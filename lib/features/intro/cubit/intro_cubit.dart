@@ -1,0 +1,73 @@
+import 'package:doctory/core/cache/cache_helper.dart';
+import 'package:doctory/core/session/user_session.dart';
+import 'package:doctory/core/utils/app_assets.dart';
+import 'package:doctory/features/intro/data/model/intro_model.dart';
+import 'package:doctory/features/intro/cubit/intro_states.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class IntroCubit extends Cubit<IntroStates> {
+  IntroCubit() : super(IntroInitialState());
+
+  List<IntroModel> getIntros() {
+    return [
+      IntroModel(
+        id: 1,
+        title: 'intro_title_1',
+        content: 'intro_subtitle_1',
+        imagePath: AppAssets.images.onboarding1,
+      ),
+      IntroModel(
+        id: 2,
+        title: 'intro_title_2',
+        content: 'intro_subtitle_2',
+        imagePath: AppAssets.images.onboarding2,
+      ),
+    ];
+  }
+
+  /// منطق التحقق من حالة المستخدم (Splash Screen Logic)
+  void checkUserStatus() async {
+    // Populate UserSession from cache
+    await UserSession.getUser();
+
+    // محاكاة تأخير الشاشة لمدة ثانيتين كما في المشروع الأصلي
+    await Future<void>.delayed(const Duration(seconds: 2));
+
+    // Compatibility logic for old flags
+    bool isLanguageSelected =
+        CacheHelper.getBool('isLanguageSelected') ?? false;
+    bool isIntroSeen = CacheHelper.getBool('isIntroSeen') ?? false;
+
+    // If they already finished onboarding the old way (isFirstTime was false)
+    final bool isFirstTimeOld = CacheHelper.getBool('isFirstTime') ?? true;
+    if (!isFirstTimeOld) {
+      isLanguageSelected = true;
+      isIntroSeen = true;
+      await CacheHelper.saveBool('isLanguageSelected', true);
+      await CacheHelper.saveBool('isIntroSeen', true);
+    }
+
+    final bool isLoggedIn = UserSession.token.isNotEmpty;
+
+    if (!isLanguageSelected) {
+      // 1. Language Selection (First time ever)
+      emit(ShowLanguageBottomSheetState());
+    } else if (!isIntroSeen) {
+      // 2. Onboarding (First time after language)
+      emit(NavigateToIntroState());
+    } else if (isLoggedIn) {
+      // 3. Main Layout (If already logged in)
+      emit(NavigateToMainState());
+    } else {
+      // 4. Login (If not logged in and seen intro)
+      emit(NavigateToLoginState());
+    }
+  }
+
+  /// دالة تعيين مشاهدة الإنترو والانتقال
+  void setIntroSeen() async {
+    await CacheHelper.saveBool('isIntroSeen', true);
+    // After intro, we go to login (since they wouldn't be logged in yet if it's the first time)
+    emit(NavigateToLoginState());
+  }
+}

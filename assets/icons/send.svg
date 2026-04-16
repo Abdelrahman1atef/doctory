@@ -1,0 +1,9 @@
+<svg id="arrow-right_bulk" data-name="arrow-right/bulk" xmlns="http://www.w3.org/2000/svg" width="35.625" height="35.625" viewBox="0 0 35.625 35.625">
+  <g id="vuesax_bulk_arrow-right" data-name="vuesax/bulk/arrow-right">
+    <g id="arrow-right">
+      <path id="Vector" d="M10.391,5.527v7.927c0,4.928-3.488,6.932-7.748,4.483l-1.9-1.1A1.49,1.49,0,0,1,0,15.547V3.434A1.49,1.49,0,0,1,.742,2.143l1.9-1.1C6.9-1.4,10.391.6,10.391,5.527Z" transform="translate(16.328 8.322)" fill="#fff"/>
+      <path id="Vector-2" data-name="Vector" d="M5.941.752V10.3a.735.735,0,0,1-1.113.638L3.2,9.984c-4.26-2.449-4.26-6.487,0-8.936L4.828.1A.746.746,0,0,1,5.941.752Z" transform="translate(8.903 12.296)" fill="#fff" opacity="0.4"/>
+      <path id="Vector-3" data-name="Vector" d="M35.625,0H0V35.625H35.625Z" fill="none" opacity="0"/>
+    </g>
+  </g>
+</svg>

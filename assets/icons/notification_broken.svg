@@ -1,0 +1,10 @@
+<svg id="notification-bing_broken" data-name="notification-bing/broken" xmlns="http://www.w3.org/2000/svg" width="140.156" height="140.156" viewBox="0 0 140.156 140.156">
+  <g id="vuesax_broken_notification-bing" data-name="vuesax/broken/notification-bing">
+    <g id="notification-bing">
+      <path id="Vector" d="M0,0V19.447" transform="translate(70.078 37.609)" fill="none" stroke="#c2c2c2" stroke-linecap="round" stroke-width="8"/>
+      <path id="Vector-2" data-name="Vector" d="M102.149,76.911A12.963,12.963,0,0,1,95.141,95.89a136.3,136.3,0,0,1-86.021,0C.711,93.087-2.5,84.561,2.113,76.911L9.529,64.53a30.54,30.54,0,0,0,3.679-13.315V38.952A38.893,38.893,0,1,1,91,38.893V51.157a24.933,24.933,0,0,0,.292,3.446" transform="translate(18.093 11.68)" fill="none" stroke="#c2c2c2" stroke-linecap="round" stroke-width="8"/>
+      <path id="Vector-3" data-name="Vector" d="M38.893,0A19.515,19.515,0,0,1,19.447,19.447,19.481,19.481,0,0,1,5.723,13.724,19.481,19.481,0,0,1,0,0" transform="translate(50.631 109.906)" fill="none" stroke="#c2c2c2" stroke-width="8"/>
+      <path id="Vector-4" data-name="Vector" d="M0,0H140.156V140.156H0Z" fill="none" opacity="0"/>
+    </g>
+  </g>
+</svg>

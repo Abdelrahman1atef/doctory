@@ -1,0 +1,8 @@
+<svg id="video-circle_bold" data-name="video-circle/bold" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <g id="vuesax_bold_video-circle" data-name="vuesax/bold/video-circle">
+    <g id="video-circle">
+      <path id="Vector" d="M10,0A10,10,0,1,0,20,10,10,10,0,0,0,10,0Zm2.66,11.73-1.28.74-1.28.74c-1.65.95-3,.17-3-1.73V8.52c0-1.91,1.35-2.68,3-1.73l1.28.74,1.28.74C14.31,9.22,14.31,10.78,12.66,11.73Z" transform="translate(2 2)" fill="#fff"/>
+      <path id="Vector-2" data-name="Vector" d="M0,0H24V24H0Z" fill="none" opacity="0"/>
+    </g>
+  </g>
+</svg>

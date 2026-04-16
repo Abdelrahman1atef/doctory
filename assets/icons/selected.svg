@@ -1,0 +1,7 @@
+<svg id="vuesax_bulk_tick-circle" data-name="vuesax/bulk/tick-circle" xmlns="http://www.w3.org/2000/svg" width="19.52" height="19.52" viewBox="0 0 19.52 19.52">
+  <g id="tick-circle">
+    <path id="Vector" d="M16.266,8.133A8.133,8.133,0,1,1,8.133,0,8.133,8.133,0,0,1,16.266,8.133Z" transform="translate(1.627 1.627)" fill="#fff" opacity="0.4"/>
+    <path id="Vector-2" data-name="Vector" d="M2.91,5.829a.609.609,0,0,1-.431-.179l-2.3-2.3a.61.61,0,0,1,.862-.862L2.91,4.357,7.09.177a.61.61,0,1,1,.862.862L3.341,5.65A.609.609,0,0,1,2.91,5.829Z" transform="translate(5.695 6.842)" fill="#fff"/>
+    <path id="Vector-3" data-name="Vector" d="M0,0H19.52V19.52H0Z" fill="none" opacity="0"/>
+  </g>
+</svg>

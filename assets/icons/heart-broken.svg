@@ -1,0 +1,8 @@
+<svg id="heart_broken" data-name="heart/broken" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <g id="vuesax_broken_heart" data-name="vuesax/broken/heart">
+    <g id="heart">
+      <path id="Vector" d="M18.59,1.87A5.571,5.571,0,0,1,20,5.59c0,7-6.48,11.13-9.38,12.13a2.181,2.181,0,0,1-1.24,0C6.48,16.72,0,12.59,0,5.59A5.574,5.574,0,0,1,5.56,0,5.515,5.515,0,0,1,10,2.24,5.53,5.53,0,0,1,14.44,0" transform="translate(2 3.1)" fill="none" stroke="#174862" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
+      <path id="Vector-2" data-name="Vector" d="M0,0H24V24H0Z" fill="none" opacity="0"/>
+    </g>
+  </g>
+</svg>
