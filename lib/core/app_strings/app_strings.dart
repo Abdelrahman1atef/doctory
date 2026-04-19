@@ -43,7 +43,7 @@ class AppStrings {
 
   static String get forgetPassword => "do_you_forget_your_password";
 
-  static String get enterYourEmailToSendOtp => "Enter your email to send otp";
+  static String get enterYourEmailToSendOtp => "enter_your_email_otp";
 
   static String get otp => "otp";
 
@@ -811,7 +811,7 @@ class AppStrings {
   static String get postponeLabel => "postpone_label";
   static String get rateEvent => "rate_event_label";
   static String get rateMarina => "rate_marina_label";
-  static String get jetBoat => "jetBoat";
+  static String get jetBoat => "jet_boat_label";
 
   static String get startTrip => "start_trip";
   static String get finishTrip => "finish_trip";

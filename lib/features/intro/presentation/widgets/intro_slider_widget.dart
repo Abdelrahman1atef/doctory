@@ -27,6 +27,7 @@ class IntroSliderWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+        kToolbarHeight.ph,
         Expanded(
           child: PageView.builder(
             controller: pageController,

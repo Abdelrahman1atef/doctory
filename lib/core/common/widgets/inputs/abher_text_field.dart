@@ -66,88 +66,115 @@ class AbherTextField extends StatelessWidget {
           ),
           8.ph,
         ],
-        TextFormField(
-          controller: controller,
-          initialValue: controller == null ? null : null,
-          decoration: InputDecoration(
-            counterText: counterText,
-            hintText: hintText,
-            hintStyle: AppTextSizes.s14.regular.withColor(AppColors.textHint),
-            errorText: errorText,
-            filled: false,
-            fillColor: Colors.transparent,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 20,
-              vertical: 18,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: const BorderSide(color: AppColors.grey1, width: 1),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: const BorderSide(
-                color: AppColors.primaryTeal,
-                width: 1.5,
+        Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(20),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.stitchPrimary.withValues(alpha: 0.06),
+                blurRadius: 32,
+                offset: const Offset(0, 16),
+              ),
+            ],
+          ),
+          child: TextFormField(
+            controller: controller,
+            initialValue: controller == null ? null : null,
+            decoration: InputDecoration(
+              counterText: counterText,
+              hintText: hintText,
+              hintStyle: AppTextSizes.s14.regular.withColor(AppColors.textHint),
+              errorText: errorText,
+              filled: false,
+              fillColor: Colors.transparent,
+              contentPadding: const EdgeInsets.symmetric(
+                horizontal: 24,
+                vertical: 20,
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: const BorderSide(
+                  color: Colors.transparent,
+                  width: 1.5,
+                ),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: const BorderSide(
+                  color: Colors.transparent,
+                  width: 1.5,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: const BorderSide(
+                  color: AppColors.stitchPrimary,
+                  width: 1.5,
+                ),
+              ),
+              errorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide(color: AppColors.error, width: 1.5),
+              ),
+              focusedErrorBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide(color: AppColors.error, width: 1.5),
+              ),
+              disabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(20),
+                borderSide: BorderSide(color: Colors.grey.shade100, width: 1.5),
+              ),
+              prefixIcon: prefixIcon != null
+                  ? UnconstrainedBox(
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        margin: const EdgeInsets.symmetric(horizontal: 14),
+                        decoration: BoxDecoration(
+                          color: AppColors.stitchPrimaryContainer.withValues(
+                            alpha: 0.3,
+                          ),
+                          shape: BoxShape.circle,
+                        ),
+                        child: IconTheme(
+                          data: const IconThemeData(
+                            color: AppColors.stitchPrimary,
+                            size: 20,
+                          ),
+                          child: prefixIcon!,
+                        ),
+                      ),
+                    )
+                  : null,
+              suffixIcon: suffixIcon,
+              prefixIconConstraints: const BoxConstraints(
+                minWidth: 64,
+                minHeight: 48,
+              ),
+              suffixIconConstraints: const BoxConstraints(
+                minWidth: 48,
+                minHeight: 24,
               ),
             ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide(color: AppColors.error, width: 1),
+            style: AppTextSizes.s16.regular.withColor(
+              enabled ? AppColors.stitchPrimary : AppColors.textHint,
             ),
-            focusedErrorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide(color: AppColors.error, width: 1.5),
-            ),
-            disabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(30),
-              borderSide: BorderSide(color: Colors.grey.shade300, width: 1),
-            ),
-            prefixIcon: prefixIcon != null
-                ? UnconstrainedBox(
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      margin: const EdgeInsets.symmetric(horizontal: 10),
-                      decoration: const BoxDecoration(
-                        color: AppColors.grey100,
-                        shape: BoxShape.circle,
-                      ),
-                      child: prefixIcon,
-                    ),
-                  )
-                : null,
-            suffixIcon: suffixIcon,
-            prefixIconConstraints: const BoxConstraints(
-              minWidth: 60,
-              minHeight: 44,
-            ),
-            suffixIconConstraints: const BoxConstraints(
-              minWidth: 44,
-              minHeight: 24,
-            ),
+            obscureText: obscureText,
+            keyboardType: keyboardType,
+            textInputAction: textInputAction,
+            onChanged: onChanged,
+            onFieldSubmitted: onSubmitted,
+            validator: validator,
+            enabled: enabled,
+            readOnly: readOnly,
+            autofocus: autofocus,
+            maxLines: maxLines,
+            minLines: minLines,
+            maxLength: maxLength,
+            inputFormatters: inputFormatters,
+            onTap: onTap,
+            cursorColor: AppColors.stitchPrimary,
           ),
-          style: AppTextSizes.s16.regular.withColor(
-            enabled ? AppColors.accentGrey : AppColors.textHint,
-          ),
-          obscureText: obscureText,
-          keyboardType: keyboardType,
-          textInputAction: textInputAction,
-          onChanged: onChanged,
-          onFieldSubmitted: onSubmitted,
-          validator: validator,
-          enabled: enabled,
-          readOnly: readOnly,
-          autofocus: autofocus,
-          maxLines: maxLines,
-          minLines: minLines,
-          maxLength: maxLength,
-          inputFormatters: inputFormatters,
-          onTap: onTap,
-          cursorColor: AppColors.primaryTeal,
         ),
       ],
     );

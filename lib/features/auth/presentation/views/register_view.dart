@@ -1,4 +1,8 @@
+import 'package:doctory/core/theme/app_colors.dart';
+import 'package:doctory/core/utils/extensions.dart';
+import 'package:doctory/features/auth/presentation/sections/register_form_section.dart';
 import 'package:flutter/material.dart';
+import 'package:animate_do/animate_do.dart';
 
 class RegisterView extends StatelessWidget {
   const RegisterView({super.key});
@@ -6,8 +10,59 @@ class RegisterView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Register')),
-      body: const Center(child: Text('Register View - To be implemented')),
+      backgroundColor: AppColors.stitchSurface,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AppBar(
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              leading: const BackButton(color: AppColors.stitchPrimary),
+              forceMaterialTransparency: true,
+            ),
+            const SizedBox(height: 10),
+
+            /// Header Section
+            FadeInDown(
+              duration: const Duration(milliseconds: 600),
+              child: Column(
+                children: [
+                  Text(
+                    'Create Account',
+                    textAlign: TextAlign.center,
+                    style: context.theme.textTheme.displaySmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.stitchPrimary,
+                      fontSize: 32,
+                      height: 1.2,
+                    ),
+                  ),
+                  12.ph,
+                  Text(
+                    'Join our clinical community in seconds.',
+                    textAlign: TextAlign.center,
+                    style: context.theme.textTheme.bodyLarge?.copyWith(
+                      color: AppColors.textSecondary,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 60),
+
+            /// Form Section
+            FadeInUp(
+              duration: const Duration(milliseconds: 600),
+              delay: const Duration(milliseconds: 200),
+              child: const RegisterFormSection(),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

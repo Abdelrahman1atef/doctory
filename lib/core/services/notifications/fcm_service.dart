@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:doctory/firebase_options.dart';
+// import 'package:doctory/firebase_options.dart';
 import 'package:doctory/core/router/app_router.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -41,7 +41,7 @@ class FBMessaging {
     // Background handlers run in a separate isolate, so Firebase
     // must be re-initialized here using explicit options.
     await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
+      // options: DefaultFirebaseOptions.currentPlatform,
     );
     await _setNotificationPresentationOptions();
     log('Background message received: ${message.messageId}');

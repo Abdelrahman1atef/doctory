@@ -24,7 +24,7 @@ class AbherBackButton extends StatelessWidget {
           context.pop();
         }
       },
-      icon: AppAssets.svg(AppAssets.icons.back, width: 24),
+      icon: Icon(Icons.arrow_back),
     );
   }
 }

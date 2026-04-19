@@ -1,8 +1,0 @@
-<svg id="crown_broken" data-name="crown/broken" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-  <g id="vuesax_broken_crown" data-name="vuesax/broken/crown">
-    <g id="crown">
-      <path id="Vector" d="M0,7.282V2c0-1.33.77-1.65,1.71-.71L4.3,3.883a1,1,0,0,0,1.41,0L9.29.292a1,1,0,0,1,1.41,0l3.59,3.59a1,1,0,0,0,1.41,0l2.59-2.59C19.23.353,20,.673,20,2v9.59a4.724,4.724,0,0,1-5,5H5a5,5,0,0,1-5-5" transform="translate(2 3.707)" fill="none" stroke="#ef8801" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"/>
-      <path id="Vector-2" data-name="Vector" d="M0,0H24V24H0Z" fill="none" opacity="0"/>
-    </g>
-  </g>
-</svg>

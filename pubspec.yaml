@@ -72,6 +72,7 @@ dependencies:
   collection: ^1.18.0
   path: ^1.9.1
   mobile_scanner: ^7.2.0
+  pin_code_fields:
 
 dev_dependencies:
   flutter_test:
@@ -86,7 +87,6 @@ flutter:
 
   assets:
     - assets/images/
-    - assets/audio/
     - assets/translation/
     - assets/icons/
     - assets/fonts/

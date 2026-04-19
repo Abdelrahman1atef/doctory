@@ -15,12 +15,12 @@ class IntroView extends StatelessWidget {
     return BlocListener<IntroCubit, IntroStates>(
       listener: (context, state) {
         if (state is NavigateToLoginState) {
-          context.go(AppRoutes.login);
+          context.go(AppRoutes.welcome);
         }
       },
       child: Scaffold(
         backgroundColor: AppColors.background,
-        body: const SafeArea(child: IntroSliderSection()),
+        body: IntroSliderSection(),
       ),
     );
   }

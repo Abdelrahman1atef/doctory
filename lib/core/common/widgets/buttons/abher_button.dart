@@ -76,6 +76,7 @@ class AbherButton extends StatelessWidget {
                   ? Border.all(color: borderColor!)
                   : _getBorder(),
               borderRadius: borderRadius ?? BorderRadius.circular(28),
+              boxShadow: _getBoxShadow(),
             ),
             child: Center(
               child: isLoading
@@ -143,6 +144,20 @@ class AbherButton extends StatelessWidget {
   BoxBorder? _getBorder() {
     if (variant == AbherButtonVariant.outline && _isEnabled) {
       return Border.all(color: AppColors.primary, width: 1.5);
+    }
+    return null;
+  }
+
+  List<BoxShadow>? _getBoxShadow() {
+    if (!_isEnabled) return null;
+    if (variant == AbherButtonVariant.primary) {
+      return [
+        BoxShadow(
+          color: AppColors.stitchPrimary.withValues(alpha: 0.25),
+          blurRadius: 24,
+          offset: const Offset(0, 8),
+        ),
+      ];
     }
     return null;
   }

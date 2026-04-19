@@ -12,38 +12,38 @@ class AppColors {
   // Accent grey: #7D7D7D
 
   static final ColorScheme lightColorScheme = ColorScheme.fromSeed(
-    seedColor: const Color(0xFF2EC5D7),
-    primary: const Color(0xFF2EC5D7),
+    seedColor: const Color(0xFF076453),
+    primary: const Color(0xFF076453),
     onPrimary: Colors.white,
-    secondary: const Color(0xFF174862),
+    secondary: const Color(0xFF526069),
     onSecondary: Colors.white,
-    surface: Colors.white,
-    onSurface: const Color(0xFF1A1A1A),
-    surfaceContainerHighest: const Color(0xFFF9F9F9),
-    onSurfaceVariant: const Color(0xFF4A4B4D),
-    outline: const Color(0xFFDCDBDB),
-    error: const Color(0xFFFF0000),
+    surface: const Color(0xFFF8F9FA),
+    onSurface: const Color(0xFF191C1D),
+    surfaceContainerHighest: const Color(0xFFE1E3E4),
+    onSurfaceVariant: const Color(0xFF3F4945),
+    outline: const Color(0xFF6F7975),
+    error: const Color(0xFFBA1A1A),
     onError: Colors.white,
     brightness: Brightness.light,
   );
 
   static final ColorScheme darkColorScheme = ColorScheme.fromSeed(
-    seedColor: const Color(0xFF2EC5D7),
-    primary: const Color(0xFF2EC5D7),
-    onPrimary: Colors.black,
-    secondary: const Color(0xFF174862),
-    onSecondary: Colors.white,
-    surface: const Color(0xFF121212),
-    onSurface: Colors.white,
+    seedColor: const Color(0xFF076453),
+    primary: const Color(0xFF88D5C0), // Dark mode primary from CSS
+    onPrimary: const Color(0xFF00382D),
+    secondary: const Color(0xFFB6C9D7), // secondary fixed dim approximation
+    onSecondary: const Color(0xFF24323A),
+    surface: const Color(0xFF0F1412),
+    onSurface: const Color(0xFFDFE4E1),
     surfaceContainerHighest: const Color(0xFF2C2C2C),
-    onSurfaceVariant: const Color(0xFFBDBDBD),
-    outline: const Color(0xFF424242),
-    error: const Color(0xFFCF6679),
-    onError: Colors.black,
+    onSurfaceVariant: const Color(0xFFBFC9C4),
+    outline: const Color(0xFF89938F),
+    error: const Color(0xFFFFB4AB),
+    onError: const Color(0xFF690005),
     brightness: Brightness.dark,
   );
 
-  // ==================== DYNAMIC CONTEXTLESS ACCESS ====================
+  // ==================== DYNAMIC ACCESSORS (STITCH DESIGN SYSTEM) ====================
 
   static ColorScheme get _currentScheme {
     return lightColorScheme;
@@ -60,19 +60,33 @@ class AppColors {
   static Color get border => _currentScheme.outline;
   static Color get surfaceVariant => _currentScheme.surfaceContainerHighest;
 
-  // ==================== ABHER FIXED COLORS ====================
+  // ==================== STITCH COLORS (MINIMALIST CLINIC LOCATOR) ====================
+  static const Color stitchPrimary = Color(0xFF076453);
+  static const Color stitchSurface = Color(0xFFF8F9FA);
+  static const Color stitchPrimaryFixed = Color(0xFFA4F2DB);
+  static const Color stitchPrimaryContainer = Color(0xFF2E7D6B);
+  static const Color stitchOnPrimary = Color(0xFFFFFFFF);
+  static const Color stitchSecondary = Color(0xFF526069);
+  static const Color stitchTertiary = Color(0xFF00671A);
+  static const Color stitchTertiaryContainer = Color(0xFF178229);
+  static const Color stitchOnTertiaryContainer = Color(0xFFDEFFD6);
+  static const Color stitchSurfaceLow = Color(0xFFF3F4F5);
+  static const Color stitchSurfaceLowest = Color(0xFFFFFFFF);
+  static const Color stitchSurfaceBright = Color(0xFFF8FAFB);
 
-  /// Primary teal
-  static const Color primaryTeal = Color(0xFF2EC5D7);
+  // ==================== ABHER FIXED COLORS (MAPPED TO STITCH TO PREVENT CONFLICTS) ====================
 
-  /// Dark navy (colorPrimaryDark)
-  static const Color primaryNavy = Color(0xFF174862);
+  /// Primary teal -> Replaced by Minimalist primary (Dark Green)
+  static const Color primaryTeal = stitchPrimary;
+
+  /// Dark navy -> Replaced by Minimalist secondary
+  static const Color primaryNavy = stitchSecondary;
 
   /// Off-white background
-  static const Color offWhite = Color(0xFFF0F0F0);
+  static const Color offWhite = stitchSurface;
 
   /// Light white background
-  static const Color lightWhite = Color(0xFFF9F9F9);
+  static const Color lightWhite = stitchSurface;
 
   /// Accent grey
   static const Color accentGrey = Color(0xFF7D7D7D);
@@ -84,7 +98,7 @@ class AppColors {
   static const Color rate = Color(0xFFD6990A);
   static const Color rateText = Color(0xFF919191);
 
-  /// rate
+  /// anchors
   static const Color anchorsText = Color(0xFF949494);
   static const Color anchorsIcon = Color(0xFFC9C9C9);
 
@@ -100,12 +114,12 @@ class AppColors {
   static const Color notEditableColor = Color(0xffE3065F);
   static const Color iconTextField = Color(0xfff6f6f6);
 
-  static const Color chatBackground = Color(0xffF5F8F9);
+  static const Color chatBackground = stitchSurface;
   static const Color chatTimeText = Color(0xffBCBDBE);
   static const Color chatUserNameText = Color(0xffA9A9A9);
 
   /// Chat bubble sent by current user
-  static const Color chatBubbleMe = Color(0xFF29C2D1);
+  static const Color chatBubbleMe = stitchPrimaryContainer;
 
   /// Chat bubble received from other user
   static const Color chatBubbleOther = Color(0xFFF5F5F5);

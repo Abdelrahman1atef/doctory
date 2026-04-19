@@ -27,6 +27,8 @@ abstract class AppStyles {
   static TextStyle get s20Bold => AppTextSizes.s20.bold;
   static TextStyle get s24Bold => AppTextSizes.s24.bold;
   static TextStyle get s26Bold => AppTextSizes.s26.bold;
+  static TextStyle get s28Bold => AppTextSizes.s28.bold;
+  static TextStyle get s32Bold => AppTextSizes.s32.bold;
 }
 
 /// الأصناف الأساسية للأحجام - Base Text Sizes

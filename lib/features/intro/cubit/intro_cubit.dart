@@ -12,15 +12,16 @@ class IntroCubit extends Cubit<IntroStates> {
     return [
       IntroModel(
         id: 1,
-        title: 'intro_title_1',
-        content: 'intro_subtitle_1',
-        imagePath: AppAssets.images.onboarding1,
+        title: 'discover',
+        content: 'discover_subtitle',
+        imagePath: '',
       ),
+      IntroModel(id: 2, title: 'book', content: 'book_subtitle', imagePath: ''),
       IntroModel(
-        id: 2,
-        title: 'intro_title_2',
-        content: 'intro_subtitle_2',
-        imagePath: AppAssets.images.onboarding2,
+        id: 3,
+        title: 'compare',
+        content: 'compare_subtitle',
+        imagePath: '',
       ),
     ];
   }
