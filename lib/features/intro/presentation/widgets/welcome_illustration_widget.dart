@@ -26,12 +26,15 @@ class WelcomeIllustrationWidget extends StatelessWidget {
               ),
             ),
           ),
-          
+
           /// Decorative floating dots
           Positioned(
             top: 20,
             left: 40,
-            child: _CircleDot(color: AppColors.stitchPrimaryContainer.withValues(alpha: 0.2), size: 12),
+            child: _CircleDot(
+              color: AppColors.stitchPrimaryContainer.withValues(alpha: 0.2),
+              size: 12,
+            ),
           ),
           Positioned(
             bottom: 40,
@@ -43,31 +46,33 @@ class WelcomeIllustrationWidget extends StatelessWidget {
             right: 30,
             child: _CircleDot(color: AppColors.stitchTertiary.withValues(alpha: 0.1), size: 16),
           ),
-          
+
           /// Main Medical Icon Container (Glassmorphic)
-          Container(
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.8),
-              shape: BoxShape.circle,
-              boxShadow: [
-                BoxShadow(
-                  color: AppColors.stitchPrimary.withValues(alpha: 0.06),
-                  blurRadius: 32,
-                  offset: const Offset(0, 16),
+          Hero(
+            tag: 'app_logo',
+            child: Material(
+              type: MaterialType.transparency,
+              child: Container(
+                padding: const EdgeInsets.all(32),
+                decoration: BoxDecoration(
+                  color: Colors.white.withValues(alpha: 0.8),
+                  shape: BoxShape.circle,
+                  boxShadow: [
+                    BoxShadow(
+                      color: AppColors.stitchPrimary.withValues(alpha: 0.06),
+                      blurRadius: 32,
+                      offset: const Offset(0, 16),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-            child: Container(
-              padding: const EdgeInsets.all(24),
-              decoration: const BoxDecoration(
-                color: AppColors.stitchPrimaryContainer,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.medical_services_rounded,
-                size: 64,
-                color: Colors.white,
+                child: Container(
+                  padding: const EdgeInsets.all(24),
+                  decoration: const BoxDecoration(
+                    color: AppColors.stitchPrimaryContainer,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.medical_services_rounded, size: 64, color: Colors.white),
+                ),
               ),
             ),
           ),
@@ -80,6 +85,7 @@ class WelcomeIllustrationWidget extends StatelessWidget {
 class _CircleDot extends StatelessWidget {
   final Color color;
   final double size;
+
   const _CircleDot({required this.color, required this.size});
 
   @override
@@ -87,10 +93,7 @@ class _CircleDot extends StatelessWidget {
     return Container(
       width: size,
       height: size,
-      decoration: BoxDecoration(
-        color: color,
-        shape: BoxShape.circle,
-      ),
+      decoration: BoxDecoration(color: color, shape: BoxShape.circle),
     );
   }
 }

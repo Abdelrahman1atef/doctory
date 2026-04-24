@@ -3,6 +3,7 @@ import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
+import 'package:doctory/core/common/widgets/buttons/social_auth_button.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -125,6 +126,14 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
                   onTap: () => setState(() => _selectedGender = 'female'),
                 ),
               ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _GenderChip(
+                  label: context.tr('other'),
+                  isSelected: _selectedGender == 'other',
+                  onTap: () => setState(() => _selectedGender = 'other'),
+                ),
+              ),
             ],
           ),
 
@@ -194,6 +203,40 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
               ),
               child: Text(context.tr('continue_btn'), style: AppStyles.s16SemiBold),
             ),
+          ),
+          
+          24.ph,
+          
+          /// OR Divider
+          Row(
+            children: [
+              const Expanded(child: Divider(color: AppColors.cardBorder, thickness: 1)),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16),
+                child: Text(
+                  context.tr('or_continue_with'),
+                  style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
+                ),
+              ),
+              const Expanded(child: Divider(color: AppColors.cardBorder, thickness: 1)),
+            ],
+          ),
+          
+          32.ph,
+          
+          /// Social Auth Buttons
+          SocialAuthButton(
+            title: context.tr('continue_with_google'),
+            icon: const Icon(Icons.g_mobiledata_rounded, color: Colors.red, size: 36),
+            onTap: () {},
+          ),
+          
+          16.ph,
+          
+          SocialAuthButton(
+            title: context.tr('continue_with_facebook'),
+            icon: const Icon(Icons.facebook_rounded, color: Colors.blue, size: 28),
+            onTap: () {},
           ),
           
           24.ph,

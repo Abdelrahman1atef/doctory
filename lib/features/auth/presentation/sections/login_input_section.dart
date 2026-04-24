@@ -3,6 +3,7 @@ import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
+import 'package:doctory/core/common/widgets/buttons/social_auth_button.dart';
 import 'package:doctory/features/auth/cubit/auth_cubit.dart';
 import 'package:doctory/features/auth/cubit/auth_states.dart';
 import 'package:flutter/material.dart';
@@ -20,10 +21,13 @@ class LoginInputSection extends StatefulWidget {
 class _LoginInputSectionState extends State<LoginInputSection> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
     _emailController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -63,6 +67,46 @@ class _LoginInputSectionState extends State<LoginInputSection> {
                 },
               ),
               
+              20.ph,
+              
+              StitchTextField(
+                controller: _passwordController,
+                label: context.tr('password'),
+                hintText: '••••••••',
+                obscureText: _obscurePassword,
+                prefixIcon: const Icon(Icons.lock_outline, color: AppColors.stitchPrimary),
+                suffixIcon: IconButton(
+                  icon: Icon(
+                    _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                    color: AppColors.textSecondary,
+                  ),
+                  onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) return context.tr('required_password');
+                  return null;
+                },
+              ),
+              
+              const SizedBox(height: 12),
+              
+              /// Forgot Password Link
+              Align(
+                alignment: AlignmentDirectional.centerEnd,
+                child: TextButton(
+                  onPressed: () {}, // TODO: Navigate to forgot password screen
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: const Size(0, 0),
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                  ),
+                  child: Text(
+                    context.tr('forgot_password'),
+                    style: AppStyles.s14Medium.copyWith(color: AppColors.stitchPrimary),
+                  ),
+                ),
+              ),
+              
               32.ph,
               
               /// Login Button (Primary Container style)
@@ -85,8 +129,42 @@ class _LoginInputSectionState extends State<LoginInputSection> {
                   ),
                   child: state is AuthLoadingState
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(context.tr('continue_btn'), style: AppStyles.s16SemiBold),
+                      : Text(context.tr('login_action'), style: AppStyles.s16SemiBold),
                 ),
+              ),
+              
+              32.ph,
+              
+              /// OR Divider
+              Row(
+                children: [
+                  const Expanded(child: Divider(color: AppColors.cardBorder, thickness: 1)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      context.tr('or_continue_with'),
+                      style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
+                    ),
+                  ),
+                  const Expanded(child: Divider(color: AppColors.cardBorder, thickness: 1)),
+                ],
+              ),
+              
+              32.ph,
+              
+              /// Social Auth Buttons
+              SocialAuthButton(
+                title: context.tr('continue_with_google'),
+                icon: const Icon(Icons.g_mobiledata_rounded, color: Colors.red, size: 36),
+                onTap: () {},
+              ),
+              
+              16.ph,
+              
+              SocialAuthButton(
+                title: context.tr('continue_with_facebook'),
+                icon: const Icon(Icons.facebook_rounded, color: Colors.blue, size: 28),
+                onTap: () {},
               ),
               
               24.ph,

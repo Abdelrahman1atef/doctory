@@ -69,6 +69,7 @@
   "gender": "اختر الجنس",
   "male": "ذكر",
   "female": "أنثى",
+  "other": "آخر",
   "personal_profile": "إكمال الملف الشخصي",
   "email": "البريد الإلكتروني",
   "address_details": "رقم الهوية (اختياري)",
@@ -514,5 +515,8 @@
   "trip_time_hint": "قم بتحديد توقيت الرحلة",
   "ignore_order": "تجاهل الطلب",
   "price_sort_asc": "من الأقل سعراً للأعلى",
-  "price_sort_desc": "من الأعلى سعراً للأقل"
+  "price_sort_desc": "من الأعلى سعراً للأقل",
+  "or_continue_with": "أو المتابعة باستخدام",
+  "continue_with_google": "جوجل",
+  "continue_with_facebook": "فيسبوك"
 }

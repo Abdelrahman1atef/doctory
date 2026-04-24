@@ -11,7 +11,6 @@ import 'package:flutter/material.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
   // Initialize Firebase (Note: ensure you have a valid firebase_options.dart or mock it)
   try {
     await Firebase.initializeApp(

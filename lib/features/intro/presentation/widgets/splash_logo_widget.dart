@@ -73,9 +73,11 @@ class _SplashLogoWidgetState extends State<SplashLogoWidget> with SingleTickerPr
                 duration: const Duration(milliseconds: 1000),
                 child: Hero(
                   tag: 'app_logo',
-                  child: Container(
-                    width: 160,
-                    height: 160,
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: Container(
+                      width: 160,
+                      height: 160,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       shape: BoxShape.circle,
@@ -103,7 +105,7 @@ class _SplashLogoWidgetState extends State<SplashLogoWidget> with SingleTickerPr
                     ),
                   ),
                 ),
-              ),
+              ),),
 
               const SizedBox(height: 48),
 

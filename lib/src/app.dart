@@ -1,14 +1,27 @@
 import 'package:doctory/core/router/app_router.dart';
 import 'package:doctory/core/common/widgets/layout/abher_responsive_wrapper.dart';
 import 'package:doctory/core/theme/theme_manager.dart';
+import 'package:doctory/core/utils/app_assets.dart';
 import 'package:doctory/core/utils/utils.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 
-class Doctory extends StatelessWidget {
+class Doctory extends StatefulWidget {
   const Doctory({super.key});
+
+  @override
+  State<Doctory> createState() => _DoctoryState();
+}
+
+class _DoctoryState extends State<Doctory> {
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Precache all app images
+    AppAssets.precacheImages(context);
+  }
 
   @override
   Widget build(BuildContext context) {

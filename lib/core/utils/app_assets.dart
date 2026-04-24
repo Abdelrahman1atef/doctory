@@ -52,7 +52,7 @@ class AppAssets {
   /// تحضير الأيقونات الأساسية في الذاكرة لمنع التأخير (Pre-caching)
   static Future<void> precacheIcons() async {
     final List<String> iconsToCache = [
-
+      // Add any critical SVG icons here
     ];
 
     for (final iconPath in iconsToCache) {
@@ -68,14 +68,35 @@ class AppAssets {
       }
     }
   }
+
+  /// تحضير الصور الأساسية (Pre-caching)
+  static Future<void> precacheImages(BuildContext context) async {
+    final List<String> imagesToCache = [
+      images.logo,
+      images.bookingAr,
+      images.bookingEn,
+      images.compareImage,
+    ];
+
+    for (final imagePath in imagesToCache) {
+      try {
+        await precacheImage(AssetImage(imagePath), context);
+        // debugPrint('✅ [AppAssets] precached image: $imagePath');
+      } catch (e) {
+        debugPrint('⚠️ [AppAssets] failed to precache image: $imagePath - $e');
+      }
+    }
+  }
 }
 
 class _Images {
   const _Images();
-
   final String _base = 'assets/images';
 
-
+  String get logo => '$_base/logo.png';
+  String get bookingAr => '$_base/booking_ar.png';
+  String get bookingEn => '$_base/booking_en.png';
+  String get compareImage => '$_base/compare_image.png';
 }
 
 class _Icons {

@@ -56,12 +56,20 @@ class _ProfileFormSectionState extends State<ProfileFormSection> {
                   onTap: () => setState(() => _selectedGender = 'male'),
                 ),
               ),
-              const SizedBox(width: 16),
+              const SizedBox(width: 12),
               Expanded(
                 child: _GenderChip(
                   label: context.tr('female'),
                   isSelected: _selectedGender == 'female',
                   onTap: () => setState(() => _selectedGender = 'female'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: _GenderChip(
+                  label: context.tr('other'),
+                  isSelected: _selectedGender == 'other',
+                  onTap: () => setState(() => _selectedGender = 'other'),
                 ),
               ),
             ],

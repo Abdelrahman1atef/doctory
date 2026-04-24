@@ -1,4 +1,5 @@
 import 'package:doctory/core/theme/app_colors.dart';
+import 'package:doctory/core/utils/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -52,8 +53,8 @@ class IntroCompareWidget extends StatelessWidget {
                       ],
                     ),
                     clipBehavior: Clip.hardEdge,
-                    child: Image.network(
-                      'https://lh3.googleusercontent.com/aida-public/AB6AXuAdAZnalfVwPC7_cHLZlyILZI1NP9kFmbZDAw2UEc_BK8Iqz56EbobExmpqkYEtD4pl0F45SMnpxGIzQLNPaqNQmgnKunau5RbPBWnIEfnzwYW_cHtCrHMZln2sG0NVp21DaMPWFOiLg8oLeH2ixjAfBgdoouAx_QBO9bcFPgZRvTJYrxg6aQJIrvyZgpnrpNjlRccfyyr0eL9fzcT3d7Xl43FNYuYHvsCrrTCphw5iU9FPqsVn7Iquts1pw8EJ1PkJas-K8aOGkKE',
+                    child: AppAssets.image(
+                      AppAssets.images.compareImage,
                       fit: BoxFit.cover,
                     ),
                   ),

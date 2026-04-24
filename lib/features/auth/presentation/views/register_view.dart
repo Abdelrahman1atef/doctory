@@ -3,6 +3,9 @@ import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/auth/presentation/sections/register_form_section.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:easy_localization/easy_localization.dart';
+
+import '../../../../core/theme/app_typography.dart';
 
 class RegisterView extends StatelessWidget {
   const RegisterView({super.key});
@@ -30,9 +33,9 @@ class RegisterView extends StatelessWidget {
               child: Column(
                 children: [
                   Text(
-                    'Create Account',
+                    context.tr('signUp'),
                     textAlign: TextAlign.center,
-                    style: context.theme.textTheme.displaySmall?.copyWith(
+                    style: AppStyles.s14Bold.copyWith(
                       fontWeight: FontWeight.w800,
                       color: AppColors.stitchPrimary,
                       fontSize: 32,
@@ -41,9 +44,9 @@ class RegisterView extends StatelessWidget {
                   ),
                   12.ph,
                   Text(
-                    'Join our clinical community in seconds.',
+                    context.tr('signUp_subtitle'),
                     textAlign: TextAlign.center,
-                    style: context.theme.textTheme.bodyLarge?.copyWith(
+                    style: AppStyles.s14Bold.copyWith(
                       color: AppColors.textSecondary,
                       fontWeight: FontWeight.w500,
                     ),
@@ -60,6 +63,7 @@ class RegisterView extends StatelessWidget {
               delay: const Duration(milliseconds: 200),
               child: const RegisterFormSection(),
             ),
+            kBottomNavigationBarHeight.ph
           ],
         ),
       ),

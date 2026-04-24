@@ -3,6 +3,9 @@ import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/auth/presentation/sections/login_input_section.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:easy_localization/easy_localization.dart';
+
+import '../../../../core/theme/app_typography.dart';
 
 class LoginBodySection extends StatelessWidget {
   const LoginBodySection({super.key});
@@ -41,9 +44,9 @@ class LoginBodySection extends StatelessWidget {
                     child: Column(
                       children: [
                         Text(
-                          'Welcome Back',
+                          context.tr('login_title'),
                           textAlign: TextAlign.center,
-                          style: context.theme.textTheme.displaySmall?.copyWith(
+                          style:AppStyles.s14Bold.copyWith(
                             fontWeight: FontWeight.w800,
                             color: AppColors.stitchPrimary,
                             fontSize: 32,
@@ -52,9 +55,9 @@ class LoginBodySection extends StatelessWidget {
                         ),
                         16.ph,
                         Text(
-                          'Log in to access your clinical sanctuary.',
+                          context.tr('login_subtitle'),
                           textAlign: TextAlign.center,
-                          style: context.theme.textTheme.bodyLarge?.copyWith(
+                          style: AppStyles.s14Bold.copyWith(
                             color: AppColors.textSecondary,
                             fontWeight: FontWeight.w500,
                           ),
