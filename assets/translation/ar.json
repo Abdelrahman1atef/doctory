@@ -10,6 +10,8 @@
   "login_action": "تسجيل دخول",
   "dont_have_account": "ليس لديك حساب؟",
   "register_now": "سجل الآن",
+  "email_address": "البريد الإلكتروني",
+  "or_login_with": "أو سجل دخول بواسطة",
   "stay_as_guest": "الاستمرار كضيف",
   "intro_title_1": "اطب رحلتك بكل سهولة",
   "intro_subtitle_1": "يمكنك الإبحار معنا بكل سهولة من بين العديد من المراكب والمراسي المتاحة فقط اطب وأبحر الآن",
@@ -521,5 +523,6 @@
   "continue_with_facebook": "فيسبوك",
   "forgot_password_title": "نسيت كلمة المرور؟",
   "forgot_password_subtitle": "أدخل بريدك الإلكتروني لاستلام رابط إعادة تعيين كلمة المرور.",
-  "send_reset_link": "إرسال رابط الاستعادة"
+  "send_reset_link": "إرسال رابط الاستعادة",
+  "internet_connected": "تم استعادة الاتصال بالإنترنت"
 }

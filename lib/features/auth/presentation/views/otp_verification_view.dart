@@ -37,7 +37,7 @@ class OtpVerificationView extends StatelessWidget {
               FadeInUp(
                 duration: const Duration(milliseconds: 600),
                 delay: const Duration(milliseconds: 200),
-                child: const OtpInputSection(),
+                child: OtpInputSection(email: email),
               ),
             ],
           ),

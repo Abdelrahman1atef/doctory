@@ -9,6 +9,9 @@
   "login": "Login",
   "dont_have_account": "Don't have an account?",
   "register_now": "Register Now",
+  "email_address": "Email Address",
+  "or_login_with": "Or Login With",
+  "stay_as_guest": "Stay as Guest",
   "intro_title_1": "Welcome to Abher",
   "intro_subtitle_1": "Discover the best marine trips and adventures",
   "intro_title_2": "Easy Booking",
@@ -522,5 +525,6 @@
   "continue_with_facebook": "Facebook",
   "forgot_password_title": "Forgot Password?",
   "forgot_password_subtitle": "Enter your email address to receive a password reset link.",
-  "send_reset_link": "Send Reset Link"
+  "send_reset_link": "Send Reset Link",
+  "internet_connected": "Internet connection restored"
 }

@@ -12,9 +12,9 @@ class NetworkConfig {
 
   const NetworkConfig({
     required this.baseUrl,
-    this.connectTimeout = const Duration(seconds: 30),
-    this.receiveTimeout = const Duration(seconds: 30),
-    this.sendTimeout = const Duration(seconds: 30),
+    this.connectTimeout = const Duration(seconds: 15),
+    this.receiveTimeout = const Duration(seconds: 15),
+    this.sendTimeout = const Duration(seconds: 15),
     this.defaultHeaders = const {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
@@ -27,14 +27,14 @@ class NetworkConfig {
 
   /// Development configuration
   static const NetworkConfig development = NetworkConfig(
-    baseUrl: 'https://nebher.sa/api',
+    baseUrl: 'https://hucliniccare-huicareapp.runasp.net/api',
     enableLogging: true,
     enableRetry: true,
   );
 
   /// Production configuration
   static const NetworkConfig production = NetworkConfig(
-    baseUrl: 'https://nebher.sa/api',
+    baseUrl: 'https://hucliniccare-huicareapp.runasp.net/api',
     enableLogging: false,
     enableRetry: true,
     maxRetries: 2,
@@ -42,7 +42,7 @@ class NetworkConfig {
 
   /// Testing configuration
   static const NetworkConfig testing = NetworkConfig(
-    baseUrl: 'https://nebher.sa/api',
+    baseUrl: 'https://hucliniccare-huicareapp.runasp.net/api',
     enableLogging: false,
     enableRetry: false,
     connectTimeout: Duration(seconds: 10),

@@ -1,4 +1,3 @@
-import 'package:doctory/core/error/failures.dart';
 
 abstract class AuthStates {}
 
@@ -10,6 +9,22 @@ class AuthSuccessState<T> extends AuthStates {
   final T data;
   AuthSuccessState(this.data);
 }
+
+class SignupSuccessState extends AuthStates {
+  final String email;
+  SignupSuccessState(this.email);
+}
+
+class VerifySuccessState extends AuthStates {}
+
+class ForgotPasswordSuccessState extends AuthStates {}
+
+class ResetTokenVerifiedState extends AuthStates {
+  final bool isValid;
+  ResetTokenVerifiedState(this.isValid);
+}
+
+class ResetPasswordSuccessState extends AuthStates {}
 
 class AuthErrorState extends AuthStates {
   final String message;

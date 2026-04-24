@@ -20,20 +20,31 @@ class AuthRouter {
     ),
     GoRoute(
       path: AppRoutes.register,
-      builder: (context, state) => const RegisterView(),
+      builder: (context, state) => BlocProvider(
+        create: (context) => sl<AuthCubit>(),
+        child: const RegisterView(),
+      ),
     ),
     GoRoute(
       path: AppRoutes.otpVerification,
-      builder: (context, state) =>
-          OtpVerificationView(email: state.extra as String?),
+      builder: (context, state) => BlocProvider(
+        create: (context) => sl<AuthCubit>(),
+        child: OtpVerificationView(email: state.extra as String?),
+      ),
     ),
     GoRoute(
       path: AppRoutes.completeProfile,
-      builder: (context, state) => const CompleteProfileView(),
+      builder: (context, state) => BlocProvider(
+        create: (context) => sl<AuthCubit>(),
+        child: const CompleteProfileView(),
+      ),
     ),
     GoRoute(
       path: AppRoutes.forgotPassword,
-      builder: (context, state) => const ForgotPasswordView(),
+      builder: (context, state) => BlocProvider(
+        create: (context) => sl<AuthCubit>(),
+        child: const ForgotPasswordView(),
+      ),
     ),
   ];
 }

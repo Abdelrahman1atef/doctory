@@ -12,7 +12,20 @@
           "package_name": "com.example.doctory"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "793203157030-7602lqhtbnj0n2teqd6p8iiu4c73ukpg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.doctory",
+            "certificate_hash": "f9540eef24a665c1e215fe6050bb13f423b0426c"
+          }
+        },
+        {
+          "client_id": "793203157030-1aekjuvf8044duj2drh5f4r8slvc5ari.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyB-h4AcPdLKlwPNSI11Y_G-OhhpRTQl2Ns"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "793203157030-1aekjuvf8044duj2drh5f4r8slvc5ari.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "793203157030-169euktkk90e0crirtr1i7apu56s3j8k.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.doctory"
+              }
+            }
+          ]
         }
       }
     }

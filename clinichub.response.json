@@ -1,0 +1,384 @@
+# ClinicHub API Response Schemas
+
+This document provides detailed schemas for all API endpoints in ClinicHub. All responses are wrapped in a standard `ApiResponse<T>` container.
+
+## 📦 Shared Structures
+
+### Standard API Response Wrapper
+```json
+{
+    "success": true,
+    "errors": {
+        "propertyName": [
+            "Error message"
+        ]
+    },
+    "data": T,
+    "message": "Operation successful",
+    "statusCode": 200
+}
+```
+
+### Pagination Wrapper (`PagginatedResult<T>`)
+```json
+{
+    "items": [T
+    ],
+    "pageNumber": 1,
+    "pageSize": 20,
+    "totalPages": 5,
+    "totalCount": 100,
+    "hasPreviousPage": false,
+    "hasNextPage": true
+}
+```
+
+---
+
+## 🔐 Authentication & Profile (`/api/v1/auth`)
+
+### 1. Signup / Register
+**Endpoint:** `POST /api/v1/auth/signup`
+**Response Data Type:** `AuthResponseDto`
+
+```json
+{
+    "success": true,
+    "errors": {},
+    "data": {
+        "accessToken": "string|null",
+        "refreshToken": "string|null",
+        "fullName": "string",
+        "email": "string",
+        "id": "guid",
+        "verificationCode": "string|null"
+    },
+    "message": "User created successfully",
+    "statusCode": 201
+}
+```
+
+### 2. Verify User
+**Endpoint:** `POST /api/v1/auth/verify`
+**Response Data Type:** `string` (Success Message)
+
+```json
+{
+    "success": true,
+    "errors": {},
+    "data": "Verification successful message",
+    "message": "Operation successful",
+    "statusCode": 200
+}
+```
+
+### 3. Login
+**Endpoint:** `POST /api/v1/auth/login`
+**Response Data Type:** `AuthResponseDto`
+
+```json
+{
+    "success": true,
+    "errors": {},
+    "data": {
+        "accessToken": "string",
+        "refreshToken": "string",
+        "fullName": "string",
+        "email": "string",
+        "id": "guid",
+        "verificationCode": null
+    },
+    "message": "Login successful",
+    "statusCode": 200
+}
+```
+
+### 4. Refresh Token
+**Endpoint:** `POST /api/v1/auth/refresh-token`
+**Response Data Type:** `RefreshTokenResponseDto`
+
+```json
+{
+    "success": true,
+    "errors": {},
+    "data": {
+        "accessToken": "string",
+        "refreshToken": "string"
+    },
+    "message": "Tokens refreshed",
+    "statusCode": 200
+}
+```
+
+### 5. Forget Password
+**Endpoint:** `POST /api/v1/auth/forget-password`
+**Response Data Type:** `string`
+
+```json
+{
+    "success": true,
+    "errors": {},
+    "data": "Check your email for reset instructions",
+    "message": "Operation successful",
+    "statusCode": 200
+}
+```
+
+### 6. Verify Reset Token
+**Endpoint:** `POST /api/v1/auth/verify-reset-token`
+**Response Data Type:** `bool`
+
+```json
+{
+    "success": true,
+    "errors": {},
+    "data": true,
+    "message": "Token is valid",
+    "statusCode": 200
+}
+```
+
+### 7. Reset Password
+**Endpoint:** `POST /api/v1/auth/reset-password`
+**Response Data Type:** `string`
+
+```json
+{
+    "success": true,
+    "errors": {},
+    "data": "Password changed successfully",
+    "message": "Operation successful",
+    "statusCode": 200
+}
+```
+
+---
+
+### 8. Get Profile
+**Endpoint:** `GET /api/v1/auth/profile`
+**Response Data Type:** `UserProfileDto`
+
+```json
+{
+    "success": true,
+    "errors": {},
+    "data": {
+        "id": "guid",
+        "fullName": "string",
+        "email": "string",
+        "gender": 0,
+        "phoneNumber": "string",
+        "birthDate": "2024-04-24T15:00:00Z",
+        "profilePictureUrl": "string|null"
+    },
+    "message": "Profile retrieved",
+    "statusCode": 200
+}
+```
+
+---
+
+## 🏥 Clinics (`/api/v1/clinics`)
+
+### 1. Hybrid Search
+**Endpoint:** `GET /api/v1/clinics/search`
+**Response Data Type:** `PagginatedResult<ClinicDto>`
+
+```json
+{
+    "success": true,
+    "errors": {},
+    "data": {
+        "items": [
+            {
+                "id": "guid",
+                "name": "string",
+                "nameAr": "string",
+                "address": "string",
+                "addressAr": "string",
+                "phone": "string",
+                "lat": 0.0,
+                "lng": 0.0,
+                "isRegistered": false,
+                "specializationName": "string",
+                "distance": 0.0
+            }
+        ],
+        "pageNumber": 1,
+        "pageSize": 20,
+        "totalPages": 1,
+        "totalCount": 1
+    },
+    "message": "Search completed",
+    "statusCode": 200
+}
+```
+
+---
+
+## 📝 Posts (`/api/v1/posts`)
+
+### 1. Get All Paginated
+**Endpoint:** `GET /api/v1/posts/pagginated`
+**Response Data Type:** `PagginatedResult<PostDto>`
+
+```json
+{
+    "success": true,
+    "errors": {},
+    "data": {
+        "items": [
+            {
+                "id": "guid",
+                "content": "string",
+                "authorId": "guid",
+                "createdAt": "datetime",
+                "reactionCount": 0,
+                "commentCount": 0,
+                "media": [
+                    {
+                        "id": "guid",
+                        "url": "string",
+                        "type": "string"
+                    }
+                ]
+            }
+        ],
+        "pageNumber": 1,
+        "pageSize": 20,
+        "totalPages": 1,
+        "totalCount": 1
+    },
+    "message": "Posts retrieved",
+    "statusCode": 200
+}
+```
+
+### 2. Get Post By ID
+**Endpoint:** `GET /api/v1/posts/{id
+}`
+**Response Data Type:** `PostDto`
+
+### 3. Create Post
+**Endpoint:** `POST /api/v1/posts/create`
+**Response Data Type:** `PostDto`
+
+### 4. Update Post
+**Endpoint:** `PUT /api/v1/posts/update`
+**Response Data Type:** `PostDto`
+
+### 5. Delete Post
+**Endpoint:** `DELETE /api/v1/posts/delete`
+**Response Data Type:** `Guid` (Deleted Post ID)
+
+```json
+{
+    "success": true,
+    "errors": {},
+    "data": "guid",
+    "message": "Post deleted successfully",
+    "statusCode": 202
+}
+```
+
+### 6. Toggle Post Reaction
+**Endpoint:** `POST /api/v1/posts/{id
+}/reactions`
+**Response Data Type:** `bool`
+
+```json
+{
+    "success": true,
+    "errors": {},
+    "data": true,
+    "message": "Reaction toggled",
+    "statusCode": 200
+}
+```
+
+---
+
+## 💬 Comments (`/api/v1/comments`)
+
+### 1. Get All Paginated
+**Endpoint:** `GET /api/v1/comments/pagginated`
+**Response Data Type:** `PagginatedResult<CommentDto>`
+
+### 2. Get Comments By Post
+**Endpoint:** `GET /api/v1/comments/post/{postId
+}`
+**Response Data Type:** `List<CommentDto>`
+
+```json
+{
+    "success": true,
+    "errors": {},
+    "data": [
+        {
+            "id": "guid",
+            "content": "string",
+            "authorId": "guid",
+            "postId": "guid",
+            "parentCommentId": "guid|null",
+            "createdAt": "datetime",
+            "reactionCount": 0,
+            "replyCount": 0,
+            "media": []
+        }
+    ],
+    "message": "Comments retrieved",
+    "statusCode": 200
+}
+```
+
+### 3. Get Comment Replies
+**Endpoint:** `GET /api/v1/comments/{id
+}/replies`
+**Response Data Type:** `List<CommentDto>`
+
+### 4. Add Comment
+**Endpoint:** `POST /api/v1/comments/create`
+**Response Data Type:** `CommentDto`
+
+### 5. Update Comment
+**Endpoint:** `PUT /api/v1/comments/update`
+**Response Data Type:** `CommentDto`
+
+### 6. Delete Comment
+**Endpoint:** `DELETE /api/v1/comments/delete`
+**Response Data Type:** `Guid`
+
+### 7. Toggle Comment Reaction
+**Endpoint:** `POST /api/v1/comments/{id
+}/reactions`
+**Response Data Type:** `bool`
+
+### 8. Get Comment Reactions
+**Endpoint:** `GET /api/v1/comments/{id
+}/reactions`
+**Response Data Type:** `PagginatedResult<ReactionDto>`
+
+---
+
+## 🏥 System Endpoints
+
+### 1. Health Check
+**Endpoint:** `GET /health`
+
+```json
+{
+    "status": "Healthy",
+    "checks": {
+        "API Custom Checks": {
+            "status": "Healthy"
+        },
+        "Disk Space": {
+            "status": "Healthy"
+        },
+        "Database": {
+            "status": "Healthy",
+            "description": "Connection successful"
+        }
+    }
+}
+```
