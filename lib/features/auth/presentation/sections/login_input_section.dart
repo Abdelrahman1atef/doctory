@@ -94,7 +94,7 @@ class _LoginInputSectionState extends State<LoginInputSection> {
               Align(
                 alignment: AlignmentDirectional.centerEnd,
                 child: TextButton(
-                  onPressed: () {}, // TODO: Navigate to forgot password screen
+                  onPressed: () => context.push(AppRoutes.forgotPassword),
                   style: TextButton.styleFrom(
                     padding: EdgeInsets.zero,
                     minimumSize: const Size(0, 0),

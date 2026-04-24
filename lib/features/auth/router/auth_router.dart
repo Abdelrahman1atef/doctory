@@ -4,6 +4,7 @@ import 'package:doctory/features/auth/cubit/auth_cubit.dart';
 import 'package:doctory/features/auth/presentation/views/login_view.dart';
 import 'package:doctory/features/auth/presentation/views/otp_verification_view.dart';
 import 'package:doctory/features/auth/presentation/views/complete_profile_view.dart';
+import 'package:doctory/features/auth/presentation/views/forgot_password_view.dart';
 import 'package:doctory/features/auth/presentation/views/register_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -30,6 +31,10 @@ class AuthRouter {
     GoRoute(
       path: AppRoutes.completeProfile,
       builder: (context, state) => const CompleteProfileView(),
+    ),
+    GoRoute(
+      path: AppRoutes.forgotPassword,
+      builder: (context, state) => const ForgotPasswordView(),
     ),
   ];
 }

@@ -1,90 +1,66 @@
-// import 'dart:async';
-// import 'dart:developer';
+import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:doctory/core/router/app_router.dart';
 
-// import 'package:flutter/material.dart';
+/// NavigationService is a global wrapper around GoRouter.
+/// It uses the singleton instance of GoRouter defined in AppRouter.
+class NavigationService {
+  static GoRouter get route => AppRouter.router;
 
-// import '../Router/Router.dart';
-// import '../utils/injection.dart';
+  static BuildContext get context =>
+      AppRouter.navigatorKey.currentState!.context;
 
-// class NavigationService {
-//   static final route = locator<Routes>();
-//   static goNamed(
-//     String routeName, {
-//     Map<String, String> pathParameters = const <String, String>{},
-//     Map<String, dynamic> queryParameters = const <String, dynamic>{},
-//     Object? extra,
-//   }) {
-//     route.goRouter.goNamed(routeName,
-//         pathParameters: pathParameters,
-//         queryParameters: queryParameters,
-//         extra: extra);
-//   }
+  /// Navigate to a new route by path (e.g., AppRoutes.login)
+  static void go(String path, {Object? extra}) {
+    route.go(path, extra: extra);
+  }
 
-//   static BuildContext get context => route.goRouter.routeInformationParser
-//       .configuration.navigatorKey.currentState!.context;
-//   // pushNamed
-//   static Future<T?> pushNamed<T>(String routeName,
-//       {Map<String, String> pathParameters = const <String, String>{},
-//       Map<String, dynamic> queryParameters = const <String, dynamic>{},
-//       Object? extra}) async {
-//     return route.goRouter.pushNamed<T>(routeName,
-//         pathParameters: pathParameters,
-//         queryParameters: queryParameters,
-//         extra: extra);
-//   }
+  /// Push a new route by path (e.g., AppRoutes.login)
+  static Future<T?> push<T>(String path, {Object? extra}) async {
+    return route.push<T>(path, extra: extra);
+  }
 
-//   static Timer? timer;
+  /// Navigate to a named route (ensure your routes have 'name' defined)
+  static void goNamed(
+    String name, {
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
+    Object? extra,
+  }) {
+    route.goNamed(name,
+        pathParameters: pathParameters,
+        queryParameters: queryParameters,
+        extra: extra);
+  }
 
-//   static mobileNavigateTo(String routeName) {
-//     // check for slide left or right
-//     final slide = slideLeftOrRight(routeName);
-//     if (timer?.isActive == true) return;
-//     goNamed(routeName, extra: {"transition": slide});
-//     timer = Timer(const Duration(milliseconds: 800), () {
-//       timer?.cancel();
-//     });
-//     //start timer
+  /// Push a named route (ensure your routes have 'name' defined)
+  static Future<T?> pushNamed<T>(
+    String name, {
+    Map<String, String> pathParameters = const <String, String>{},
+    Map<String, dynamic> queryParameters = const <String, dynamic>{},
+    Object? extra,
+  }) async {
+    return route.pushNamed<T>(name,
+        pathParameters: pathParameters,
+        queryParameters: queryParameters,
+        extra: extra);
+  }
 
-//     log("slide $slide");
-//   }
+  /// Pop the current route
+  static void pop<T>([T? result]) {
+    if (route.canPop()) {
+      route.pop(result);
+    }
+  }
 
-//   //pop
-//   static pop<T>([T? result]) {
-//     route.goRouter.pop(result);
-//   }
+  /// Get the current path location
+  static String currentRoute() {
+    return route.routerDelegate.currentConfiguration.uri.toString();
+  }
 
-//   //check for current route
-//   static bool isRouteContain(String routeName) {
-//     return Routes.currentRoute == routeName;
-//   }
-//   // is mobile route
-
-//   static bool isMobileRouteContain() {
-//     final currentRouteIndex = mobileRoutes()
-//         .indexOf(route.goRouter.namedLocation(Routes.currentRoute));
-//     return currentRouteIndex != -1;
-//   }
-
-//   static String slideLeftOrRight(String newRoute) {
-//     final currentRoute = Routes.currentRoute;
-//     final currentRouteIndex = mobileRoutes()
-//         .indexOf(route.goRouter.namedLocation(currentRoute) ?? "");
-
-//     final newRouteIndex = mobileRoutes().indexOf(newRoute);
-//     if (currentRouteIndex < newRouteIndex) {
-//       return "slideRight";
-//     } else {
-//       return "slideLeft";
-//     }
-//   }
-
-// // MOBILE NAVIGATION ROUTES
-//   static mobileRoutes() {
-//     return [
-//       Routes.feature1,
-//       Routes.feature2,
-//       Routes.feature3,
-//       Routes.home,
-//     ];
-//   }
-// }
+  /// Check if the current route matches a specific path
+  static bool isRouteContain(String path) {
+    return currentRoute() == path;
+  }
+}

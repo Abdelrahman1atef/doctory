@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "793203157030",
+    "project_id": "doctory-e1bfd",
+    "storage_bucket": "doctory-e1bfd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:793203157030:android:6131fb7c97cf8df57adee7",
+        "android_client_info": {
+          "package_name": "com.example.doctory"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB-h4AcPdLKlwPNSI11Y_G-OhhpRTQl2Ns"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

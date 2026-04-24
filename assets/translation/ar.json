@@ -518,5 +518,8 @@
   "price_sort_desc": "من الأعلى سعراً للأقل",
   "or_continue_with": "أو المتابعة باستخدام",
   "continue_with_google": "جوجل",
-  "continue_with_facebook": "فيسبوك"
+  "continue_with_facebook": "فيسبوك",
+  "forgot_password_title": "نسيت كلمة المرور؟",
+  "forgot_password_subtitle": "أدخل بريدك الإلكتروني لاستلام رابط إعادة تعيين كلمة المرور.",
+  "send_reset_link": "إرسال رابط الاستعادة"
 }
