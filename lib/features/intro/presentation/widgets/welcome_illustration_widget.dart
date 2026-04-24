@@ -39,12 +39,18 @@ class WelcomeIllustrationWidget extends StatelessWidget {
           Positioned(
             bottom: 40,
             right: 50,
-            child: _CircleDot(color: AppColors.stitchSecondary.withValues(alpha: 0.1), size: 24),
+            child: _CircleDot(
+              color: AppColors.stitchSecondary.withValues(alpha: 0.1),
+              size: 24,
+            ),
           ),
           Positioned(
             top: 100,
             right: 30,
-            child: _CircleDot(color: AppColors.stitchTertiary.withValues(alpha: 0.1), size: 16),
+            child: _CircleDot(
+              color: AppColors.stitchTertiary.withValues(alpha: 0.1),
+              size: 16,
+            ),
           ),
 
           /// Main Medical Icon Container (Glassmorphic)
@@ -71,7 +77,11 @@ class WelcomeIllustrationWidget extends StatelessWidget {
                     color: AppColors.stitchPrimaryContainer,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(Icons.medical_services_rounded, size: 64, color: Colors.white),
+                  child: const Icon(
+                    Icons.medical_services_rounded,
+                    size: 64,
+                    color: Colors.white,
+                  ),
                 ),
               ),
             ),

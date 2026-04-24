@@ -24,9 +24,9 @@ class OtpHeaderSection extends StatelessWidget {
             color: AppColors.stitchPrimary,
           ),
         ),
-        
+
         const SizedBox(height: 32),
-        
+
         /// Title
         Text(
           context.tr('otp'),
@@ -36,18 +36,21 @@ class OtpHeaderSection extends StatelessWidget {
             letterSpacing: -0.5,
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         /// Subtitle
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),
           child: RichText(
             textAlign: TextAlign.center,
             text: TextSpan(
-              style: AppStyles.s16Medium.copyWith(color: AppColors.textSecondary, height: 1.5),
+              style: AppStyles.s16Medium.copyWith(
+                color: AppColors.textSecondary,
+                height: 1.5,
+              ),
               children: [
-                TextSpan(text: context.tr('verification_sent_to_email')),
+                TextSpan(text: context.tr('verification_sent_to')),
                 TextSpan(
                   text: email ?? context.tr('email'),
                   style: AppStyles.s16Bold.copyWith(color: AppColors.onSurface),

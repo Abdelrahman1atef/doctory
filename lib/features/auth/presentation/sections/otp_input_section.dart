@@ -72,9 +72,14 @@ class _OtpInputSectionState extends State<OtpInputSection> {
               backgroundColor: AppColors.stitchPrimaryContainer,
               foregroundColor: Colors.white,
               elevation: 0,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
-            child: Text(context.tr('verify_and_continue'), style: AppStyles.s16SemiBold),
+            child: Text(
+              context.tr('verify_and_continue'),
+              style: AppStyles.s16SemiBold,
+            ),
           ),
         ),
 
@@ -85,13 +90,17 @@ class _OtpInputSectionState extends State<OtpInputSection> {
           children: [
             Text(
               context.tr('the_code_was_not_sent'),
-              style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
+              style: AppStyles.s14Medium.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
             TextButton(
               onPressed: () {},
               child: Text(
                 context.tr('send_again'),
-                style: AppStyles.s14Bold.copyWith(color: AppColors.stitchPrimary),
+                style: AppStyles.s14Bold.copyWith(
+                  color: AppColors.stitchPrimary,
+                ),
               ),
             ),
           ],

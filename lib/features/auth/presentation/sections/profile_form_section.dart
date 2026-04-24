@@ -35,12 +35,15 @@ class _ProfileFormSectionState extends State<ProfileFormSection> {
           StitchTextField(
             label: context.tr('birth_date'),
             hintText: 'DD / MM / YYYY',
-            prefixIcon: const Icon(Icons.calendar_month_outlined, color: AppColors.stitchPrimary),
+            prefixIcon: const Icon(
+              Icons.calendar_month_outlined,
+              color: AppColors.stitchPrimary,
+            ),
             keyboardType: TextInputType.datetime,
           ),
-          
+
           32.ph,
-          
+
           /// Gender Selection
           Text(
             context.tr('gender'),
@@ -74,9 +77,9 @@ class _ProfileFormSectionState extends State<ProfileFormSection> {
               ),
             ],
           ),
-          
+
           64.ph,
-          
+
           /// Save Button
           SizedBox(
             height: 56,
@@ -90,7 +93,10 @@ class _ProfileFormSectionState extends State<ProfileFormSection> {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Text(context.tr('complete_setup'), style: AppStyles.s16SemiBold),
+              child: Text(
+                context.tr('complete_setup'),
+                style: AppStyles.s16SemiBold,
+              ),
             ),
           ),
         ],
@@ -124,13 +130,15 @@ class _GenderChip extends StatelessWidget {
             color: isSelected ? AppColors.stitchPrimary : AppColors.cardBorder,
             width: 1.5,
           ),
-          boxShadow: isSelected ? [
-            BoxShadow(
-              color: AppColors.stitchPrimary.withValues(alpha: 0.2),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            )
-          ] : [],
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.stitchPrimary.withValues(alpha: 0.2),
+                    blurRadius: 10,
+                    offset: const Offset(0, 4),
+                  ),
+                ]
+              : [],
         ),
         child: Center(
           child: Text(

@@ -10,14 +10,17 @@ class SplashLogoWidget extends StatefulWidget {
   State<SplashLogoWidget> createState() => _SplashLogoWidgetState();
 }
 
-class _SplashLogoWidgetState extends State<SplashLogoWidget> with SingleTickerProviderStateMixin {
+class _SplashLogoWidgetState extends State<SplashLogoWidget>
+    with SingleTickerProviderStateMixin {
   late final AnimationController _glowController;
 
   @override
   void initState() {
     super.initState();
-    _glowController = AnimationController(vsync: this, duration: const Duration(seconds: 4))
-      ..repeat(reverse: true);
+    _glowController = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 4),
+    )..repeat(reverse: true);
   }
 
   @override
@@ -45,7 +48,9 @@ class _SplashLogoWidgetState extends State<SplashLogoWidget> with SingleTickerPr
                     top: -50 + (20 * _glowController.value),
                     right: -50 + (20 * _glowController.value),
                     child: _GlowCircle(
-                      color: AppColors.stitchPrimaryFixed.withValues(alpha: 0.2),
+                      color: AppColors.stitchPrimaryFixed.withValues(
+                        alpha: 0.2,
+                      ),
                       size: 300,
                     ),
                   ),
@@ -53,7 +58,9 @@ class _SplashLogoWidgetState extends State<SplashLogoWidget> with SingleTickerPr
                     bottom: -30 + (30 * (1 - _glowController.value)),
                     left: -40 + (30 * _glowController.value),
                     child: _GlowCircle(
-                      color: AppColors.stitchPrimaryContainer.withValues(alpha: 0.1),
+                      color: AppColors.stitchPrimaryContainer.withValues(
+                        alpha: 0.1,
+                      ),
                       size: 250,
                     ),
                   ),
@@ -78,34 +85,37 @@ class _SplashLogoWidgetState extends State<SplashLogoWidget> with SingleTickerPr
                     child: Container(
                       width: 160,
                       height: 160,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.stitchPrimary.withValues(alpha: 0.08),
-                          blurRadius: 40,
-                          offset: const Offset(0, 20),
-                        ),
-                      ],
-                    ),
-                    child: Center(
-                      child: Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: const BoxDecoration(
-                          color: AppColors.stitchPrimaryContainer,
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.medical_services_rounded,
-                          size: 64,
-                          color: Colors.white,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.stitchPrimary.withValues(
+                              alpha: 0.08,
+                            ),
+                            blurRadius: 40,
+                            offset: const Offset(0, 20),
+                          ),
+                        ],
+                      ),
+                      child: Center(
+                        child: Container(
+                          padding: const EdgeInsets.all(24),
+                          decoration: const BoxDecoration(
+                            color: AppColors.stitchPrimaryContainer,
+                            shape: BoxShape.circle,
+                          ),
+                          child: const Icon(
+                            Icons.medical_services_rounded,
+                            size: 64,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
                   ),
                 ),
-              ),),
+              ),
 
               const SizedBox(height: 48),
 
@@ -130,7 +140,9 @@ class _SplashLogoWidgetState extends State<SplashLogoWidget> with SingleTickerPr
                 delay: const Duration(milliseconds: 400),
                 child: Text(
                   'Your Clinical Sanctuary',
-                  style: AppStyles.s16Medium.copyWith(color: AppColors.textSecondary),
+                  style: AppStyles.s16Medium.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ),
 

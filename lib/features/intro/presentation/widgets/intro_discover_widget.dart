@@ -29,7 +29,9 @@ class IntroDiscoverWidget extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.stitchPrimary.withValues(alpha: 0.04),
+                          color: AppColors.stitchPrimary.withValues(
+                            alpha: 0.04,
+                          ),
                           blurRadius: 100,
                           spreadRadius: 20,
                         ),
@@ -63,7 +65,9 @@ class IntroDiscoverWidget extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.stitchPrimary.withValues(alpha: 0.12),
+                          color: AppColors.stitchPrimary.withValues(
+                            alpha: 0.12,
+                          ),
                           blurRadius: 40,
                           offset: const Offset(0, 15),
                         ),
@@ -74,7 +78,9 @@ class IntroDiscoverWidget extends StatelessWidget {
                         width: 120,
                         height: 120,
                         decoration: BoxDecoration(
-                          color: AppColors.stitchPrimary.withValues(alpha: 0.05),
+                          color: AppColors.stitchPrimary.withValues(
+                            alpha: 0.05,
+                          ),
                           shape: BoxShape.circle,
                         ),
                         child: const Icon(

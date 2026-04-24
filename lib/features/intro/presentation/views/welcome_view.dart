@@ -17,22 +17,22 @@ class WelcomeView extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(flex: 1),
-              
+
               /// Header Section (Illustration, Title, Subtitle)
               FadeInDown(
                 duration: const Duration(milliseconds: 800),
                 child: const WelcomeHeaderSection(),
               ),
-              
+
               const Spacer(flex: 2),
-              
+
               /// Actions Section (Buttons)
               FadeInUp(
                 duration: const Duration(milliseconds: 800),
                 delay: const Duration(milliseconds: 200),
                 child: const WelcomeActionsSection(),
               ),
-              
+
               const SizedBox(height: 32),
             ],
           ),

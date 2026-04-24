@@ -102,7 +102,4 @@ class _Images {
 class _Icons {
   const _Icons();
 
-  final String _base = 'assets/icons';
-
-
 }

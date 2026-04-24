@@ -28,33 +28,7 @@ class WelcomeActionsSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12), // rounded-md (0.75rem)
               ),
             ),
-            child: Text(
-              context.tr('start_now'),
-              style: AppStyles.s16SemiBold,
-            ),
-          ),
-        ),
-        
-        const SizedBox(height: 16),
-        
-        /// Secondary CTA (Browse Clinics)
-        SizedBox(
-          width: double.infinity,
-          height: 56,
-          child: TextButton(
-            onPressed: () {
-              // Navigate to Home/Search
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.stitchPrimary,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: Text(
-              context.tr('browse_clinics'),
-              style: AppStyles.s16SemiBold,
-            ),
+            child: Text(context.tr('start_now'), style: AppStyles.s16SemiBold),
           ),
         ),
       ],

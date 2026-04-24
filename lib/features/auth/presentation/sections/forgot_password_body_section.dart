@@ -11,7 +11,8 @@ class ForgotPasswordBodySection extends StatefulWidget {
   const ForgotPasswordBodySection({super.key});
 
   @override
-  State<ForgotPasswordBodySection> createState() => _ForgotPasswordBodySectionState();
+  State<ForgotPasswordBodySection> createState() =>
+      _ForgotPasswordBodySectionState();
 }
 
 class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
@@ -41,9 +42,9 @@ class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
             context.tr('forgot_password_subtitle'),
             style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
           ),
-          
+
           40.ph,
-          
+
           /// Form
           Form(
             key: _formKey,
@@ -55,7 +56,10 @@ class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
                   label: context.tr('email'),
                   hintText: 'name@example.com',
                   keyboardType: TextInputType.emailAddress,
-                  prefixIcon: const Icon(Icons.email_outlined, color: AppColors.stitchPrimary),
+                  prefixIcon: const Icon(
+                    Icons.email_outlined,
+                    color: AppColors.stitchPrimary,
+                  ),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return context.tr('required_email');
@@ -66,16 +70,19 @@ class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
                     return null;
                   },
                 ),
-                
+
                 40.ph,
-                
+
                 /// Submit Button
                 SizedBox(
                   height: 56,
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
-                        context.push(AppRoutes.otpVerification, extra: _emailController.text);
+                        context.push(
+                          AppRoutes.otpVerification,
+                          extra: _emailController.text,
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(
@@ -86,7 +93,10 @@ class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
                         borderRadius: BorderRadius.circular(12),
                       ),
                     ),
-                    child: Text(context.tr('send_reset_link'), style: AppStyles.s16SemiBold),
+                    child: Text(
+                      context.tr('send_reset_link'),
+                      style: AppStyles.s16SemiBold,
+                    ),
                   ),
                 ),
               ],

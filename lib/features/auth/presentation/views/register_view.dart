@@ -63,7 +63,7 @@ class RegisterView extends StatelessWidget {
               delay: const Duration(milliseconds: 200),
               child: const RegisterFormSection(),
             ),
-            kBottomNavigationBarHeight.ph
+            kBottomNavigationBarHeight.ph,
           ],
         ),
       ),

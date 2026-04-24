@@ -55,7 +55,10 @@ class _LoginInputSectionState extends State<LoginInputSection> {
                 label: context.tr('email'),
                 hintText: 'name@example.com',
                 keyboardType: TextInputType.emailAddress,
-                prefixIcon: const Icon(Icons.email_outlined, color: AppColors.stitchPrimary),
+                prefixIcon: const Icon(
+                  Icons.email_outlined,
+                  color: AppColors.stitchPrimary,
+                ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return context.tr('required_email');
@@ -66,30 +69,37 @@ class _LoginInputSectionState extends State<LoginInputSection> {
                   return null;
                 },
               ),
-              
+
               20.ph,
-              
+
               StitchTextField(
                 controller: _passwordController,
                 label: context.tr('password'),
                 hintText: '••••••••',
                 obscureText: _obscurePassword,
-                prefixIcon: const Icon(Icons.lock_outline, color: AppColors.stitchPrimary),
+                prefixIcon: const Icon(
+                  Icons.lock_outline,
+                  color: AppColors.stitchPrimary,
+                ),
                 suffixIcon: IconButton(
                   icon: Icon(
-                    _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                    _obscurePassword
+                        ? Icons.visibility_off_outlined
+                        : Icons.visibility_outlined,
                     color: AppColors.textSecondary,
                   ),
-                  onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                  onPressed: () =>
+                      setState(() => _obscurePassword = !_obscurePassword),
                 ),
                 validator: (value) {
-                  if (value == null || value.isEmpty) return context.tr('required_password');
+                  if (value == null || value.isEmpty)
+                    return context.tr('required_password');
                   return null;
                 },
               ),
-              
+
               const SizedBox(height: 12),
-              
+
               /// Forgot Password Link
               Align(
                 alignment: AlignmentDirectional.centerEnd,
@@ -102,13 +112,15 @@ class _LoginInputSectionState extends State<LoginInputSection> {
                   ),
                   child: Text(
                     context.tr('forgot_password'),
-                    style: AppStyles.s14Medium.copyWith(color: AppColors.stitchPrimary),
+                    style: AppStyles.s14Medium.copyWith(
+                      color: AppColors.stitchPrimary,
+                    ),
                   ),
                 ),
               ),
-              
+
               32.ph,
-              
+
               /// Login Button (Primary Container style)
               SizedBox(
                 height: 56,
@@ -116,7 +128,10 @@ class _LoginInputSectionState extends State<LoginInputSection> {
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       // Trigger OTP sending logic here via Cubit if needed
-                      context.push(AppRoutes.otpVerification, extra: _emailController.text);
+                      context.push(
+                        AppRoutes.otpVerification,
+                        extra: _emailController.text,
+                      );
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -129,54 +144,81 @@ class _LoginInputSectionState extends State<LoginInputSection> {
                   ),
                   child: state is AuthLoadingState
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(context.tr('login_action'), style: AppStyles.s16SemiBold),
+                      : Text(
+                          context.tr('login_action'),
+                          style: AppStyles.s16SemiBold,
+                        ),
                 ),
               ),
-              
+
               32.ph,
-              
+
               /// OR Divider
               Row(
                 children: [
-                  const Expanded(child: Divider(color: AppColors.cardBorder, thickness: 1)),
+                  const Expanded(
+                    child: Divider(color: AppColors.cardBorder, thickness: 1),
+                  ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
                       context.tr('or_continue_with'),
-                      style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
+                      style: AppStyles.s14Medium.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ),
-                  const Expanded(child: Divider(color: AppColors.cardBorder, thickness: 1)),
+                  const Expanded(
+                    child: Divider(color: AppColors.cardBorder, thickness: 1),
+                  ),
                 ],
               ),
-              
+
               32.ph,
-              
+
               /// Social Auth Buttons
               SocialAuthButton(
                 title: context.tr('continue_with_google'),
-                icon: const Icon(Icons.g_mobiledata_rounded, color: Colors.red, size: 36),
-                onTap: () {},
+                icon: const Icon(
+                  Icons.g_mobiledata_rounded,
+                  color: Colors.red,
+                  size: 36,
+                ),
+                onTap: () => context.push(AppRoutes.completeProfile),
               ),
-              
+
               16.ph,
-              
+
               SocialAuthButton(
                 title: context.tr('continue_with_facebook'),
-                icon: const Icon(Icons.facebook_rounded, color: Colors.blue, size: 28),
-                onTap: () {},
+                icon: const Icon(
+                  Icons.facebook_rounded,
+                  color: Colors.blue,
+                  size: 28,
+                ),
+                onTap: () => context.push(AppRoutes.completeProfile),
               ),
-              
+
               24.ph,
-              
+
               /// Register Link
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(context.tr('dont_have_account'), style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary)),
+                  Text(
+                    context.tr('dont_have_account'),
+                    style: AppStyles.s14Medium.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
+                  ),
                   TextButton(
                     onPressed: () => context.push(AppRoutes.register),
-                    child: Text(context.tr('register_now'), style: AppStyles.s14Bold.copyWith(color: AppColors.stitchPrimary)),
+                    child: Text(
+                      context.tr('register_now'),
+                      style: AppStyles.s14Bold.copyWith(
+                        color: AppColors.stitchPrimary,
+                      ),
+                    ),
                   ),
                 ],
               ),

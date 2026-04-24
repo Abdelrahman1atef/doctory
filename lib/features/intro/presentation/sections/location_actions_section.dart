@@ -35,9 +35,9 @@ class LocationActionsSection extends StatelessWidget {
             ),
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         /// Secondary CTA (Not now)
         SizedBox(
           width: double.infinity,
@@ -52,10 +52,7 @@ class LocationActionsSection extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: Text(
-              context.tr('not_now'),
-              style: AppStyles.s16SemiBold,
-            ),
+            child: Text(context.tr('not_now'), style: AppStyles.s16SemiBold),
           ),
         ),
       ],

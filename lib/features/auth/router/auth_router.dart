@@ -24,9 +24,8 @@ class AuthRouter {
     ),
     GoRoute(
       path: AppRoutes.otpVerification,
-      builder: (context, state) => OtpVerificationView(
-        email: state.extra as String?,
-      ),
+      builder: (context, state) =>
+          OtpVerificationView(email: state.extra as String?),
     ),
     GoRoute(
       path: AppRoutes.completeProfile,

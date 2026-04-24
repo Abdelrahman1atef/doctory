@@ -19,18 +19,18 @@ class ProfileHeaderSection extends StatelessWidget {
             letterSpacing: -0.5,
           ),
         ),
-        
+
         const SizedBox(height: 12),
-        
+
         /// Subtitle
         Text(
           context.tr('complete_profile_subtitle'),
           textAlign: TextAlign.center,
           style: AppStyles.s16Medium.copyWith(color: AppColors.textSecondary),
         ),
-        
+
         const SizedBox(height: 40),
-        
+
         /// Profile Photo Placeholder (Minimalist)
         Stack(
           alignment: Alignment.bottomRight,

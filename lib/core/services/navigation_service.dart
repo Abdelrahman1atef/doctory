@@ -28,10 +28,12 @@ class NavigationService {
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) {
-    route.goNamed(name,
-        pathParameters: pathParameters,
-        queryParameters: queryParameters,
-        extra: extra);
+    route.goNamed(
+      name,
+      pathParameters: pathParameters,
+      queryParameters: queryParameters,
+      extra: extra,
+    );
   }
 
   /// Push a named route (ensure your routes have 'name' defined)
@@ -41,10 +43,12 @@ class NavigationService {
     Map<String, dynamic> queryParameters = const <String, dynamic>{},
     Object? extra,
   }) async {
-    return route.pushNamed<T>(name,
-        pathParameters: pathParameters,
-        queryParameters: queryParameters,
-        extra: extra);
+    return route.pushNamed<T>(
+      name,
+      pathParameters: pathParameters,
+      queryParameters: queryParameters,
+      extra: extra,
+    );
   }
 
   /// Pop the current route

@@ -41,15 +41,15 @@ class LocationHeaderSection extends StatelessWidget {
                   color: AppColors.stitchPrimary,
                 ),
               ),
-              
+
               /// Decorative pulses
               ...List.generate(2, (index) => _PulseCircle(delay: index * 400)),
             ],
           ),
         ),
-        
+
         const SizedBox(height: 48),
-        
+
         /// Title
         Text(
           context.tr('location_access_title'),
@@ -59,9 +59,9 @@ class LocationHeaderSection extends StatelessWidget {
             letterSpacing: -0.5,
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         /// Subtitle
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0),

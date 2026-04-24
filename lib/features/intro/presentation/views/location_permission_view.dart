@@ -17,22 +17,22 @@ class LocationPermissionView extends StatelessWidget {
           child: Column(
             children: [
               const Spacer(flex: 1),
-              
+
               /// Header Section (Illustration + Text)
               FadeInDown(
                 duration: const Duration(milliseconds: 800),
                 child: const LocationHeaderSection(),
               ),
-              
+
               const Spacer(flex: 2),
-              
+
               /// Actions Section (Buttons)
               FadeInUp(
                 duration: const Duration(milliseconds: 800),
                 delay: const Duration(milliseconds: 200),
                 child: const LocationActionsSection(),
               ),
-              
+
               const SizedBox(height: 32),
             ],
           ),

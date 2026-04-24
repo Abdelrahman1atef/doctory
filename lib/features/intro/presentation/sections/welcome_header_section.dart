@@ -13,9 +13,9 @@ class WelcomeHeaderSection extends StatelessWidget {
       children: [
         /// Illustration Widget
         const WelcomeIllustrationWidget(),
-        
+
         const SizedBox(height: 48),
-        
+
         /// Headline (Editorial style)
         Text(
           context.tr('welcome_title'),
@@ -26,9 +26,9 @@ class WelcomeHeaderSection extends StatelessWidget {
             letterSpacing: -1,
           ),
         ),
-        
+
         const SizedBox(height: 16),
-        
+
         /// Subtitle
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),

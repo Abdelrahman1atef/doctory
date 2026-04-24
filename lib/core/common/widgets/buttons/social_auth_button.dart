@@ -31,7 +31,7 @@ class SocialAuthButton extends StatelessWidget {
             color: AppColors.stitchPrimary.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
-          )
+          ),
         ],
       ),
       child: Material(

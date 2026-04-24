@@ -29,7 +29,9 @@ class IntroCompareWidget extends StatelessWidget {
                       shape: BoxShape.circle,
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.stitchPrimary.withValues(alpha: 0.05),
+                          color: AppColors.stitchPrimary.withValues(
+                            alpha: 0.05,
+                          ),
                           blurRadius: 80,
                         ),
                       ],
@@ -46,7 +48,9 @@ class IntroCompareWidget extends StatelessWidget {
                       border: Border.all(color: Colors.white, width: 4),
                       boxShadow: [
                         BoxShadow(
-                          color: AppColors.stitchPrimary.withValues(alpha: 0.06),
+                          color: AppColors.stitchPrimary.withValues(
+                            alpha: 0.06,
+                          ),
                           blurRadius: 32,
                           offset: const Offset(0, 16),
                         ),
@@ -119,7 +123,9 @@ class IntroCompareWidget extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20),
                         boxShadow: [
                           BoxShadow(
-                            color: AppColors.stitchPrimary.withValues(alpha: 0.04),
+                            color: AppColors.stitchPrimary.withValues(
+                              alpha: 0.04,
+                            ),
                             blurRadius: 16,
                             offset: const Offset(0, 8),
                           ),

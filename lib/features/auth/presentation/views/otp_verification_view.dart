@@ -24,15 +24,15 @@ class OtpVerificationView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 20),
-              
+
               /// Header Section
               FadeInDown(
                 duration: const Duration(milliseconds: 600),
                 child: OtpHeaderSection(email: email),
               ),
-              
+
               const SizedBox(height: 60),
-              
+
               /// Input Section
               FadeInUp(
                 duration: const Duration(milliseconds: 600),

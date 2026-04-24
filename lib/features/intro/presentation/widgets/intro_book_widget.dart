@@ -1,10 +1,8 @@
-import 'dart:math';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 import 'package:easy_localization/easy_localization.dart';
-
 
 import '../../../../core/utils/app_assets.dart';
 
@@ -23,7 +21,9 @@ class IntroBookWidget extends StatelessWidget {
             child: Card(
               elevation: 5,
               child: AppAssets.image(
-                Utils.lang=='ar'?AppAssets.images.bookingAr:AppAssets.images.bookingEn,
+                Utils.lang == 'ar'
+                    ? AppAssets.images.bookingAr
+                    : AppAssets.images.bookingEn,
                 fit: BoxFit.cover,
               ),
             ),

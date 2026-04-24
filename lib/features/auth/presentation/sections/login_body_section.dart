@@ -29,7 +29,7 @@ class LoginBodySection extends StatelessWidget {
               ),
             ),
           ),
-          
+
           SafeArea(
             child: SingleChildScrollView(
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
@@ -37,7 +37,7 @@ class LoginBodySection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   40.ph,
-                  
+
                   /// Header Section
                   FadeInDown(
                     duration: const Duration(milliseconds: 600),
@@ -46,7 +46,7 @@ class LoginBodySection extends StatelessWidget {
                         Text(
                           context.tr('login_title'),
                           textAlign: TextAlign.center,
-                          style:AppStyles.s14Bold.copyWith(
+                          style: AppStyles.s14Bold.copyWith(
                             fontWeight: FontWeight.w800,
                             color: AppColors.stitchPrimary,
                             fontSize: 32,
@@ -65,9 +65,9 @@ class LoginBodySection extends StatelessWidget {
                       ],
                     ),
                   ),
-                  
+
                   80.ph,
-                  
+
                   /// Input Section
                   FadeInUp(
                     duration: const Duration(milliseconds: 600),

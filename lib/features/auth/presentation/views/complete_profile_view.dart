@@ -18,15 +18,15 @@ class CompleteProfileView extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 20),
-              
+
               /// Header Section
               FadeInDown(
                 duration: const Duration(milliseconds: 600),
                 child: const ProfileHeaderSection(),
               ),
-              
+
               const SizedBox(height: 48),
-              
+
               /// Form Section
               FadeInUp(
                 duration: const Duration(milliseconds: 600),
