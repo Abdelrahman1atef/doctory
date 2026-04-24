@@ -3,7 +3,6 @@ import 'package:doctory/core/cache/cache_helper.dart';
 import 'package:doctory/features/intro/cubit/intro_cubit.dart';
 import 'package:doctory/features/intro/cubit/intro_states.dart';
 import 'package:doctory/features/intro/presentation/sections/splash_body_section.dart';
-import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -37,10 +36,8 @@ class SplashView extends StatelessWidget {
         } else if (state is NavigateToIntroState) {
           context.go(AppRoutes.intro);
         } else if (state is NavigateToLoginState) {
-          //TODO change to welcome
           context.go(AppRoutes.welcome);
         } else if (state is NavigateToMainState) {
-          //TODO change to welcome
           context.go(AppRoutes.welcome);
         }
       },
