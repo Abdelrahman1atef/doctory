@@ -7,12 +7,14 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:doctory/features/intro/router/intro_router.dart';
 import 'package:doctory/features/auth/router/auth_router.dart';
+import 'package:doctory/features/home/router/home_router.dart';
+import 'package:doctory/features/search_results/router/search_router.dart';
 
 import 'package:doctory/core/session/user_session.dart';
 
 /// GoRouter configuration
 class AppRouter {
-  static String initialRoute = AppRoutes.splash;
+  static String initialRoute = AppRoutes.home;
 
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
@@ -28,7 +30,12 @@ class AppRouter {
       return null;
     },
 
-    routes: [...IntroRouter.routes, ...AuthRouter.routes],
+    routes: [
+      ...IntroRouter.routes,
+      ...AuthRouter.routes,
+      ...HomeRouter.routes,
+      ...SearchRouter.routes,
+    ],
 
     // Error page
     errorPageBuilder: (context, state) {

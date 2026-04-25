@@ -526,5 +526,16 @@
   "forgot_password_title": "Forgot Password?",
   "forgot_password_subtitle": "Enter your email address to receive a password reset link.",
   "send_reset_link": "Send Reset Link",
-  "internet_connected": "Internet connection restored"
+  "internet_connected": "Internet connection restored",
+  "good_morning": "Good morning",
+  "hello_user": "Hello, {}",
+  "how_can_we_help": "How can we help you today?",
+  "search_hint": "Search for a doctor, specialty, clinic...",
+  "specialties": "Specialties",
+  "featured_clinics": "Featured Clinics",
+  "recommended_doctors": "Recommended Doctors",
+  "search_clinics": "Search Clinics",
+  "doctors_near_you": "Doctors available near you",
+  "clinics_near_you": "Clinics near you",
+  "no_results_found": "No results found"
 }

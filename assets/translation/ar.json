@@ -524,5 +524,16 @@
   "forgot_password_title": "نسيت كلمة المرور؟",
   "forgot_password_subtitle": "أدخل بريدك الإلكتروني لاستلام رابط إعادة تعيين كلمة المرور.",
   "send_reset_link": "إرسال رابط الاستعادة",
-  "internet_connected": "تم استعادة الاتصال بالإنترنت"
+  "internet_connected": "تم استعادة الاتصال بالإنترنت",
+  "good_morning": "صباح الخير",
+  "hello_user": "أهلاً، {}",
+  "how_can_we_help": "كيف يمكننا مساعدتك اليوم؟",
+  "search_hint": "ابحث عن دكتور، تخصص، عيادة...",
+  "specialties": "التخصصات",
+  "featured_clinics": "عيادات مميزة",
+  "recommended_doctors": "أطباء متاحون بالقرب منك",
+  "search_clinics": "البحث عن عيادات",
+  "doctors_near_you": "أطباء متاحون بالقرب منك",
+  "clinics_near_you": "عيادات بالقرب منك",
+  "no_results_found": "لا توجد نتائج"
 }

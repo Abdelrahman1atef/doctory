@@ -9,7 +9,7 @@ class GeneralCubit extends Cubit<GeneralState> {
   GeneralCubit() : super(GeneralInitial()) {
     _monitorConnectivity();
   }
-  
+
   static GeneralCubit get(context) => BlocProvider.of(context);
 
   StreamSubscription<InternetStatus>? _connectivitySubscription;
@@ -17,7 +17,9 @@ class GeneralCubit extends Cubit<GeneralState> {
   bool get isConnected => _isConnected;
 
   void _monitorConnectivity() {
-    _connectivitySubscription = InternetConnection().onStatusChange.listen((status) {
+    _connectivitySubscription = InternetConnection().onStatusChange.listen((
+      status,
+    ) {
       _isConnected = status == InternetStatus.connected;
       emit(ConnectivityChanged(_isConnected));
     });

@@ -54,9 +54,12 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
 
   int _getGenderValue() {
     switch (_selectedGender) {
-      case 'male': return 0;
-      case 'female': return 1;
-      default: return 2;
+      case 'male':
+        return 0;
+      case 'female':
+        return 1;
+      default:
+        return 2;
     }
   }
 
@@ -71,7 +74,9 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
     super.dispose();
   }
 
-  Future<void> _handleSocialAuth(Future<SocialAuthResult?> Function() signInMethod) async {
+  Future<void> _handleSocialAuth(
+    Future<SocialAuthResult?> Function() signInMethod,
+  ) async {
     final result = await signInMethod();
     if (result != null && mounted) {
       context.read<AuthCubit>().socialLogin(
@@ -115,7 +120,9 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
                 Icons.person_outline_rounded,
                 color: AppColors.stitchPrimary,
               ),
-              validator: (value) => value == null || value.isEmpty ? context.tr('field_required') : null,
+              validator: (value) => value == null || value.isEmpty
+                  ? context.tr('field_required')
+                  : null,
             ),
 
             20.ph,
@@ -131,8 +138,10 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
                 color: AppColors.stitchPrimary,
               ),
               validator: (value) {
-                if (value == null || value.isEmpty) return context.tr('field_required');
-                if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) return context.tr('invalid_email');
+                if (value == null || value.isEmpty)
+                  return context.tr('field_required');
+                if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value))
+                  return context.tr('invalid_email');
                 return null;
               },
             ),
@@ -154,14 +163,24 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
                   children: [
                     const Text('🇪🇬', style: TextStyle(fontSize: 18)),
                     const SizedBox(width: 4),
-                    Text('+20', style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary)),
+                    Text(
+                      '+20',
+                      style: AppStyles.s14Medium.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
+                    ),
                     const SizedBox(width: 8),
-                    Container(width: 1, height: 20, color: AppColors.cardBorder),
+                    Container(
+                      width: 1,
+                      height: 20,
+                      color: AppColors.cardBorder,
+                    ),
                   ],
                 ),
               ),
               validator: (value) {
-                if (value == null || value.isEmpty) return context.tr('field_required');
+                if (value == null || value.isEmpty)
+                  return context.tr('field_required');
                 if (value.length != 11) return context.tr('invalid_phone');
                 return null;
               },
@@ -178,19 +197,25 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
               onTap: () async {
                 DateTime? picked = await showDatePicker(
                   context: context,
-                  initialDate: DateTime.now().subtract(const Duration(days: 365 * 20)),
+                  initialDate: DateTime.now().subtract(
+                    const Duration(days: 365 * 20),
+                  ),
                   firstDate: DateTime(1900),
                   lastDate: DateTime.now(),
                 );
                 if (picked != null) {
-                  _birthDateController.text = picked.toIso8601String().split('T')[0];
+                  _birthDateController.text = picked.toIso8601String().split(
+                    'T',
+                  )[0];
                 }
               },
               prefixIcon: const Icon(
                 Icons.calendar_today_outlined,
                 color: AppColors.stitchPrimary,
               ),
-              validator: (value) => value == null || value.isEmpty ? context.tr('field_required') : null,
+              validator: (value) => value == null || value.isEmpty
+                  ? context.tr('field_required')
+                  : null,
             ),
 
             20.ph,
@@ -198,7 +223,9 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
             /// Gender Selection
             Text(
               context.tr('gender'),
-              style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
+              style: AppStyles.s14Medium.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
             8.ph,
             Row(
@@ -243,13 +270,18 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
               ),
               suffixIcon: IconButton(
                 icon: Icon(
-                  _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                  _obscurePassword
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
                   color: AppColors.textSecondary,
                   size: 20,
                 ),
-                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                onPressed: () =>
+                    setState(() => _obscurePassword = !_obscurePassword),
               ),
-              validator: (value) => value == null || value.length < 6 ? context.tr('password_too_short') : null,
+              validator: (value) => value == null || value.length < 6
+                  ? context.tr('password_too_short')
+                  : null,
             ),
 
             20.ph,
@@ -266,14 +298,19 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
               ),
               suffixIcon: IconButton(
                 icon: Icon(
-                  _obscureConfirmPassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                  _obscureConfirmPassword
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
                   color: AppColors.textSecondary,
                   size: 20,
                 ),
-                onPressed: () => setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
+                onPressed: () => setState(
+                  () => _obscureConfirmPassword = !_obscureConfirmPassword,
+                ),
               ),
               validator: (value) {
-                if (value != _passwordController.text) return context.tr('passwords_dont_match');
+                if (value != _passwordController.text)
+                  return context.tr('passwords_dont_match');
                 return null;
               },
             ),
@@ -288,16 +325,16 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
                     context.read<AuthCubit>().signup(
-                          SignupRequest(
-                            fullName: _nameController.text.trim(),
-                            email: _emailController.text.trim(),
-                            password: _passwordController.text,
-                            confirmPassword: _confirmPasswordController.text,
-                            phoneNumber: _getFormattedPhone(),
-                            birthDate: _birthDateController.text,
-                            gender: _getGenderValue(),
-                          ),
-                        );
+                      SignupRequest(
+                        fullName: _nameController.text.trim(),
+                        email: _emailController.text.trim(),
+                        password: _passwordController.text,
+                        confirmPassword: _confirmPasswordController.text,
+                        phoneNumber: _getFormattedPhone(),
+                        birthDate: _birthDateController.text,
+                        gender: _getGenderValue(),
+                      ),
+                    );
                   }
                 },
                 style: ElevatedButton.styleFrom(
@@ -308,7 +345,10 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: Text(context.tr('create_account'), style: AppStyles.s16SemiBold),
+                child: Text(
+                  context.tr('create_account'),
+                  style: AppStyles.s16SemiBold,
+                ),
               ),
             ),
 
@@ -317,15 +357,21 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
             /// Social Registration
             Row(
               children: [
-                const Expanded(child: Divider(color: AppColors.cardBorder, thickness: 1)),
+                const Expanded(
+                  child: Divider(color: AppColors.cardBorder, thickness: 1),
+                ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
                     context.tr('or_register_with'),
-                    style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
+                    style: AppStyles.s14Medium.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ),
-                const Expanded(child: Divider(color: AppColors.cardBorder, thickness: 1)),
+                const Expanded(
+                  child: Divider(color: AppColors.cardBorder, thickness: 1),
+                ),
               ],
             ),
 
@@ -333,16 +379,26 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
 
             SocialAuthButton(
               title: context.tr('continue_with_google'),
-              icon: const Icon(Icons.g_mobiledata_rounded, color: Colors.red, size: 36),
-              onTap: () => _handleSocialAuth(sl<SocialAuthService>().signInWithGoogle),
+              icon: const Icon(
+                Icons.g_mobiledata_rounded,
+                color: Colors.red,
+                size: 36,
+              ),
+              onTap: () =>
+                  _handleSocialAuth(sl<SocialAuthService>().signInWithGoogle),
             ),
 
             16.ph,
 
             SocialAuthButton(
               title: context.tr('continue_with_facebook'),
-              icon: const Icon(Icons.facebook_rounded, color: Colors.blue, size: 28),
-              onTap: () => _handleSocialAuth(sl<SocialAuthService>().signInWithFacebook),
+              icon: const Icon(
+                Icons.facebook_rounded,
+                color: Colors.blue,
+                size: 28,
+              ),
+              onTap: () =>
+                  _handleSocialAuth(sl<SocialAuthService>().signInWithFacebook),
             ),
 
             24.ph,
@@ -353,13 +409,17 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
               children: [
                 Text(
                   context.tr('already_have_account'),
-                  style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
+                  style: AppStyles.s14Medium.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
                 ),
                 TextButton(
                   onPressed: () => context.pop(),
                   child: Text(
                     context.tr('login'),
-                    style: AppStyles.s14SemiBold.copyWith(color: AppColors.stitchPrimary),
+                    style: AppStyles.s14SemiBold.copyWith(
+                      color: AppColors.stitchPrimary,
+                    ),
                   ),
                 ),
               ],
@@ -390,7 +450,9 @@ class _GenderChip extends StatelessWidget {
         height: 48,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.stitchPrimary.withAlpha(25) : Colors.transparent,
+          color: isSelected
+              ? AppColors.stitchPrimary.withAlpha(25)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
             color: isSelected ? AppColors.stitchPrimary : AppColors.cardBorder,
@@ -400,7 +462,9 @@ class _GenderChip extends StatelessWidget {
         child: Text(
           label,
           style: AppStyles.s14Medium.copyWith(
-            color: isSelected ? AppColors.stitchPrimary : AppColors.textSecondary,
+            color: isSelected
+                ? AppColors.stitchPrimary
+                : AppColors.textSecondary,
           ),
         ),
       ),

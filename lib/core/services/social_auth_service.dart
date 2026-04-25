@@ -24,7 +24,8 @@ class SocialAuthResult {
 }
 
 class SocialAuthService {
-  static const String _serverClientId = '793203157030-1aekjuvf8044duj2drh5f4r8slvc5ari.apps.googleusercontent.com';
+  static const String _serverClientId =
+      '793203157030-1aekjuvf8044duj2drh5f4r8slvc5ari.apps.googleusercontent.com';
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     serverClientId: _serverClientId.isEmpty ? null : _serverClientId,
@@ -34,7 +35,7 @@ class SocialAuthService {
     try {
       debugPrint('===> Starting Google Sign In...');
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
-      
+
       if (googleUser == null) {
         debugPrint('===> Google Sign In Cancelled by user');
         return null;
@@ -42,11 +43,12 @@ class SocialAuthService {
 
       debugPrint('===> Google User: ${googleUser.email}');
       debugPrint('===> Google Display Name: ${googleUser.displayName}');
-      
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       debugPrint('===> Google AccessToken: ${googleAuth.accessToken}');
       debugPrint('===> Google IdToken: ${googleAuth.idToken}');
-      
+
       final result = SocialAuthResult(
         name: googleUser.displayName,
         email: googleUser.email,
@@ -55,7 +57,7 @@ class SocialAuthService {
         idToken: googleAuth.idToken,
         provider: 'google',
       );
-      
+
       debugPrint('===> Final Result: $result');
       return result;
     } catch (e) {
@@ -68,23 +70,23 @@ class SocialAuthService {
     try {
       debugPrint('===> Starting Facebook Sign In...');
       final LoginResult result = await FacebookAuth.instance.login();
-      
+
       debugPrint('===> Facebook Status: ${result.status}');
       debugPrint('===> Facebook Message: ${result.message}');
 
       if (result.status == LoginStatus.success) {
         debugPrint('===> Facebook Token: ${result.accessToken?.tokenString}');
-        
+
         final userData = await FacebookAuth.instance.getUserData();
         debugPrint('===> Facebook User Data: $userData');
-        
+
         final socialResult = SocialAuthResult(
           name: userData['name'],
           email: userData['email'],
           accessToken: result.accessToken?.tokenString ?? '',
           provider: 'facebook',
         );
-        
+
         debugPrint('===> Final Result: $socialResult');
         return socialResult;
       } else {

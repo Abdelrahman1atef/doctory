@@ -62,7 +62,9 @@ class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
             8.ph,
             Text(
               context.tr('forgot_password_subtitle'),
-              style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
+              style: AppStyles.s14Medium.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
 
             40.ph,
@@ -86,7 +88,9 @@ class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
                       if (value == null || value.isEmpty) {
                         return context.tr('required_email');
                       }
-                      if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                      if (!RegExp(
+                        r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$',
+                      ).hasMatch(value)) {
                         return context.tr('wrong_email_validation');
                       }
                       return null;
@@ -101,7 +105,9 @@ class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
                     child: ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
-                          context.read<AuthCubit>().forgotPassword(_emailController.text.trim());
+                          context.read<AuthCubit>().forgotPassword(
+                            _emailController.text.trim(),
+                          );
                         }
                       },
                       style: ElevatedButton.styleFrom(

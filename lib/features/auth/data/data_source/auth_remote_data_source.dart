@@ -11,7 +11,11 @@ abstract class AuthRemoteDataSource {
   Future<ApiResult<void>> verify(String email, String code);
   Future<ApiResult<void>> forgotPassword(String email);
   Future<ApiResult<bool>> verifyResetToken(String email, String token);
-  Future<ApiResult<void>> resetPassword(String email, String token, String newPassword);
+  Future<ApiResult<void>> resetPassword(
+    String email,
+    String token,
+    String newPassword,
+  );
   Future<ApiResult<AuthResponse>> refreshToken(String token);
   Future<ApiResult<UserModel>> getProfile();
   Future<ApiResult<AuthResponse>> socialLogin({
@@ -71,14 +75,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<ApiResult<void>> resetPassword(String email, String token, String newPassword) async {
+  Future<ApiResult<void>> resetPassword(
+    String email,
+    String token,
+    String newPassword,
+  ) async {
     return await _apiConsumer.post(
       path: AuthEndpoints.resetPassword,
-      body: {
-        'email': email,
-        'token': token,
-        'newPassword': newPassword,
-      },
+      body: {'email': email, 'token': token, 'newPassword': newPassword},
     );
   }
 

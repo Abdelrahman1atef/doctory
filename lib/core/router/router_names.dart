@@ -11,4 +11,6 @@ abstract class AppRoutes {
   static const String forgotPassword = '/forgot-password';
   static const String locationPermission = '/location-permission';
   static const String mainLayout = '/main';
+  static const String home = '/home';
+  static const String searchResults = '/search-results';
 }

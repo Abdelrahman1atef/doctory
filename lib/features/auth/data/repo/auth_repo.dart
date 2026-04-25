@@ -12,7 +12,11 @@ abstract class AuthRepo {
   Future<ApiResult<void>> verify(String email, String code);
   Future<ApiResult<void>> forgotPassword(String email);
   Future<ApiResult<bool>> verifyResetToken(String email, String token);
-  Future<ApiResult<void>> resetPassword(String email, String token, String newPassword);
+  Future<ApiResult<void>> resetPassword(
+    String email,
+    String token,
+    String newPassword,
+  );
   Future<ApiResult<AuthResponse>> refreshToken(String token);
   Future<ApiResult<UserModel>> getProfile();
   Future<ApiResult<AuthResponse>> socialLogin({
@@ -50,8 +54,8 @@ class AuthRepoImpl implements AuthRepo {
           'data': {
             'accessToken': response.accessToken,
             'refreshToken': response.refreshToken,
-            'user': response.user?.toJson()
-          }
+            'user': response.user?.toJson(),
+          },
         });
         return ApiResult.success(response);
       },
@@ -75,7 +79,11 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   @override
-  Future<ApiResult<void>> resetPassword(String email, String token, String newPassword) async {
+  Future<ApiResult<void>> resetPassword(
+    String email,
+    String token,
+    String newPassword,
+  ) async {
     return await _dataSource.resetPassword(email, token, newPassword);
   }
 
@@ -108,8 +116,8 @@ class AuthRepoImpl implements AuthRepo {
           'data': {
             'accessToken': response.accessToken,
             'refreshToken': response.refreshToken,
-            'user': response.user?.toJson()
-          }
+            'user': response.user?.toJson(),
+          },
         });
         return ApiResult.success(response);
       },

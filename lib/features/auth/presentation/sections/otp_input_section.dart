@@ -54,7 +54,9 @@ class _OtpInputSectionState extends State<OtpInputSection> {
               defaultPinTheme: PinTheme(
                 width: 56,
                 height: 56,
-                textStyle: AppStyles.s24Bold.copyWith(color: AppColors.stitchPrimary),
+                textStyle: AppStyles.s24Bold.copyWith(
+                  color: AppColors.stitchPrimary,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.stitchPrimary.withAlpha(25),
                   borderRadius: BorderRadius.circular(12),
@@ -64,7 +66,9 @@ class _OtpInputSectionState extends State<OtpInputSection> {
               focusedPinTheme: PinTheme(
                 width: 60,
                 height: 60,
-                textStyle: AppStyles.s24Bold.copyWith(color: AppColors.stitchPrimary),
+                textStyle: AppStyles.s24Bold.copyWith(
+                  color: AppColors.stitchPrimary,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.stitchPrimary.withAlpha(40),
                   borderRadius: BorderRadius.circular(12),
@@ -87,7 +91,10 @@ class _OtpInputSectionState extends State<OtpInputSection> {
             child: ElevatedButton(
               onPressed: () {
                 if (_otpController.text.length >= 4 && widget.email != null) {
-                  context.read<AuthCubit>().verify(widget.email!, _otpController.text);
+                  context.read<AuthCubit>().verify(
+                    widget.email!,
+                    _otpController.text,
+                  );
                 } else if (widget.email == null) {
                   SmartDialog.showToast('Email is missing');
                 }

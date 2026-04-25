@@ -34,7 +34,9 @@ class _LoginInputSectionState extends State<LoginInputSection> {
     super.dispose();
   }
 
-  Future<void> _handleSocialAuth(Future<SocialAuthResult?> Function() signInMethod) async {
+  Future<void> _handleSocialAuth(
+    Future<SocialAuthResult?> Function() signInMethod,
+  ) async {
     final result = await signInMethod();
     if (result != null && mounted) {
       context.read<AuthCubit>().socialLogin(
@@ -70,7 +72,9 @@ class _LoginInputSectionState extends State<LoginInputSection> {
             /// Email Field
             Text(
               context.tr('email_address'),
-              style: AppStyles.s14Medium.copyWith(color: AppColors.stitchSecondary),
+              style: AppStyles.s14Medium.copyWith(
+                color: AppColors.stitchSecondary,
+              ),
             ),
             8.ph,
             StitchTextField(
@@ -82,7 +86,9 @@ class _LoginInputSectionState extends State<LoginInputSection> {
                 if (value == null || value.isEmpty) {
                   return context.tr('email_required');
                 }
-                if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                if (!RegExp(
+                  r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$',
+                ).hasMatch(value)) {
                   return context.tr('invalid_email');
                 }
                 return null;
@@ -94,7 +100,9 @@ class _LoginInputSectionState extends State<LoginInputSection> {
             /// Password Field
             Text(
               context.tr('password'),
-              style: AppStyles.s14Medium.copyWith(color: AppColors.stitchSecondary),
+              style: AppStyles.s14Medium.copyWith(
+                color: AppColors.stitchSecondary,
+              ),
             ),
             8.ph,
             StitchTextField(
@@ -103,9 +111,12 @@ class _LoginInputSectionState extends State<LoginInputSection> {
               obscureText: _obscurePassword,
               prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20),
               suffixIcon: IconButton(
-                onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+                onPressed: () =>
+                    setState(() => _obscurePassword = !_obscurePassword),
                 icon: Icon(
-                  _obscurePassword ? Icons.visibility_off_outlined : Icons.visibility_outlined,
+                  _obscurePassword
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
                   size: 20,
                   color: AppColors.stitchSecondary,
                 ),
@@ -165,10 +176,7 @@ class _LoginInputSectionState extends State<LoginInputSection> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
-                child: Text(
-                  context.tr('login'),
-                  style: AppStyles.s16SemiBold,
-                ),
+                child: Text(context.tr('login'), style: AppStyles.s16SemiBold),
               ),
             ),
 
@@ -184,7 +192,9 @@ class _LoginInputSectionState extends State<LoginInputSection> {
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
                     context.tr('or_login_with'),
-                    style: AppStyles.s14Medium.copyWith(color: AppColors.stitchSecondary),
+                    style: AppStyles.s14Medium.copyWith(
+                      color: AppColors.stitchSecondary,
+                    ),
                   ),
                 ),
                 const Expanded(
@@ -203,7 +213,8 @@ class _LoginInputSectionState extends State<LoginInputSection> {
                 color: Colors.red,
                 size: 36,
               ),
-              onTap: () => _handleSocialAuth(sl<SocialAuthService>().signInWithGoogle),
+              onTap: () =>
+                  _handleSocialAuth(sl<SocialAuthService>().signInWithGoogle),
             ),
 
             16.ph,
@@ -215,7 +226,8 @@ class _LoginInputSectionState extends State<LoginInputSection> {
                 color: Colors.blue,
                 size: 28,
               ),
-              onTap: () => _handleSocialAuth(sl<SocialAuthService>().signInWithFacebook),
+              onTap: () =>
+                  _handleSocialAuth(sl<SocialAuthService>().signInWithFacebook),
             ),
 
             24.ph,

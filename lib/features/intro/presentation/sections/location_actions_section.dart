@@ -28,7 +28,7 @@ class LocationActionsSection extends StatelessWidget {
       if (permission == LocationPermission.denied) {
         if (context.mounted) {
           SmartDialog.showToast(context.tr('location_permission_denied'));
-          context.go(AppRoutes.mainLayout);
+          context.go(AppRoutes.home);
         }
         return;
       }
@@ -36,8 +36,10 @@ class LocationActionsSection extends StatelessWidget {
 
     if (permission == LocationPermission.deniedForever) {
       if (context.mounted) {
-        SmartDialog.showToast(context.tr('location_permission_permanently_denied'));
-        context.go(AppRoutes.mainLayout);
+        SmartDialog.showToast(
+          context.tr('location_permission_permanently_denied'),
+        );
+        context.go(AppRoutes.home);
       }
       return;
     }
@@ -56,7 +58,7 @@ class LocationActionsSection extends StatelessWidget {
     }
 
     if (context.mounted) {
-      context.go(AppRoutes.mainLayout);
+      context.go(AppRoutes.home);
     }
   }
 
@@ -93,7 +95,7 @@ class LocationActionsSection extends StatelessWidget {
           height: 56,
           child: TextButton(
             onPressed: () {
-              context.go(AppRoutes.mainLayout);
+              context.go(AppRoutes.home);
             },
             style: TextButton.styleFrom(
               foregroundColor: AppColors.stitchPrimary,

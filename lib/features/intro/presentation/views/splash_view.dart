@@ -38,7 +38,7 @@ class SplashView extends StatelessWidget {
         } else if (state is NavigateToLoginState) {
           context.go(AppRoutes.welcome);
         } else if (state is NavigateToMainState) {
-          context.go(AppRoutes.welcome);
+          context.go(AppRoutes.home);
         }
       },
       child: const Scaffold(body: SplashBodySection()),

@@ -1,0 +1,41 @@
+import 'package:doctory/features/home/data/model/clinic_model.dart';
+import 'package:doctory/features/home/data/model/doctor_model.dart';
+import 'package:doctory/features/home/data/model/specialty_model.dart';
+
+abstract class HomeStates {}
+
+class HomeInitialState extends HomeStates {}
+
+class HomeLoadingState extends HomeStates {}
+
+class HomeSuccessState extends HomeStates {
+  final List<SpecialtyModel> specialties;
+  final List<DoctorModel> recommendedDoctors;
+  final List<ClinicModel> featuredClinics;
+
+  HomeSuccessState({
+    required this.specialties,
+    required this.recommendedDoctors,
+    required this.featuredClinics,
+  });
+}
+
+class HomeErrorState extends HomeStates {
+  final String message;
+  HomeErrorState(this.message);
+}
+
+// Search States
+class SearchLoadingState extends HomeStates {}
+
+class SearchSuccessState extends HomeStates {
+  final List<DoctorModel> doctors;
+  final List<ClinicModel> clinics;
+
+  SearchSuccessState({required this.doctors, required this.clinics});
+}
+
+class SearchErrorState extends HomeStates {
+  final String message;
+  SearchErrorState(this.message);
+}
