@@ -17,17 +17,29 @@ class HomeSpecialtiesSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          context.tr('specialties'),
-          style: AppStyles.s16Bold.copyWith(color: AppColors.textPrimary),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              context.tr('specialties'),
+              style: AppStyles.s16Bold.copyWith(color: AppColors.textPrimary),
+            ),
+            TextButton(
+              onPressed: () {},
+              child: Text(
+                context.tr('see_all'),
+                style: AppStyles.s14Medium.copyWith(color: AppColors.stitchPrimary),
+              ),
+            ),
+          ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 8),
         SizedBox(
-          height: 100,
+          height: 70,
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: specialties.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 16),
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
               return SpecialtyItemWidget(specialty: specialties[index]);
             },

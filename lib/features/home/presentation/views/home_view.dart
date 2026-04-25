@@ -53,13 +53,18 @@ class HomeView extends StatelessWidget {
                     const HomeHeaderSection(),
                     const SizedBox(height: 24),
                     const HomeSearchSection(),
-                    const SizedBox(height: 32),
-                    HomeSpecialtiesSection(specialties: state.specialties),
-                    const SizedBox(height: 32),
-                    HomeFeaturedSection(
-                      doctors: state.recommendedDoctors,
-                      clinics: state.featuredClinics,
+                    const SizedBox(height: 24),
+                    _buildSectionContainer(
+                      child: HomeSpecialtiesSection(specialties: state.specialties),
                     ),
+                    const SizedBox(height: 16),
+                    _buildSectionContainer(
+                      child: HomeFeaturedSection(
+                        doctors: state.recommendedDoctors,
+                        clinics: state.featuredClinics,
+                      ),
+                    ),
+                    const SizedBox(height: 24),
                   ],
                 );
               }
@@ -69,6 +74,25 @@ class HomeView extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildSectionContainer({required Widget child}) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.03),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+        border: Border.all(color: AppColors.cardBorder.withValues(alpha: 0.3)),
+      ),
+      child: child,
     );
   }
 }

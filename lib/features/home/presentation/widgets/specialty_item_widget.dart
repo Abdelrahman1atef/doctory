@@ -17,12 +17,12 @@ class SpecialtyItemWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-          child: Column(
+          child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               Container(
-                width: 64,
-                height: 64,
+                width: 48,
+                height: 48,
                 decoration: BoxDecoration(
                   color: AppColors.white,
                   shape: BoxShape.circle,
@@ -30,8 +30,8 @@ class SpecialtyItemWidget extends StatelessWidget {
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.stitchPrimary.withValues(alpha: 0.08),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
                     ),
                   ],
                 ),
@@ -39,19 +39,19 @@ class SpecialtyItemWidget extends StatelessWidget {
                   child: Icon(
                     Icons.medical_services_outlined,
                     color: AppColors.stitchPrimary,
-                    size: 28,
+                    size: 20,
                   ),
                 ),
               ),
-              const SizedBox(height: 10),
+              const SizedBox(width: 12),
               Text(
                 specialty.name,
                 style: AppStyles.s14Medium.copyWith(
                   color: AppColors.textPrimary,
                   fontWeight: FontWeight.w600,
                 ),
-                textAlign: TextAlign.center,
               ),
+              const SizedBox(width: 8),
             ],
           ),
         ),

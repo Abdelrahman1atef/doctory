@@ -1,3 +1,4 @@
+import 'package:doctory/core/common/functions/location_helper.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/search_results/cubit/search_cubit.dart';
 import 'package:doctory/features/search_results/cubit/search_states.dart';
@@ -147,6 +148,13 @@ class _SearchMapSectionState extends State<SearchMapSection> {
     );
   }
 
+  Future<void> _goToMyLocation() async {
+    final position = await LocationHelper.getCurrentLocation();
+    _mapController?.animateCamera(
+      CameraUpdate.newLatLngZoom(position, 15),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<SearchCubit, SearchStates>(
@@ -179,10 +187,27 @@ class _SearchMapSectionState extends State<SearchMapSection> {
                   markers: _markers,
                   polylines: _polylines,
                   style: _mapStyle,
-                  myLocationEnabled: false, // Permission confirmed before navigation
+                  myLocationEnabled: true,
                   myLocationButtonEnabled: false,
                   zoomControlsEnabled: false,
                   mapToolbarEnabled: false,
+                ),
+              ),
+
+            // My Location Button
+            if (_isMapReadyToBuild)
+              Positioned(
+                bottom: 24,
+                right: 24,
+                child: FloatingActionButton(
+                  heroTag: 'my_location_btn',
+                  backgroundColor: AppColors.white,
+                  mini: true,
+                  onPressed: _goToMyLocation,
+                  child: const Icon(
+                    Icons.my_location,
+                    color: AppColors.stitchPrimary,
+                  ),
                 ),
               ),
           ],

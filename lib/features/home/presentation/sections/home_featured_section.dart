@@ -24,25 +24,49 @@ class HomeFeaturedSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (clinics.isNotEmpty) ...[
-          Text(
-            context.tr('featured_clinics'),
-            style: AppStyles.s16Bold.copyWith(color: AppColors.textPrimary),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                context.tr('featured_clinics'),
+                style: AppStyles.s16Bold.copyWith(color: AppColors.textPrimary),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text(
+                  context.tr('see_all'),
+                  style: AppStyles.s14Medium.copyWith(color: AppColors.stitchPrimary),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           ...clinics.map(
             (clinic) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: ClinicCardWidget(clinic: clinic),
             ),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 16),
         ],
         if (doctors.isNotEmpty) ...[
-          Text(
-            context.tr('recommended_doctors'),
-            style: AppStyles.s16Bold.copyWith(color: AppColors.textPrimary),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                context.tr('recommended_doctors'),
+                style: AppStyles.s16Bold.copyWith(color: AppColors.textPrimary),
+              ),
+              TextButton(
+                onPressed: () {},
+                child: Text(
+                  context.tr('see_all'),
+                  style: AppStyles.s14Medium.copyWith(color: AppColors.stitchPrimary),
+                ),
+              ),
+            ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           ...doctors.map(
             (doctor) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
