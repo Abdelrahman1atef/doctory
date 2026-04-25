@@ -1,6 +1,7 @@
 import 'package:doctory/features/auth/cubit/auth_states.dart';
 import 'package:doctory/features/auth/data/model/login_request.dart';
 import 'package:doctory/features/auth/data/model/signup_request.dart';
+import 'package:doctory/features/auth/data/model/update_profile_request.dart';
 import 'package:doctory/features/auth/data/repo/auth_repo.dart';
 import 'package:doctory/core/error/failures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -40,7 +41,7 @@ class AuthCubit extends Cubit<AuthStates> {
     final result = await _authRepo.verify(email, code);
 
     result.fold(
-      onSuccess: (_) => emit(VerifySuccessState()),
+      onSuccess: (data) => emit(AuthSuccessState(data)),
       onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
     );
   }
@@ -52,6 +53,27 @@ class AuthCubit extends Cubit<AuthStates> {
 
     result.fold(
       onSuccess: (_) => emit(ForgotPasswordSuccessState()),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+    );
+  }
+
+  void loginFacebook(String accessToken) async {
+    emit(AuthLoadingState());
+    final result = await _authRepo.loginFacebook(accessToken);
+    result.fold(
+      onSuccess: (data) => emit(AuthSuccessState(data)),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+    );
+  }
+
+  void completeFacebookRegistration(String accessToken, String email) async {
+    emit(AuthLoadingState());
+    final result = await _authRepo.completeFacebookRegistration(
+      accessToken: accessToken,
+      email: email,
+    );
+    result.fold(
+      onSuccess: (data) => emit(AuthSuccessState(data)),
       onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
     );
   }
@@ -86,15 +108,48 @@ class AuthCubit extends Cubit<AuthStates> {
     );
   }
 
-  Future<void> resetPassword(
-    String email,
-    String token,
-    String newPassword,
-  ) async {
+  Future<void> resetPassword({
+    required String email,
+    required String token,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
     emit(AuthLoadingState());
-    final result = await _authRepo.resetPassword(email, token, newPassword);
+    final result = await _authRepo.resetPassword(
+      email: email,
+      token: token,
+      newPassword: newPassword,
+      confirmPassword: confirmPassword,
+    );
     result.fold(
       onSuccess: (_) => emit(ResetPasswordSuccessState()),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+    );
+  }
+
+  Future<void> getProfile() async {
+    emit(AuthLoadingState());
+    final result = await _authRepo.getProfile();
+    result.fold(
+      onSuccess: (user) => emit(ProfileLoadedState(user)),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+    );
+  }
+
+  Future<void> updateProfile(UpdateProfileRequest request) async {
+    emit(AuthLoadingState());
+    final result = await _authRepo.updateProfile(request);
+    result.fold(
+      onSuccess: (_) => emit(ProfileUpdateSuccessState()),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+    );
+  }
+
+  Future<void> updateLanguage(int language) async {
+    emit(AuthLoadingState());
+    final result = await _authRepo.updateLanguage(language);
+    result.fold(
+      onSuccess: (_) => emit(LanguageUpdateSuccessState()),
       onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
     );
   }

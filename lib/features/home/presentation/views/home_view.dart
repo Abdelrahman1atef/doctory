@@ -55,7 +55,9 @@ class HomeView extends StatelessWidget {
                     const HomeSearchSection(),
                     const SizedBox(height: 24),
                     _buildSectionContainer(
-                      child: HomeSpecialtiesSection(specialties: state.specialties),
+                      child: HomeSpecialtiesSection(
+                        specialties: state.specialties,
+                      ),
                     ),
                     const SizedBox(height: 16),
                     _buildSectionContainer(

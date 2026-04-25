@@ -65,5 +65,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'doctory-1aca1.firebasestorage.app',
     iosBundleId: 'com.doctory',
   );
-
 }

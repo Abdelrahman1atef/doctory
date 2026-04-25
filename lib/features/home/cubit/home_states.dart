@@ -1,6 +1,4 @@
-import 'package:doctory/features/home/data/model/clinic_model.dart';
-import 'package:doctory/features/home/data/model/doctor_model.dart';
-import 'package:doctory/features/home/data/model/specialty_model.dart';
+import 'package:doctory/core/common/models/shared_models.dart';
 
 abstract class HomeStates {}
 

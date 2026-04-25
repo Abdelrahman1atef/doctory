@@ -8,6 +8,7 @@ import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/core/common/widgets/buttons/social_auth_button.dart';
 import 'package:doctory/features/auth/cubit/auth_cubit.dart';
 import 'package:doctory/features/auth/cubit/auth_states.dart';
+import 'package:doctory/core/services/alerts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -39,12 +40,16 @@ class _LoginInputSectionState extends State<LoginInputSection> {
   ) async {
     final result = await signInMethod();
     if (result != null && mounted) {
-      context.read<AuthCubit>().socialLogin(
-        provider: result.provider,
-        accessToken: result.accessToken,
-        name: result.name,
-        email: result.email,
-      );
+      if (result.provider == 'facebook') {
+        context.read<AuthCubit>().loginFacebook(result.accessToken);
+      } else {
+        context.read<AuthCubit>().socialLogin(
+          provider: result.provider,
+          accessToken: result.accessToken,
+          name: result.name,
+          email: result.email,
+        );
+      }
     }
   }
 
@@ -61,7 +66,7 @@ class _LoginInputSectionState extends State<LoginInputSection> {
         if (state is AuthSuccessState) {
           context.go(AppRoutes.locationPermission);
         } else if (state is AuthErrorState) {
-          SmartDialog.showToast(state.message);
+          Alerts.showSnackBar(context, message: state.message, state: SnackState.failed);
         }
       },
       child: Form(

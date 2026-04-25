@@ -2,8 +2,11 @@ import 'package:doctory/core/common/widgets/snackbars/custom_toast_widget.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:doctory/core/theme/app_typography.dart';
 
+import 'package:doctory/core/theme/app_colors.dart';
 import '../app_strings/locale_keys.dart';
+import '../utils/extensions.dart';
 
 enum SnackState { success, failed }
 
@@ -177,6 +180,44 @@ class Alerts {
       align: Alignment.center,
       onlyOne: true,
       toastBuilder: (s) => AbherToastWidget(state: state, text: text),
+    );
+  }
+
+  static void showSnackBar(BuildContext context, {required String message, SnackState state = SnackState.success}) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              state == SnackState.success ? Icons.check_circle_outline : Icons.error_outline,
+              color: Colors.white,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    state == SnackState.success ? context.tr('success') : context.tr('error'),
+                    style: AppStyles.s16Bold.copyWith(color: Colors.white),
+                  ),
+                  5.ph,
+                  Text(
+                    message,
+                    style: AppStyles.s14Bold.copyWith(color: Colors.white),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        backgroundColor: state == SnackState.success ? AppColors.stitchPrimary : AppColors.errorColor,
+        behavior: SnackBarBehavior.floating,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        duration: const Duration(seconds: 4),
+        elevation: 6,
+      ),
     );
   }
 }

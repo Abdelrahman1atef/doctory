@@ -6,6 +6,7 @@ class UserModel {
   final String? birthDate;
   final int? gender;
   final String? profilePictureUrl;
+  final int? language;
 
   UserModel({
     this.id,
@@ -15,6 +16,7 @@ class UserModel {
     this.birthDate,
     this.gender,
     this.profilePictureUrl,
+    this.language,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -28,6 +30,9 @@ class UserModel {
           ? json['gender']
           : int.tryParse(json['gender']?.toString() ?? ''),
       profilePictureUrl: json['profilePictureUrl'] ?? json['profileImage'],
+      language: json['language'] is int
+          ? json['language']
+          : int.tryParse(json['language']?.toString() ?? ''),
     );
   }
 
@@ -40,6 +45,7 @@ class UserModel {
       'birthDate': birthDate,
       'gender': gender,
       'profilePictureUrl': profilePictureUrl,
+      'language': language,
     };
   }
 }

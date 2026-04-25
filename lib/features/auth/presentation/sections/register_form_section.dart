@@ -9,6 +9,7 @@ import 'package:doctory/core/common/widgets/buttons/social_auth_button.dart';
 import 'package:doctory/features/auth/cubit/auth_cubit.dart';
 import 'package:doctory/features/auth/cubit/auth_states.dart';
 import 'package:doctory/features/auth/data/model/signup_request.dart';
+import 'package:doctory/core/services/alerts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -47,19 +48,19 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
   String _getFormattedPhone() {
     final phone = _phoneController.text.trim();
     if (phone.startsWith('0')) {
-      return '+20${phone.substring(1)}';
+      return phone.substring(1);
     }
-    return '+20$phone';
+    return phone;
   }
 
   int _getGenderValue() {
     switch (_selectedGender) {
       case 'male':
-        return 0;
-      case 'female':
         return 1;
-      default:
+      case 'female':
         return 2;
+      default:
+        return 3;
     }
   }
 
@@ -103,7 +104,7 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
         } else if (state is AuthSuccessState) {
           context.go(AppRoutes.completeProfile);
         } else if (state is AuthErrorState) {
-          SmartDialog.showToast(state.message);
+          Alerts.showSnackBar(context, message: state.message, state: SnackState.failed);
         }
       },
       child: Form(

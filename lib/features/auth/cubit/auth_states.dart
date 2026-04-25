@@ -1,3 +1,5 @@
+import 'package:doctory/features/auth/data/model/user_model.dart';
+
 abstract class AuthStates {}
 
 class AuthInitialState extends AuthStates {}
@@ -24,6 +26,15 @@ class ResetTokenVerifiedState extends AuthStates {
 }
 
 class ResetPasswordSuccessState extends AuthStates {}
+
+class ProfileLoadedState extends AuthStates {
+  final UserModel user;
+  ProfileLoadedState(this.user);
+}
+
+class ProfileUpdateSuccessState extends AuthStates {}
+
+class LanguageUpdateSuccessState extends AuthStates {}
 
 class AuthErrorState extends AuthStates {
   final String message;

@@ -1,7 +1,6 @@
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
-import 'package:doctory/features/home/data/model/clinic_model.dart';
-import 'package:doctory/features/home/data/model/doctor_model.dart';
+import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:flutter/material.dart';
 
 class DoctorCardWidget extends StatelessWidget {
@@ -22,7 +21,9 @@ class DoctorCardWidget extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.cardBorder.withValues(alpha: 0.5)),
+            border: Border.all(
+              color: AppColors.cardBorder.withValues(alpha: 0.5),
+            ),
             boxShadow: [
               BoxShadow(
                 color: AppColors.black.withValues(alpha: 0.03),
@@ -70,7 +71,10 @@ class DoctorCardWidget extends StatelessWidget {
                     if (doctor.nextAppointment != null) ...[
                       const SizedBox(height: 12),
                       Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 10,
+                          vertical: 6,
+                        ),
                         decoration: BoxDecoration(
                           color: AppColors.stitchSurface,
                           borderRadius: BorderRadius.circular(8),
@@ -128,7 +132,9 @@ class ClinicCardWidget extends StatelessWidget {
           padding: const EdgeInsets.all(16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.cardBorder.withValues(alpha: 0.5)),
+            border: Border.all(
+              color: AppColors.cardBorder.withValues(alpha: 0.5),
+            ),
             boxShadow: [
               BoxShadow(
                 color: AppColors.black.withValues(alpha: 0.03),
@@ -162,7 +168,9 @@ class ClinicCardWidget extends StatelessWidget {
                   children: [
                     Text(
                       clinic.name,
-                      style: AppStyles.s16Bold.copyWith(color: AppColors.textPrimary),
+                      style: AppStyles.s16Bold.copyWith(
+                        color: AppColors.textPrimary,
+                      ),
                     ),
                     const SizedBox(height: 6),
                     Text(

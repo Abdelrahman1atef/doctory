@@ -5,20 +5,29 @@ import 'package:doctory/features/auth/data/model/auth_response.dart';
 import 'package:doctory/features/auth/data/model/login_request.dart';
 import 'package:doctory/features/auth/data/model/signup_request.dart';
 import 'package:doctory/features/auth/data/model/user_model.dart';
+import 'package:doctory/features/auth/data/model/update_profile_request.dart';
 
 abstract class AuthRepo {
   Future<ApiResult<AuthResponse>> signup(SignupRequest request);
   Future<ApiResult<AuthResponse>> login(LoginRequest request);
-  Future<ApiResult<void>> verify(String email, String code);
+  Future<ApiResult<AuthResponse>> verify(String email, String code);
   Future<ApiResult<void>> forgotPassword(String email);
   Future<ApiResult<bool>> verifyResetToken(String email, String token);
-  Future<ApiResult<void>> resetPassword(
-    String email,
-    String token,
-    String newPassword,
-  );
+  Future<ApiResult<void>> resetPassword({
+    required String email,
+    required String token,
+    required String newPassword,
+    required String confirmPassword,
+  });
   Future<ApiResult<AuthResponse>> refreshToken(String token);
   Future<ApiResult<UserModel>> getProfile();
+  Future<ApiResult<bool>> updateProfile(UpdateProfileRequest request);
+  Future<ApiResult<bool>> updateLanguage(int language);
+  Future<ApiResult<AuthResponse>> loginFacebook(String accessToken);
+  Future<ApiResult<AuthResponse>> completeFacebookRegistration({
+    required String accessToken,
+    required String email,
+  });
   Future<ApiResult<AuthResponse>> socialLogin({
     required String provider,
     required String accessToken,
@@ -34,15 +43,7 @@ class AuthRepoImpl implements AuthRepo {
 
   @override
   Future<ApiResult<AuthResponse>> signup(SignupRequest request) async {
-    final result = await _dataSource.signup(request);
-    return result.fold(
-      onSuccess: (response) async {
-        // Option to save user data directly after signup if needed
-        // await UserSession.saveUser({'data': {'accessToken': response.accessToken, 'user': response.user?.toJson()}});
-        return ApiResult.success(response);
-      },
-      onFailure: (failure) => ApiResult.failure(failure),
-    );
+    return await _dataSource.signup(request);
   }
 
   @override
@@ -50,13 +51,7 @@ class AuthRepoImpl implements AuthRepo {
     final result = await _dataSource.login(request);
     return result.fold(
       onSuccess: (response) async {
-        await UserSession.saveUser({
-          'data': {
-            'accessToken': response.accessToken,
-            'refreshToken': response.refreshToken,
-            'user': response.user?.toJson(),
-          },
-        });
+        await _saveAuthSession(response);
         return ApiResult.success(response);
       },
       onFailure: (failure) => ApiResult.failure(failure),
@@ -64,8 +59,17 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   @override
-  Future<ApiResult<void>> verify(String email, String code) async {
-    return await _dataSource.verify(email, code);
+  Future<ApiResult<AuthResponse>> verify(String email, String code) async {
+    final result = await _dataSource.verify(email, code);
+    return result.fold(
+      onSuccess: (response) async {
+        if (response.accessToken.isNotEmpty) {
+          await _saveAuthSession(response);
+        }
+        return ApiResult.success(response);
+      },
+      onFailure: (failure) => ApiResult.failure(failure),
+    );
   }
 
   @override
@@ -79,12 +83,18 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   @override
-  Future<ApiResult<void>> resetPassword(
-    String email,
-    String token,
-    String newPassword,
-  ) async {
-    return await _dataSource.resetPassword(email, token, newPassword);
+  Future<ApiResult<void>> resetPassword({
+    required String email,
+    required String token,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    return await _dataSource.resetPassword(
+      email: email,
+      token: token,
+      newPassword: newPassword,
+      confirmPassword: confirmPassword,
+    );
   }
 
   @override
@@ -95,6 +105,50 @@ class AuthRepoImpl implements AuthRepo {
   @override
   Future<ApiResult<UserModel>> getProfile() async {
     return await _dataSource.getProfile();
+  }
+
+  @override
+  Future<ApiResult<bool>> updateProfile(UpdateProfileRequest request) async {
+    return await _dataSource.updateProfile(request);
+  }
+
+  @override
+  Future<ApiResult<bool>> updateLanguage(int language) async {
+    return await _dataSource.updateLanguage(language);
+  }
+
+  @override
+  Future<ApiResult<AuthResponse>> loginFacebook(String accessToken) async {
+    final result = await _dataSource.loginFacebook(accessToken);
+    return result.fold(
+      onSuccess: (response) async {
+        if (response.accessToken.isNotEmpty) {
+          await _saveAuthSession(response);
+        }
+        return ApiResult.success(response);
+      },
+      onFailure: (failure) => ApiResult.failure(failure),
+    );
+  }
+
+  @override
+  Future<ApiResult<AuthResponse>> completeFacebookRegistration({
+    required String accessToken,
+    required String email,
+  }) async {
+    final result = await _dataSource.completeFacebookRegistration(
+      accessToken: accessToken,
+      email: email,
+    );
+    return result.fold(
+      onSuccess: (response) async {
+        if (response.accessToken.isNotEmpty) {
+          await _saveAuthSession(response);
+        }
+        return ApiResult.success(response);
+      },
+      onFailure: (failure) => ApiResult.failure(failure),
+    );
   }
 
   @override
@@ -112,16 +166,20 @@ class AuthRepoImpl implements AuthRepo {
     );
     return result.fold(
       onSuccess: (response) async {
-        await UserSession.saveUser({
-          'data': {
-            'accessToken': response.accessToken,
-            'refreshToken': response.refreshToken,
-            'user': response.user?.toJson(),
-          },
-        });
+        if (response.accessToken.isNotEmpty) {
+          await _saveAuthSession(response);
+        }
         return ApiResult.success(response);
       },
       onFailure: (failure) => ApiResult.failure(failure),
     );
+  }
+
+  Future<void> _saveAuthSession(AuthResponse response) async {
+    await UserSession.saveUser({
+      'accessToken': response.accessToken,
+      'refreshToken': response.refreshToken,
+      'user': response.user?.toJson(),
+    });
   }
 }

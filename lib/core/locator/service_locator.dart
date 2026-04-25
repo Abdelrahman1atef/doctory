@@ -11,7 +11,6 @@ import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/features/intro/di/intro_di.dart';
 import 'package:doctory/features/auth/di/auth_di.dart';
 import 'package:doctory/features/home/di/home_di.dart';
-import 'package:doctory/features/search_results/di/search_di.dart';
 
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
@@ -59,6 +58,5 @@ class ServiceLocator {
     IntroDI.setup();
     AuthDI.setup();
     HomeDI.setup();
-    SearchDI.setup();
   }
 }

@@ -1,7 +1,6 @@
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
-import 'package:doctory/features/home/data/model/clinic_model.dart';
-import 'package:doctory/features/home/data/model/doctor_model.dart';
+import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/features/home/presentation/widgets/featured_card_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -35,7 +34,9 @@ class HomeFeaturedSection extends StatelessWidget {
                 onPressed: () {},
                 child: Text(
                   context.tr('see_all'),
-                  style: AppStyles.s14Medium.copyWith(color: AppColors.stitchPrimary),
+                  style: AppStyles.s14Medium.copyWith(
+                    color: AppColors.stitchPrimary,
+                  ),
                 ),
               ),
             ],
@@ -61,7 +62,9 @@ class HomeFeaturedSection extends StatelessWidget {
                 onPressed: () {},
                 child: Text(
                   context.tr('see_all'),
-                  style: AppStyles.s14Medium.copyWith(color: AppColors.stitchPrimary),
+                  style: AppStyles.s14Medium.copyWith(
+                    color: AppColors.stitchPrimary,
+                  ),
                 ),
               ),
             ],

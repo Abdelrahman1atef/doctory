@@ -1,9 +1,7 @@
 import 'package:doctory/core/error/failures.dart';
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import 'package:doctory/features/home/data/data_source/home_remote_data_source.dart';
-import 'package:doctory/features/home/data/model/clinic_model.dart';
-import 'package:doctory/features/home/data/model/doctor_model.dart';
-import 'package:doctory/features/home/data/model/specialty_model.dart';
+import 'package:doctory/core/common/models/shared_models.dart';
 
 abstract class HomeRepo {
   Future<ApiResult<List<SpecialtyModel>>> getSpecialties();

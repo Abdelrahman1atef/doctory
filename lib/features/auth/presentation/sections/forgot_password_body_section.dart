@@ -8,6 +8,7 @@ import 'package:doctory/features/auth/cubit/auth_states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:doctory/core/services/alerts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 
@@ -40,13 +41,16 @@ class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
         }
 
         if (state is ForgotPasswordSuccessState) {
-          SmartDialog.showToast(context.tr('reset_link_sent_success'));
+          Alerts.showSnackBar(context, message: context.tr('reset_link_sent_success'));
           context.push(
             AppRoutes.otpVerification,
-            extra: _emailController.text.trim(),
+            extra: {
+              'email': _emailController.text.trim(),
+              'isForgotPassword': true,
+            },
           );
         } else if (state is AuthErrorState) {
-          SmartDialog.showToast(state.message);
+          Alerts.showSnackBar(context, message: state.message, state: SnackState.failed);
         }
       },
       child: SingleChildScrollView(

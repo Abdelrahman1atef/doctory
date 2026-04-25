@@ -6,7 +6,8 @@ import 'package:animate_do/animate_do.dart';
 
 class OtpVerificationView extends StatelessWidget {
   final String? email;
-  const OtpVerificationView({super.key, this.email});
+  final bool isForgotPassword;
+  const OtpVerificationView({super.key, this.email, this.isForgotPassword = false});
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +38,7 @@ class OtpVerificationView extends StatelessWidget {
               FadeInUp(
                 duration: const Duration(milliseconds: 600),
                 delay: const Duration(milliseconds: 200),
-                child: OtpInputSection(email: email),
+                child: OtpInputSection(email: email, isForgotPassword: isForgotPassword),
               ),
             ],
           ),

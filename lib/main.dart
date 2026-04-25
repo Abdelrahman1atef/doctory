@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/services/notifications/fcm_service.dart';
@@ -23,7 +22,9 @@ void main() async {
   if (mapsImplementation is GoogleMapsFlutterAndroid) {
     mapsImplementation.useAndroidViewSurface = true;
     try {
-      await mapsImplementation.initializeWithRenderer(AndroidMapRenderer.latest);
+      await mapsImplementation.initializeWithRenderer(
+        AndroidMapRenderer.latest,
+      );
     } catch (e) {
       debugPrint("Google Maps initialization: $e");
     }

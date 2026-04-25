@@ -9,8 +9,18 @@ abstract class AppRoutes {
   static const String otpVerification = '/otp-verification';
   static const String completeProfile = '/complete-profile';
   static const String forgotPassword = '/forgot-password';
+  static const String resetPassword = '/reset-password';
   static const String locationPermission = '/location-permission';
   static const String mainLayout = '/main';
   static const String home = '/home';
-  static const String searchResults = '/search-results';
+
+  // Clinic Locator Features
+  static const String mapHome = '/map-home';
+  static const String clinicDetails = '/clinic-details';
+  static const String doctorDetails = '/doctor-details';
+  static const String bookingSelectDate = '/booking/select-date';
+  static const String bookingSelectTime = '/booking/select-time';
+  static const String bookingConfirm = '/booking/confirm';
+  static const String bookingSuccess = '/booking/success';
+  static const String patientReviews = '/patient-reviews';
 }

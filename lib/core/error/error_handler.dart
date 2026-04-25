@@ -102,6 +102,14 @@ class ErrorHandler {
 
     switch (statusCode) {
       case 400:
+        if (validationErrors != null && validationErrors.isNotEmpty) {
+          return ValidationFailure(
+            message: message,
+            errors: validationErrors,
+            originalError: error,
+            stackTrace: error.stackTrace,
+          );
+        }
         return BadRequestFailure(
           message: message,
           originalError: error,

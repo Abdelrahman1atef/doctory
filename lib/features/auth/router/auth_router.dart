@@ -6,6 +6,7 @@ import 'package:doctory/features/auth/presentation/views/otp_verification_view.d
 import 'package:doctory/features/auth/presentation/views/complete_profile_view.dart';
 import 'package:doctory/features/auth/presentation/views/forgot_password_view.dart';
 import 'package:doctory/features/auth/presentation/views/register_view.dart';
+import 'package:doctory/features/auth/presentation/views/reset_password_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -27,10 +28,26 @@ class AuthRouter {
     ),
     GoRoute(
       path: AppRoutes.otpVerification,
-      builder: (context, state) => BlocProvider(
-        create: (context) => sl<AuthCubit>(),
-        child: OtpVerificationView(email: state.extra as String?),
-      ),
+      builder: (context, state) {
+        final extra = state.extra;
+        String? email;
+        bool isForgotPassword = false;
+
+        if (extra is Map<String, dynamic>) {
+          email = extra['email'] as String?;
+          isForgotPassword = extra['isForgotPassword'] as bool? ?? false;
+        } else if (extra is String) {
+          email = extra;
+        }
+
+        return BlocProvider(
+          create: (context) => sl<AuthCubit>(),
+          child: OtpVerificationView(
+            email: email,
+            isForgotPassword: isForgotPassword,
+          ),
+        );
+      },
     ),
     GoRoute(
       path: AppRoutes.completeProfile,
@@ -45,6 +62,19 @@ class AuthRouter {
         create: (context) => sl<AuthCubit>(),
         child: const ForgotPasswordView(),
       ),
+    ),
+    GoRoute(
+      path: AppRoutes.resetPassword,
+      builder: (context, state) {
+        final extra = state.extra as Map<String, dynamic>;
+        return BlocProvider(
+          create: (context) => sl<AuthCubit>(),
+          child: ResetPasswordView(
+            email: extra['email'] as String,
+            token: extra['token'] as String,
+          ),
+        );
+      },
     ),
   ];
 }

@@ -8,13 +8,18 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:doctory/features/intro/router/intro_router.dart';
 import 'package:doctory/features/auth/router/auth_router.dart';
 import 'package:doctory/features/home/router/home_router.dart';
-import 'package:doctory/features/search_results/router/search_router.dart';
+import 'package:doctory/features/map_home/router/map_home_router.dart';
+import 'package:doctory/features/clinic_details/router/clinic_details_router.dart';
+import 'package:doctory/features/doctor_details/router/doctor_details_router.dart';
+import 'package:doctory/features/booking/router/booking_router.dart';
+import 'package:doctory/features/patient_reviews/router/patient_reviews_router.dart';
 
 import 'package:doctory/core/session/user_session.dart';
 
 /// GoRouter configuration
 class AppRouter {
-  static String initialRoute = AppRoutes.home;
+  // Changed temporarily for testing the new clinic locator feature
+  static String initialRoute = AppRoutes.splash;
 
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
@@ -34,7 +39,11 @@ class AppRouter {
       ...IntroRouter.routes,
       ...AuthRouter.routes,
       ...HomeRouter.routes,
-      ...SearchRouter.routes,
+      ...MapHomeRouter.routes,
+      ...ClinicDetailsRouter.routes,
+      ...DoctorDetailsRouter.routes,
+      ...BookingRouter.routes,
+      ...PatientReviewsRouter.routes,
     ],
 
     // Error page

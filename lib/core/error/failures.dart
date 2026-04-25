@@ -188,7 +188,17 @@ extension FailureExtensions on Failure {
     } else if (isAuthError) {
       return 'please_login_again'.tr();
     } else if (isValidationError) {
-      return 'check_input_data'.tr();
+      final errorsMap = validationErrors;
+      if (errorsMap != null && errorsMap.isNotEmpty) {
+        final List<String> allErrors = [];
+        errorsMap.forEach((key, values) {
+          allErrors.addAll(values);
+        });
+        if (allErrors.isNotEmpty) {
+          return allErrors.join('\n');
+        }
+      }
+      return message;
     } else {
       return message;
     }

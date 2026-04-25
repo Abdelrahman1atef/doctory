@@ -17,7 +17,9 @@ class HomeHeaderSection extends StatelessWidget {
           children: [
             Text(
               context.tr('good_morning'),
-              style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
+              style: AppStyles.s14Medium.copyWith(
+                color: AppColors.textSecondary,
+              ),
             ),
             const SizedBox(height: 4),
             Text(

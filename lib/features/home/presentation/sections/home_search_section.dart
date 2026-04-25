@@ -21,9 +21,9 @@ class _HomeSearchSectionState extends State<HomeSearchSection> {
     if (query.isNotEmpty) {
       // Ensure location permission is confirmed before navigating
       await LocationHelper.checkAndRequestPermission();
-      
+
       if (mounted) {
-        context.push(AppRoutes.searchResults, extra: query);
+        context.push(AppRoutes.mapHome, extra: query);
       }
     }
   }
@@ -57,8 +57,13 @@ class _HomeSearchSectionState extends State<HomeSearchSection> {
             onSubmitted: (_) => _onSearch(),
             decoration: InputDecoration(
               hintText: context.tr('search_hint'),
-              hintStyle: AppStyles.s14Medium.copyWith(color: AppColors.textHint),
-              prefixIcon: const Icon(Icons.search, color: AppColors.stitchPrimary),
+              hintStyle: AppStyles.s14Medium.copyWith(
+                color: AppColors.textHint,
+              ),
+              prefixIcon: const Icon(
+                Icons.search,
+                color: AppColors.stitchPrimary,
+              ),
               suffixIcon: IconButton(
                 icon: const Icon(
                   Icons.arrow_forward_ios,

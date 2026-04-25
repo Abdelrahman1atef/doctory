@@ -7,5 +7,10 @@ class AuthEndpoints {
   static const String forgetPassword = '/v1/Auth/forget-password';
   static const String verifyResetToken = '/v1/Auth/verify-reset-token';
   static const String resetPassword = '/v1/Auth/reset-password';
-  static const String socialLogin = '/v1/Auth/social-login';
+  static const String loginFacebook = '/v1/Auth/login-facebook';
+  static const String completeFacebookRegistration =
+      '/v1/Auth/complete-facebook-registration';
+  static const String updateProfile = '/v1/Auth/profile/update';
+  static const String updateLanguage = '/v1/Auth/language/update';
+  static const String socialLogin = '/v1/Auth/social-login'; // Keep for now
 }

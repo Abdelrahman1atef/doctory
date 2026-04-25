@@ -3,7 +3,6 @@ import 'package:flutter/foundation.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class LocationHelper {
   static const LatLng defaultLocation = LatLng(27.910000, 34.333000);
@@ -57,17 +56,18 @@ class LocationHelper {
       );
 
       // 2. High accuracy fresh position with a strict timeout
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-        ),
-      ).timeout(
-        const Duration(seconds: 4), // Reduced from 5 to 4 for better UX
-        onTimeout: () {
-          debugPrint('📍 [LocationHelper] Timeout: No position fix');
-          throw Exception('Location timeout');
-        },
-      );
+      final position =
+          await Geolocator.getCurrentPosition(
+            locationSettings: const LocationSettings(
+              accuracy: LocationAccuracy.high,
+            ),
+          ).timeout(
+            const Duration(seconds: 4), // Reduced from 5 to 4 for better UX
+            onTimeout: () {
+              debugPrint('📍 [LocationHelper] Timeout: No position fix');
+              throw Exception('Location timeout');
+            },
+          );
 
       debugPrint(
         '📍 [LocationHelper] Fresh position: ${position.latitude}, ${position.longitude}',
@@ -121,24 +121,31 @@ class LocationHelper {
     try {
       // Use OSRM Public API (Demo server)
       // Format: http://router.project-osrm.org/route/v1/driving/sourceLng,sourceLat;destLng,destLat?overview=full&geometries=geojson
-      final url = 'https://router.project-osrm.org/route/v1/driving/$startLng,$startLat;$endLng,$endLat?overview=full&geometries=geojson';
-      
+      final url =
+          'https://router.project-osrm.org/route/v1/driving/$startLng,$startLat;$endLng,$endLat?overview=full&geometries=geojson';
+
       final dio = Dio();
       final response = await dio.get(url);
 
       if (response.statusCode == 200) {
         final data = response.data;
-        final List<dynamic> coordinates = data['routes'][0]['geometry']['coordinates'];
-        
+        final List<dynamic> coordinates =
+            data['routes'][0]['geometry']['coordinates'];
+
         // OSRM returns [lng, lat], convert to LatLng(lat, lng)
-        return coordinates.map((coord) => LatLng(coord[1].toDouble(), coord[0].toDouble())).toList();
+        return coordinates
+            .map((coord) => LatLng(coord[1].toDouble(), coord[0].toDouble()))
+            .toList();
       }
     } on DioException catch (e) {
       if (e.response?.statusCode == 400) {
         debugPrint(
-            '📍 [LocationHelper] OSRM 400 Bad Request: No route found. This usually happens if the points are too far apart (e.g., continents apart) or in un-routable areas. Response: ${e.response?.data}');
+          '📍 [LocationHelper] OSRM 400 Bad Request: No route found. This usually happens if the points are too far apart (e.g., continents apart) or in un-routable areas. Response: ${e.response?.data}',
+        );
       } else {
-        debugPrint('📍 [LocationHelper] DioException fetching route points: $e');
+        debugPrint(
+          '📍 [LocationHelper] DioException fetching route points: $e',
+        );
       }
     } catch (e) {
       debugPrint('📍 [LocationHelper] Error fetching route points: $e');

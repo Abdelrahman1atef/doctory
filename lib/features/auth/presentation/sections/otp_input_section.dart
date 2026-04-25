@@ -6,13 +6,15 @@ import 'package:doctory/features/auth/cubit/auth_states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:doctory/core/services/alerts.dart';
 import 'package:go_router/go_router.dart';
 import 'package:pinput/pinput.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:easy_localization/easy_localization.dart' as easy;
 
 class OtpInputSection extends StatefulWidget {
   final String? email;
-  const OtpInputSection({super.key, this.email});
+  final bool isForgotPassword;
+  const OtpInputSection({super.key, this.email, this.isForgotPassword = false});
 
   @override
   State<OtpInputSection> createState() => _OtpInputSectionState();
@@ -37,49 +39,64 @@ class _OtpInputSectionState extends State<OtpInputSection> {
           SmartDialog.dismiss();
         }
 
-        if (state is VerifySuccessState) {
-          context.go(AppRoutes.completeProfile);
+        if (state is AuthSuccessState) {
+          if (widget.isForgotPassword) {
+            // For forgot password, 'data' is AuthResponse which contains tokens
+            // We pass the accessToken (used as verification token) to the next screen
+            context.push(
+              AppRoutes.resetPassword,
+              extra: {
+                'email': widget.email,
+                'token': state.data.accessToken,
+              },
+            );
+          } else {
+            context.go(AppRoutes.locationPermission);
+          }
         } else if (state is AuthErrorState) {
-          SmartDialog.showToast(state.message);
+          Alerts.showSnackBar(context, message: state.message, state: SnackState.failed);
         }
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           /// Pin Code Input (Using Pinput)
-          Center(
-            child: Pinput(
-              length: 6, // Adjusted to 6 as it's common, or keep 4 if specified
-              controller: _otpController,
-              defaultPinTheme: PinTheme(
-                width: 56,
-                height: 56,
-                textStyle: AppStyles.s24Bold.copyWith(
-                  color: AppColors.stitchPrimary,
+          Directionality(
+            textDirection: TextDirection.ltr,
+            child: Center(
+              child: Pinput(
+                length: 6,
+                controller: _otpController,
+                defaultPinTheme: PinTheme(
+                  width: 56,
+                  height: 56,
+                  textStyle: AppStyles.s24Bold.copyWith(
+                    color: AppColors.stitchPrimary,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.stitchPrimary.withAlpha(25),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: Colors.transparent),
+                  ),
                 ),
-                decoration: BoxDecoration(
-                  color: AppColors.stitchPrimary.withAlpha(25),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.transparent),
+                focusedPinTheme: PinTheme(
+                  width: 60,
+                  height: 60,
+                  textStyle: AppStyles.s24Bold.copyWith(
+                    color: AppColors.stitchPrimary,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.stitchPrimary.withAlpha(40),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.stitchPrimary, width: 2),
+                  ),
                 ),
+                onCompleted: (pin) {
+                  if (widget.email != null) {
+                    context.read<AuthCubit>().verify(widget.email!, pin);
+                  }
+                },
               ),
-              focusedPinTheme: PinTheme(
-                width: 60,
-                height: 60,
-                textStyle: AppStyles.s24Bold.copyWith(
-                  color: AppColors.stitchPrimary,
-                ),
-                decoration: BoxDecoration(
-                  color: AppColors.stitchPrimary.withAlpha(40),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.stitchPrimary, width: 2),
-                ),
-              ),
-              onCompleted: (pin) {
-                if (widget.email != null) {
-                  context.read<AuthCubit>().verify(widget.email!, pin);
-                }
-              },
             ),
           ),
 
@@ -96,7 +113,7 @@ class _OtpInputSectionState extends State<OtpInputSection> {
                     _otpController.text,
                   );
                 } else if (widget.email == null) {
-                  SmartDialog.showToast('Email is missing');
+                  Alerts.showSnackBar(context, message: 'Email is missing', state: SnackState.failed);
                 }
               },
               style: ElevatedButton.styleFrom(

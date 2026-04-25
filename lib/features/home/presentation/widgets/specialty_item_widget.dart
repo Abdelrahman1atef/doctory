@@ -1,6 +1,6 @@
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
-import 'package:doctory/features/home/data/model/specialty_model.dart';
+import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:flutter/material.dart';
 
 class SpecialtyItemWidget extends StatelessWidget {
@@ -26,7 +26,9 @@ class SpecialtyItemWidget extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: AppColors.white,
                   shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.stitchPrimary.withValues(alpha: 0.1)),
+                  border: Border.all(
+                    color: AppColors.stitchPrimary.withValues(alpha: 0.1),
+                  ),
                   boxShadow: [
                     BoxShadow(
                       color: AppColors.stitchPrimary.withValues(alpha: 0.08),
