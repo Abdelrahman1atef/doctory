@@ -1,4 +1,4 @@
-package com.example.doctory
+package com.doctory
 
 import io.flutter.embedding.android.FlutterActivity
 

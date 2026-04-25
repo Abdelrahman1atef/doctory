@@ -25,7 +25,7 @@ class SocialAuthResult {
 
 class SocialAuthService {
   static const String _serverClientId =
-      '793203157030-1aekjuvf8044duj2drh5f4r8slvc5ari.apps.googleusercontent.com';
+      '1077893614286-hfio622ah8p9hc0d97ms3h8e2lpmm88h.apps.googleusercontent.com';
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     serverClientId: _serverClientId.isEmpty ? null : _serverClientId,

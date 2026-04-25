@@ -50,19 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyB-h4AcPdLKlwPNSI11Y_G-OhhpRTQl2Ns',
-    appId: '1:793203157030:android:6131fb7c97cf8df57adee7',
-    messagingSenderId: '793203157030',
-    projectId: 'doctory-e1bfd',
-    storageBucket: 'doctory-e1bfd.firebasestorage.app',
+    apiKey: 'AIzaSyBe0Y23Oj65g7W_y6dj07hOaR1wEU5eZTY',
+    appId: '1:1077893614286:android:51c43c18b7b298330c9e9f',
+    messagingSenderId: '1077893614286',
+    projectId: 'doctory-1aca1',
+    storageBucket: 'doctory-1aca1.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyBX0KAP8FOFp2QVd0wP9P1eg5Nebg58HXA',
-    appId: '1:793203157030:ios:e8459e9eb12d8d8f7adee7',
-    messagingSenderId: '793203157030',
-    projectId: 'doctory-e1bfd',
-    storageBucket: 'doctory-e1bfd.firebasestorage.app',
-    iosBundleId: 'com.example.doctory',
+    apiKey: 'AIzaSyD5mwsRZYu1qnE75tTrreD4YPeNm6ttcOQ',
+    appId: '1:1077893614286:ios:9fca740ea930f68d0c9e9f',
+    messagingSenderId: '1077893614286',
+    projectId: 'doctory-1aca1',
+    storageBucket: 'doctory-1aca1.firebasestorage.app',
+    iosBundleId: 'com.doctory',
   );
+
 }

@@ -1,48 +1,48 @@
 {
   "project_info": {
-    "project_number": "793203157030",
-    "project_id": "doctory-e1bfd",
-    "storage_bucket": "doctory-e1bfd.firebasestorage.app"
+    "project_number": "1077893614286",
+    "project_id": "doctory-1aca1",
+    "storage_bucket": "doctory-1aca1.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:793203157030:android:6131fb7c97cf8df57adee7",
+        "mobilesdk_app_id": "1:1077893614286:android:51c43c18b7b298330c9e9f",
         "android_client_info": {
-          "package_name": "com.example.doctory"
+          "package_name": "com.doctory"
         }
       },
       "oauth_client": [
         {
-          "client_id": "793203157030-7602lqhtbnj0n2teqd6p8iiu4c73ukpg.apps.googleusercontent.com",
+          "client_id": "1077893614286-e27molhsup60qfde1f8lgi1r84trkcn2.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.doctory",
-            "certificate_hash": "f9540eef24a665c1e215fe6050bb13f423b0426c"
+            "package_name": "com.doctory",
+            "certificate_hash": "06e6327e5d8e26a239ab17fe9642bb5b7620775b"
           }
         },
         {
-          "client_id": "793203157030-1aekjuvf8044duj2drh5f4r8slvc5ari.apps.googleusercontent.com",
+          "client_id": "1077893614286-hfio622ah8p9hc0d97ms3h8e2lpmm88h.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyB-h4AcPdLKlwPNSI11Y_G-OhhpRTQl2Ns"
+          "current_key": "AIzaSyBe0Y23Oj65g7W_y6dj07hOaR1wEU5eZTY"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "793203157030-1aekjuvf8044duj2drh5f4r8slvc5ari.apps.googleusercontent.com",
+              "client_id": "1077893614286-hfio622ah8p9hc0d97ms3h8e2lpmm88h.apps.googleusercontent.com",
               "client_type": 3
             },
             {
-              "client_id": "793203157030-169euktkk90e0crirtr1i7apu56s3j8k.apps.googleusercontent.com",
+              "client_id": "1077893614286-71rnjraq4m1elogkkqij9sah557cnhp0.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.example.doctory"
+                "bundle_id": "com.doctory"
               }
             }
           ]
