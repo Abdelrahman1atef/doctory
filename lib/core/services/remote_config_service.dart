@@ -1,46 +1,84 @@
-import 'package:firebase_core/firebase_core.dart';
+import 'dart:io';
 import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 
 class RemoteConfigService {
-  final FirebaseRemoteConfig _remoteConfig;
+  static final FirebaseRemoteConfig _remoteConfig = FirebaseRemoteConfig.instance;
+  static String _localAppVersion = "";
 
-  RemoteConfigService(this._remoteConfig);
-
-  static Future<RemoteConfigService> init() async {
-    final remoteConfig = FirebaseRemoteConfig.instance;
-
+  static Future<void> init() async {
     try {
-      await remoteConfig.setConfigSettings(RemoteConfigSettings(
-        fetchTimeout: const Duration(minutes: 1),
-        minimumFetchInterval: const Duration(minutes: 5), // simplified interval
-      ));
+      final PackageInfo info = await PackageInfo.fromPlatform();
+      _localAppVersion = '${info.version}+${info.buildNumber}';
 
-      // Default values
-      await remoteConfig.setDefaults({
-        'BASE_URL': 'https://doctory-icare.runasp.net/api/v1/',
+      await _remoteConfig.setDefaults({
+        "BASE_URL": "https://doctory-icare.runasp.net/api/v1/",
+        "android_version": "1.0.0+1",
+        "ios_version": "1.0.0+1",
+        "android_store_link": "",
+        "ios_store_link": "",
+        "force_update": false,
+        "SHOW_FACEBOOK_AUTH": false,
+        "SHOW_GOOGLE_AUTH": false,
       });
 
-      debugPrint('Fetching Firebase Remote Config...');
-      await remoteConfig.fetch();
-      bool activated = await remoteConfig.activate();
-      debugPrint('✅✅✅ Firebase Remote Config activated successfully.${remoteConfig.getString('BASE_URL')}');
-      if (activated) {
-        
-        debugPrint('✅✅✅ Firebase Remote Config activated successfully.');
-      } else {
-        debugPrint('⛔❌ Firebase Remote Config: No new updates or already activated.');
-      }
+      await _remoteConfig.setConfigSettings(
+        RemoteConfigSettings(
+          fetchTimeout: const Duration(minutes: 1),
+          minimumFetchInterval: kDebugMode ? const Duration(seconds: 1) : const Duration(hours: 1),
+        ),
+      );
 
-      debugPrint('✅✅✅ Remote Config BASE_URL: ${remoteConfig.getString('BASE_URL')}');
-    } on FirebaseException catch (e) {
-      debugPrint('⛔❌ Firebase Remote Config Error: [${e.code}] ${e.message}');
+      await _remoteConfig.fetchAndActivate();
+      debugPrint("✅ Remote Config Fetched Successfully!");
+      debugPrint("✅ Remote Config BASE_URL: $baseUrl");
     } catch (e) {
-      debugPrint('⛔❌ Firebase Remote Config initialization failed: $e');
+      debugPrint("❌ Remote Config Error: $e");
     }
-
-    return RemoteConfigService(remoteConfig);
   }
 
-  String get baseUrl => _remoteConfig.getString('BASE_URL');
+  static String get baseUrl => _remoteConfig.getString("BASE_URL");
+  static String get androidVersion => _remoteConfig.getString("android_version");
+  static String get iosVersion => _remoteConfig.getString("ios_version");
+  static bool get isForceUpdate => _remoteConfig.getBool("force_update");
+  static String get androidStoreLink => _remoteConfig.getString("android_store_link");
+  static String get iosStoreLink => _remoteConfig.getString("ios_store_link");
+  
+  // Social Auth Toggles
+  static bool get showFacebookAuth => _remoteConfig.getBool("SHOW_FACEBOOK_AUTH");
+  static bool get showGoogleAuth => _remoteConfig.getBool("SHOW_GOOGLE_AUTH");
+
+  // For Force Update
+  static bool get needsForceUpdate {
+    if (!isForceUpdate) return false;
+
+    final String remoteVersion = Platform.isIOS ? iosVersion : androidVersion;
+
+    return _isLower(_localAppVersion, remoteVersion);
+  }
+
+  static bool _isLower(String local, String remote) {
+    try {
+      List<String> localParts = local.split('+')[0].split('.');
+      List<String> remoteParts = remote.split('+')[0].split('.');
+      int minLength = localParts.length < remoteParts.length ? localParts.length : remoteParts.length;
+      
+      for (int i = 0; i < minLength; i++) {
+        int l = int.parse(localParts[i]);
+        int r = int.parse(remoteParts[i]);
+
+        if (l < r) return true;
+        if (l > r) return false;
+      }
+
+      int localBuild = int.parse(local.contains('+') ? local.split('+')[1] : '0');
+      int remoteBuild = int.parse(remote.contains('+') ? remote.split('+')[1] : '0');
+
+      return localBuild < remoteBuild;
+    } catch (e) {
+      debugPrint("Error parsing version in _isLower: $e");
+      return local != remote;
+    }
+  }
 }

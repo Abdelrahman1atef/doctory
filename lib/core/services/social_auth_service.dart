@@ -52,8 +52,7 @@ class SocialAuthService {
       final result = SocialAuthResult(
         name: googleUser.displayName,
         email: googleUser.email,
-        // For Google, we often send idToken to the backend instead of accessToken
-        accessToken: googleAuth.idToken ?? googleAuth.accessToken ?? '',
+        accessToken: googleAuth.idToken ?? '',
         idToken: googleAuth.idToken,
         provider: 'google',
       );
@@ -85,6 +84,7 @@ class SocialAuthService {
           email: userData['email'],
           accessToken: result.accessToken?.tokenString ?? '',
           provider: 'facebook',
+          idToken: '',
         );
 
         debugPrint('===> Final Result: $socialResult');

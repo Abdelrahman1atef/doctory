@@ -1,16 +1,16 @@
 class AuthEndpoints {
-  static const String signup = '/v1/Auth/signup';
-  static const String login = '/v1/Auth/login';
-  static const String verify = '/v1/Auth/verify';
-  static const String refreshToken = '/v1/Auth/refresh-token';
-  static const String profile = '/v1/Auth/profile';
-  static const String forgetPassword = '/v1/Auth/forget-password';
-  static const String verifyResetToken = '/v1/Auth/verify-reset-token';
-  static const String resetPassword = '/v1/Auth/reset-password';
-  static const String loginFacebook = '/v1/Auth/login-facebook';
+  static const String signup = '/Auth/signup';
+  static const String login = '/Auth/login';
+  static const String verify = '/Auth/verify';
+  static const String refreshToken = '/Auth/refresh-token';
+  static const String profile = '/Auth/profile';
+  static const String forgetPassword = '/Auth/forget-password';
+  static const String verifyResetToken = '/Auth/verify-reset-token';
+  static const String resetPassword = '/Auth/reset-password';
+  static const String loginFacebook = '/Auth/login-facebook';
   static const String completeFacebookRegistration =
-      '/v1/Auth/complete-facebook-registration';
-  static const String updateProfile = '/v1/Auth/profile/update';
-  static const String updateLanguage = '/v1/Auth/language/update';
-  static const String socialLogin = '/v1/Auth/social-login'; // Keep for now
+      '/Auth/complete-facebook-registration';
+  static const String updateProfile = '/Auth/profile/update';
+  static const String updateLanguage = '/Auth/language/update';
+  static const String loginGoogle = '/Auth/login-google';
 }

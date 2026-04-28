@@ -14,6 +14,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:doctory/core/services/remote_config_service.dart';
 
 class LoginInputSection extends StatefulWidget {
   const LoginInputSection({super.key});
@@ -42,13 +43,17 @@ class _LoginInputSectionState extends State<LoginInputSection> {
     if (result != null && mounted) {
       if (result.provider == 'facebook') {
         context.read<AuthCubit>().loginFacebook(result.accessToken);
-      } else {
-        context.read<AuthCubit>().socialLogin(
-          provider: result.provider,
-          accessToken: result.accessToken,
-          name: result.name,
-          email: result.email,
-        );
+      } else if (result.provider == 'google') {
+        print('Google ID Token: ${result.idToken}');
+        if (result.idToken != null) {
+          context.read<AuthCubit>().loginGoogle(result.idToken!);
+        } else {
+          Alerts.showSnackBar(
+            context,
+            message: context.tr('google_auth_failed'),
+            state: SnackState.failed,
+          );
+        }
       }
     }
   }
@@ -188,52 +193,56 @@ class _LoginInputSectionState extends State<LoginInputSection> {
             24.ph,
 
             /// Divider
-            Row(
-              children: [
-                const Expanded(
-                  child: Divider(color: AppColors.cardBorder, thickness: 1),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    context.tr('or_login_with'),
-                    style: AppStyles.s14Medium.copyWith(
-                      color: AppColors.stitchSecondary,
+            if (RemoteConfigService.showGoogleAuth ||
+                RemoteConfigService.showFacebookAuth)
+              Row(
+                children: [
+                  const Expanded(
+                    child: Divider(color: AppColors.cardBorder, thickness: 1),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      context.tr('or_login_with'),
+                      style: AppStyles.s14Medium.copyWith(
+                        color: AppColors.stitchSecondary,
+                      ),
                     ),
                   ),
-                ),
-                const Expanded(
-                  child: Divider(color: AppColors.cardBorder, thickness: 1),
-                ),
-              ],
-            ),
-
-            32.ph,
+                  const Expanded(
+                    child: Divider(color: AppColors.cardBorder, thickness: 1),
+                  ),
+                ],
+              ),
 
             /// Social Auth Buttons
-            SocialAuthButton(
-              title: context.tr('continue_with_google'),
-              icon: const Icon(
-                Icons.g_mobiledata_rounded,
-                color: Colors.red,
-                size: 36,
+            if (RemoteConfigService.showGoogleAuth) ...[
+              32.ph,
+              SocialAuthButton(
+                title: context.tr('continue_with_google'),
+                icon: const Icon(
+                  Icons.g_mobiledata_rounded,
+                  color: Colors.red,
+                  size: 36,
+                ),
+                onTap: () =>
+                    _handleSocialAuth(sl<SocialAuthService>().signInWithGoogle),
               ),
-              onTap: () =>
-                  _handleSocialAuth(sl<SocialAuthService>().signInWithGoogle),
-            ),
+            ],
 
-            16.ph,
-
-            SocialAuthButton(
-              title: context.tr('continue_with_facebook'),
-              icon: const Icon(
-                Icons.facebook_rounded,
-                color: Colors.blue,
-                size: 28,
+            if (RemoteConfigService.showFacebookAuth) ...[
+              if (!RemoteConfigService.showGoogleAuth) 32.ph else 16.ph,
+              SocialAuthButton(
+                title: context.tr('continue_with_facebook'),
+                icon: const Icon(
+                  Icons.facebook_rounded,
+                  color: Colors.blue,
+                  size: 28,
+                ),
+                onTap: () => _handleSocialAuth(
+                    sl<SocialAuthService>().signInWithFacebook),
               ),
-              onTap: () =>
-                  _handleSocialAuth(sl<SocialAuthService>().signInWithFacebook),
-            ),
+            ],
 
             24.ph,
 

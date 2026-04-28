@@ -28,12 +28,7 @@ abstract class AuthRepo {
     required String accessToken,
     required String email,
   });
-  Future<ApiResult<AuthResponse>> socialLogin({
-    required String provider,
-    required String accessToken,
-    String? name,
-    String? email,
-  });
+  Future<ApiResult<AuthResponse>> loginGoogle(String idToken);
 }
 
 class AuthRepoImpl implements AuthRepo {
@@ -152,18 +147,8 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   @override
-  Future<ApiResult<AuthResponse>> socialLogin({
-    required String provider,
-    required String accessToken,
-    String? name,
-    String? email,
-  }) async {
-    final result = await _dataSource.socialLogin(
-      provider: provider,
-      accessToken: accessToken,
-      name: name,
-      email: email,
-    );
+  Future<ApiResult<AuthResponse>> loginGoogle(String idToken) async {
+    final result = await _dataSource.loginGoogle(idToken);
     return result.fold(
       onSuccess: (response) async {
         if (response.accessToken.isNotEmpty) {
@@ -174,6 +159,7 @@ class AuthRepoImpl implements AuthRepo {
       onFailure: (failure) => ApiResult.failure(failure),
     );
   }
+
 
   Future<void> _saveAuthSession(AuthResponse response) async {
     await UserSession.saveUser({

@@ -8,6 +8,8 @@
   "field_required": "هذا الحقل مطلوب",
   "password_too_short": "كلمة المرور قصيرة جداً (6 أحرف على الأقل)",
   "invalid_email": "يرجى إدخال بريد إلكتروني صحيح",
+  "email_required": "البريد الإلكتروني مطلوب",
+  "password_required": "كلمة المرور مطلوبة",
   "passwords_dont_match": "كلمات المرور غير متطابقة",
   "invalid_phone": "يرجى إدخل رقم هاتف صحيح",
   "login": "الدخول",

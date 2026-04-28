@@ -8,6 +8,8 @@
   "field_required": "This field is required",
   "password_too_short": "Password is too short (min 6 characters)",
   "invalid_email": "Please enter a valid email address",
+  "email_required": "Email address is required",
+  "password_required": "Password is required",
   "passwords_dont_match": "Passwords don't match",
   "invalid_phone": "Please enter a valid phone number",
   "login": "Login",

@@ -27,12 +27,7 @@ abstract class AuthRemoteDataSource {
     required String accessToken,
     required String email,
   });
-  Future<ApiResult<AuthResponse>> socialLogin({
-    required String provider,
-    required String accessToken,
-    String? name,
-    String? email,
-  });
+  Future<ApiResult<AuthResponse>> loginGoogle(String idToken);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -159,21 +154,14 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<ApiResult<AuthResponse>> socialLogin({
-    required String provider,
-    required String accessToken,
-    String? name,
-    String? email,
-  }) async {
+  Future<ApiResult<AuthResponse>> loginGoogle(String idToken) async {
     return await _apiConsumer.post(
-      path: AuthEndpoints.socialLogin,
+      path: AuthEndpoints.loginGoogle,
       body: {
-        'provider': provider,
-        'accessToken': accessToken,
-        if (name != null) 'name': name,
-        if (email != null) 'email': email,
+        'idToken': idToken,
       },
       parser: (json) => AuthResponse.fromJson(json),
     );
   }
+
 }

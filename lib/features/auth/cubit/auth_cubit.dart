@@ -78,26 +78,15 @@ class AuthCubit extends Cubit<AuthStates> {
     );
   }
 
-  void socialLogin({
-    required String provider,
-    required String accessToken,
-    String? name,
-    String? email,
-  }) async {
+  void loginGoogle(String idToken) async {
     emit(AuthLoadingState());
-
-    final result = await _authRepo.socialLogin(
-      provider: provider,
-      accessToken: accessToken,
-      name: name,
-      email: email,
-    );
-
+    final result = await _authRepo.loginGoogle(idToken);
     result.fold(
       onSuccess: (data) => emit(AuthSuccessState(data)),
       onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
     );
   }
+
 
   Future<void> verifyResetToken(String email, String token) async {
     emit(AuthLoadingState());

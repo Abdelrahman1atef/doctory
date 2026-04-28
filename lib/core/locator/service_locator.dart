@@ -34,8 +34,7 @@ class ServiceLocator {
     sl.registerLazySingleton<HiveService>(() => HiveService());
 
     // Initialize Remote Config
-    final remoteConfig = await RemoteConfigService.init();
-    sl.registerSingleton<RemoteConfigService>(remoteConfig);
+    await RemoteConfigService.init();
 
     // Initialize Firebase Analytics
     final analytics = FirebaseAnalytics.instance;
@@ -46,7 +45,7 @@ class ServiceLocator {
     sl.registerLazySingleton<NetworkConfig>(
       () {
         final config = NetworkConfig.development.copyWith(
-          baseUrl: sl<RemoteConfigService>().baseUrl,
+          baseUrl: RemoteConfigService.baseUrl,
         );
         debugPrint('NetworkConfig initialized with baseUrl: ${config.baseUrl}');
         return config;
