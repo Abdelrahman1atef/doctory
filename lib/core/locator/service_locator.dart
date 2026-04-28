@@ -1,4 +1,7 @@
+import 'package:flutter/foundation.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:doctory/core/cache/cache_helper.dart';
+import 'package:doctory/core/services/remote_config_service.dart';
 import 'package:doctory/core/cache/hive_service.dart';
 import 'package:doctory/core/cache/init_hive.dart';
 import 'package:doctory/core/network/config/network_config.dart';
@@ -30,8 +33,25 @@ class ServiceLocator {
     // Register core services
     sl.registerLazySingleton<HiveService>(() => HiveService());
 
+    // Initialize Remote Config
+    final remoteConfig = await RemoteConfigService.init();
+    sl.registerSingleton<RemoteConfigService>(remoteConfig);
+
+    // Initialize Firebase Analytics
+    final analytics = FirebaseAnalytics.instance;
+    await analytics.logAppOpen();
+    sl.registerLazySingleton<FirebaseAnalytics>(() => analytics);
+
     // Register network services
-    sl.registerLazySingleton<NetworkConfig>(() => NetworkConfig.development);
+    sl.registerLazySingleton<NetworkConfig>(
+      () {
+        final config = NetworkConfig.development.copyWith(
+          baseUrl: sl<RemoteConfigService>().baseUrl,
+        );
+        debugPrint('NetworkConfig initialized with baseUrl: ${config.baseUrl}');
+        return config;
+      },
+    );
 
     sl.registerLazySingleton<AuthInterceptor>(() => AuthInterceptor());
 

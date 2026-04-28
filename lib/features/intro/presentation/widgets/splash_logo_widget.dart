@@ -1,5 +1,6 @@
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
+import 'package:doctory/core/utils/app_assets.dart';
 import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
 
@@ -101,15 +102,12 @@ class _SplashLogoWidgetState extends State<SplashLogoWidget>
                       child: Center(
                         child: Container(
                           padding: const EdgeInsets.all(24),
-                          decoration: const BoxDecoration(
-                            color: AppColors.stitchPrimaryContainer,
+                          decoration: BoxDecoration(
+                            color: AppColors.white,
                             shape: BoxShape.circle,
+                            border: Border.all(width: 5, color: AppColors.primary)
                           ),
-                          child: const Icon(
-                            Icons.medical_services_rounded,
-                            size: 64,
-                            color: Colors.white,
-                          ),
+                          child: AppAssets.image(AppAssets.images.appLogo),
                         ),
                       ),
                     ),

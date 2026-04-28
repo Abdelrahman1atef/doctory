@@ -32,9 +32,20 @@ void main() async {
 
   // Initialize Firebase...
   try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
+    if (Firebase.apps.isEmpty) {
+      try {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+      } catch (e) {
+        if (e.toString().contains('duplicate-app')) {
+          await Firebase.initializeApp();
+        } else {
+          rethrow;
+        }
+      }
+    }
+    
     FirebaseMessaging.onBackgroundMessage(
       FBMessaging.firebaseMessagingBackgroundHandler,
     );

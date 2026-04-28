@@ -72,7 +72,7 @@ class AppAssets {
   /// تحضير الصور الأساسية (Pre-caching)
   static Future<void> precacheImages(BuildContext context) async {
     final List<String> imagesToCache = [
-      images.logo,
+      images.appLogo,
       images.bookingAr,
       images.bookingEn,
       images.compareImage,
@@ -93,7 +93,7 @@ class _Images {
   const _Images();
   final String _base = 'assets/images';
 
-  String get logo => '$_base/logo.png';
+  String get appLogo => '$_base/app_logo.png';
   String get bookingAr => '$_base/booking_ar.png';
   String get bookingEn => '$_base/booking_en.png';
   String get compareImage => '$_base/compare_image.png';

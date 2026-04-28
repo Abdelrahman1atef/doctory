@@ -27,14 +27,14 @@ class NetworkConfig {
 
   /// Development configuration
   static const NetworkConfig development = NetworkConfig(
-    baseUrl: 'https://hucliniccare-huicareapp.runasp.net/api',
+    baseUrl: 'https://doctory-icare.runasp.net/api/v1/',
     enableLogging: true,
     enableRetry: true,
   );
 
   /// Production configuration
   static const NetworkConfig production = NetworkConfig(
-    baseUrl: 'https://hucliniccare-huicareapp.runasp.net/api',
+    baseUrl: 'https://doctory-icare.runasp.net/api/v1/',
     enableLogging: false,
     enableRetry: true,
     maxRetries: 2,
@@ -42,7 +42,7 @@ class NetworkConfig {
 
   /// Testing configuration
   static const NetworkConfig testing = NetworkConfig(
-    baseUrl: 'https://hucliniccare-huicareapp.runasp.net/api',
+    baseUrl: 'https://doctory-icare.runasp.net/api/v1/',
     enableLogging: false,
     enableRetry: false,
     connectTimeout: Duration(seconds: 10),
