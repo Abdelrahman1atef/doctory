@@ -1,7 +1,5 @@
 import 'package:doctory/core/common/widgets/inputs/stitch_text_field.dart';
-import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/router/router_names.dart';
-import 'package:doctory/core/services/social_auth_service.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
@@ -34,28 +32,6 @@ class _LoginInputSectionState extends State<LoginInputSection> {
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
-  }
-
-  Future<void> _handleSocialAuth(
-    Future<SocialAuthResult?> Function() signInMethod,
-  ) async {
-    final result = await signInMethod();
-    if (result != null && mounted) {
-      if (result.provider == 'facebook') {
-        context.read<AuthCubit>().loginFacebook(result.accessToken);
-      } else if (result.provider == 'google') {
-        print('Google ID Token: ${result.idToken}');
-        if (result.idToken != null) {
-          context.read<AuthCubit>().loginGoogle(result.idToken!);
-        } else {
-          Alerts.showSnackBar(
-            context,
-            message: context.tr('google_auth_failed'),
-            state: SnackState.failed,
-          );
-        }
-      }
-    }
   }
 
   @override
@@ -225,8 +201,7 @@ class _LoginInputSectionState extends State<LoginInputSection> {
                   color: Colors.red,
                   size: 36,
                 ),
-                onTap: () =>
-                    _handleSocialAuth(sl<SocialAuthService>().signInWithGoogle),
+                onTap: () => context.read<AuthCubit>().signInWithGoogle(),
               ),
             ],
 
@@ -239,8 +214,7 @@ class _LoginInputSectionState extends State<LoginInputSection> {
                   color: Colors.blue,
                   size: 28,
                 ),
-                onTap: () => _handleSocialAuth(
-                    sl<SocialAuthService>().signInWithFacebook),
+                onTap: () => context.read<AuthCubit>().signInWithFacebook(),
               ),
             ],
 

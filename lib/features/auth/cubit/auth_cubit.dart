@@ -5,11 +5,13 @@ import 'package:doctory/features/auth/data/model/update_profile_request.dart';
 import 'package:doctory/features/auth/data/repo/auth_repo.dart';
 import 'package:doctory/core/error/failures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:doctory/core/services/social_auth_service.dart';
 
 class AuthCubit extends Cubit<AuthStates> {
   final AuthRepo _authRepo;
+  final SocialAuthService _socialAuthService;
 
-  AuthCubit(this._authRepo) : super(AuthInitialState());
+  AuthCubit(this._authRepo, this._socialAuthService) : super(AuthInitialState());
 
   void login({required String email, required String password}) async {
     emit(AuthLoadingState());
@@ -85,6 +87,26 @@ class AuthCubit extends Cubit<AuthStates> {
       onSuccess: (data) => emit(AuthSuccessState(data)),
       onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
     );
+  }
+
+  void signInWithGoogle() async {
+    emit(AuthLoadingState());
+    final result = await _socialAuthService.signInWithGoogle();
+    if (result != null && result.idToken != null) {
+      loginGoogle(result.idToken!);
+    } else {
+      emit(AuthInitialState());
+    }
+  }
+
+  void signInWithFacebook() async {
+    emit(AuthLoadingState());
+    final result = await _socialAuthService.signInWithFacebook();
+    if (result != null && result.accessToken.isNotEmpty) {
+      loginFacebook(result.accessToken);
+    } else {
+      emit(AuthInitialState());
+    }
   }
 
 

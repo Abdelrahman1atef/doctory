@@ -22,14 +22,6 @@
           }
         },
         {
-          "client_id": "1077893614286-e27molhsup60qfde1f8lgi1r84trkcn2.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.doctory",
-            "certificate_hash": "06e6327e5d8e26a239ab17fe9642bb5b7620775b"
-          }
-        },
-        {
           "client_id": "1077893614286-hfio622ah8p9hc0d97ms3h8e2lpmm88h.apps.googleusercontent.com",
           "client_type": 3
         }

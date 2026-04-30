@@ -21,6 +21,7 @@ class AuthDI {
     sl.registerLazySingleton<SocialAuthService>(() => SocialAuthService());
 
     // Cubits
-    sl.registerFactory<AuthCubit>(() => AuthCubit(sl<AuthRepo>()));
+    sl.registerFactory<AuthCubit>(
+        () => AuthCubit(sl<AuthRepo>(), sl<SocialAuthService>()));
   }
 }

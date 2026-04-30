@@ -28,39 +28,34 @@ class SocialAuthService {
       '1077893614286-hfio622ah8p9hc0d97ms3h8e2lpmm88h.apps.googleusercontent.com';
 
   final GoogleSignIn _googleSignIn = GoogleSignIn(
-    serverClientId: _serverClientId.isEmpty ? null : _serverClientId,
+    serverClientId: _serverClientId,
+    scopes: ['email'],
   );
 
   Future<SocialAuthResult?> signInWithGoogle() async {
+      print("##################### Hi from google auth1");
     try {
-      debugPrint('===> Starting Google Sign In...');
-      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      await _googleSignIn.signOut(); // <--- كان ناقص هنا await
+      final user = await _googleSignIn.signIn();
+      print("##################### Hi from google auth2");
+      if (user == null) return null;
 
-      if (googleUser == null) {
-        debugPrint('===> Google Sign In Cancelled by user');
-        return null;
+      final auth = await user.authentication;
+
+      print("##################### Hi from google auth3");
+      if (auth.idToken == null) {
+        throw Exception("ID Token is null");
       }
 
-      debugPrint('===> Google User: ${googleUser.email}');
-      debugPrint('===> Google Display Name: ${googleUser.displayName}');
-
-      final GoogleSignInAuthentication googleAuth =
-          await googleUser.authentication;
-      debugPrint('===> Google AccessToken: ${googleAuth.accessToken}');
-      debugPrint('===> Google IdToken: ${googleAuth.idToken}');
-
-      final result = SocialAuthResult(
-        name: googleUser.displayName,
-        email: googleUser.email,
-        accessToken: googleAuth.idToken ?? '',
-        idToken: googleAuth.idToken,
+      return SocialAuthResult(
+        name: user.displayName,
+        email: user.email,
+        accessToken: auth.accessToken ?? '',
+        idToken: auth.idToken,
         provider: 'google',
       );
-
-      debugPrint('===> Final Result: $result');
-      return result;
     } catch (e) {
-      debugPrint('===> Google Sign In Error: $e');
+      debugPrint('Google Sign In Error: $e');
       return null;
     }
   }
