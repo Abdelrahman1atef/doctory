@@ -29,6 +29,7 @@ abstract class AuthRepo {
     required String email,
   });
   Future<ApiResult<AuthResponse>> loginGoogle(String idToken);
+  Future<ApiResult<void>> logout(String refreshToken);
 }
 
 class AuthRepoImpl implements AuthRepo {
@@ -160,6 +161,10 @@ class AuthRepoImpl implements AuthRepo {
     );
   }
 
+  @override
+  Future<ApiResult<void>> logout(String refreshToken) async {
+    return await _dataSource.logout(refreshToken);
+  }
 
   Future<void> _saveAuthSession(AuthResponse response) async {
     await UserSession.saveUser({

@@ -1,18 +1,13 @@
-import 'package:doctory/core/common/widgets/inputs/stitch_text_field.dart';
-import 'package:doctory/core/router/router_names.dart';
-import 'package:doctory/core/theme/app_colors.dart';
-import 'package:doctory/core/theme/app_typography.dart';
-import 'package:doctory/core/utils/extensions.dart';
-import 'package:doctory/core/common/widgets/buttons/social_auth_button.dart';
-import 'package:doctory/features/auth/cubit/auth_cubit.dart';
-import 'package:doctory/features/auth/cubit/auth_states.dart';
-import 'package:doctory/core/services/alerts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:doctory/core/services/remote_config_service.dart';
+import '../../../../core/common/functions/location_helper.dart';
+import '../../../../core/router/router_names.dart';
+import '../../../../core/services/alerts.dart';
+import '../../cubit/auth_cubit.dart';
+import '../../cubit/auth_states.dart';
+import '../widgets/login_form_widget.dart';
 
 class LoginInputSection extends StatefulWidget {
   const LoginInputSection({super.key});
@@ -34,6 +29,15 @@ class _LoginInputSectionState extends State<LoginInputSection> {
     super.dispose();
   }
 
+  void _onLogin() {
+    if (_formKey.currentState!.validate()) {
+      context.read<AuthCubit>().login(
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthStates>(
@@ -45,204 +49,33 @@ class _LoginInputSectionState extends State<LoginInputSection> {
         }
 
         if (state is AuthSuccessState) {
-          context.go(AppRoutes.locationPermission);
+          LocationHelper.isPermissionGranted().then((isGranted) {
+            if (isGranted && context.mounted) {
+              context.go(AppRoutes.home);
+            } else if (context.mounted) {
+              context.go(AppRoutes.locationPermission);
+            }
+          });
         } else if (state is AuthErrorState) {
-          Alerts.showSnackBar(context, message: state.message, state: SnackState.failed);
+          Alerts.showSnackBar(
+            context,
+            message: state.message,
+            state: SnackState.failed,
+          );
         }
       },
-      child: Form(
-        key: _formKey,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            /// Email Field
-            Text(
-              context.tr('email_address'),
-              style: AppStyles.s14Medium.copyWith(
-                color: AppColors.stitchSecondary,
-              ),
-            ),
-            8.ph,
-            StitchTextField(
-              controller: _emailController,
-              hintText: context.tr('enter_your_email'),
-              keyboardType: TextInputType.emailAddress,
-              prefixIcon: const Icon(Icons.email_outlined, size: 20),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return context.tr('email_required');
-                }
-                if (!RegExp(
-                  r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$',
-                ).hasMatch(value)) {
-                  return context.tr('invalid_email');
-                }
-                return null;
-              },
-            ),
-
-            24.ph,
-
-            /// Password Field
-            Text(
-              context.tr('password'),
-              style: AppStyles.s14Medium.copyWith(
-                color: AppColors.stitchSecondary,
-              ),
-            ),
-            8.ph,
-            StitchTextField(
-              controller: _passwordController,
-              hintText: context.tr('enter_your_password'),
-              obscureText: _obscurePassword,
-              prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20),
-              suffixIcon: IconButton(
-                onPressed: () =>
-                    setState(() => _obscurePassword = !_obscurePassword),
-                icon: Icon(
-                  _obscurePassword
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
-                  size: 20,
-                  color: AppColors.stitchSecondary,
-                ),
-              ),
-              validator: (value) {
-                if (value == null || value.isEmpty) {
-                  return context.tr('password_required');
-                }
-                if (value.length < 6) {
-                  return context.tr('password_too_short');
-                }
-                return null;
-              },
-            ),
-
-            const SizedBox(height: 12),
-
-            /// Forgot Password Link
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: TextButton(
-                onPressed: () => context.push(AppRoutes.forgotPassword),
-                style: TextButton.styleFrom(
-                  padding: EdgeInsets.zero,
-                  minimumSize: const Size(0, 0),
-                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                ),
-                child: Text(
-                  context.tr('forgot_password'),
-                  style: AppStyles.s14Medium.copyWith(
-                    color: AppColors.stitchPrimary,
-                  ),
-                ),
-              ),
-            ),
-
-            32.ph,
-
-            /// Login Button
-            SizedBox(
-              height: 56,
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    context.read<AuthCubit>().login(
-                      email: _emailController.text.trim(),
-                      password: _passwordController.text,
-                    );
-                  }
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.stitchPrimaryContainer,
-                  foregroundColor: Colors.white,
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(context.tr('login'), style: AppStyles.s16SemiBold),
-              ),
-            ),
-
-            24.ph,
-
-            /// Divider
-            if (RemoteConfigService.showGoogleAuth ||
-                RemoteConfigService.showFacebookAuth)
-              Row(
-                children: [
-                  const Expanded(
-                    child: Divider(color: AppColors.cardBorder, thickness: 1),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
-                    child: Text(
-                      context.tr('or_login_with'),
-                      style: AppStyles.s14Medium.copyWith(
-                        color: AppColors.stitchSecondary,
-                      ),
-                    ),
-                  ),
-                  const Expanded(
-                    child: Divider(color: AppColors.cardBorder, thickness: 1),
-                  ),
-                ],
-              ),
-
-            /// Social Auth Buttons
-            if (RemoteConfigService.showGoogleAuth) ...[
-              32.ph,
-              SocialAuthButton(
-                title: context.tr('continue_with_google'),
-                icon: const Icon(
-                  Icons.g_mobiledata_rounded,
-                  color: Colors.red,
-                  size: 36,
-                ),
-                onTap: () => context.read<AuthCubit>().signInWithGoogle(),
-              ),
-            ],
-
-            if (RemoteConfigService.showFacebookAuth) ...[
-              if (!RemoteConfigService.showGoogleAuth) 32.ph else 16.ph,
-              SocialAuthButton(
-                title: context.tr('continue_with_facebook'),
-                icon: const Icon(
-                  Icons.facebook_rounded,
-                  color: Colors.blue,
-                  size: 28,
-                ),
-                onTap: () => context.read<AuthCubit>().signInWithFacebook(),
-              ),
-            ],
-
-            24.ph,
-
-            /// Register Link
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  context.tr('dont_have_account'),
-                  style: AppStyles.s14Medium.copyWith(
-                    color: AppColors.stitchSecondary,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => context.push(AppRoutes.register),
-                  child: Text(
-                    context.tr('register_now'),
-                    style: AppStyles.s14SemiBold.copyWith(
-                      color: AppColors.stitchPrimary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ],
-        ),
+      child: LoginFormWidget(
+        formKey: _formKey,
+        emailController: _emailController,
+        passwordController: _passwordController,
+        obscurePassword: _obscurePassword,
+        onTogglePassword: () =>
+            setState(() => _obscurePassword = !_obscurePassword),
+        onForgotPassword: () => context.push(AppRoutes.forgotPassword),
+        onLogin: _onLogin,
+        onGoogleSignIn: () => context.read<AuthCubit>().signInWithGoogle(),
+        onFacebookSignIn: () => context.read<AuthCubit>().signInWithFacebook(),
+        onRegister: () => context.push(AppRoutes.register),
       ),
     );
   }

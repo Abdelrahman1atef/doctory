@@ -28,6 +28,7 @@ abstract class AuthRemoteDataSource {
     required String email,
   });
   Future<ApiResult<AuthResponse>> loginGoogle(String idToken);
+  Future<ApiResult<void>> logout(String refreshToken);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -157,11 +158,16 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<ApiResult<AuthResponse>> loginGoogle(String idToken) async {
     return await _apiConsumer.post(
       path: AuthEndpoints.loginGoogle,
-      body: {
-        'idToken': idToken,
-      },
+      body: {'idToken': idToken},
       parser: (json) => AuthResponse.fromJson(json),
     );
   }
 
+  @override
+  Future<ApiResult<void>> logout(String refreshToken) async {
+    return await _apiConsumer.post(
+      path: AuthEndpoints.logout,
+      body: {'refreshToken': refreshToken},
+    );
+  }
 }

@@ -13,6 +13,7 @@ abstract class AppRoutes {
   static const String locationPermission = '/location-permission';
   static const String mainLayout = '/main';
   static const String home = '/home';
+  static const String more = '/more';
 
   // Clinic Locator Features
   static const String mapHome = '/map-home';

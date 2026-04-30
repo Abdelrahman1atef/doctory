@@ -13,6 +13,8 @@ import 'package:doctory/features/clinic_details/router/clinic_details_router.dar
 import 'package:doctory/features/doctor_details/router/doctor_details_router.dart';
 import 'package:doctory/features/booking/router/booking_router.dart';
 import 'package:doctory/features/patient_reviews/router/patient_reviews_router.dart';
+import 'package:doctory/features/layout/presentation/views/layout_view.dart';
+import 'package:doctory/features/more/router/more_router.dart';
 
 import 'package:doctory/core/session/user_session.dart';
 
@@ -38,8 +40,16 @@ class AppRouter {
     routes: [
       ...IntroRouter.routes,
       ...AuthRouter.routes,
-      ...HomeRouter.routes,
-      ...MapHomeRouter.routes,
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) {
+          return LayoutView(navigationShell: navigationShell);
+        },
+        branches: [
+          StatefulShellBranch(routes: HomeRouter.routes),
+          StatefulShellBranch(routes: MapHomeRouter.routes),
+          StatefulShellBranch(routes: MoreRouter.routes),
+        ],
+      ),
       ...ClinicDetailsRouter.routes,
       ...DoctorDetailsRouter.routes,
       ...BookingRouter.routes,

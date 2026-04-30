@@ -1,16 +1,13 @@
-import 'package:doctory/core/common/widgets/inputs/stitch_text_field.dart';
-import 'package:doctory/core/theme/app_colors.dart';
-import 'package:doctory/core/theme/app_typography.dart';
-import 'package:doctory/core/utils/extensions.dart';
-import 'package:doctory/core/router/router_names.dart';
-import 'package:doctory/features/auth/cubit/auth_cubit.dart';
-import 'package:doctory/features/auth/cubit/auth_states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:doctory/core/services/alerts.dart';
 import 'package:go_router/go_router.dart';
-import 'package:easy_localization/easy_localization.dart';
+import '../../../../core/router/router_names.dart';
+import '../../../../core/services/alerts.dart';
+import '../../../../core/utils/extensions.dart';
+import '../../cubit/auth_cubit.dart';
+import '../../cubit/auth_states.dart';
+import '../widgets/forgot_password_form_widget.dart';
 
 class ForgotPasswordBodySection extends StatefulWidget {
   const ForgotPasswordBodySection({super.key});
@@ -30,6 +27,12 @@ class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
     super.dispose();
   }
 
+  void _onSubmit() {
+    if (_formKey.currentState!.validate()) {
+      context.read<AuthCubit>().forgotPassword(_emailController.text.trim());
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthStates>(
@@ -41,7 +44,10 @@ class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
         }
 
         if (state is ForgotPasswordSuccessState) {
-          Alerts.showSnackBar(context, message: context.tr('reset_link_sent_success'));
+          Alerts.showSnackBar(
+            context,
+            message: context.l10n('reset_link_sent_success'),
+          );
           context.push(
             AppRoutes.otpVerification,
             extra: {
@@ -50,88 +56,19 @@ class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
             },
           );
         } else if (state is AuthErrorState) {
-          Alerts.showSnackBar(context, message: state.message, state: SnackState.failed);
+          Alerts.showSnackBar(
+            context,
+            message: state.message,
+            state: SnackState.failed,
+          );
         }
       },
       child: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            /// Header
-            Text(
-              context.tr('forgot_password_title'),
-              style: AppStyles.s24Bold.copyWith(color: AppColors.textPrimary),
-            ),
-            8.ph,
-            Text(
-              context.tr('forgot_password_subtitle'),
-              style: AppStyles.s14Medium.copyWith(
-                color: AppColors.textSecondary,
-              ),
-            ),
-
-            40.ph,
-
-            /// Form
-            Form(
-              key: _formKey,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  StitchTextField(
-                    controller: _emailController,
-                    label: context.tr('email'),
-                    hintText: 'name@example.com',
-                    keyboardType: TextInputType.emailAddress,
-                    prefixIcon: const Icon(
-                      Icons.email_outlined,
-                      color: AppColors.stitchPrimary,
-                    ),
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return context.tr('required_email');
-                      }
-                      if (!RegExp(
-                        r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$',
-                      ).hasMatch(value)) {
-                        return context.tr('wrong_email_validation');
-                      }
-                      return null;
-                    },
-                  ),
-
-                  40.ph,
-
-                  /// Submit Button
-                  SizedBox(
-                    height: 56,
-                    child: ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          context.read<AuthCubit>().forgotPassword(
-                            _emailController.text.trim(),
-                          );
-                        }
-                      },
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.stitchPrimaryContainer,
-                        foregroundColor: Colors.white,
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Text(
-                        context.tr('send_reset_link'),
-                        style: AppStyles.s16SemiBold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        child: ForgotPasswordFormWidget(
+          formKey: _formKey,
+          emailController: _emailController,
+          onSubmit: _onSubmit,
         ),
       ),
     );

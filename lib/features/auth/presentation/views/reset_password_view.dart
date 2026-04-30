@@ -5,7 +5,11 @@ import 'package:flutter/material.dart';
 class ResetPasswordView extends StatelessWidget {
   final String email;
   final String token;
-  const ResetPasswordView({super.key, required this.email, required this.token});
+  const ResetPasswordView({
+    super.key,
+    required this.email,
+    required this.token,
+  });
 
   @override
   Widget build(BuildContext context) {

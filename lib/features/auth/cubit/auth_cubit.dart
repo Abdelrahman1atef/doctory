@@ -11,7 +11,8 @@ class AuthCubit extends Cubit<AuthStates> {
   final AuthRepo _authRepo;
   final SocialAuthService _socialAuthService;
 
-  AuthCubit(this._authRepo, this._socialAuthService) : super(AuthInitialState());
+  AuthCubit(this._authRepo, this._socialAuthService)
+    : super(AuthInitialState());
 
   void login({required String email, required String password}) async {
     emit(AuthLoadingState());
@@ -108,7 +109,6 @@ class AuthCubit extends Cubit<AuthStates> {
       emit(AuthInitialState());
     }
   }
-
 
   Future<void> verifyResetToken(String email, String token) async {
     emit(AuthLoadingState());

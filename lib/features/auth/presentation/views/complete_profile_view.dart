@@ -1,8 +1,8 @@
-import 'package:doctory/core/theme/app_colors.dart';
-import 'package:doctory/features/auth/presentation/sections/profile_form_section.dart';
-import 'package:doctory/features/auth/presentation/sections/profile_header_section.dart';
-import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../sections/profile_form_section.dart';
+import '../widgets/profile_header_widget.dart';
 
 class CompleteProfileView extends StatelessWidget {
   const CompleteProfileView({super.key});
@@ -22,7 +22,7 @@ class CompleteProfileView extends StatelessWidget {
               /// Header Section
               FadeInDown(
                 duration: const Duration(milliseconds: 600),
-                child: const ProfileHeaderSection(),
+                child: const ProfileHeaderWidget(),
               ),
 
               const SizedBox(height: 48),

@@ -1,13 +1,17 @@
-import 'package:doctory/core/theme/app_colors.dart';
-import 'package:doctory/features/auth/presentation/sections/otp_header_section.dart';
-import 'package:doctory/features/auth/presentation/sections/otp_input_section.dart';
-import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
+import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../sections/otp_input_section.dart';
+import '../widgets/otp_header_widget.dart';
 
 class OtpVerificationView extends StatelessWidget {
   final String? email;
   final bool isForgotPassword;
-  const OtpVerificationView({super.key, this.email, this.isForgotPassword = false});
+  const OtpVerificationView({
+    super.key,
+    this.email,
+    this.isForgotPassword = false,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +33,7 @@ class OtpVerificationView extends StatelessWidget {
               /// Header Section
               FadeInDown(
                 duration: const Duration(milliseconds: 600),
-                child: OtpHeaderSection(email: email),
+                child: OtpHeaderWidget(email: email),
               ),
 
               const SizedBox(height: 60),
@@ -38,7 +42,10 @@ class OtpVerificationView extends StatelessWidget {
               FadeInUp(
                 duration: const Duration(milliseconds: 600),
                 delay: const Duration(milliseconds: 200),
-                child: OtpInputSection(email: email, isForgotPassword: isForgotPassword),
+                child: OtpInputSection(
+                  email: email,
+                  isForgotPassword: isForgotPassword,
+                ),
               ),
             ],
           ),

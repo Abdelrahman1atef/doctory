@@ -1,15 +1,13 @@
-import 'package:doctory/core/router/router_names.dart';
-import 'package:doctory/core/theme/app_colors.dart';
-import 'package:doctory/core/theme/app_typography.dart';
-import 'package:doctory/features/auth/cubit/auth_cubit.dart';
-import 'package:doctory/features/auth/cubit/auth_states.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
-import 'package:doctory/core/services/alerts.dart';
 import 'package:go_router/go_router.dart';
-import 'package:pinput/pinput.dart';
-import 'package:easy_localization/easy_localization.dart' as easy;
+import '../../../../core/common/functions/location_helper.dart';
+import '../../../../core/router/router_names.dart';
+import '../../../../core/services/alerts.dart';
+import '../../cubit/auth_cubit.dart';
+import '../../cubit/auth_states.dart';
+import '../widgets/otp_form_widget.dart';
 
 class OtpInputSection extends StatefulWidget {
   final String? email;
@@ -29,6 +27,31 @@ class _OtpInputSectionState extends State<OtpInputSection> {
     super.dispose();
   }
 
+  void _onVerify() {
+    if (_otpController.text.length >= 4 && widget.email != null) {
+      if (widget.isForgotPassword) {
+        context.read<AuthCubit>().verifyResetToken(
+          widget.email!,
+          _otpController.text,
+        );
+      } else {
+        context.read<AuthCubit>().verify(widget.email!, _otpController.text);
+      }
+    } else if (widget.email == null) {
+      Alerts.showSnackBar(
+        context,
+        message: 'Email is missing',
+        state: SnackState.failed,
+      );
+    }
+  }
+
+  void _onResend() {
+    if (widget.email != null) {
+      context.read<AuthCubit>().forgotPassword(widget.email!);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthStates>(
@@ -40,124 +63,47 @@ class _OtpInputSectionState extends State<OtpInputSection> {
         }
 
         if (state is AuthSuccessState) {
-          if (widget.isForgotPassword) {
-            // For forgot password, 'data' is AuthResponse which contains tokens
-            // We pass the accessToken (used as verification token) to the next screen
+          LocationHelper.isPermissionGranted().then((isGranted) {
+            if (isGranted && context.mounted) {
+              context.go(AppRoutes.home);
+            } else if (context.mounted) {
+              context.go(AppRoutes.locationPermission);
+            }
+          });
+        } else if (state is ResetTokenVerifiedState) {
+          if (state.isValid) {
             context.push(
               AppRoutes.resetPassword,
-              extra: {
-                'email': widget.email,
-                'token': state.data.accessToken,
-              },
+              extra: {'email': widget.email, 'token': _otpController.text},
             );
           } else {
-            context.go(AppRoutes.locationPermission);
+            Alerts.showSnackBar(
+              context,
+              message: 'Invalid OTP',
+              state: SnackState.failed,
+            );
           }
         } else if (state is AuthErrorState) {
-          Alerts.showSnackBar(context, message: state.message, state: SnackState.failed);
+          Alerts.showSnackBar(
+            context,
+            message: state.message,
+            state: SnackState.failed,
+          );
         }
       },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          /// Pin Code Input (Using Pinput)
-          Directionality(
-            textDirection: TextDirection.ltr,
-            child: Center(
-              child: Pinput(
-                length: 6,
-                controller: _otpController,
-                defaultPinTheme: PinTheme(
-                  width: 56,
-                  height: 56,
-                  textStyle: AppStyles.s24Bold.copyWith(
-                    color: AppColors.stitchPrimary,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.stitchPrimary.withAlpha(25),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.transparent),
-                  ),
-                ),
-                focusedPinTheme: PinTheme(
-                  width: 60,
-                  height: 60,
-                  textStyle: AppStyles.s24Bold.copyWith(
-                    color: AppColors.stitchPrimary,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.stitchPrimary.withAlpha(40),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.stitchPrimary, width: 2),
-                  ),
-                ),
-                onCompleted: (pin) {
-                  if (widget.email != null) {
-                    context.read<AuthCubit>().verify(widget.email!, pin);
-                  }
-                },
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 48),
-
-          /// Verify Button
-          SizedBox(
-            height: 56,
-            child: ElevatedButton(
-              onPressed: () {
-                if (_otpController.text.length >= 4 && widget.email != null) {
-                  context.read<AuthCubit>().verify(
-                    widget.email!,
-                    _otpController.text,
-                  );
-                } else if (widget.email == null) {
-                  Alerts.showSnackBar(context, message: 'Email is missing', state: SnackState.failed);
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.stitchPrimaryContainer,
-                foregroundColor: Colors.white,
-                elevation: 0,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                context.tr('verify_and_continue'),
-                style: AppStyles.s16SemiBold,
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          /// Resend Link
-          Column(
-            children: [
-              Text(
-                context.tr('the_code_was_not_sent'),
-                style: AppStyles.s14Medium.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              TextButton(
-                onPressed: () {
-                  if (widget.email != null) {
-                    context.read<AuthCubit>().forgotPassword(widget.email!);
-                  }
-                },
-                child: Text(
-                  context.tr('send_again'),
-                  style: AppStyles.s14Bold.copyWith(
-                    color: AppColors.stitchPrimary,
-                  ),
-                ),
-              ),
-            ],
-          ),
-        ],
+      child: OtpFormWidget(
+        otpController: _otpController,
+        onVerify: _onVerify,
+        onResend: _onResend,
+        onCompleted: (pin) {
+          if (widget.email != null) {
+            if (widget.isForgotPassword) {
+              context.read<AuthCubit>().verifyResetToken(widget.email!, pin);
+            } else {
+              context.read<AuthCubit>().verify(widget.email!, pin);
+            }
+          }
+        },
       ),
     );
   }

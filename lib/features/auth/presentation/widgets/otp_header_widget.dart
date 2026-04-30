@@ -1,11 +1,12 @@
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
-class OtpHeaderSection extends StatelessWidget {
+import '../../../../core/utils/extensions.dart';
+
+class OtpHeaderWidget extends StatelessWidget {
   final String? email;
-  const OtpHeaderSection({super.key, this.email});
+  const OtpHeaderWidget({super.key, this.email});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +30,7 @@ class OtpHeaderSection extends StatelessWidget {
 
         /// Title
         Text(
-          context.tr('otp'),
+          context.l10n('otp'),
           textAlign: TextAlign.center,
           style: AppStyles.s26Bold.copyWith(
             color: AppColors.onSurface,
@@ -50,9 +51,9 @@ class OtpHeaderSection extends StatelessWidget {
                 height: 1.5,
               ),
               children: [
-                TextSpan(text: context.tr('verification_sent_to')),
+                TextSpan(text: context.l10n('verification_sent_to')),
                 TextSpan(
-                  text: email ?? context.tr('email'),
+                  text: email ?? context.l10n('email'),
                   style: AppStyles.s16Bold.copyWith(color: AppColors.onSurface),
                 ),
               ],

@@ -1,11 +1,9 @@
-import 'package:doctory/core/theme/app_colors.dart';
-import 'package:doctory/core/utils/extensions.dart';
-import 'package:doctory/features/auth/presentation/sections/register_form_section.dart';
-import 'package:flutter/material.dart';
 import 'package:animate_do/animate_do.dart';
-import 'package:easy_localization/easy_localization.dart';
-
-import '../../../../core/theme/app_typography.dart';
+import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/extensions.dart';
+import '../sections/register_form_section.dart';
+import '../widgets/register_header_widget.dart';
 
 class RegisterView extends StatelessWidget {
   const RegisterView({super.key});
@@ -28,32 +26,7 @@ class RegisterView extends StatelessWidget {
             const SizedBox(height: 10),
 
             /// Header Section
-            FadeInDown(
-              duration: const Duration(milliseconds: 600),
-              child: Column(
-                children: [
-                  Text(
-                    context.tr('signUp'),
-                    textAlign: TextAlign.center,
-                    style: AppStyles.s14Bold.copyWith(
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.stitchPrimary,
-                      fontSize: 32,
-                      height: 1.2,
-                    ),
-                  ),
-                  12.ph,
-                  Text(
-                    context.tr('signUp_subtitle'),
-                    textAlign: TextAlign.center,
-                    style: AppStyles.s14Bold.copyWith(
-                      color: AppColors.textSecondary,
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const RegisterHeaderWidget(),
 
             const SizedBox(height: 60),
 

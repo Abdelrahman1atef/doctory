@@ -33,16 +33,12 @@ class SocialAuthService {
   );
 
   Future<SocialAuthResult?> signInWithGoogle() async {
-      print("##################### Hi from google auth1");
     try {
-      await _googleSignIn.signOut(); // <--- كان ناقص هنا await
       final user = await _googleSignIn.signIn();
-      print("##################### Hi from google auth2");
       if (user == null) return null;
 
       final auth = await user.authentication;
 
-      print("##################### Hi from google auth3");
       if (auth.idToken == null) {
         throw Exception("ID Token is null");
       }

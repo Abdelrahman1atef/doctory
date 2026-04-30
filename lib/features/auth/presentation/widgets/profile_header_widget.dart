@@ -1,10 +1,11 @@
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:flutter/material.dart';
-import 'package:easy_localization/easy_localization.dart';
 
-class ProfileHeaderSection extends StatelessWidget {
-  const ProfileHeaderSection({super.key});
+import '../../../../core/utils/extensions.dart';
+
+class ProfileHeaderWidget extends StatelessWidget {
+  const ProfileHeaderWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +13,7 @@ class ProfileHeaderSection extends StatelessWidget {
       children: [
         /// Title
         Text(
-          context.tr('complete_profile_title'),
+          context.l10n('complete_profile_title'),
           textAlign: TextAlign.center,
           style: AppStyles.s26Bold.copyWith(
             color: AppColors.onSurface,
@@ -24,7 +25,7 @@ class ProfileHeaderSection extends StatelessWidget {
 
         /// Subtitle
         Text(
-          context.tr('complete_profile_subtitle'),
+          context.l10n('complete_profile_subtitle'),
           textAlign: TextAlign.center,
           style: AppStyles.s16Medium.copyWith(color: AppColors.textSecondary),
         ),

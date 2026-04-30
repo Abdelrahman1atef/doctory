@@ -34,6 +34,12 @@ class LocationHelper {
     return true;
   }
 
+  static Future<bool> isPermissionGranted() async {
+    final permission = await Geolocator.checkPermission();
+    return permission == LocationPermission.always ||
+        permission == LocationPermission.whileInUse;
+  }
+
   static Future<LatLng> getCurrentLocation() async {
     try {
       final hasPermission = await checkAndRequestPermission();

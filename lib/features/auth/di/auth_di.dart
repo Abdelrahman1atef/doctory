@@ -22,6 +22,7 @@ class AuthDI {
 
     // Cubits
     sl.registerFactory<AuthCubit>(
-        () => AuthCubit(sl<AuthRepo>(), sl<SocialAuthService>()));
+      () => AuthCubit(sl<AuthRepo>(), sl<SocialAuthService>()),
+    );
   }
 }
