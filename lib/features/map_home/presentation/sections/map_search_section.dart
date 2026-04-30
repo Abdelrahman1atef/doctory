@@ -2,6 +2,7 @@ import 'dart:ui';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
+import 'package:doctory/features/map_home/presentation/widgets/map_filter_bottom_sheet.dart';
 import 'package:doctory/features/map_home/presentation/widgets/map_filter_chip_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,7 @@ class _MapSearchSectionState extends State<MapSearchSection> {
       right: 16,
       child: BlocConsumer<MapHomeCubit, MapHomeStates>(
         listener: (context, state) {
-          if (state is MapHomeLoaded && state.query != _searchController.text) {
+          if (state is MapHomeLoadedState && state.query != _searchController.text) {
             _searchController.text = state.query ?? '';
           }
         },
@@ -78,7 +79,7 @@ class _MapSearchSectionState extends State<MapSearchSection> {
                           child: TextField(
                             controller: _searchController,
                             onSubmitted: (value) {
-                              context.read<MapHomeCubit>().fetchNearbyClinics(query: value);
+                              context.read<MapHomeCubit>().searchClinics(searchText: value);
                             },
                             style: AppStyles.s14Medium.withColor(
                               AppColors.stitchSecondary,
@@ -95,9 +96,25 @@ class _MapSearchSectionState extends State<MapSearchSection> {
                             ),
                           ),
                         ),
-                        const Icon(
-                          Icons.tune,
-                          color: AppColors.stitchPrimaryContainer,
+                        InkWell(
+                          onTap: () {
+                            if (state is MapHomeLoadedState) {
+                              showModalBottomSheet(
+                                context: context,
+                                isScrollControlled: true,
+                                builder: (_) => BlocProvider.value(
+                                  value: context.read<MapHomeCubit>(),
+                                  child: MapFilterBottomSheet(
+                                    initialState: state,
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          child: const Icon(
+                            Icons.tune,
+                            color: AppColors.stitchPrimaryContainer,
+                          ),
                         ),
                       ],
                     ),
@@ -112,30 +129,30 @@ class _MapSearchSectionState extends State<MapSearchSection> {
                   children: [
                     MapFilterChipWidget(
                       label: 'All',
-                      isSelected: state is MapHomeLoaded && (state.query == null || state.query!.isEmpty),
+                      isSelected: state is MapHomeLoadedState && (state.query == null || state.query!.isEmpty),
                       onTap: () {
-                        context.read<MapHomeCubit>().fetchNearbyClinics();
+                        context.read<MapHomeCubit>().searchClinics();
                       },
                     ),
                     MapFilterChipWidget(
                       label: 'Dental',
-                      isSelected: state is MapHomeLoaded && state.query == 'Dental',
+                      isSelected: state is MapHomeLoadedState && state.query == 'Dental',
                       onTap: () {
-                        context.read<MapHomeCubit>().fetchNearbyClinics(query: 'Dental');
+                        context.read<MapHomeCubit>().searchClinics(searchText: 'Dental');
                       },
                     ),
                     MapFilterChipWidget(
                       label: 'Cardiology',
-                      isSelected: state is MapHomeLoaded && state.query == 'Cardiology',
+                      isSelected: state is MapHomeLoadedState && state.query == 'Cardiology',
                       onTap: () {
-                        context.read<MapHomeCubit>().fetchNearbyClinics(query: 'Cardiology');
+                        context.read<MapHomeCubit>().searchClinics(searchText: 'Cardiology');
                       },
                     ),
                     MapFilterChipWidget(
                       label: 'Eye Care',
-                      isSelected: state is MapHomeLoaded && state.query == 'Eye Care',
+                      isSelected: state is MapHomeLoadedState && state.query == 'Eye Care',
                       onTap: () {
-                        context.read<MapHomeCubit>().fetchNearbyClinics(query: 'Eye Care');
+                        context.read<MapHomeCubit>().searchClinics(searchText: 'Eye Care');
                       },
                     ),
                   ],

@@ -1,7 +1,10 @@
-import '../../../core/common/widgets/sheets/require_auth_bottom_sheet.dart';
+import 'package:easy_localization/easy_localization.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/services/alerts.dart';
 import '../../router/app_router.dart';
+import '../../router/router_names.dart';
 import '../../locator/service_locator.dart';
+import '../../session/user_session.dart';
 import '../interceptors/auth_interceptor.dart';
 
 /// Sets up a listener for unauthorized (401) events from the AuthInterceptor.
@@ -10,12 +13,17 @@ void setupAuthListener() {
   sl<AuthInterceptor>().onUnauthorized.listen((_) async {
     final context = AppRouter.navigatorKey.currentContext;
     if (context != null) {
-      // Check if we are already showing the sheet to avoid stacking
-      // Note: AuthInterceptor doesn't track this state anymore effectively if we use a stream,
-      await Future<void>.delayed(const Duration(seconds: 1));
-      // might handle it or we can add a flag here.
-      // For now, we rely on the context being valid.
-      Alerts.bottomSheet<void>(context, child: const RequireAuthBottomSheet());
+      // Clear user session
+      await UserSession.logout();
+
+      // Show message
+      Alerts.snack(
+        text: 'session_expired_login_again'.tr(),
+        state: SnackState.failed,
+      );
+
+      // Navigate to login and clear navigation stack
+      context.go(AppRoutes.login);
     }
   });
 }

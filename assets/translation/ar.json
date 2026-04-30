@@ -580,5 +580,11 @@
   "nearby_clinics": "العيادات القريبة",
   "open_now": "مفتوح الآن",
   "closed": "مغلق",
-  "years": "سنوات"
+  "years": "سنوات",
+  "filter": "تصفية",
+  "specialization": "التخصص",
+  "sort_by_nearest": "الترتيب حسب الأقرب",
+  "search_radius": "نطاق البحث",
+  "apply_filters": "تطبيق الفلاتر",
+  "session_expired_login_again": "انتهت الجلسة، يرجى تسجيل الدخول مرة أخرى"
 }

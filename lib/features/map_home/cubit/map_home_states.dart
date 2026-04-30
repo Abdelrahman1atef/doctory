@@ -1,40 +1,57 @@
-import 'package:doctory/core/common/models/shared_models.dart';
+import 'package:doctory/core/common/models/clinic_model.dart';
+import 'package:doctory/features/map_home/data/model/route_model.dart';
 
 abstract class MapHomeStates {}
 
-class MapHomeInitial extends MapHomeStates {}
+class MapHomeInitialState extends MapHomeStates {}
 
-class MapHomeLoading extends MapHomeStates {}
+class MapHomeLoadingState extends MapHomeStates {
+  final List<ClinicModel> clinics;
+  MapHomeLoadingState({this.clinics = const []});
+}
 
-class MapHomeLoaded extends MapHomeStates {
+class MapHomeLoadedState extends MapHomeStates {
   final List<ClinicModel> clinics;
   final ClinicModel? selectedClinic;
-  final List<dynamic> routePoints;
+  final RouteModel? route;
   final String? query;
+  final String? specializationId;
+  final bool isNearest;
+  final int radiusInKm;
 
-  MapHomeLoaded({
-    required this.clinics,
+  MapHomeLoadedState({
+    this.clinics = const [],
     this.selectedClinic,
-    this.routePoints = const [],
+    this.route,
     this.query,
+    this.specializationId,
+    this.isNearest = false,
+    this.radiusInKm = 5,
   });
 
-  MapHomeLoaded copyWith({
+  MapHomeLoadedState copyWith({
     List<ClinicModel>? clinics,
     ClinicModel? selectedClinic,
-    List<dynamic>? routePoints,
+    RouteModel? route,
     String? query,
+    String? specializationId,
+    bool? isNearest,
+    int? radiusInKm,
   }) {
-    return MapHomeLoaded(
+    return MapHomeLoadedState(
       clinics: clinics ?? this.clinics,
       selectedClinic: selectedClinic ?? this.selectedClinic,
-      routePoints: routePoints ?? this.routePoints,
+      route: route ?? this.route,
       query: query ?? this.query,
+      specializationId: specializationId ?? this.specializationId,
+      isNearest: isNearest ?? this.isNearest,
+      radiusInKm: radiusInKm ?? this.radiusInKm,
     );
   }
 }
 
-class MapHomeError extends MapHomeStates {
+class MapHomeErrorState extends MapHomeStates {
   final String message;
-  MapHomeError(this.message);
+  final List<ClinicModel> clinics;
+  MapHomeErrorState(this.message, {this.clinics = const []});
 }

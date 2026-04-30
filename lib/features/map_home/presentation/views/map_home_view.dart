@@ -1,3 +1,4 @@
+import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/map_home/cubit/map_home_cubit.dart';
@@ -15,21 +16,22 @@ class MapHomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => MapHomeCubit()..getUserLocationAndSearch(query: searchQuery),
+      create: (context) => sl<MapHomeCubit>()..searchClinics(searchText: searchQuery),
       child: Scaffold(
         body: BlocBuilder<MapHomeCubit, MapHomeStates>(
           builder: (context, state) {
-            final List<ClinicModel> clinics = (state is MapHomeLoaded) ? state.clinics : [];
-            final bool isLoading = state is MapHomeLoading;
+            final List<ClinicModel> clinics =
+                (state is MapHomeLoadedState) ? state.clinics : [];
+            final bool isLoading = state is MapHomeLoadingState;
 
             return Stack(
               children: [
                 // Map remains in tree
                 MapSection(clinics: clinics),
-                
+
                 const MapSearchSection(),
-                
-                if (state is MapHomeLoaded)
+
+                if (state is MapHomeLoadedState)
                   NearbyClinicsSheet(clinics: state.clinics),
 
                 if (isLoading)
@@ -41,8 +43,8 @@ class MapHomeView extends StatelessWidget {
                       ),
                     ),
                   ),
-                
-                if (state is MapHomeError)
+
+                if (state is MapHomeErrorState)
                   Center(child: Text(state.message)),
               ],
             );

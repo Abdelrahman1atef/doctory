@@ -105,9 +105,11 @@ class _MapSectionState extends State<MapSection> {
   @override
   Widget build(BuildContext context) {
     // Generate markers from current clinics
-    final Set<Marker> markers = widget.clinics.map((clinic) {
+    final Set<Marker> markers = widget.clinics.asMap().entries.map((entry) {
+      final int index = entry.key;
+      final ClinicModel clinic = entry.value;
       return Marker(
-        markerId: MarkerId(clinic.id),
+        markerId: MarkerId('${clinic.id}_$index'),
         position: LatLng(clinic.lat ?? 0.0, clinic.lng ?? 0.0),
         infoWindow: InfoWindow(title: clinic.displayName),
         onTap: () {
@@ -118,13 +120,13 @@ class _MapSectionState extends State<MapSection> {
 
     return BlocListener<MapHomeCubit, MapHomeStates>(
       listenWhen: (previous, current) {
-        if (previous is MapHomeLoaded && current is MapHomeLoaded) {
+        if (previous is MapHomeLoadedState && current is MapHomeLoadedState) {
           return previous.selectedClinic?.id != current.selectedClinic?.id;
         }
-        return current is MapHomeLoaded;
+        return current is MapHomeLoadedState;
       },
       listener: (context, state) async {
-        if (state is MapHomeLoaded && state.selectedClinic != null) {
+        if (state is MapHomeLoadedState && state.selectedClinic != null) {
           final controller = await _controller.future;
           controller.animateCamera(
             CameraUpdate.newLatLngZoom(
@@ -138,11 +140,13 @@ class _MapSectionState extends State<MapSection> {
       child: BlocBuilder<MapHomeCubit, MapHomeStates>(
         builder: (context, state) {
           Set<Polyline> polylines = {};
-          if (state is MapHomeLoaded && state.routePoints.isNotEmpty) {
+          if (state is MapHomeLoadedState &&
+              state.route != null &&
+              state.route!.geometry.isNotEmpty) {
             polylines.add(
               Polyline(
                 polylineId: const PolylineId('route'),
-                points: state.routePoints.cast<LatLng>(),
+                points: state.route!.geometry,
                 color: AppColors.stitchPrimaryContainer,
                 width: 5,
               ),

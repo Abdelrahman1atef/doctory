@@ -1,98 +1,124 @@
-import 'dart:async';
-import 'package:doctory/core/common/models/shared_models.dart';
-import 'package:doctory/features/map_home/data/data_source/map_home_mock_data.dart';
-import 'package:doctory/features/map_home/cubit/map_home_states.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:doctory/core/common/models/clinic_model.dart';
 import 'package:doctory/core/common/functions/location_helper.dart';
-import 'package:flutter/foundation.dart';
+import 'package:doctory/core/error/failures.dart';
+import 'package:doctory/features/map_home/cubit/map_home_states.dart';
+import 'package:doctory/features/map_home/data/repo/map_home_repo.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MapHomeCubit extends Cubit<MapHomeStates> {
-  MapHomeCubit() : super(MapHomeInitial());
+  final MapHomeRepo _mapHomeRepo;
 
-  List<ClinicModel> _allClinics = [];
-  ClinicModel? _selectedClinic;
-  Timer? _routeUpdateTimer;
+  MapHomeCubit(this._mapHomeRepo) : super(MapHomeInitialState());
 
-  void fetchNearbyClinics({String? query}) async {
-    emit(MapHomeLoading());
-    try {
-      // Simulate network delay
-      await Future.delayed(const Duration(milliseconds: 800));
-      _allClinics = MapHomeMockData.nearbyClinics;
-
-      if (query != null && query.isNotEmpty) {
-        final q = query.toLowerCase();
-        _allClinics = _allClinics.where((clinic) {
-          final inName = clinic.name.toLowerCase().contains(q);
-          final inNameAr = clinic.nameAr?.toLowerCase().contains(q) ?? false;
-          final inAddress = clinic.address?.toLowerCase().contains(q) ?? false;
-          final inAddressAr = clinic.addressAr?.toLowerCase().contains(q) ?? false;
-          final inSpecialties = clinic.specialties?.any((s) => s.toLowerCase().contains(q)) ?? false;
-
-          return inName || inNameAr || inAddress || inAddressAr || inSpecialties;
-        }).toList();
-      }
-
-      emit(MapHomeLoaded(clinics: _allClinics, query: query));
-    } catch (e) {
-      emit(MapHomeError('Failed to load clinics'));
-    }
-  }
-
-  void getUserLocationAndSearch({String? query}) async {
-    emit(MapHomeLoading());
-    try {
-      await LocationHelper.getCurrentLocation();
-      // In a real app, you'd send lat/lng to the API
-      fetchNearbyClinics(query: query);
-    } catch (e) {
-      fetchNearbyClinics(query: query); // Fallback to fetching anyway
-    }
-  }
-
-  void selectClinic(ClinicModel? clinic) async {
-    _selectedClinic = clinic;
-    _routeUpdateTimer?.cancel(); // Cancel any existing timer
-
+  Future<void> searchClinics({
+    String? searchText,
+    String? specializationId,
+    double? userLat,
+    double? userLng,
+    bool? isNearest,
+    int? radiusInKm,
+    int? pageNumber,
+    int? pageSize,
+  }) async {
     final currentState = state;
-    if (currentState is MapHomeLoaded) {
-      emit(currentState.copyWith(
-          selectedClinic: _selectedClinic, routePoints: []));
+    List<ClinicModel> currentClinics = [];
+    String? currentQuery;
+    String? currentSpec;
+    bool currentNearest = true;
+    int currentRadius = 5;
 
-      if (_selectedClinic != null) {
-        _updateRoute(); // Initial update
-        
-        // Setup periodic update every 2 seconds
-        _routeUpdateTimer = Timer.periodic(const Duration(seconds: 5), (timer) {
-          _updateRoute();
-        });
-      }
+    if (currentState is MapHomeLoadedState) {
+      currentClinics = currentState.clinics;
+      currentQuery = searchText ?? currentState.query;
+      currentSpec = specializationId ?? currentState.specializationId;
+      currentNearest = isNearest ?? currentState.isNearest;
+      currentRadius = radiusInKm ?? currentState.radiusInKm;
+    } else {
+      currentQuery = searchText;
+      currentSpec = specializationId;
+      currentNearest = isNearest ?? true;
+      currentRadius = radiusInKm ?? 5;
     }
+
+    emit(MapHomeLoadingState(clinics: currentClinics));
+
+    // Get current location if not provided
+    double? lat = userLat;
+    double? lng = userLng;
+    if (lat == null || lng == null) {
+      final position = await LocationHelper.getCurrentLocation();
+      lat = position.latitude;
+      lng = position.longitude;
+    }
+
+    final result = await _mapHomeRepo.searchClinics(
+      searchText: currentQuery,
+      specializationId: currentSpec,
+      userLat: lat,
+      userLng: lng,
+      isNearest: currentNearest,
+      radiusInKm: currentRadius,
+      pageNumber: pageNumber,
+      pageSize: pageSize,
+    );
+
+    result.fold(
+      onSuccess: (data) {
+        if (state is MapHomeLoadedState) {
+          emit((state as MapHomeLoadedState).copyWith(
+            clinics: data.items,
+            query: currentQuery,
+            specializationId: currentSpec,
+            isNearest: currentNearest,
+            radiusInKm: currentRadius,
+          ));
+        } else {
+          emit(MapHomeLoadedState(
+            clinics: data.items,
+            query: currentQuery,
+            specializationId: currentSpec,
+            isNearest: currentNearest,
+            radiusInKm: currentRadius,
+          ));
+        }
+      },
+      onFailure: (failure) => emit(MapHomeErrorState(
+        failure.userMessage,
+        clinics: currentClinics,
+      )),
+    );
   }
 
-  Future<void> _updateRoute() async {
-    if (_selectedClinic == null) return;
+  Future<void> getRoute({
+    required double startLat,
+    required double startLng,
+    required double endLat,
+    required double endLng,
+  }) async {
+    final currentState = state;
+    if (currentState is! MapHomeLoadedState) return;
 
-    try {
-      final userLocation = await LocationHelper.getCurrentLocation();
-      final points = await LocationHelper.getRoutePoints(
-        startLat: userLocation.latitude,
-        startLng: userLocation.longitude,
-        endLat: _selectedClinic!.lat ?? 0.0,
-        endLng: _selectedClinic!.lng ?? 0.0,
-      );
+    emit(MapHomeLoadingState(clinics: currentState.clinics));
 
-      if (state is MapHomeLoaded) {
-        emit((state as MapHomeLoaded).copyWith(routePoints: points));
-      }
-    } catch (e) {
-      debugPrint('Error updating route: $e');
-    }
+    final result = await _mapHomeRepo.getRoute(
+      startLat: startLat,
+      startLng: startLng,
+      endLat: endLat,
+      endLng: endLng,
+    );
+
+    result.fold(
+      onSuccess: (data) => emit(currentState.copyWith(route: data)),
+      onFailure: (failure) => emit(MapHomeErrorState(
+        failure.userMessage,
+        clinics: currentState.clinics,
+      )),
+    );
   }
 
-  @override
-  Future<void> close() {
-    _routeUpdateTimer?.cancel();
-    return super.close();
+  void selectClinic(dynamic clinic) {
+    if (state is MapHomeLoadedState) {
+      emit((state as MapHomeLoadedState).copyWith(selectedClinic: clinic));
+    }
   }
 }

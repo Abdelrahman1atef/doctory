@@ -28,13 +28,13 @@ class _NearbyClinicsSheetState extends State<NearbyClinicsSheet> {
   Widget build(BuildContext context) {
     return BlocListener<MapHomeCubit, MapHomeStates>(
       listenWhen: (previous, current) {
-        if (previous is MapHomeLoaded && current is MapHomeLoaded) {
+        if (previous is MapHomeLoadedState && current is MapHomeLoadedState) {
           return previous.selectedClinic?.id != current.selectedClinic?.id;
         }
-        return current is MapHomeLoaded;
+        return current is MapHomeLoadedState;
       },
       listener: (context, state) {
-        if (state is MapHomeLoaded && state.selectedClinic != null) {
+        if (state is MapHomeLoadedState && state.selectedClinic != null) {
           // If sheet is expanded, collapse it to initial size to show map
           if (_sheetController.size > 0.35) {
             _sheetController.animateTo(
@@ -103,7 +103,7 @@ class _NearbyClinicsSheetState extends State<NearbyClinicsSheet> {
                 Expanded(
                   child: BlocBuilder<MapHomeCubit, MapHomeStates>(
                     builder: (context, state) {
-                      final selectedClinicId = (state is MapHomeLoaded)
+                      final selectedClinicId = (state is MapHomeLoadedState)
                           ? state.selectedClinic?.id
                           : null;
 

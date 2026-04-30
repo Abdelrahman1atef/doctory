@@ -582,5 +582,11 @@
   "nearby_clinics": "Nearby Clinics",
   "open_now": "Open Now",
   "closed": "Closed",
-  "years": "Years"
+  "years": "Years",
+  "filter": "Filter",
+  "specialization": "Specialization",
+  "sort_by_nearest": "Sort by Nearest",
+  "search_radius": "Search Radius",
+  "apply_filters": "Apply Filters",
+  "session_expired_login_again": "Session expired, please login again"
 }

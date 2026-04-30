@@ -17,11 +17,12 @@ class ClinicModel {
   final double? lng;
   final int reviewsCount;
   final List<String>? photos;
-  final Map<String, String>?
-  operatingHours; // e.g., {'Monday': '09:00 - 17:00'}
+  final Map<String, String>? operatingHours; // e.g., {'Monday': '09:00 - 17:00'}
   final bool isOpen;
   final List<DoctorModel>? doctors;
   final List<String>? specialties;
+  final bool isRegistered;
+  final String? specializationName;
   final double distance;
 
   ClinicModel({
@@ -43,6 +44,8 @@ class ClinicModel {
     this.isOpen = true,
     this.doctors,
     this.specialties,
+    this.isRegistered = false,
+    this.specializationName,
     this.distance = 0.0,
   });
 
@@ -53,8 +56,8 @@ class ClinicModel {
   /// The display description
   String get displayDescription =>
       (descriptionAr != null && descriptionAr!.isNotEmpty)
-      ? descriptionAr!
-      : description;
+          ? descriptionAr!
+          : description;
 
   /// The display address
   String get displayAddress => (addressAr != null && addressAr!.isNotEmpty)
@@ -63,7 +66,7 @@ class ClinicModel {
 
   /// Distance formatted in km
   String get distanceFormatted {
-    final km = distance * 100;
+    final km = distance; // Already in km from API
     if (km < 1) {
       return '${(km * 1000).toStringAsFixed(0)} m';
     }
@@ -92,12 +95,14 @@ class ClinicModel {
       isOpen: json['isOpen'] ?? true,
       doctors: json['doctors'] != null
           ? (json['doctors'] as List)
-                .map((e) => DoctorModel.fromJson(e))
-                .toList()
+              .map((e) => DoctorModel.fromJson(e))
+              .toList()
           : null,
       specialties: json['specialties'] != null
           ? List<String>.from(json['specialties'])
           : null,
+      isRegistered: json['isRegistered'] ?? false,
+      specializationName: json['specializationName'],
       distance: (json['distance'] ?? 0.0).toDouble(),
     );
   }
@@ -122,6 +127,8 @@ class ClinicModel {
       'isOpen': isOpen,
       'doctors': doctors?.map((e) => e.toJson()).toList(),
       'specialties': specialties,
+      'isRegistered': isRegistered,
+      'specializationName': specializationName,
       'distance': distance,
     };
   }
