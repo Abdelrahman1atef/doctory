@@ -18,52 +18,60 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Initialize Google Maps Renderer for Android
-  final GoogleMapsFlutterPlatform mapsImplementation =
-      GoogleMapsFlutterPlatform.instance;
-  if (mapsImplementation is GoogleMapsFlutterAndroid) {
-    mapsImplementation.useAndroidViewSurface = true;
-    try {
-      await mapsImplementation.initializeWithRenderer(
-        AndroidMapRenderer.latest,
-      );
-    } catch (e) {
-      debugPrint("Google Maps initialization: $e");
-    }
-  }
-
-  // Initialize Firebase...
-  try {
-    if (Firebase.apps.isEmpty) {
+  // Parallelize independent initializations
+  Future<void> initGoogleMaps() async {
+    final GoogleMapsFlutterPlatform mapsImplementation =
+        GoogleMapsFlutterPlatform.instance;
+    if (mapsImplementation is GoogleMapsFlutterAndroid) {
+      mapsImplementation.useAndroidViewSurface = true;
       try {
-        await Firebase.initializeApp(
-          options: DefaultFirebaseOptions.currentPlatform,
+        await mapsImplementation.initializeWithRenderer(
+          AndroidMapRenderer.latest,
         );
       } catch (e) {
-        if (e.toString().contains('duplicate-app')) {
-          await Firebase.initializeApp();
-        } else {
-          rethrow;
-        }
+        debugPrint("Google Maps initialization: $e");
       }
     }
-    
-    FirebaseMessaging.onBackgroundMessage(
-      FBMessaging.firebaseMessagingBackgroundHandler,
-    );
-    // Initialize the rest of FCM (permissions, token, foreground listeners)
-    await FBMessaging.initialize();
-  } catch (e) {
-    debugPrint("Firebase initialization failed: $e");
   }
 
-  await EasyLocalization.ensureInitialized();
-  await AppThemeManager.instance.initialize();
+  Future<void> initFirebase() async {
+    try {
+      if (Firebase.apps.isEmpty) {
+        try {
+          await Firebase.initializeApp(
+            options: DefaultFirebaseOptions.currentPlatform,
+          );
+        } catch (e) {
+          if (e.toString().contains('duplicate-app')) {
+            await Firebase.initializeApp();
+          } else {
+            rethrow;
+          }
+        }
+      }
+      
+      FirebaseMessaging.onBackgroundMessage(
+        FBMessaging.firebaseMessagingBackgroundHandler,
+      );
+      // Initialize the rest of FCM (permissions, token, foreground listeners)
+      await FBMessaging.initialize();
+    } catch (e) {
+      debugPrint("Firebase initialization failed: $e");
+    }
+  }
+
+  await Future.wait([
+    initGoogleMaps(),
+    initFirebase(),
+    EasyLocalization.ensureInitialized(),
+    AppThemeManager.instance.initialize(),
+  ]);
+
   await ServiceLocator.init();
   setupAuthListener();
 
-  // Precache critical SVG icons
-  await AppAssets.precacheIcons();
+  // Precache critical SVG icons in the background without blocking startup
+  AppAssets.precacheIcons();
 
   runApp(
     EasyLocalization(

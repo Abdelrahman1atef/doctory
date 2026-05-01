@@ -46,7 +46,7 @@ class AppRouter {
         },
         branches: [
           StatefulShellBranch(routes: HomeRouter.routes),
-          StatefulShellBranch(routes: MapHomeRouter.routes),
+          StatefulShellBranch(routes: MapHomeRouter.routes, preload: true),
           StatefulShellBranch(routes: MoreRouter.routes),
         ],
       ),

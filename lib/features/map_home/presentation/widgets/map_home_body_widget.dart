@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 class MapHomeBodyWidget extends StatelessWidget {
   final Widget mapSection;
   final Widget searchSection;
+  final Widget? bottomSheetSection;
   final Widget? loadingOverlay;
   final Widget? errorOverlay;
 
@@ -11,6 +12,7 @@ class MapHomeBodyWidget extends StatelessWidget {
     super.key,
     required this.mapSection,
     required this.searchSection,
+    this.bottomSheetSection,
     this.loadingOverlay,
     this.errorOverlay,
   });
@@ -20,6 +22,7 @@ class MapHomeBodyWidget extends StatelessWidget {
     return Stack(
       children: [
         mapSection,
+        if (bottomSheetSection != null) bottomSheetSection!,
         searchSection,
         if (loadingOverlay != null) loadingOverlay!,
         if (errorOverlay != null) errorOverlay!,

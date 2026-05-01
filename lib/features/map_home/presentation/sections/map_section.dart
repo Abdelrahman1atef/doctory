@@ -4,18 +4,24 @@ import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/map_home/cubit/map_home_cubit.dart';
 import 'package:doctory/features/map_home/cubit/map_home_states.dart';
-import 'package:doctory/features/map_home/presentation/widgets/map_content_widget.dart';
-import 'package:doctory/features/map_home/presentation/widgets/map_location_fab_widget.dart';
 import 'package:doctory/features/map_home/presentation/widgets/marker_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
+import 'package:doctory/features/map_home/presentation/sections/map_fabs_section.dart';
+
 class MapSection extends StatefulWidget {
   final List<ClinicModel> clinics;
   final String? selectedClinicId;
+  final ValueNotifier<double>? sheetSizeNotifier;
 
-  const MapSection({super.key, required this.clinics, this.selectedClinicId});
+  const MapSection({
+    super.key, 
+    required this.clinics, 
+    this.selectedClinicId,
+    this.sheetSizeNotifier,
+  });
 
   @override
   State<MapSection> createState() => _MapSectionState();
@@ -177,21 +183,27 @@ class _MapSectionState extends State<MapSection> {
             );
           }
 
-          return MapContentWidget(
-            mapWidget: GoogleMap(
-              initialCameraPosition: _initialPosition,
-              myLocationEnabled: true,
-              myLocationButtonEnabled: false,
-              zoomControlsEnabled: false,
-              mapToolbarEnabled: true,
-              markerType: GoogleMapMarkerType.advancedMarker,
-              markers: _customMarkers,
-              polylines: polylines,
-              onMapCreated: (GoogleMapController controller) {
-                _controller.complete(controller);
-              },
-            ),
-            fabWidget: MapLocationFabWidget(onPressed: _getCurrentLocation),
+          return Stack(
+            children: [
+              GoogleMap(
+                initialCameraPosition: _initialPosition,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: false,
+                zoomControlsEnabled: false,
+                mapToolbarEnabled: false,
+                markerType: GoogleMapMarkerType.advancedMarker,
+                markers: _customMarkers,
+                polylines: polylines,
+                onMapCreated: (GoogleMapController controller) {
+                  _controller.complete(controller);
+                },
+              ),
+              if (widget.sheetSizeNotifier != null)
+                MapFabsSection(
+                  sheetSizeNotifier: widget.sheetSizeNotifier!,
+                  onMyLocationPressed: _getCurrentLocation,
+                ),
+            ],
           );
         },
       ),

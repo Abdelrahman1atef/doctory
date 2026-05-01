@@ -21,18 +21,25 @@ class RemoteConfigService {
         "force_update": false,
         "SHOW_FACEBOOK_AUTH": false,
         "SHOW_GOOGLE_AUTH": false,
+        "SHOW_MAP_DIRECTIONS_FAB": false,
       });
 
       await _remoteConfig.setConfigSettings(
         RemoteConfigSettings(
-          fetchTimeout: const Duration(minutes: 1),
+          fetchTimeout: const Duration(seconds: 5),
           minimumFetchInterval: kDebugMode ? const Duration(seconds: 1) : const Duration(hours: 1),
         ),
       );
 
-      await _remoteConfig.fetchAndActivate();
+      // Add a fallback timeout so it doesn't block the app indefinitely
+      await _remoteConfig.fetchAndActivate().timeout(
+        const Duration(seconds: 5),
+        onTimeout: () {
+          debugPrint("⚠️ Remote Config fetch timed out, using defaults.");
+          return false;
+        },
+      );
       debugPrint("✅ Remote Config Fetched Successfully!");
-      debugPrint("✅ Remote Config BASE_URL: $baseUrl");
     } catch (e) {
       debugPrint("❌ Remote Config Error: $e");
     }
@@ -48,6 +55,7 @@ class RemoteConfigService {
   // Social Auth Toggles
   static bool get showFacebookAuth => _remoteConfig.getBool("SHOW_FACEBOOK_AUTH");
   static bool get showGoogleAuth => _remoteConfig.getBool("SHOW_GOOGLE_AUTH");
+  static bool get showMapDirectionsFab => _remoteConfig.getBool("SHOW_MAP_DIRECTIONS_FAB");
 
   // For Force Update
   static bool get needsForceUpdate {
