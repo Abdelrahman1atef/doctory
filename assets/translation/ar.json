@@ -586,5 +586,9 @@
   "sort_by_nearest": "الترتيب حسب الأقرب",
   "search_radius": "نطاق البحث",
   "apply_filters": "تطبيق الفلاتر",
-  "session_expired_login_again": "انتهت الجلسة، يرجى تسجيل الدخول مرة أخرى"
+  "session_expired_login_again": "انتهت الجلسة، يرجى تسجيل الدخول مرة أخرى",
+  "search_location": "موقع البحث",
+  "current_location": "الموقع الحالي",
+  "pick_location": "اختيار موقع",
+  "confirm_location": "تأكيد الموقع"
 }

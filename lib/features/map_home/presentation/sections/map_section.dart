@@ -4,15 +4,18 @@ import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/map_home/cubit/map_home_cubit.dart';
 import 'package:doctory/features/map_home/cubit/map_home_states.dart';
+import 'package:doctory/features/map_home/presentation/widgets/map_content_widget.dart';
 import 'package:doctory/features/map_home/presentation/widgets/map_location_fab_widget.dart';
+import 'package:doctory/features/map_home/presentation/widgets/marker_generator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapSection extends StatefulWidget {
   final List<ClinicModel> clinics;
+  final String? selectedClinicId;
 
-  const MapSection({super.key, required this.clinics});
+  const MapSection({super.key, required this.clinics, this.selectedClinicId});
 
   @override
   State<MapSection> createState() => _MapSectionState();
@@ -21,6 +24,7 @@ class MapSection extends StatefulWidget {
 class _MapSectionState extends State<MapSection> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
+  Set<Marker> _customMarkers = {};
 
   // Default to Mansoura
   static const CameraPosition _initialPosition = CameraPosition(
@@ -31,6 +35,7 @@ class _MapSectionState extends State<MapSection> {
   @override
   void initState() {
     super.initState();
+    _generateCustomMarkers();
     if (widget.clinics.isNotEmpty) {
       // Small delay to ensure controller is ready
       WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -44,8 +49,40 @@ class _MapSectionState extends State<MapSection> {
   @override
   void didUpdateWidget(MapSection oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.clinics != oldWidget.clinics && widget.clinics.isNotEmpty) {
-      _fitResults();
+    if (widget.clinics != oldWidget.clinics || widget.selectedClinicId != oldWidget.selectedClinicId) {
+      if (widget.clinics != oldWidget.clinics && widget.clinics.isNotEmpty) {
+        _fitResults();
+      }
+      _generateCustomMarkers();
+    }
+  }
+
+  Future<void> _generateCustomMarkers() async {
+    final Set<Marker> newMarkers = {};
+    for (int i = 0; i < widget.clinics.length; i++) {
+      final clinic = widget.clinics[i];
+      final String title = clinic.displayName;
+      final bool isSelected = clinic.id == widget.selectedClinicId;
+      
+      final icon = await MarkerGenerator.createCustomMarkerBitmap(title, isSelected: isSelected);
+      
+      newMarkers.add(
+        Marker(
+          markerId: MarkerId('${clinic.id}_$i'),
+          position: LatLng(clinic.lat ?? 0.0, clinic.lng ?? 0.0),
+          infoWindow: InfoWindow(title: clinic.displayName),
+          icon: icon,
+          onTap: () {
+            context.read<MapHomeCubit>().selectClinic(clinic);
+          },
+        ),
+      );
+    }
+
+    if (mounted) {
+      setState(() {
+        _customMarkers = newMarkers;
+      });
     }
   }
 
@@ -104,19 +141,6 @@ class _MapSectionState extends State<MapSection> {
 
   @override
   Widget build(BuildContext context) {
-    // Generate markers from current clinics
-    final Set<Marker> markers = widget.clinics.asMap().entries.map((entry) {
-      final int index = entry.key;
-      final ClinicModel clinic = entry.value;
-      return Marker(
-        markerId: MarkerId('${clinic.id}_$index'),
-        position: LatLng(clinic.lat ?? 0.0, clinic.lng ?? 0.0),
-        infoWindow: InfoWindow(title: clinic.displayName),
-        onTap: () {
-          context.read<MapHomeCubit>().selectClinic(clinic);
-        },
-      );
-    }).toSet();
 
     return BlocListener<MapHomeCubit, MapHomeStates>(
       listenWhen: (previous, current) {
@@ -153,25 +177,21 @@ class _MapSectionState extends State<MapSection> {
             );
           }
 
-          return Stack(
-            children: [
-              GoogleMap(
-                initialCameraPosition: _initialPosition,
-                myLocationEnabled: true,
-                myLocationButtonEnabled: false,
-                zoomControlsEnabled: false,
-                markers: markers,
-                polylines: polylines,
-                onMapCreated: (GoogleMapController controller) {
-                  _controller.complete(controller);
-                },
-              ),
-              Positioned(
-                bottom: MediaQuery.of(context).size.height * 0.35 + 16,
-                right: 16,
-                child: MapLocationFabWidget(onPressed: _getCurrentLocation),
-              ),
-            ],
+          return MapContentWidget(
+            mapWidget: GoogleMap(
+              initialCameraPosition: _initialPosition,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: false,
+              zoomControlsEnabled: false,
+              mapToolbarEnabled: true,
+              markerType: GoogleMapMarkerType.advancedMarker,
+              markers: _customMarkers,
+              polylines: polylines,
+              onMapCreated: (GoogleMapController controller) {
+                _controller.complete(controller);
+              },
+            ),
+            fabWidget: MapLocationFabWidget(onPressed: _getCurrentLocation),
           );
         },
       ),

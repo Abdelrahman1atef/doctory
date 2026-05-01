@@ -1,4 +1,4 @@
-import 'package:doctory/core/error/failures.dart';
+import 'package:doctory/core/error/error_handler.dart';
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import 'package:doctory/features/home/data/data_source/home_remote_data_source.dart';
 import 'package:doctory/core/common/models/shared_models.dart';
@@ -18,8 +18,8 @@ class HomeRepoImpl implements HomeRepo {
   Future<ApiResult<List<SpecialtyModel>>> getSpecialties() async {
     try {
       return await _remoteDataSource.getSpecialties();
-    } catch (e) {
-      return ApiResult.failure(UnknownFailure(message: e.toString()));
+    } on Exception catch (e) {
+      return ApiResult.failure(ErrorHandler.handleException(e));
     }
   }
 
@@ -27,8 +27,8 @@ class HomeRepoImpl implements HomeRepo {
   Future<ApiResult<List<DoctorModel>>> getRecommendedDoctors() async {
     try {
       return await _remoteDataSource.getRecommendedDoctors();
-    } catch (e) {
-      return ApiResult.failure(UnknownFailure(message: e.toString()));
+    } on Exception catch (e) {
+      return ApiResult.failure(ErrorHandler.handleException(e));
     }
   }
 
@@ -36,8 +36,8 @@ class HomeRepoImpl implements HomeRepo {
   Future<ApiResult<List<ClinicModel>>> getFeaturedClinics() async {
     try {
       return await _remoteDataSource.getFeaturedClinics();
-    } catch (e) {
-      return ApiResult.failure(UnknownFailure(message: e.toString()));
+    } on Exception catch (e) {
+      return ApiResult.failure(ErrorHandler.handleException(e));
     }
   }
 }

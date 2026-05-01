@@ -3,6 +3,7 @@ import 'package:doctory/core/common/functions/location_helper.dart';
 import 'package:doctory/core/error/failures.dart';
 import 'package:doctory/features/map_home/cubit/map_home_states.dart';
 import 'package:doctory/features/map_home/data/repo/map_home_repo.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class MapHomeCubit extends Cubit<MapHomeStates> {
@@ -42,13 +43,18 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
 
     emit(MapHomeLoadingState(clinics: currentClinics));
 
-    // Get current location if not provided
+    // Use custom location from state > provided params > GPS
     double? lat = userLat;
     double? lng = userLng;
     if (lat == null || lng == null) {
-      final position = await LocationHelper.getCurrentLocation();
-      lat = position.latitude;
-      lng = position.longitude;
+      if (currentState is MapHomeLoadedState && currentState.hasCustomLocation) {
+        lat = currentState.customLat;
+        lng = currentState.customLng;
+      } else {
+        final position = await LocationHelper.getCurrentLocation();
+        lat = position.latitude;
+        lng = position.longitude;
+      }
     }
 
     final result = await _mapHomeRepo.searchClinics(
@@ -65,27 +71,28 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     result.fold(
       onSuccess: (data) {
         if (state is MapHomeLoadedState) {
-          emit((state as MapHomeLoadedState).copyWith(
-            clinics: data.items,
-            query: currentQuery,
-            specializationId: currentSpec,
-            isNearest: currentNearest,
-            radiusInKm: currentRadius,
-          ));
+          emit(
+            (state as MapHomeLoadedState).copyWith(
+              clinics: data.items,
+              query: currentQuery,
+              specializationId: currentSpec,
+              isNearest: currentNearest,
+              radiusInKm: currentRadius,
+            ),
+          );
         } else {
-          emit(MapHomeLoadedState(
-            clinics: data.items,
-            query: currentQuery,
-            specializationId: currentSpec,
-            isNearest: currentNearest,
-            radiusInKm: currentRadius,
-          ));
+          emit(
+            MapHomeLoadedState(
+              clinics: data.items,
+              query: currentQuery,
+              specializationId: currentSpec,
+              isNearest: currentNearest,
+              radiusInKm: currentRadius,
+            ),
+          );
         }
       },
-      onFailure: (failure) => emit(MapHomeErrorState(
-        failure.userMessage,
-        clinics: currentClinics,
-      )),
+      onFailure: (failure) => emit(MapHomeErrorState(failure.userMessage, clinics: currentClinics)),
     );
   }
 
@@ -98,8 +105,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     final currentState = state;
     if (currentState is! MapHomeLoadedState) return;
 
-    emit(MapHomeLoadingState(clinics: currentState.clinics));
-
+    // Use backend endpoint to get the route (which wraps OSRM data internally)
     final result = await _mapHomeRepo.getRoute(
       startLat: startLat,
       startLng: startLng,
@@ -109,16 +115,52 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
 
     result.fold(
       onSuccess: (data) => emit(currentState.copyWith(route: data)),
-      onFailure: (failure) => emit(MapHomeErrorState(
-        failure.userMessage,
-        clinics: currentState.clinics,
-      )),
+      onFailure: (failure) {
+        // Silently fail for route — don't break the UI
+        debugPrint('Route fetch failed (Backend): ${failure.message}');
+      },
     );
   }
 
-  void selectClinic(dynamic clinic) {
-    if (state is MapHomeLoadedState) {
-      emit((state as MapHomeLoadedState).copyWith(selectedClinic: clinic));
+  void selectClinic(ClinicModel clinic) async {
+    final currentState = state;
+    if (currentState is MapHomeLoadedState) {
+      emit(currentState.copyWith(selectedClinic: clinic));
+
+      // Automatically get route to selected clinic
+      double startLat;
+      double startLng;
+      if (currentState.hasCustomLocation) {
+        startLat = currentState.customLat!;
+        startLng = currentState.customLng!;
+      } else {
+        final userLocation = await LocationHelper.getCurrentLocation();
+        startLat = userLocation.latitude;
+        startLng = userLocation.longitude;
+      }
+
+      await getRoute(
+        startLat: startLat,
+        startLng: startLng,
+        endLat: clinic.lat ?? 0.0,
+        endLng: clinic.lng ?? 0.0,
+      );
+    }
+  }
+
+  /// Set a custom search location (user-picked on map)
+  void setCustomLocation(double lat, double lng) {
+    final currentState = state;
+    if (currentState is MapHomeLoadedState) {
+      emit(currentState.copyWith(customLat: lat, customLng: lng));
+    }
+  }
+
+  /// Reset to current GPS location
+  void clearCustomLocation() {
+    final currentState = state;
+    if (currentState is MapHomeLoadedState) {
+      emit(currentState.clearCustomLocation());
     }
   }
 }

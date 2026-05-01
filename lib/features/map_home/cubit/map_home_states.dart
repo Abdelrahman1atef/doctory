@@ -18,6 +18,8 @@ class MapHomeLoadedState extends MapHomeStates {
   final String? specializationId;
   final bool isNearest;
   final int radiusInKm;
+  final double? customLat;
+  final double? customLng;
 
   MapHomeLoadedState({
     this.clinics = const [],
@@ -27,7 +29,12 @@ class MapHomeLoadedState extends MapHomeStates {
     this.specializationId,
     this.isNearest = false,
     this.radiusInKm = 5,
+    this.customLat,
+    this.customLng,
   });
+
+  /// Whether user has set a custom search location
+  bool get hasCustomLocation => customLat != null && customLng != null;
 
   MapHomeLoadedState copyWith({
     List<ClinicModel>? clinics,
@@ -37,6 +44,8 @@ class MapHomeLoadedState extends MapHomeStates {
     String? specializationId,
     bool? isNearest,
     int? radiusInKm,
+    double? customLat,
+    double? customLng,
   }) {
     return MapHomeLoadedState(
       clinics: clinics ?? this.clinics,
@@ -46,6 +55,23 @@ class MapHomeLoadedState extends MapHomeStates {
       specializationId: specializationId ?? this.specializationId,
       isNearest: isNearest ?? this.isNearest,
       radiusInKm: radiusInKm ?? this.radiusInKm,
+      customLat: customLat ?? this.customLat,
+      customLng: customLng ?? this.customLng,
+    );
+  }
+
+  /// Create copy that resets custom location to null
+  MapHomeLoadedState clearCustomLocation() {
+    return MapHomeLoadedState(
+      clinics: clinics,
+      selectedClinic: selectedClinic,
+      route: route,
+      query: query,
+      specializationId: specializationId,
+      isNearest: isNearest,
+      radiusInKm: radiusInKm,
+      customLat: null,
+      customLng: null,
     );
   }
 }

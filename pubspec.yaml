@@ -95,6 +95,7 @@ flutter:
     - assets/icons/
     - assets/fonts/
     - assets/json/
+    - assets/lottie/
 
   fonts:
     - family: Bukra

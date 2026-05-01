@@ -7,6 +7,7 @@ import '../../../../core/services/alerts.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../cubit/auth_cubit.dart';
 import '../../cubit/auth_states.dart';
+import '../widgets/auth_form_container_widget.dart';
 import '../widgets/forgot_password_form_widget.dart';
 
 class ForgotPasswordBodySection extends StatefulWidget {
@@ -63,8 +64,7 @@ class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
           );
         }
       },
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: AuthFormContainerWidget(
         child: ForgotPasswordFormWidget(
           formKey: _formKey,
           emailController: _emailController,
@@ -74,3 +74,4 @@ class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
     );
   }
 }
+

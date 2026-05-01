@@ -588,5 +588,9 @@
   "sort_by_nearest": "Sort by Nearest",
   "search_radius": "Search Radius",
   "apply_filters": "Apply Filters",
-  "session_expired_login_again": "Session expired, please login again"
+  "session_expired_login_again": "Session expired, please login again",
+  "search_location": "Search Location",
+  "current_location": "Current Location",
+  "pick_location": "Pick Location",
+  "confirm_location": "Confirm Location"
 }

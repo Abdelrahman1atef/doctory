@@ -1,8 +1,5 @@
-import 'package:doctory/core/theme/app_colors.dart';
-import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/common/models/shared_models.dart';
-import 'package:doctory/features/home/presentation/widgets/specialty_item_widget.dart';
-import 'package:easy_localization/easy_localization.dart';
+import 'package:doctory/features/home/presentation/widgets/home_specialties_list_widget.dart';
 import 'package:flutter/material.dart';
 
 class HomeSpecialtiesSection extends StatelessWidget {
@@ -14,40 +11,11 @@ class HomeSpecialtiesSection extends StatelessWidget {
   Widget build(BuildContext context) {
     if (specialties.isEmpty) return const SizedBox.shrink();
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              context.tr('specialties'),
-              style: AppStyles.s16Bold.copyWith(color: AppColors.textPrimary),
-            ),
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                context.tr('see_all'),
-                style: AppStyles.s14Medium.copyWith(
-                  color: AppColors.stitchPrimary,
-                ),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        SizedBox(
-          height: 70,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            itemCount: specialties.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
-            itemBuilder: (context, index) {
-              return SpecialtyItemWidget(specialty: specialties[index]);
-            },
-          ),
-        ),
-      ],
+    return HomeSpecialtiesListWidget(
+      specialties: specialties,
+      onSeeAll: () {
+        // TODO: Navigate to all specialties
+      },
     );
   }
 }

@@ -7,6 +7,7 @@ import '../../../../core/services/alerts.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../cubit/auth_cubit.dart';
 import '../../cubit/auth_states.dart';
+import '../widgets/auth_form_container_widget.dart';
 import '../widgets/reset_password_form_widget.dart';
 
 class ResetPasswordBodySection extends StatefulWidget {
@@ -72,8 +73,7 @@ class _ResetPasswordBodySectionState extends State<ResetPasswordBodySection> {
           );
         }
       },
-      child: SingleChildScrollView(
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: AuthFormContainerWidget(
         child: ResetPasswordFormWidget(
           formKey: _formKey,
           passwordController: _passwordController,
@@ -91,3 +91,4 @@ class _ResetPasswordBodySectionState extends State<ResetPasswordBodySection> {
     );
   }
 }
+

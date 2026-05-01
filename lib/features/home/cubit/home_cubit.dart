@@ -1,3 +1,5 @@
+import 'package:doctory/core/network/interfaces/api_result.dart';
+import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/features/home/cubit/home_states.dart';
 import 'package:doctory/features/home/data/repo/home_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,30 +12,37 @@ class HomeCubit extends Cubit<HomeStates> {
   void getHomeData() async {
     emit(HomeLoadingState());
 
-    final specialtiesResult = await _homeRepo.getSpecialties();
-    final doctorsResult = await _homeRepo.getRecommendedDoctors();
-    final clinicsResult = await _homeRepo.getFeaturedClinics();
+    final results = await Future.wait([
+      _homeRepo.getSpecialties(),
+      _homeRepo.getRecommendedDoctors(),
+      _homeRepo.getFeaturedClinics(),
+    ]);
 
-    // If any fails, emit error
-    if (specialtiesResult.isFailure) {
-      emit(HomeErrorState(specialtiesResult.failure!.message));
-      return;
-    }
-    if (doctorsResult.isFailure) {
-      emit(HomeErrorState(doctorsResult.failure!.message));
-      return;
-    }
-    if (clinicsResult.isFailure) {
-      emit(HomeErrorState(clinicsResult.failure!.message));
-      return;
-    }
+    final specialtiesResult = results[0] as ApiResult<List<SpecialtyModel>>;
+    final doctorsResult = results[1] as ApiResult<List<DoctorModel>>;
+    final clinicsResult = results[2] as ApiResult<List<ClinicModel>>;
 
-    emit(
-      HomeSuccessState(
-        specialties: specialtiesResult.data ?? [],
-        recommendedDoctors: doctorsResult.data ?? [],
-        featuredClinics: clinicsResult.data ?? [],
-      ),
+    specialtiesResult.fold(
+      onSuccess: (specialties) {
+        doctorsResult.fold(
+          onSuccess: (doctors) {
+            clinicsResult.fold(
+              onSuccess: (clinics) {
+                emit(
+                  HomeSuccessState(
+                    specialties: specialties,
+                    recommendedDoctors: doctors,
+                    featuredClinics: clinics,
+                  ),
+                );
+              },
+              onFailure: (failure) => emit(HomeErrorState(failure.message)),
+            );
+          },
+          onFailure: (failure) => emit(HomeErrorState(failure.message)),
+        );
+      },
+      onFailure: (failure) => emit(HomeErrorState(failure.message)),
     );
   }
 }
