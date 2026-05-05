@@ -11,6 +11,7 @@ import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
 import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 import 'package:doctory/core/network/util/auth_listener.dart';
+import 'package:doctory/core/services/remote_config_service.dart'; // Add this import
 
 import 'firebase_options.dart';
 
@@ -53,14 +54,14 @@ void main() async {
         FBMessaging.firebaseMessagingBackgroundHandler,
       );
       // Initialize the rest of FCM (permissions, token, foreground listeners)
-      await FBMessaging.initialize();
+      // Moved to background after runApp FBMessaging.initialize();
     } catch (e) {
       debugPrint("Firebase initialization failed: $e");
     }
   }
 
   await Future.wait([
-    initGoogleMaps(),
+    // initGoogleMaps(), // Moved to background after runApp
     initFirebase(),
     EasyLocalization.ensureInitialized(),
     AppThemeManager.instance.initialize(),
@@ -81,4 +82,13 @@ void main() async {
       child: const Doctory(),
     ),
   );
+
+  // Initialize Remote Config in the background after runApp
+  RemoteConfigService.init(); // No await here to avoid blocking
+
+  // Initialize FCM in the background after runApp
+  FBMessaging.initialize();
+
+  // Initialize Google Maps in the background after runApp
+  initGoogleMaps(); // No await here to avoid blocking and allow parallel execution
 }

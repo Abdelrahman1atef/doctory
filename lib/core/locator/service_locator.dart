@@ -35,8 +35,7 @@ class ServiceLocator {
     // Register core services
     sl.registerLazySingleton<HiveService>(() => HiveService());
 
-    // Initialize Remote Config
-    await RemoteConfigService.init();
+
 
     // Initialize Firebase Analytics
     final analytics = FirebaseAnalytics.instance;
