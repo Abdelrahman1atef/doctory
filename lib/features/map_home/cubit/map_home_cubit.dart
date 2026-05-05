@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:doctory/core/common/models/clinic_model.dart';
 import 'package:doctory/core/common/functions/location_helper.dart';
 import 'package:doctory/core/error/failures.dart';
@@ -5,9 +6,11 @@ import 'package:doctory/features/map_home/cubit/map_home_states.dart';
 import 'package:doctory/features/map_home/data/repo/map_home_repo.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geolocator/geolocator.dart';
 
 class MapHomeCubit extends Cubit<MapHomeStates> {
   final MapHomeRepo _mapHomeRepo;
+  Timer? _liveLocationTimer;
 
   MapHomeCubit(this._mapHomeRepo) : super(MapHomeInitialState());
 
@@ -127,7 +130,15 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
   void selectClinic(ClinicModel clinic) async {
     final currentState = state;
     if (currentState is MapHomeLoadedState) {
-      emit(currentState.copyWith(selectedClinic: clinic));
+      emit(
+        currentState.copyWith(
+          selectedClinic: clinic,
+          isNavigating: false,
+          lastRouteLat:
+              null, // Reset last fetch location to force initial route
+          lastRouteLng: null,
+        ),
+      );
 
       // Automatically get route to selected clinic
       double startLat;
@@ -136,9 +147,24 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
         startLat = currentState.customLat!;
         startLng = currentState.customLng!;
       } else {
-        final userLocation = await LocationHelper.getCurrentLocation();
-        startLat = userLocation.latitude;
-        startLng = userLocation.longitude;
+        final position = await Geolocator.getCurrentPosition(
+          locationSettings: const LocationSettings(
+            accuracy: LocationAccuracy.high,
+          ),
+        );
+        startLat = position.latitude;
+        startLng = position.longitude;
+
+        // Update state with fetch location and heading
+        if (state is MapHomeLoadedState) {
+          emit(
+            (state as MapHomeLoadedState).copyWith(
+              currentUserLat: startLat,
+              currentUserLng: startLng,
+              currentUserHeading: position.heading,
+            ),
+          );
+        }
       }
 
       await getRoute(
@@ -147,7 +173,87 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
         endLat: clinic.lat ?? 0.0,
         endLng: clinic.lng ?? 0.0,
       );
+
+      // Update state with fetch location
+      if (state is MapHomeLoadedState) {
+        emit(
+          (state as MapHomeLoadedState).copyWith(
+            lastRouteLat: startLat,
+            lastRouteLng: startLng,
+          ),
+        );
+      }
+
+      // Start live navigation updates every 5 seconds
+      _startLiveNavigation(clinic);
     }
+  }
+
+  void _startLiveNavigation(ClinicModel clinic) {
+    _liveLocationTimer?.cancel();
+    _liveLocationTimer = Timer.periodic(const Duration(seconds: 5), (
+      timer,
+    ) async {
+      final currentState = state;
+      if (currentState is! MapHomeLoadedState ||
+          currentState.selectedClinic?.id != clinic.id) {
+        timer.cancel();
+        return;
+      }
+
+      final position = await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      );
+
+      // Check if user moved far enough from last fetch point (e.g. > 20 meters)
+      double distance = 999; // Default to large if no last point
+      if (currentState.lastRouteLat != null &&
+          currentState.lastRouteLng != null) {
+        distance = Geolocator.distanceBetween(
+          currentState.lastRouteLat!,
+          currentState.lastRouteLng!,
+          position.latitude,
+          position.longitude,
+        );
+      }
+
+      if (distance > 20) {
+        debugPrint(
+          '📍 [LiveNav] Moved ${distance.toInt()}m. Updating route...',
+        );
+        await getRoute(
+          startLat: position.latitude,
+          startLng: position.longitude,
+          endLat: clinic.lat ?? 0.0,
+          endLng: clinic.lng ?? 0.0,
+        );
+
+        if (state is MapHomeLoadedState) {
+          emit(
+            (state as MapHomeLoadedState).copyWith(
+              currentUserLat: position.latitude,
+              currentUserLng: position.longitude,
+              currentUserHeading: position.heading,
+              lastRouteLat: position.latitude,
+              lastRouteLng: position.longitude,
+            ),
+          );
+        }
+      } else {
+        debugPrint(
+          '📍 [LiveNav] Minor movement (${distance.toInt()}m). Skipping route update.',
+        );
+        emit(
+          currentState.copyWith(
+            currentUserLat: position.latitude,
+            currentUserLng: position.longitude,
+            currentUserHeading: position.heading,
+          ),
+        );
+      }
+    });
   }
 
   /// Set a custom search location (user-picked on map)
@@ -164,5 +270,25 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     if (currentState is MapHomeLoadedState) {
       emit(currentState.clearCustomLocation());
     }
+  }
+
+  void startNavigation() {
+    final currentState = state;
+    if (currentState is MapHomeLoadedState && currentState.route != null) {
+      emit(currentState.copyWith(isNavigating: true));
+    }
+  }
+
+  void stopNavigation() {
+    final currentState = state;
+    if (currentState is MapHomeLoadedState) {
+      emit(currentState.copyWith(isNavigating: false));
+    }
+  }
+
+  @override
+  Future<void> close() {
+    _liveLocationTimer?.cancel();
+    return super.close();
   }
 }

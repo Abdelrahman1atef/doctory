@@ -20,6 +20,12 @@ class MapHomeLoadedState extends MapHomeStates {
   final int radiusInKm;
   final double? customLat;
   final double? customLng;
+  final double? currentUserLat;
+  final double? currentUserLng;
+  final double? lastRouteLat;
+  final double? lastRouteLng;
+  final bool isNavigating;
+  final double? currentUserHeading;
 
   MapHomeLoadedState({
     this.clinics = const [],
@@ -31,6 +37,12 @@ class MapHomeLoadedState extends MapHomeStates {
     this.radiusInKm = 5,
     this.customLat,
     this.customLng,
+    this.currentUserLat,
+    this.currentUserLng,
+    this.lastRouteLat,
+    this.lastRouteLng,
+    this.isNavigating = false,
+    this.currentUserHeading,
   });
 
   /// Whether user has set a custom search location
@@ -46,6 +58,12 @@ class MapHomeLoadedState extends MapHomeStates {
     int? radiusInKm,
     double? customLat,
     double? customLng,
+    double? currentUserLat,
+    double? currentUserLng,
+    double? lastRouteLat,
+    double? lastRouteLng,
+    bool? isNavigating,
+    double? currentUserHeading,
   }) {
     return MapHomeLoadedState(
       clinics: clinics ?? this.clinics,
@@ -57,6 +75,12 @@ class MapHomeLoadedState extends MapHomeStates {
       radiusInKm: radiusInKm ?? this.radiusInKm,
       customLat: customLat ?? this.customLat,
       customLng: customLng ?? this.customLng,
+      currentUserLat: currentUserLat ?? this.currentUserLat,
+      currentUserLng: currentUserLng ?? this.currentUserLng,
+      lastRouteLat: lastRouteLat ?? this.lastRouteLat,
+      lastRouteLng: lastRouteLng ?? this.lastRouteLng,
+      isNavigating: isNavigating ?? this.isNavigating,
+      currentUserHeading: currentUserHeading ?? this.currentUserHeading,
     );
   }
 
@@ -72,6 +96,12 @@ class MapHomeLoadedState extends MapHomeStates {
       radiusInKm: radiusInKm,
       customLat: null,
       customLng: null,
+      currentUserLat: currentUserLat,
+      currentUserLng: currentUserLng,
+      lastRouteLat: lastRouteLat,
+      lastRouteLng: lastRouteLng,
+      isNavigating: isNavigating,
+      currentUserHeading: currentUserHeading,
     );
   }
 }

@@ -21,7 +21,10 @@ class MapHomeBodyWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        mapSection,
+        KeyedSubtree(
+          key: const ValueKey('map_section_subtree'),
+          child: mapSection,
+        ),
         if (bottomSheetSection != null) bottomSheetSection!,
         searchSection,
         if (loadingOverlay != null) loadingOverlay!,

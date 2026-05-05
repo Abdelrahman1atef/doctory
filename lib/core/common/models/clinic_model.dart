@@ -50,6 +50,32 @@ class ClinicModel {
     this.distance = 0.0,
   });
 
+  /// Mock data for UI testing
+  static List<ClinicModel> get mockClinics => [
+    ClinicModel(
+      id: '1',
+      name: 'عيادة النور (Registered)',
+      description: 'عيادة مسجلة في نظامنا بكل البيانات',
+      isRegistered: true,
+      rating: 4.8,
+      lat: 31.0409,
+      lng: 31.3785,
+      address: 'المنصورة، شارع المشاية',
+      isOpen: true,
+    ),
+    ClinicModel(
+      id: '2',
+      name: 'مستشفى الشفاء (Google Maps)',
+      description: 'بيانات مسترجعة من بحث جوجل - بدون تقييم',
+      isRegistered: false,
+      rating: 0.0,
+      lat: 31.0348,
+      lng: 31.3575,
+      address: 'المنصورة، حي الجامعة',
+      isOpen: false,
+    ),
+  ];
+
   /// The display name
   String get displayName =>
       (nameAr != null && nameAr!.isNotEmpty) ? nameAr! : name;

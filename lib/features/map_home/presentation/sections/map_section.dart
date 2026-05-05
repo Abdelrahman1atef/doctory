@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/services.dart' show rootBundle;
 import 'package:doctory/core/common/functions/location_helper.dart';
 import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/core/theme/app_colors.dart';
@@ -31,6 +32,8 @@ class _MapSectionState extends State<MapSection> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
   Set<Marker> _customMarkers = {};
+  String? _mapStyle;
+  Brightness? _currentBrightness;
 
   // Default to Mansoura
   static const CameraPosition _initialPosition = CameraPosition(
@@ -53,11 +56,45 @@ class _MapSectionState extends State<MapSection> {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final brightness = Theme.of(context).brightness;
+    if (_currentBrightness != brightness) {
+      _currentBrightness = brightness;
+      _loadMapStyle();
+    }
+  }
+
+  Future<void> _loadMapStyle() async {
+    final isDark = _currentBrightness == Brightness.dark;
+    final stylePath = isDark
+        ? 'assets/json/map_dark_style.json'
+        : 'assets/json/map_light_style.json';
+
+    try {
+      final style = await rootBundle.loadString(stylePath);
+      if (mounted) {
+        setState(() {
+          _mapStyle = style;
+        });
+      }
+    } catch (e) {
+      debugPrint('Error loading map style: $e');
+    }
+  }
+
+  @override
   void didUpdateWidget(MapSection oldWidget) {
     super.didUpdateWidget(oldWidget);
+    final currentState = context.read<MapHomeCubit>().state;
+    final isNavigating =
+        currentState is MapHomeLoadedState && currentState.isNavigating;
+
     if (widget.clinics != oldWidget.clinics ||
         widget.selectedClinicId != oldWidget.selectedClinicId) {
-      if (widget.clinics != oldWidget.clinics && widget.clinics.isNotEmpty) {
+      if (widget.clinics != oldWidget.clinics &&
+          widget.clinics.isNotEmpty &&
+          !isNavigating) {
         _fitResults();
       }
       _generateCustomMarkers();
@@ -98,6 +135,14 @@ class _MapSectionState extends State<MapSection> {
   }
 
   Future<void> _fitResults() async {
+    final currentState = context.read<MapHomeCubit>().state;
+    if (currentState is MapHomeLoadedState && currentState.isNavigating) {
+      debugPrint(
+        '📍 [MapSection] Skipping fitResults because navigation is active',
+      );
+      return;
+    }
+
     final GoogleMapController controller = await _controller.future;
 
     if (widget.clinics.length == 1) {
@@ -155,22 +200,48 @@ class _MapSectionState extends State<MapSection> {
     return BlocListener<MapHomeCubit, MapHomeStates>(
       listenWhen: (previous, current) {
         if (previous is MapHomeLoadedState && current is MapHomeLoadedState) {
-          return previous.selectedClinic?.id != current.selectedClinic?.id;
+          final clinicChanged =
+              previous.selectedClinic?.id != current.selectedClinic?.id;
+          final navToggled = previous.isNavigating != current.isNavigating;
+          final userMovedWhileNav =
+              current.isNavigating &&
+              (previous.currentUserLat != current.currentUserLat ||
+                  previous.currentUserLng != current.currentUserLng ||
+                  previous.currentUserHeading != current.currentUserHeading);
+
+          return clinicChanged || navToggled || userMovedWhileNav;
         }
         return current is MapHomeLoadedState;
       },
       listener: (context, state) async {
-        if (state is MapHomeLoadedState && state.selectedClinic != null) {
+        if (state is MapHomeLoadedState) {
           final controller = await _controller.future;
-          controller.animateCamera(
-            CameraUpdate.newLatLngZoom(
-              LatLng(
-                state.selectedClinic!.lat ?? 0.0,
-                state.selectedClinic!.lng ?? 0.0,
+          if (state.isNavigating &&
+              state.currentUserLat != null &&
+              state.currentUserLng != null) {
+            // Navigation mode: follow user with tilt
+            controller.animateCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(
+                  target: LatLng(state.currentUserLat!, state.currentUserLng!),
+                  zoom: 18,
+                  tilt: 0, // Enforce 2D view (no tilt)
+                  bearing: state.currentUserHeading ?? 0,
+                ),
               ),
-              15,
-            ),
-          );
+            );
+          } else if (state.selectedClinic != null) {
+            // Clinic selected but not navigating: center on clinic
+            controller.animateCamera(
+              CameraUpdate.newLatLngZoom(
+                LatLng(
+                  state.selectedClinic!.lat ?? 0.0,
+                  state.selectedClinic!.lng ?? 0.0,
+                ),
+                15,
+              ),
+            );
+          }
         }
       },
       child: BlocBuilder<MapHomeCubit, MapHomeStates>(
@@ -192,6 +263,7 @@ class _MapSectionState extends State<MapSection> {
           return Stack(
             children: [
               GoogleMap(
+                key: const ValueKey('main_google_map'),
                 initialCameraPosition: _initialPosition,
                 myLocationEnabled: true,
                 myLocationButtonEnabled: false,
@@ -200,14 +272,37 @@ class _MapSectionState extends State<MapSection> {
                 markerType: GoogleMapMarkerType.advancedMarker,
                 markers: _customMarkers,
                 polylines: polylines,
+                style: _mapStyle,
+                buildingsEnabled: false,
+                indoorViewEnabled: false,
+                tiltGesturesEnabled: false,
                 onMapCreated: (GoogleMapController controller) {
-                  _controller.complete(controller);
+                  if (!_controller.isCompleted) {
+                    _controller.complete(controller);
+                  }
                 },
               ),
               if (widget.sheetSizeNotifier != null)
                 MapFabsSection(
                   sheetSizeNotifier: widget.sheetSizeNotifier!,
                   onMyLocationPressed: _getCurrentLocation,
+                ),
+              if (state is MapHomeLoadedState && state.isNavigating)
+                Positioned(
+                  top: 16,
+                  left: 16,
+                  child: SafeArea(
+                    child: IconButton.filled(
+                      onPressed: () {
+                        context.read<MapHomeCubit>().stopNavigation();
+                      },
+                      style: IconButton.styleFrom(
+                        backgroundColor: AppColors.errorColor,
+                        padding: const EdgeInsets.all(12),
+                      ),
+                      icon: const Icon(Icons.close, color: Colors.white),
+                    ),
+                  ),
                 ),
             ],
           );

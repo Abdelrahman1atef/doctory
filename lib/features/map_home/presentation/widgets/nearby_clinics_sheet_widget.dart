@@ -11,6 +11,7 @@ class NearbyClinicsSheetWidget extends StatelessWidget {
   final String? selectedClinicId;
   final ScrollController scrollController;
   final Function(ClinicModel) onClinicTap;
+  final Function(ClinicModel)? onNavPressed;
 
   const NearbyClinicsSheetWidget({
     super.key,
@@ -18,6 +19,7 @@ class NearbyClinicsSheetWidget extends StatelessWidget {
     required this.selectedClinicId,
     required this.scrollController,
     required this.onClinicTap,
+    this.onNavPressed,
   });
 
   @override
@@ -84,6 +86,9 @@ class NearbyClinicsSheetWidget extends StatelessWidget {
                   clinic: clinic,
                   isSelected: isSelected,
                   onTap: () => onClinicTap(clinic),
+                  onNavPressed: onNavPressed != null
+                      ? () => onNavPressed!(clinic)
+                      : null,
                 );
               },
             ),

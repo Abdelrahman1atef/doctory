@@ -45,13 +45,18 @@ class _MapHomeBodySectionState extends State<MapHomeBodySection> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MapHomeCubit, MapHomeStates>(
+      //todo : remove this and use the real data from the cubit
       builder: (context, state) {
-        final List<ClinicModel> clinics = (state is MapHomeLoadedState)
-            ? state.clinics
-            : [];
+        final List<ClinicModel> clinics =
+            (state is MapHomeLoadedState && state.clinics.isNotEmpty)
+            ? ClinicModel.mockClinics
+            : ClinicModel.mockClinics;
         final String? selectedClinicId = (state is MapHomeLoadedState)
             ? state.selectedClinic?.id
             : null;
+        final bool isNavigating = (state is MapHomeLoadedState)
+            ? state.isNavigating
+            : false;
         final bool isLoading = state is MapHomeLoadingState;
 
         Widget? errorOverlay;
@@ -60,11 +65,14 @@ class _MapHomeBodySectionState extends State<MapHomeBodySection> {
         }
 
         // Reset sheet size notifier if clinics are empty (sheet goes away)
-        if (clinics.isEmpty && _sheetSizeNotifier.value != 0.0) {
+        if ((clinics.isEmpty || isNavigating) &&
+            _sheetSizeNotifier.value != 0.0) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) _sheetSizeNotifier.value = 0.0;
           });
-        } else if (clinics.isNotEmpty && _sheetSizeNotifier.value == 0.0) {
+        } else if (clinics.isNotEmpty &&
+            !isNavigating &&
+            _sheetSizeNotifier.value == 0.0) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             if (mounted) _sheetSizeNotifier.value = 0.35;
           });
@@ -76,8 +84,10 @@ class _MapHomeBodySectionState extends State<MapHomeBodySection> {
             selectedClinicId: selectedClinicId,
             sheetSizeNotifier: _sheetSizeNotifier,
           ),
-          searchSection: const MapSearchSection(),
-          bottomSheetSection: clinics.isNotEmpty
+          searchSection: isNavigating
+              ? const SizedBox.shrink()
+              : const MapSearchSection(),
+          bottomSheetSection: (clinics.isNotEmpty && !isNavigating)
               ? NearbyClinicsSheet(
                   clinics: clinics,
                   sheetController: _sheetController,

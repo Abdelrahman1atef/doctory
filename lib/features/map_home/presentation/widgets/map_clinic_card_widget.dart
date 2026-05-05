@@ -9,12 +9,14 @@ class MapClinicCardWidget extends StatelessWidget {
   final ClinicModel clinic;
   final bool isSelected;
   final VoidCallback onTap;
+  final VoidCallback? onNavPressed;
 
   const MapClinicCardWidget({
     super.key,
     required this.clinic,
     this.isSelected = false,
     required this.onTap,
+    this.onNavPressed,
   });
 
   @override
@@ -190,7 +192,8 @@ class MapClinicCardWidget extends StatelessWidget {
                   12.pw,
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () {}, // Action already handled by parent tap
+                      onPressed:
+                          onTap, // Still allow tapping to select/go to details
                       style: ElevatedButton.styleFrom(
                         backgroundColor: AppColors.stitchPrimaryContainer,
                         foregroundColor: Colors.white,
@@ -200,11 +203,27 @@ class MapClinicCardWidget extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(vertical: 12),
                       ),
                       child: Text(
-                        'book_appointment'.tr(),
+                        clinic.isRegistered
+                            ? 'book_appointment'.tr()
+                            : 'navigate'.tr(),
                         style: AppStyles.s14Bold,
                       ),
                     ),
                   ),
+                  if (isSelected && onNavPressed != null) ...[
+                    8.pw,
+                    IconButton.filled(
+                      onPressed: onNavPressed,
+                      style: IconButton.styleFrom(
+                        backgroundColor: AppColors.success,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.all(12),
+                      ),
+                      icon: const Icon(Icons.navigation, color: Colors.white),
+                    ),
+                  ],
                 ],
               ),
             ],

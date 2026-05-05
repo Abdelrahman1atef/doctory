@@ -592,5 +592,6 @@
   "search_location": "Search Location",
   "current_location": "Current Location",
   "pick_location": "Pick Location",
-  "confirm_location": "Confirm Location"
+  "confirm_location": "Confirm Location",
+  "navigate": "Navigate"
 }

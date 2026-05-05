@@ -590,5 +590,6 @@
   "search_location": "موقع البحث",
   "current_location": "الموقع الحالي",
   "pick_location": "اختيار موقع",
-  "confirm_location": "تأكيد الموقع"
+  "confirm_location": "تأكيد الموقع",
+  "navigate": "رسم الطريق"
 }
