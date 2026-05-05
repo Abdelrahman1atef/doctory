@@ -9,10 +9,7 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: AppColors.stitchSurface,
-      body: SafeArea(
-        child: HomeContentSection(),
-      ),
+      body: SafeArea(child: HomeContentSection()),
     );
   }
 }
-

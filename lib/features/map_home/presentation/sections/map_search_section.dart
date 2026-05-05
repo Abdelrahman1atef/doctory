@@ -33,7 +33,8 @@ class _MapSearchSectionState extends State<MapSearchSection> {
   Widget build(BuildContext context) {
     return BlocConsumer<MapHomeCubit, MapHomeStates>(
       listener: (context, state) {
-        if (state is MapHomeLoadedState && state.query != _searchController.text) {
+        if (state is MapHomeLoadedState &&
+            state.query != _searchController.text) {
           _searchController.text = state.query ?? '';
         }
       },
@@ -51,9 +52,7 @@ class _MapSearchSectionState extends State<MapSearchSection> {
                   isScrollControlled: true,
                   builder: (_) => BlocProvider.value(
                     value: context.read<MapHomeCubit>(),
-                    child: MapFilterBottomSheet(
-                      initialState: state,
-                    ),
+                    child: MapFilterBottomSheet(initialState: state),
                   ),
                 );
               }
@@ -63,30 +62,41 @@ class _MapSearchSectionState extends State<MapSearchSection> {
             children: [
               MapFilterChipWidget(
                 label: 'All',
-                isSelected: state is MapHomeLoadedState && (state.query == null || state.query!.isEmpty),
+                isSelected:
+                    state is MapHomeLoadedState &&
+                    (state.query == null || state.query!.isEmpty),
                 onTap: () {
                   context.read<MapHomeCubit>().searchClinics();
                 },
               ),
               MapFilterChipWidget(
                 label: 'Dental',
-                isSelected: state is MapHomeLoadedState && state.query == 'Dental',
+                isSelected:
+                    state is MapHomeLoadedState && state.query == 'Dental',
                 onTap: () {
-                  context.read<MapHomeCubit>().searchClinics(searchText: 'Dental');
+                  context.read<MapHomeCubit>().searchClinics(
+                    searchText: 'Dental',
+                  );
                 },
               ),
               MapFilterChipWidget(
                 label: 'Cardiology',
-                isSelected: state is MapHomeLoadedState && state.query == 'Cardiology',
+                isSelected:
+                    state is MapHomeLoadedState && state.query == 'Cardiology',
                 onTap: () {
-                  context.read<MapHomeCubit>().searchClinics(searchText: 'Cardiology');
+                  context.read<MapHomeCubit>().searchClinics(
+                    searchText: 'Cardiology',
+                  );
                 },
               ),
               MapFilterChipWidget(
                 label: 'Eye Care',
-                isSelected: state is MapHomeLoadedState && state.query == 'Eye Care',
+                isSelected:
+                    state is MapHomeLoadedState && state.query == 'Eye Care',
                 onTap: () {
-                  context.read<MapHomeCubit>().searchClinics(searchText: 'Eye Care');
+                  context.read<MapHomeCubit>().searchClinics(
+                    searchText: 'Eye Care',
+                  );
                 },
               ),
             ],
@@ -96,4 +106,3 @@ class _MapSearchSectionState extends State<MapSearchSection> {
     );
   }
 }
-

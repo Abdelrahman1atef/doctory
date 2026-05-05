@@ -11,11 +11,9 @@ class MapHomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => sl<MapHomeCubit>()..searchClinics(searchText: searchQuery),
-      child: const Scaffold(
-        body: MapHomeBodySection(),
-      ),
+      create: (context) =>
+          sl<MapHomeCubit>()..searchClinics(searchText: searchQuery),
+      child: const Scaffold(body: MapHomeBodySection()),
     );
   }
 }
-

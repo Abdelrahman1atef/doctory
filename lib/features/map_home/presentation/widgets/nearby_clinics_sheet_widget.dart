@@ -74,10 +74,7 @@ class NearbyClinicsSheetWidget extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               controller: scrollController,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 8,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               itemCount: clinics.length,
               itemBuilder: (context, index) {
                 final clinic = clinics[index];

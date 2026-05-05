@@ -20,11 +20,7 @@ class OtpVerificationView extends StatelessWidget {
         elevation: 0,
         leading: const BackButton(color: AppColors.stitchPrimary),
       ),
-      body: OtpBodySection(
-        email: email,
-        isForgotPassword: isForgotPassword,
-      ),
+      body: OtpBodySection(email: email, isForgotPassword: isForgotPassword),
     );
   }
 }
-

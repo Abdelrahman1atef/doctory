@@ -59,7 +59,9 @@ class UserSession {
           response["data"] is Map &&
           (response["data"] as Map).containsKey("user") &&
           (response["data"] as Map)["user"] is Map) {
-        userData = Map<String, dynamic>.from((response["data"] as Map)["user"] as Map);
+        userData = Map<String, dynamic>.from(
+          (response["data"] as Map)["user"] as Map,
+        );
       } else if (response.containsKey("id") || response.containsKey("email")) {
         userData = response;
       }
@@ -69,11 +71,13 @@ class UserSession {
       }
 
       // Determine the token (accessToken, token, or access_token)
-      if (response.containsKey("accessToken") && response["accessToken"] != null) {
+      if (response.containsKey("accessToken") &&
+          response["accessToken"] != null) {
         token = response["accessToken"].toString();
       } else if (response.containsKey("token") && response["token"] != null) {
         token = response["token"].toString();
-      } else if (response.containsKey("access_token") && response["access_token"] != null) {
+      } else if (response.containsKey("access_token") &&
+          response["access_token"] != null) {
         token = response["access_token"].toString();
       } else if (response.containsKey("data") && response["data"] is Map) {
         final data = response["data"] as Map;
@@ -81,13 +85,15 @@ class UserSession {
           token = data["accessToken"]?.toString() ?? '';
         } else if (data.containsKey("token") && data["token"] != null) {
           token = data["token"]?.toString() ?? '';
-        } else if (data.containsKey("access_token") && data["access_token"] != null) {
+        } else if (data.containsKey("access_token") &&
+            data["access_token"] != null) {
           token = data["access_token"]?.toString() ?? '';
         }
       }
 
       // Determine the refresh token
-      if (response.containsKey("refreshToken") && response["refreshToken"] != null) {
+      if (response.containsKey("refreshToken") &&
+          response["refreshToken"] != null) {
         refreshToken = response["refreshToken"].toString();
       } else if (response.containsKey("data") && response["data"] is Map) {
         final data = response["data"] as Map;
@@ -159,7 +165,9 @@ class UserSession {
           data["data"] is Map &&
           (data["data"] as Map).containsKey("user") &&
           (data["data"] as Map)["user"] != null) {
-        userData = Map<String, dynamic>.from((data["data"] as Map)["user"] as Map);
+        userData = Map<String, dynamic>.from(
+          (data["data"] as Map)["user"] as Map,
+        );
       } else if (data.containsKey("id") || data.containsKey("email")) {
         userData = data;
       }

@@ -4,10 +4,7 @@ import 'package:flutter/material.dart';
 class MapContentWidget extends StatelessWidget {
   final Widget mapWidget;
 
-  const MapContentWidget({
-    super.key,
-    required this.mapWidget,
-  });
+  const MapContentWidget({super.key, required this.mapWidget});
 
   @override
   Widget build(BuildContext context) {

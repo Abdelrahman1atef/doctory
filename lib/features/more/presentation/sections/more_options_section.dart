@@ -47,7 +47,7 @@ class MoreOptionsSection extends StatelessWidget {
                 ),
               ],
             );
-          }
+          },
         ),
       ),
     );

@@ -183,13 +183,19 @@ class Alerts {
     );
   }
 
-  static void showSnackBar(BuildContext context, {required String message, SnackState state = SnackState.success}) {
+  static void showSnackBar(
+    BuildContext context, {
+    required String message,
+    SnackState state = SnackState.success,
+  }) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Row(
           children: [
             Icon(
-              state == SnackState.success ? Icons.check_circle_outline : Icons.error_outline,
+              state == SnackState.success
+                  ? Icons.check_circle_outline
+                  : Icons.error_outline,
               color: Colors.white,
             ),
             const SizedBox(width: 12),
@@ -199,7 +205,9 @@ class Alerts {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    state == SnackState.success ? context.tr('success') : context.tr('error'),
+                    state == SnackState.success
+                        ? context.tr('success')
+                        : context.tr('error'),
                     style: AppStyles.s16Bold.copyWith(color: Colors.white),
                   ),
                   5.ph,
@@ -212,7 +220,9 @@ class Alerts {
             ),
           ],
         ),
-        backgroundColor: state == SnackState.success ? AppColors.stitchPrimary : AppColors.errorColor,
+        backgroundColor: state == SnackState.success
+            ? AppColors.stitchPrimary
+            : AppColors.errorColor,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 4),

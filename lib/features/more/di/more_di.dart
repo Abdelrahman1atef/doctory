@@ -5,6 +5,8 @@ import 'package:doctory/features/more/cubit/more_cubit.dart';
 
 class MoreDI {
   static void setup() {
-    sl.registerFactory<MoreCubit>(() => MoreCubit(sl<AuthRepo>(), sl<SocialAuthService>()));
+    sl.registerFactory<MoreCubit>(
+      () => MoreCubit(sl<AuthRepo>(), sl<SocialAuthService>()),
+    );
   }
 }

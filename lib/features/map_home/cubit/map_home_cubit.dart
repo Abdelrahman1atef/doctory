@@ -47,7 +47,8 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     double? lat = userLat;
     double? lng = userLng;
     if (lat == null || lng == null) {
-      if (currentState is MapHomeLoadedState && currentState.hasCustomLocation) {
+      if (currentState is MapHomeLoadedState &&
+          currentState.hasCustomLocation) {
         lat = currentState.customLat;
         lng = currentState.customLng;
       } else {
@@ -92,7 +93,8 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
           );
         }
       },
-      onFailure: (failure) => emit(MapHomeErrorState(failure.userMessage, clinics: currentClinics)),
+      onFailure: (failure) =>
+          emit(MapHomeErrorState(failure.userMessage, clinics: currentClinics)),
     );
   }
 

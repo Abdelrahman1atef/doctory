@@ -17,7 +17,8 @@ class ClinicModel {
   final double? lng;
   final int reviewsCount;
   final List<String>? photos;
-  final Map<String, String>? operatingHours; // e.g., {'Monday': '09:00 - 17:00'}
+  final Map<String, String>?
+  operatingHours; // e.g., {'Monday': '09:00 - 17:00'}
   final bool isOpen;
   final List<DoctorModel>? doctors;
   final List<String>? specialties;
@@ -56,8 +57,8 @@ class ClinicModel {
   /// The display description
   String get displayDescription =>
       (descriptionAr != null && descriptionAr!.isNotEmpty)
-          ? descriptionAr!
-          : description;
+      ? descriptionAr!
+      : description;
 
   /// The display address
   String get displayAddress => (addressAr != null && addressAr!.isNotEmpty)
@@ -95,8 +96,8 @@ class ClinicModel {
       isOpen: json['isOpen'] ?? true,
       doctors: json['doctors'] != null
           ? (json['doctors'] as List)
-              .map((e) => DoctorModel.fromJson(e))
-              .toList()
+                .map((e) => DoctorModel.fromJson(e))
+                .toList()
           : null,
       specialties: json['specialties'] != null
           ? List<String>.from(json['specialties'])

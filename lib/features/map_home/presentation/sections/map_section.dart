@@ -17,8 +17,8 @@ class MapSection extends StatefulWidget {
   final ValueNotifier<double>? sheetSizeNotifier;
 
   const MapSection({
-    super.key, 
-    required this.clinics, 
+    super.key,
+    required this.clinics,
     this.selectedClinicId,
     this.sheetSizeNotifier,
   });
@@ -55,7 +55,8 @@ class _MapSectionState extends State<MapSection> {
   @override
   void didUpdateWidget(MapSection oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.clinics != oldWidget.clinics || widget.selectedClinicId != oldWidget.selectedClinicId) {
+    if (widget.clinics != oldWidget.clinics ||
+        widget.selectedClinicId != oldWidget.selectedClinicId) {
       if (widget.clinics != oldWidget.clinics && widget.clinics.isNotEmpty) {
         _fitResults();
       }
@@ -69,9 +70,13 @@ class _MapSectionState extends State<MapSection> {
       final clinic = widget.clinics[i];
       final String title = clinic.displayName;
       final bool isSelected = clinic.id == widget.selectedClinicId;
-      
-      final icon = await MarkerGenerator.createCustomMarkerBitmap(title, isSelected: isSelected);
-      
+
+      final icon = await MarkerGenerator.createCustomMarkerBitmap(
+        title,
+        isSelected: isSelected,
+        isRegistered: clinic.isRegistered,
+      );
+
       newMarkers.add(
         Marker(
           markerId: MarkerId('${clinic.id}_$i'),
@@ -94,7 +99,7 @@ class _MapSectionState extends State<MapSection> {
 
   Future<void> _fitResults() async {
     final GoogleMapController controller = await _controller.future;
-    
+
     if (widget.clinics.length == 1) {
       final clinic = widget.clinics.first;
       controller.animateCamera(
@@ -147,7 +152,6 @@ class _MapSectionState extends State<MapSection> {
 
   @override
   Widget build(BuildContext context) {
-
     return BlocListener<MapHomeCubit, MapHomeStates>(
       listenWhen: (previous, current) {
         if (previous is MapHomeLoadedState && current is MapHomeLoadedState) {
@@ -160,8 +164,10 @@ class _MapSectionState extends State<MapSection> {
           final controller = await _controller.future;
           controller.animateCamera(
             CameraUpdate.newLatLngZoom(
-              LatLng(state.selectedClinic!.lat ?? 0.0,
-                  state.selectedClinic!.lng ?? 0.0),
+              LatLng(
+                state.selectedClinic!.lat ?? 0.0,
+                state.selectedClinic!.lng ?? 0.0,
+              ),
               15,
             ),
           );

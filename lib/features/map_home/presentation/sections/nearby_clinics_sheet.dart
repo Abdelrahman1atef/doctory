@@ -12,7 +12,7 @@ class NearbyClinicsSheet extends StatefulWidget {
   final DraggableScrollableController sheetController;
 
   const NearbyClinicsSheet({
-    super.key, 
+    super.key,
     required this.clinics,
     required this.sheetController,
   });
@@ -22,7 +22,6 @@ class NearbyClinicsSheet extends StatefulWidget {
 }
 
 class _NearbyClinicsSheetState extends State<NearbyClinicsSheet> {
-
   @override
   Widget build(BuildContext context) {
     return BlocListener<MapHomeCubit, MapHomeStates>(
@@ -35,7 +34,8 @@ class _NearbyClinicsSheetState extends State<NearbyClinicsSheet> {
       listener: (context, state) {
         if (state is MapHomeLoadedState && state.selectedClinic != null) {
           // If sheet is expanded, collapse it to initial size to show map
-          if (widget.sheetController.isAttached && widget.sheetController.size > 0.35) {
+          if (widget.sheetController.isAttached &&
+              widget.sheetController.size > 0.35) {
             widget.sheetController.animateTo(
               0.35,
               duration: const Duration(milliseconds: 300),

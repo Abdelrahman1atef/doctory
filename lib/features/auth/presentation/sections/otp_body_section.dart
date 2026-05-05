@@ -6,12 +6,8 @@ import 'otp_input_section.dart';
 class OtpBodySection extends StatelessWidget {
   final String? email;
   final bool isForgotPassword;
-  
-  const OtpBodySection({
-    super.key,
-    this.email,
-    this.isForgotPassword = false,
-  });
+
+  const OtpBodySection({super.key, this.email, this.isForgotPassword = false});
 
   @override
   Widget build(BuildContext context) {

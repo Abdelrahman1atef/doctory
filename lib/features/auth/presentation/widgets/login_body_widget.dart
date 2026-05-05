@@ -8,11 +8,7 @@ class LoginBodyWidget extends StatelessWidget {
   final Widget header;
   final Widget form;
 
-  const LoginBodyWidget({
-    super.key,
-    required this.header,
-    required this.form,
-  });
+  const LoginBodyWidget({super.key, required this.header, required this.form});
 
   @override
   Widget build(BuildContext context) {

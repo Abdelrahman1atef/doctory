@@ -37,19 +37,14 @@ class HomeContentSection extends StatelessWidget {
 
           if (state is HomeSuccessState) {
             return ListView(
-              padding: const EdgeInsets.symmetric(
-                horizontal: 24,
-                vertical: 16,
-              ),
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
               children: [
                 const HomeHeaderSection(),
                 const SizedBox(height: 24),
                 const HomeSearchSection(),
                 const SizedBox(height: 24),
                 SectionContainerWidget(
-                  child: HomeSpecialtiesSection(
-                    specialties: state.specialties,
-                  ),
+                  child: HomeSpecialtiesSection(specialties: state.specialties),
                 ),
                 const SizedBox(height: 16),
                 SectionContainerWidget(

@@ -6,11 +6,7 @@ class OtpBodyWidget extends StatelessWidget {
   final Widget header;
   final Widget form;
 
-  const OtpBodyWidget({
-    super.key,
-    required this.header,
-    required this.form,
-  });
+  const OtpBodyWidget({super.key, required this.header, required this.form});
 
   @override
   Widget build(BuildContext context) {

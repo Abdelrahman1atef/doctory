@@ -8,9 +8,11 @@ class MapHomeMockData {
       nameAr: "مستشفى المنصورة العسكري",
       description: "Military hospital providing care.",
       descriptionAr: "مستشفى عسكري يقدم الرعاية الطبية.",
-      imageUrl: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=500&q=80',
+      imageUrl:
+          'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=500&q=80',
       rating: 4.5,
-      address: "Sandob Bridge, Sandob And Kafr Al Manasra, El Mansura, Ad Dakahliya",
+      address:
+          "Sandob Bridge, Sandob And Kafr Al Manasra, El Mansura, Ad Dakahliya",
       addressAr: "كوبري سندوب، المنصورة، الدقهلية",
       phone: "+20 101 234 5678",
       lat: 31.0200341,
@@ -27,7 +29,8 @@ class MapHomeMockData {
       nameAr: "المستشفى الدولي",
       description: "International standard hospital.",
       descriptionAr: "مستشفى بمعايير دولية.",
-      imageUrl: 'https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?w=500&q=80',
+      imageUrl:
+          'https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?w=500&q=80',
       rating: 4.2,
       address: "Amam Al Mostashfa Al Dawly Street, El Mansura",
       addressAr: "شارع المستشفى الدولي، المنصورة",
@@ -45,7 +48,8 @@ class MapHomeMockData {
       nameAr: "مستشفي الصدر",
       description: "Specialized in chest diseases.",
       descriptionAr: "متخصص في أمراض الصدر.",
-      imageUrl: 'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=500&q=80',
+      imageUrl:
+          'https://images.unsplash.com/photo-1579684385127-1ef15d508118?w=500&q=80',
       rating: 4.0,
       address: "Street 9, Second Al Hewar, El Mansura",
       addressAr: "شارع ٩، المنصورة",
@@ -63,7 +67,8 @@ class MapHomeMockData {
       nameAr: "مستشفى تبارك",
       description: "Tabarak Children's Hospital.",
       descriptionAr: "مستشفى تبارك للأطفال.",
-      imageUrl: 'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=500&q=80',
+      imageUrl:
+          'https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?w=500&q=80',
       rating: 4.8,
       address: "Ma'moun Al Shenawy Street, Sabea Al Bahr Al Saghir",
       addressAr: "شارع مأمون الشناوي، المنصورة",

@@ -8,7 +8,8 @@ class MoreCubit extends Cubit<MoreStates> {
   final AuthRepo _authRepo;
   final SocialAuthService _socialAuthService;
 
-  MoreCubit(this._authRepo, this._socialAuthService) : super(MoreInitialState());
+  MoreCubit(this._authRepo, this._socialAuthService)
+    : super(MoreInitialState());
 
   Future<void> logout() async {
     emit(LogoutLoadingState());

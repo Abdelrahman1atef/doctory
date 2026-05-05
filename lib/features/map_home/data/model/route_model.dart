@@ -16,9 +16,12 @@ class RouteModel {
     return RouteModel(
       distance: (data['distance'] ?? 0.0).toDouble(),
       duration: (data['duration'] ?? 0.0).toDouble(),
-      geometry: (data['geometry'] as List?)
-              ?.map((e) =>
-                  LatLng((e[1] as num).toDouble(), (e[0] as num).toDouble()))
+      geometry:
+          (data['geometry'] as List?)
+              ?.map(
+                (e) =>
+                    LatLng((e[1] as num).toDouble(), (e[0] as num).toDouble()),
+              )
               .toList() ??
           [],
     );

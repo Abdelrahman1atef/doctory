@@ -4,7 +4,8 @@ import 'package:flutter/foundation.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 
 class RemoteConfigService {
-  static final FirebaseRemoteConfig _remoteConfig = FirebaseRemoteConfig.instance;
+  static final FirebaseRemoteConfig _remoteConfig =
+      FirebaseRemoteConfig.instance;
   static String _localAppVersion = "";
 
   static Future<void> init() async {
@@ -27,7 +28,9 @@ class RemoteConfigService {
       await _remoteConfig.setConfigSettings(
         RemoteConfigSettings(
           fetchTimeout: const Duration(seconds: 5),
-          minimumFetchInterval: kDebugMode ? const Duration(seconds: 1) : const Duration(hours: 1),
+          minimumFetchInterval: kDebugMode
+              ? const Duration(seconds: 1)
+              : const Duration(hours: 1),
         ),
       );
 
@@ -46,16 +49,20 @@ class RemoteConfigService {
   }
 
   static String get baseUrl => _remoteConfig.getString("BASE_URL");
-  static String get androidVersion => _remoteConfig.getString("android_version");
+  static String get androidVersion =>
+      _remoteConfig.getString("android_version");
   static String get iosVersion => _remoteConfig.getString("ios_version");
   static bool get isForceUpdate => _remoteConfig.getBool("force_update");
-  static String get androidStoreLink => _remoteConfig.getString("android_store_link");
+  static String get androidStoreLink =>
+      _remoteConfig.getString("android_store_link");
   static String get iosStoreLink => _remoteConfig.getString("ios_store_link");
-  
+
   // Social Auth Toggles
-  static bool get showFacebookAuth => _remoteConfig.getBool("SHOW_FACEBOOK_AUTH");
+  static bool get showFacebookAuth =>
+      _remoteConfig.getBool("SHOW_FACEBOOK_AUTH");
   static bool get showGoogleAuth => _remoteConfig.getBool("SHOW_GOOGLE_AUTH");
-  static bool get showMapDirectionsFab => _remoteConfig.getBool("SHOW_MAP_DIRECTIONS_FAB");
+  static bool get showMapDirectionsFab =>
+      _remoteConfig.getBool("SHOW_MAP_DIRECTIONS_FAB");
 
   // For Force Update
   static bool get needsForceUpdate {
@@ -70,8 +77,10 @@ class RemoteConfigService {
     try {
       List<String> localParts = local.split('+')[0].split('.');
       List<String> remoteParts = remote.split('+')[0].split('.');
-      int minLength = localParts.length < remoteParts.length ? localParts.length : remoteParts.length;
-      
+      int minLength = localParts.length < remoteParts.length
+          ? localParts.length
+          : remoteParts.length;
+
       for (int i = 0; i < minLength; i++) {
         int l = int.parse(localParts[i]);
         int r = int.parse(remoteParts[i]);
@@ -80,8 +89,12 @@ class RemoteConfigService {
         if (l > r) return false;
       }
 
-      int localBuild = int.parse(local.contains('+') ? local.split('+')[1] : '0');
-      int remoteBuild = int.parse(remote.contains('+') ? remote.split('+')[1] : '0');
+      int localBuild = int.parse(
+        local.contains('+') ? local.split('+')[1] : '0',
+      );
+      int remoteBuild = int.parse(
+        remote.contains('+') ? remote.split('+')[1] : '0',
+      );
 
       return localBuild < remoteBuild;
     } catch (e) {

@@ -30,8 +30,11 @@ extension Dates on String {
 
 extension ContextExtensions on BuildContext {
   // localization
-  String l10n(String key, {List<String>? args, Map<String, String>? namedArgs}) =>
-      tr(key, args: args, namedArgs: namedArgs);
+  String l10n(
+    String key, {
+    List<String>? args,
+    Map<String, String>? namedArgs,
+  }) => tr(key, args: args, namedArgs: namedArgs);
 
   // size
   double get height => MediaQuery.of(this).size.height;

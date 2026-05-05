@@ -42,21 +42,26 @@ class MapFabsSection extends StatelessWidget {
           right: 16,
           child: BlocBuilder<MapHomeCubit, MapHomeStates>(
             builder: (context, state) {
-              final selectedClinic = (state is MapHomeLoadedState) ? state.selectedClinic : null;
+              final selectedClinic = (state is MapHomeLoadedState)
+                  ? state.selectedClinic
+                  : null;
 
               return Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  if (RemoteConfigService.showMapDirectionsFab && selectedClinic != null && selectedClinic.lat != null && selectedClinic.lng != null) ...[
+                  if (RemoteConfigService.showMapDirectionsFab &&
+                      selectedClinic != null &&
+                      selectedClinic.lat != null &&
+                      selectedClinic.lng != null) ...[
                     FloatingActionButton(
                       heroTag: 'map_directions_fab',
-                      onPressed: () => _openGoogleMaps(selectedClinic.lat!, selectedClinic.lng!),
-                      backgroundColor: AppColors.stitchPrimary,
-                      child: const Icon(
-                        Icons.directions,
-                        color: Colors.white,
+                      onPressed: () => _openGoogleMaps(
+                        selectedClinic.lat!,
+                        selectedClinic.lng!,
                       ),
+                      backgroundColor: AppColors.stitchPrimary,
+                      child: const Icon(Icons.directions, color: Colors.white),
                     ),
                     const SizedBox(height: 16),
                   ],

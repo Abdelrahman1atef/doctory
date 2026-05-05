@@ -32,11 +32,7 @@ class MoreOptionItem extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Icon(
-              icon,
-              color: iconColor ?? AppColors.stitchPrimary,
-              size: 24,
-            ),
+            Icon(icon, color: iconColor ?? AppColors.stitchPrimary, size: 24),
             16.pw,
             Expanded(
               child: Text(

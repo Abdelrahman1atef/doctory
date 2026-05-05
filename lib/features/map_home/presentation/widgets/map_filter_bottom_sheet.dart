@@ -64,8 +64,9 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
             children: [
               Text(
                 'filter'.tr(),
-                style: AppStyles.s20Bold
-                    .withColor(AppColors.stitchPrimaryContainer),
+                style: AppStyles.s20Bold.withColor(
+                  AppColors.stitchPrimaryContainer,
+                ),
               ),
               IconButton(
                 onPressed: () => Navigator.pop(context),
@@ -93,8 +94,9 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
                     _selectedSpecializationId = selected ? spec.id : null;
                   });
                 },
-                selectedColor: AppColors.stitchPrimaryContainer
-                    .withValues(alpha: 0.2),
+                selectedColor: AppColors.stitchPrimaryContainer.withValues(
+                  alpha: 0.2,
+                ),
                 checkmarkColor: AppColors.stitchPrimaryContainer,
                 labelStyle: AppStyles.s14Medium.withColor(
                   isSelected
@@ -213,8 +215,11 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
                           _customLng = null;
                         });
                       },
-                      child: const Icon(Icons.close,
-                          size: 20, color: AppColors.stitchSecondary),
+                      child: const Icon(
+                        Icons.close,
+                        size: 20,
+                        color: AppColors.stitchSecondary,
+                      ),
                     ),
                 ],
               ),
@@ -250,7 +255,8 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.stitchPrimaryContainer,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
+                  borderRadius: BorderRadius.circular(16),
+                ),
               ),
               child: Text(
                 'apply_filters'.tr(),
@@ -263,4 +269,3 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
     );
   }
 }
-

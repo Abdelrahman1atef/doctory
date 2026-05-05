@@ -6,10 +6,7 @@ import 'package:go_router/go_router.dart';
 class LayoutView extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
 
-  const LayoutView({
-    super.key,
-    required this.navigationShell,
-  });
+  const LayoutView({super.key, required this.navigationShell});
 
   void _onItemTapped(int index) {
     navigationShell.goBranch(

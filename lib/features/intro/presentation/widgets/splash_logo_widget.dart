@@ -105,7 +105,10 @@ class _SplashLogoWidgetState extends State<SplashLogoWidget>
                           decoration: BoxDecoration(
                             color: AppColors.white,
                             shape: BoxShape.circle,
-                            border: Border.all(width: 5, color: AppColors.primary)
+                            border: Border.all(
+                              width: 5,
+                              color: AppColors.primary,
+                            ),
                           ),
                           child: AppAssets.image(AppAssets.images.appLogo),
                         ),

@@ -3,48 +3,70 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MarkerGenerator {
-  static Future<BitmapDescriptor> createCustomMarkerBitmap(String title, {bool isSelected = false}) async {
+  static Future<BitmapDescriptor> createCustomMarkerBitmap(
+    String title, {
+    bool isSelected = false,
+    bool isRegistered = true,
+  }) async {
     const int size = 40; // Scaled down for better map proportions
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
 
     // Premium Color Palette
-    // Primary: Stitch Primary (0xFF076453)
-    // Selected: Stitch Primary Fixed or Gold
-    final Color markerColor = isSelected ? const Color(0xFF178229) : const Color(0xFF076453);
+    // Registered: Stitch Primary (0xFF076453)
+    // Unregistered: Greyish (Stitch Secondary)
+    // Selected: Vibrant Green or Highlight
+    final Color markerColor = isSelected
+        ? const Color(0xFF178229)
+        : (isRegistered ? const Color(0xFF076453) : const Color(0xFF2196F3));
     final Color shadowColor = Colors.black.withValues(alpha: 0.3);
 
     // 1. Draw Shadow
     final Paint shadowPaint = Paint()
       ..color = shadowColor
       ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 4);
-    canvas.drawCircle(const Offset(size / 2, (size / 2) + 4), (size / 2) - 6, shadowPaint);
+    canvas.drawCircle(
+      const Offset(size / 2, (size / 2) + 4),
+      (size / 2) - 6,
+      shadowPaint,
+    );
 
     // 2. Draw Main Circle
     final Paint circlePaint = Paint()..color = markerColor;
-    canvas.drawCircle(const Offset(size / 2, size / 2), (size / 2) - 6, circlePaint);
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2),
+      (size / 2) - 6,
+      circlePaint,
+    );
 
     // 3. Draw White Border
     final Paint borderPaint = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.stroke
       ..strokeWidth = 4.0;
-    canvas.drawCircle(const Offset(size / 2, size / 2), (size / 2) - 6, borderPaint);
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2),
+      (size / 2) - 6,
+      borderPaint,
+    );
 
     // 4. Draw Inner Gradient/Highlight for premium 3D look
     final Paint highlightPaint = Paint()
       ..shader = ui.Gradient.linear(
         const Offset(size / 2, 6),
         const Offset(size / 2, size - 6),
-        [
-          Colors.white.withValues(alpha: 0.3),
-          Colors.transparent,
-        ],
+        [Colors.white.withValues(alpha: 0.3), Colors.transparent],
       );
-    canvas.drawCircle(const Offset(size / 2, size / 2), (size / 2) - 8, highlightPaint);
+    canvas.drawCircle(
+      const Offset(size / 2, size / 2),
+      (size / 2) - 8,
+      highlightPaint,
+    );
 
     // 5. Draw Text (First Letter)
-    final String letter = title.isNotEmpty ? title.trim().substring(0, 1).toUpperCase() : 'C';
+    final String letter = title.isNotEmpty
+        ? title.trim().substring(0, 1).toUpperCase()
+        : 'C';
     TextPainter painter = TextPainter(textDirection: TextDirection.ltr);
     painter.text = TextSpan(
       text: letter,
@@ -52,7 +74,8 @@ class MarkerGenerator {
         fontSize: size * 0.45,
         color: Colors.white,
         fontWeight: FontWeight.bold,
-        fontFamily: 'Inter', // Try to use a clean font if available, fallback to default
+        fontFamily:
+            'Inter', // Try to use a clean font if available, fallback to default
       ),
     );
     painter.layout();

@@ -1,4 +1,3 @@
-
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/services/notifications/fcm_service.dart';
 import 'package:doctory/core/theme/theme_manager.dart';
@@ -49,7 +48,7 @@ void main() async {
           }
         }
       }
-      
+
       FirebaseMessaging.onBackgroundMessage(
         FBMessaging.firebaseMessagingBackgroundHandler,
       );

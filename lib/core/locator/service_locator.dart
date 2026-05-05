@@ -44,15 +44,13 @@ class ServiceLocator {
     sl.registerLazySingleton<FirebaseAnalytics>(() => analytics);
 
     // Register network services
-    sl.registerLazySingleton<NetworkConfig>(
-      () {
-        final config = NetworkConfig.development.copyWith(
-          baseUrl: RemoteConfigService.baseUrl,
-        );
-        debugPrint('NetworkConfig initialized with baseUrl: ${config.baseUrl}');
-        return config;
-      },
-    );
+    sl.registerLazySingleton<NetworkConfig>(() {
+      final config = NetworkConfig.development.copyWith(
+        baseUrl: RemoteConfigService.baseUrl,
+      );
+      debugPrint('NetworkConfig initialized with baseUrl: ${config.baseUrl}');
+      return config;
+    });
 
     sl.registerLazySingleton<AuthInterceptor>(() => AuthInterceptor());
 

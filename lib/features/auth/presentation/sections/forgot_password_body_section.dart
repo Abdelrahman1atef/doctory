@@ -74,4 +74,3 @@ class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
     );
   }
 }
-

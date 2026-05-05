@@ -77,31 +77,46 @@ class MapClinicCardWidget extends StatelessWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Expanded(
-                            child: Text(
-                              clinic.displayName,
-                              style: AppStyles.s16Bold.withColor(
-                                AppColors.stitchPrimaryContainer,
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    clinic.displayName,
+                                    style: AppStyles.s16Bold.withColor(
+                                      AppColors.stitchPrimaryContainer,
+                                    ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                if (clinic.isRegistered) ...[
+                                  6.pw,
+                                  const Icon(
+                                    Icons.verified,
+                                    color: AppColors.stitchPrimary,
+                                    size: 16,
+                                  ),
+                                ],
+                              ],
                             ),
                           ),
-                          Row(
-                            children: [
-                              const Icon(
-                                Icons.star_rounded,
-                                color: Colors.amber,
-                                size: 16,
-                              ),
-                              4.pw,
-                              Text(
-                                clinic.rating.toString(),
-                                style: AppStyles.s13Bold.withColor(
-                                  AppColors.stitchSecondary,
+                          if (clinic.rating > 0)
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.star_rounded,
+                                  color: Colors.amber,
+                                  size: 16,
                                 ),
-                              ),
-                            ],
-                          ),
+                                4.pw,
+                                Text(
+                                  clinic.rating.toString(),
+                                  style: AppStyles.s13Bold.withColor(
+                                    AppColors.stitchSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
                         ],
                       ),
                       4.ph,
@@ -161,7 +176,9 @@ class MapClinicCardWidget extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: AppColors.stitchPrimaryContainer.withValues(alpha: 0.1),
+                      color: AppColors.stitchPrimaryContainer.withValues(
+                        alpha: 0.1,
+                      ),
                       shape: BoxShape.circle,
                     ),
                     child: const Icon(

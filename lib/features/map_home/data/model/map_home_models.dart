@@ -22,7 +22,8 @@ class ClinicSearchResponse {
   factory ClinicSearchResponse.fromJson(Map<String, dynamic> json) {
     final data = json['data'] ?? json;
     return ClinicSearchResponse(
-      items: (data['items'] as List?)
+      items:
+          (data['items'] as List?)
               ?.map((e) => ClinicModel.fromJson(e))
               .toList() ??
           [],

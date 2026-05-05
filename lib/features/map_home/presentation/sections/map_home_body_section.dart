@@ -46,17 +46,19 @@ class _MapHomeBodySectionState extends State<MapHomeBodySection> {
   Widget build(BuildContext context) {
     return BlocBuilder<MapHomeCubit, MapHomeStates>(
       builder: (context, state) {
-        final List<ClinicModel> clinics =
-            (state is MapHomeLoadedState) ? state.clinics : [];
-        final String? selectedClinicId =
-            (state is MapHomeLoadedState) ? state.selectedClinic?.id : null;
+        final List<ClinicModel> clinics = (state is MapHomeLoadedState)
+            ? state.clinics
+            : [];
+        final String? selectedClinicId = (state is MapHomeLoadedState)
+            ? state.selectedClinic?.id
+            : null;
         final bool isLoading = state is MapHomeLoadingState;
 
         Widget? errorOverlay;
         if (state is MapHomeErrorState) {
           errorOverlay = MapHomeErrorWidget(message: state.message);
         }
-        
+
         // Reset sheet size notifier if clinics are empty (sheet goes away)
         if (clinics.isEmpty && _sheetSizeNotifier.value != 0.0) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -75,11 +77,11 @@ class _MapHomeBodySectionState extends State<MapHomeBodySection> {
             sheetSizeNotifier: _sheetSizeNotifier,
           ),
           searchSection: const MapSearchSection(),
-          bottomSheetSection: clinics.isNotEmpty 
+          bottomSheetSection: clinics.isNotEmpty
               ? NearbyClinicsSheet(
                   clinics: clinics,
                   sheetController: _sheetController,
-                ) 
+                )
               : null,
           loadingOverlay: isLoading ? const MapHomeLoadingWidget() : null,
           errorOverlay: errorOverlay,

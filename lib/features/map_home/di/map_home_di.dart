@@ -8,9 +8,7 @@ class MapHomeDI {
     sl.registerLazySingleton<MapHomeRemoteDataSource>(
       () => MapHomeRemoteDataSourceImpl(sl()),
     );
-    sl.registerLazySingleton<MapHomeRepo>(
-      () => MapHomeRepoImpl(sl()),
-    );
+    sl.registerLazySingleton<MapHomeRepo>(() => MapHomeRepoImpl(sl()));
     sl.registerFactory(() => MapHomeCubit(sl()));
   }
 }

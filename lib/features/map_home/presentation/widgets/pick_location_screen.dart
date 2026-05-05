@@ -22,8 +22,7 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
   @override
   void initState() {
     super.initState();
-    final initial =
-        widget.initialLocation ?? LocationHelper.defaultLocation;
+    final initial = widget.initialLocation ?? LocationHelper.defaultLocation;
     _pickedLocation = initial;
     _initialCamera = CameraPosition(target: initial, zoom: 14);
   }
@@ -39,8 +38,10 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
         backgroundColor: AppColors.stitchSurface,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios,
-              color: AppColors.stitchPrimaryContainer),
+          icon: const Icon(
+            Icons.arrow_back_ios,
+            color: AppColors.stitchPrimaryContainer,
+          ),
           onPressed: () => Navigator.pop(context),
         ),
       ),
@@ -61,7 +62,8 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
                       markerId: const MarkerId('picked'),
                       position: _pickedLocation!,
                       icon: BitmapDescriptor.defaultMarkerWithHue(
-                          BitmapDescriptor.hueAzure),
+                        BitmapDescriptor.hueAzure,
+                      ),
                     ),
                   }
                 : {},
@@ -86,7 +88,8 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
                   backgroundColor: AppColors.stitchPrimaryContainer,
                   disabledBackgroundColor: AppColors.stitchSurfaceLow,
                   shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
                 ),
               ),
             ),

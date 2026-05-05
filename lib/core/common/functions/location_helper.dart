@@ -115,7 +115,5 @@ class LocationHelper {
     return "";
   }
 
-
-
   static Future<void> getLatLongData() async {}
 }
