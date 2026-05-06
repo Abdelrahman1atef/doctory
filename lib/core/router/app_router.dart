@@ -13,6 +13,7 @@ import 'package:doctory/features/clinic_details/router/clinic_details_router.dar
 import 'package:doctory/features/doctor_details/router/doctor_details_router.dart';
 import 'package:doctory/features/booking/router/booking_router.dart';
 import 'package:doctory/features/patient_reviews/router/patient_reviews_router.dart';
+import 'package:doctory/features/community/router/community_router.dart';
 import 'package:doctory/features/layout/presentation/views/layout_view.dart';
 import 'package:doctory/features/more/router/more_router.dart';
 
@@ -47,6 +48,7 @@ class AppRouter {
         branches: [
           StatefulShellBranch(routes: HomeRouter.routes),
           StatefulShellBranch(routes: MapHomeRouter.routes, preload: true),
+          StatefulShellBranch(routes: CommunityRouter.routes),
           StatefulShellBranch(routes: MoreRouter.routes),
         ],
       ),
@@ -54,6 +56,7 @@ class AppRouter {
       ...DoctorDetailsRouter.routes,
       ...BookingRouter.routes,
       ...PatientReviewsRouter.routes,
+      ...CommunityRouter.globalRoutes,
     ],
 
     // Error page

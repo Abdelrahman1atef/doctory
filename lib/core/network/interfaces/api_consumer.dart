@@ -49,6 +49,7 @@ abstract class ApiConsumer {
   /// DELETE request
   Future<ApiResult<T>> delete<T>({
     required String path,
+    Map<String, dynamic>? body,
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? headers,
     T Function(Map<String, dynamic>)? parser,

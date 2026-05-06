@@ -40,6 +40,11 @@ class LayoutView extends StatelessWidget {
             label: context.tr('map.title'),
           ),
           BottomNavigationBarItem(
+            icon: const Icon(Icons.people_outline),
+            activeIcon: const Icon(Icons.people_rounded),
+            label: context.tr('community'),
+          ),
+          BottomNavigationBarItem(
             icon: const Icon(Icons.more_horiz_outlined),
             activeIcon: const Icon(Icons.more_horiz_rounded),
             label: context.tr('more'),

@@ -1,0 +1,97 @@
+import 'package:doctory/features/community/cubit/community_states.dart';
+import 'package:doctory/features/community/data/model/community_models.dart';
+import 'package:doctory/features/community/data/repo/community_repo.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+
+class CommunityCubit extends Cubit<CommunityStates> {
+  final CommunityRepo _communityRepo;
+
+  CommunityCubit(this._communityRepo) : super(CommunityInitialState());
+
+  List<PostModel> posts = [];
+  int _currentPage = 1;
+  bool _hasReachedMax = false;
+  bool _isLoading = false;
+
+  void getPosts({bool refresh = false}) async {
+    if (refresh) {
+      _currentPage = 1;
+      _hasReachedMax = false;
+      posts.clear();
+    }
+
+    if (_hasReachedMax || _isLoading) return;
+
+    _isLoading = true;
+    emit(CommunityLoadingState(isPagination: _currentPage > 1));
+
+    final result = await _communityRepo.getPosts(pageNumber: _currentPage);
+
+    result.fold(
+      onSuccess: (data) {
+        if (data.items.isEmpty) {
+          _hasReachedMax = true;
+        } else {
+          _currentPage++;
+          posts.addAll(data.items);
+          _hasReachedMax = !data.hasNextPage;
+        }
+        _isLoading = false;
+        emit(CommunitySuccessState(posts: List.from(posts), hasReachedMax: _hasReachedMax));
+      },
+      onFailure: (failure) {
+        _isLoading = false;
+        emit(CommunityErrorState(failure.message));
+      },
+    );
+  }
+
+  void toggleLike(String postId) async {
+    // Optimistic update
+    final postIndex = posts.indexWhere((p) => p.id == postId);
+    if (postIndex == -1) return;
+
+    final post = posts[postIndex];
+    final isLiked = post.isLikedByMe;
+    
+    // Update local state
+    posts[postIndex] = post.copyWith(
+      isLikedByMe: !isLiked,
+      reactionCount: isLiked ? post.reactionCount - 1 : post.reactionCount + 1,
+    );
+    
+    emit(CommunitySuccessState(posts: List.from(posts), hasReachedMax: _hasReachedMax));
+
+    final result = await _communityRepo.togglePostReaction(postId);
+
+    result.fold(
+      onSuccess: (_) {
+        emit(CommunityToggleLikeSuccessState(postId, !isLiked));
+      },
+      onFailure: (failure) {
+        // Revert on failure
+        posts[postIndex] = post;
+        emit(CommunitySuccessState(posts: List.from(posts), hasReachedMax: _hasReachedMax));
+        emit(CommunityToggleLikeErrorState(failure.message));
+      },
+    );
+  }
+
+  void createPost(String content, {List<Map<String, dynamic>>? media}) async {
+    emit(CommunityActionLoadingState());
+    
+    final result = await _communityRepo.createPost(content: content, media: media);
+    
+    result.fold(
+      onSuccess: (id) {
+        emit(CommunityCreatePostSuccessState("post_created_successfully"));
+        // Refresh posts after creation
+        getPosts(refresh: true);
+      },
+      onFailure: (failure) {
+        emit(CommunityCreatePostErrorState(failure.message));
+        emit(CommunitySuccessState(posts: List.from(posts), hasReachedMax: _hasReachedMax));
+      },
+    );
+  }
+}

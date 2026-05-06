@@ -591,5 +591,17 @@
   "current_location": "الموقع الحالي",
   "pick_location": "اختيار موقع",
   "confirm_location": "تأكيد الموقع",
-  "navigate": "رسم الطريق"
+  "navigate": "رسم الطريق",
+  "community": "المجتمع",
+  "create_post": "إنشاء منشور",
+  "post_content_hint": "بم تفكر؟",
+  "post_action": "نشر",
+  "comments": "التعليقات",
+  "write_comment": "اكتب تعليقاً...",
+  "like": "إعجاب",
+  "comment": "تعليق",
+  "no_posts_yet": "لا توجد منشورات حتى الآن",
+  "no_comments_yet": "لا توجد تعليقات حتى الآن",
+  "post_created_successfully": "تم النشر بنجاح",
+  "comment_added_successfully": "تمت إضافة التعليق بنجاح"
 }

@@ -1,0 +1,63 @@
+name: Android CI Build
+
+on:
+#  push:
+#    branches:
+#      - dev
+  workflow_dispatch:
+    inputs:
+      versionName:
+        description: "Version Name (e.g., 1.0.1). Leave empty to use pubspec."
+        required: false
+        default: ""
+      releaseNotes:
+        description: "Release notes for Firebase"
+        required: false
+        default: "New build from GitHub Actions"
+
+jobs:
+  build-android:
+    name: Build Android APK (Dev)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: "zulu"
+          java-version: "17"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: "3.x"
+          channel: "stable"
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Build Dev APK
+        run: |
+          BUILD_NAME_FLAG=""
+          if [ ! -z "${{ inputs.versionName }}" ]; then
+            BUILD_NAME_FLAG="--build-name=${{ inputs.versionName }}"
+          fi
+
+          flutter build apk --flavor dev -t lib/main_dev.dart --release $BUILD_NAME_FLAG --build-number=${{ github.run_number }}
+
+      - name: Upload Dev APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-dev-release
+          path: build/app/outputs/flutter-apk/app-dev-release.apk
+
+      - name: Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1.7.0
+        with:
+          appId: 1:214655616174:android:441c747086cfe9fb35993f
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          file: build/app/outputs/flutter-apk/app-dev-release.apk
+          releaseNotes: ${{ github.event.inputs.releaseNotes }}
