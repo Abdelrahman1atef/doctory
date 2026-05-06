@@ -49,8 +49,8 @@ class _MapHomeBodySectionState extends State<MapHomeBodySection> {
       builder: (context, state) {
         final List<ClinicModel> clinics =
             (state is MapHomeLoadedState && state.clinics.isNotEmpty)
-            ? ClinicModel.mockClinics
-            : ClinicModel.mockClinics;
+            ? state.clinics
+            : [];
         final String? selectedClinicId = (state is MapHomeLoadedState)
             ? state.selectedClinic?.id
             : null;

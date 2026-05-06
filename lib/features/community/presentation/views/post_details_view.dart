@@ -34,6 +34,8 @@ class _PostDetailsViewState extends State<PostDetailsView> {
       create: (context) => sl<PostDetailsCubit>()..initPost(widget.post),
       child: Scaffold(
         appBar: AppBar(
+          scrolledUnderElevation: 0,
+
           title: Text('post_action'.tr()),
         ),
         body: Column(

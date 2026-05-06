@@ -24,7 +24,8 @@ class _PostsListSectionState extends State<PostsListSection> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       context.read<CommunityCubit>().getPosts();
     }
   }
@@ -37,65 +38,99 @@ class _PostsListSectionState extends State<PostsListSection> {
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<CommunityCubit, CommunityStates>(
-      buildWhen: (previous, current) => 
-        current is CommunityLoadingState || 
-        current is CommunitySuccessState || 
-        current is CommunityErrorState,
-      builder: (context, state) {
-        final cubit = context.read<CommunityCubit>();
-
-        if (state is CommunityLoadingState && !state.isPagination) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (state is CommunityErrorState && cubit.posts.isEmpty) {
-          return Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(state.message),
-                ElevatedButton(
-                  onPressed: () => cubit.getPosts(refresh: true),
-                  child: Text('retry'.tr()),
+    return SafeArea(
+      child: BlocBuilder<CommunityCubit, CommunityStates>(
+        buildWhen: (previous, current) =>
+            current is CommunityLoadingState ||
+            current is CommunitySuccessState ||
+            current is CommunityErrorState,
+        builder: (context, state) {
+          final cubit = context.read<CommunityCubit>();
+      
+          return RefreshIndicator(
+            onRefresh: () async {
+              // Await the future so the indicator stays until loading is done
+              await cubit.getPosts(refresh: true);
+            },
+            // Custom styling for the indicator
+            color: Theme.of(context).primaryColor, 
+            child: CustomScrollView(
+              controller: _scrollController,
+              // AlwaysScrollable ensures we can pull-to-refresh even if the list is empty or an error occurred
+              physics: const AlwaysScrollableScrollPhysics(),
+              slivers: [
+                SliverAppBar(
+                  title: Text('community'.tr()),
+                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                  floating: true,
+                  snap: true,
+                  elevation: 0,
+                  scrolledUnderElevation: 0,
                 ),
+                if (state is CommunityLoadingState && !state.isPagination)
+                  const SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(child: CircularProgressIndicator()),
+                  )
+                else if (state is CommunityErrorState && cubit.posts.isEmpty)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(state.message, textAlign: TextAlign.center),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () => cubit.getPosts(refresh: true),
+                            child: Text('retry'.tr()),
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                else if (cubit.posts.isEmpty)
+                  SliverFillRemaining(
+                    hasScrollBody: false,
+                    child: Center(
+                      child: Text(
+                        'no_posts_yet'.tr(),
+                        style: const TextStyle(color: Colors.grey, fontSize: 16),
+                      ),
+                    ),
+                  )
+                else
+                  SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        if (index >= cubit.posts.length) {
+                          return const Padding(
+                            padding: EdgeInsets.all(16.0),
+                            child: Center(child: CircularProgressIndicator()),
+                          );
+                        }
+      
+                        final post = cubit.posts[index];
+                        return PostCardWidget(
+                          post: post,
+                          onLikeTapped: () => cubit.toggleLike(post.id),
+                          onCommentTapped: () =>
+                              context.push(AppRoutes.postDetails, extra: post),
+                          onPostTapped: () =>
+                              context.push(AppRoutes.postDetails, extra: post),
+                        );
+                      },
+                      childCount: cubit.posts.length +
+                          (state is CommunityLoadingState && state.isPagination
+                              ? 1
+                              : 0),
+                    ),
+                  ),
               ],
             ),
           );
-        }
-
-        if (cubit.posts.isEmpty) {
-          return Center(
-            child: Text('no_posts_yet'.tr()),
-          );
-        }
-
-        return RefreshIndicator(
-          onRefresh: () async {
-            cubit.getPosts(refresh: true);
-          },
-          child: ListView.builder(
-            controller: _scrollController,
-            itemCount: cubit.posts.length + (state is CommunityLoadingState && state.isPagination ? 1 : 0),
-            itemBuilder: (context, index) {
-              if (index >= cubit.posts.length) {
-                return const Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Center(child: CircularProgressIndicator()),
-                );
-              }
-
-              final post = cubit.posts[index];
-              return PostCardWidget(
-                post: post,
-                onLikeTapped: () => cubit.toggleLike(post.id),
-                onCommentTapped: () => context.push(AppRoutes.postDetails, extra: post),
-                onPostTapped: () => context.push(AppRoutes.postDetails, extra: post),
-              );
-            },
-          ),
-        );
-      },
+        },
+      ),
     );
   }
 }

@@ -56,10 +56,11 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     int pageSize = 20,
   }) async {
     return await apiConsumer.get<PaginatedData<PostModel>>(
-      path: '/api/v1/posts/pagginated',
+      path: 'posts/pagginated',
       queryParameters: {'PageNumber': pageNumber, 'PageSize': pageSize},
       parser: (json) {
-        return PaginatedData.fromJson(json, (data) => PostModel.fromJson(data));
+        final data = json['data'] ?? json['Data'] ?? json;
+        return PaginatedData.fromJson(data, (item) => PostModel.fromJson(item));
       },
     );
   }
@@ -67,8 +68,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
   @override
   Future<ApiResult<PostModel>> getPostById(String id) async {
     return await apiConsumer.get<PostModel>(
-      path:'/api/v1/posts/$id',
-      parser: (json) => PostModel.fromJson(json),
+      path:'posts/$id',
+      parser: (json) => PostModel.fromJson(json['data'] ?? json),
     );
   }
 
@@ -78,36 +79,36 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     List<Map<String, dynamic>>? media,
   }) async {
     return await apiConsumer.post<String>(
-      path:'/api/v1/posts/create',
+      path:'posts/create',
       body: {'content': content, if (media != null) 'media': media},
-      parser: (json) => json.toString(),
+      parser: (json) => (json['data'] ?? json['Data'] ?? json).toString(),
     );
   }
 
   @override
   Future<ApiResult<String>> updatePost({required String postId, required String content}) async {
     return await apiConsumer.put<String>(
-      path:'/api/v1/posts/update',
+      path:'posts/update',
       body: {'postId': postId, 'content': content},
-      parser: (json) => json.toString(),
+      parser: (json) => (json['data'] ?? json['Data'] ?? json).toString(),
     );
   }
 
   @override
   Future<ApiResult<bool>> deletePost(String postId) async {
     return await apiConsumer.delete<bool>(
-      path:'/api/v1/posts/delete',
+      path:'posts/delete',
       body: {'postId': postId},
-      parser: (json) => json == true, // Handle boolean response correctly
+      parser: (json) => (json['success'] ?? json['Success'] ?? json) == true,
     );
   }
 
   @override
   Future<ApiResult<bool>> togglePostReaction(String postId, {int type = 0}) async {
     return await apiConsumer.post<bool>(
-      path:'/api/v1/posts/$postId/reactions',
+      path:'posts/$postId/reactions',
       body: {'type': type},
-      parser: (json) => json == true,
+      parser: (json) => (json['success'] ?? json['Success'] ?? json) == true,
     );
   }
 
@@ -118,10 +119,11 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     int pageSize = 20,
   }) async {
     return await apiConsumer.get<PaginatedData<ReactionModel>>(
-      path:'/api/v1/posts/$postId/reactions',
+      path:'posts/$postId/reactions',
       queryParameters: {'PageNumber': pageNumber, 'PageSize': pageSize},
       parser: (json) {
-        return PaginatedData.fromJson(json, (data) => ReactionModel.fromJson(data));
+        final data = json['data'] ?? json['Data'] ?? json;
+        return PaginatedData.fromJson(data, (item) => ReactionModel.fromJson(item));
       },
     );
   }
@@ -134,10 +136,11 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     int pageSize = 20,
   }) async {
     return await apiConsumer.get<PaginatedData<CommentModel>>(
-      path:'/api/v1/comments/post/$postId',
+      path:'comments/post/$postId',
       queryParameters: {'PageNumber': pageNumber, 'PageSize': pageSize},
       parser: (json) {
-        return PaginatedData.fromJson(json, (data) => CommentModel.fromJson(data));
+        final data = json['data'] ?? json['Data'] ?? json;
+        return PaginatedData.fromJson(data, (item) => CommentModel.fromJson(item));
       },
     );
   }
@@ -149,13 +152,13 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     String? parentCommentId,
   }) async {
     return await apiConsumer.post<String>(
-      path:'/api/v1/comments/create',
+      path:'comments/create',
       body: {
         'postId': postId,
         'content': content,
         if (parentCommentId != null) 'parentCommentId': parentCommentId,
       },
-      parser: (json) => json.toString(),
+      parser: (json) => (json['data'] ?? json['Data'] ?? json).toString(),
     );
   }
 
@@ -165,27 +168,27 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     required String content,
   }) async {
     return await apiConsumer.put<String>(
-      path:'/api/v1/comments/update',
+      path:'comments/update',
       body: {'commentId': commentId, 'content': content},
-      parser: (json) => json.toString(),
+      parser: (json) => (json['data'] ?? json['Data'] ?? json).toString(),
     );
   }
 
   @override
   Future<ApiResult<bool>> deleteComment(String commentId) async {
     return await apiConsumer.delete<bool>(
-      path:'/api/v1/comments/delete',
+      path:'comments/delete',
       body: {'commentId': commentId},
-      parser: (json) => json == true,
+      parser: (json) => (json['success'] ?? json['Success'] ?? json) == true,
     );
   }
 
   @override
   Future<ApiResult<bool>> toggleCommentReaction(String commentId, {int type = 0}) async {
     return await apiConsumer.post<bool>(
-      path:'/api/v1/comments/$commentId/reactions',
+      path:'comments/$commentId/reactions',
       queryParameters: {'Type': type},
-      parser: (json) => json == true,
+      parser: (json) => (json['success'] ?? json['Success'] ?? json) == true,
     );
   }
 }

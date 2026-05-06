@@ -13,7 +13,7 @@ class CommunityCubit extends Cubit<CommunityStates> {
   bool _hasReachedMax = false;
   bool _isLoading = false;
 
-  void getPosts({bool refresh = false}) async {
+  Future<void> getPosts({bool refresh = false}) async {
     if (refresh) {
       _currentPage = 1;
       _hasReachedMax = false;

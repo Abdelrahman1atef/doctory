@@ -30,6 +30,7 @@ class _CreatePostViewState extends State<CreatePostView> {
       create: (context) => sl<CommunityCubit>(),
       child: Scaffold(
         appBar: AppBar(
+          scrolledUnderElevation: 0,
           title: Text('create_post'.tr()),
           actions: [
             BlocConsumer<CommunityCubit, CommunityStates>(

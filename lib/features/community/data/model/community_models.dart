@@ -204,15 +204,15 @@ class PaginatedData<T> {
   factory PaginatedData.fromJson(
       Map<String, dynamic> json, T Function(Map<String, dynamic>) fromJsonT) {
     return PaginatedData<T>(
-      items: json['items'] != null
-          ? (json['items'] as List).map((i) => fromJsonT(i)).toList()
+      items: (json['items'] ?? json['Items']) != null
+          ? ((json['items'] ?? json['Items']) as List).map((i) => fromJsonT(i)).toList()
           : [],
-      pageNumber: json['pageNumber'] ?? 1,
-      pageSize: json['pageSize'] ?? 20,
-      totalPages: json['totalPages'] ?? 1,
-      totalCount: json['totalCount'] ?? 0,
-      hasPreviousPage: json['hasPreviousPage'] ?? false,
-      hasNextPage: json['hasNextPage'] ?? false,
+      pageNumber: json['pageNumber'] ?? json['PageNumber'] ?? 1,
+      pageSize: json['pageSize'] ?? json['PageSize'] ?? 20,
+      totalPages: json['totalPages'] ?? json['TotalPages'] ?? 1,
+      totalCount: json['totalCount'] ?? json['TotalCount'] ?? 0,
+      hasPreviousPage: json['hasPreviousPage'] ?? json['HasPreviousPage'] ?? false,
+      hasNextPage: json['hasNextPage'] ?? json['HasNextPage'] ?? false,
     );
   }
 }
