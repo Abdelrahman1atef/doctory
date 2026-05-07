@@ -593,5 +593,17 @@
   "current_location": "Current Location",
   "pick_location": "Pick Location",
   "confirm_location": "Confirm Location",
-  "navigate": "Navigate"
+  "navigate": "Navigate",
+  "community": "Community",
+  "create_post": "Create Post",
+  "post_content_hint": "What's on your mind?",
+  "post_action": "Post",
+  "comments": "Comments",
+  "write_comment": "Write a comment...",
+  "like": "Like",
+  "comment": "Comment",
+  "no_posts_yet": "No posts yet",
+  "no_comments_yet": "No comments yet",
+  "post_created_successfully": "Post created successfully",
+  "comment_added_successfully": "Comment added successfully"
 }

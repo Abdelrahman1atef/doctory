@@ -24,4 +24,7 @@ abstract class AppRoutes {
   static const String bookingConfirm = '/booking/confirm';
   static const String bookingSuccess = '/booking/success';
   static const String patientReviews = '/patient-reviews';
+  static const String community = '/community';
+  static const String postDetails = '/post-details';
+  static const String createPost = '/create-post';
 }

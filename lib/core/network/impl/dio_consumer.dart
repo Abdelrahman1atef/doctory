@@ -241,6 +241,7 @@ class DioConsumer implements ApiConsumer {
   @override
   Future<ApiResult<T>> delete<T>({
     required String path,
+    Map<String, dynamic>? body,
     Map<String, dynamic>? queryParameters,
     Map<String, dynamic>? headers,
     T Function(Map<String, dynamic>)? parser,
@@ -250,6 +251,7 @@ class DioConsumer implements ApiConsumer {
     return _handleRequest<T>(
       request: () => _dio.delete(
         path,
+        data: body,
         queryParameters: queryParameters,
         options: Options(headers: headers),
       ),
