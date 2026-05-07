@@ -10,7 +10,8 @@ import 'package:geolocator/geolocator.dart';
 
 class MapHomeCubit extends Cubit<MapHomeStates> {
   final MapHomeRepo _mapHomeRepo;
-  Timer? _liveLocationTimer;
+  bool _isLiveNavigating = false;
+  ClinicModel? _navigatingClinic;
 
   MapHomeCubit(this._mapHomeRepo) : super(MapHomeInitialState());
 
@@ -190,70 +191,72 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
   }
 
   void _startLiveNavigation(ClinicModel clinic) {
-    _liveLocationTimer?.cancel();
-    _liveLocationTimer = Timer.periodic(const Duration(seconds: 5), (
-      timer,
-    ) async {
-      final currentState = state;
-      if (currentState is! MapHomeLoadedState ||
-          currentState.selectedClinic?.id != clinic.id) {
-        timer.cancel();
-        return;
-      }
+    _isLiveNavigating = true;
+    _navigatingClinic = clinic;
+  }
 
-      final position = await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-        ),
+  Future<void> checkLiveLocation() async {
+    if (!_isLiveNavigating || _navigatingClinic == null) return;
+    
+    final currentState = state;
+    if (currentState is! MapHomeLoadedState ||
+        currentState.selectedClinic?.id != _navigatingClinic!.id) {
+      _isLiveNavigating = false;
+      return;
+    }
+
+    final position = await Geolocator.getCurrentPosition(
+      locationSettings: const LocationSettings(
+        accuracy: LocationAccuracy.high,
+      ),
+    );
+
+    // Check if user moved far enough from last fetch point (e.g. > 20 meters)
+    double distance = 999; // Default to large if no last point
+    if (currentState.lastRouteLat != null &&
+        currentState.lastRouteLng != null) {
+      distance = Geolocator.distanceBetween(
+        currentState.lastRouteLat!,
+        currentState.lastRouteLng!,
+        position.latitude,
+        position.longitude,
+      );
+    }
+
+    if (distance > 20) {
+      debugPrint(
+        '📍 [LiveNav] Moved ${distance.toInt()}m. Updating route...',
+      );
+      await getRoute(
+        startLat: position.latitude,
+        startLng: position.longitude,
+        endLat: _navigatingClinic!.lat ?? 0.0,
+        endLng: _navigatingClinic!.lng ?? 0.0,
       );
 
-      // Check if user moved far enough from last fetch point (e.g. > 20 meters)
-      double distance = 999; // Default to large if no last point
-      if (currentState.lastRouteLat != null &&
-          currentState.lastRouteLng != null) {
-        distance = Geolocator.distanceBetween(
-          currentState.lastRouteLat!,
-          currentState.lastRouteLng!,
-          position.latitude,
-          position.longitude,
-        );
-      }
-
-      if (distance > 20) {
-        debugPrint(
-          '📍 [LiveNav] Moved ${distance.toInt()}m. Updating route...',
-        );
-        await getRoute(
-          startLat: position.latitude,
-          startLng: position.longitude,
-          endLat: clinic.lat ?? 0.0,
-          endLng: clinic.lng ?? 0.0,
-        );
-
-        if (state is MapHomeLoadedState) {
-          emit(
-            (state as MapHomeLoadedState).copyWith(
-              currentUserLat: position.latitude,
-              currentUserLng: position.longitude,
-              currentUserHeading: position.heading,
-              lastRouteLat: position.latitude,
-              lastRouteLng: position.longitude,
-            ),
-          );
-        }
-      } else {
-        debugPrint(
-          '📍 [LiveNav] Minor movement (${distance.toInt()}m). Skipping route update.',
-        );
+      if (state is MapHomeLoadedState) {
         emit(
-          currentState.copyWith(
+          (state as MapHomeLoadedState).copyWith(
             currentUserLat: position.latitude,
             currentUserLng: position.longitude,
             currentUserHeading: position.heading,
+            lastRouteLat: position.latitude,
+            lastRouteLng: position.longitude,
           ),
         );
       }
-    });
+    } else {
+      debugPrint(
+        '📍 [LiveNav] Minor movement (${distance.toInt()}m). Skipping route update.',
+      );
+      emit(
+        currentState.copyWith(
+          currentUserLat: position.latitude,
+          currentUserLng: position.longitude,
+          currentUserHeading: position.heading,
+        ),
+      );
+    }
   }
 
   /// Set a custom search location (user-picked on map)
@@ -280,6 +283,8 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
   }
 
   void stopNavigation() {
+    _isLiveNavigating = false;
+    _navigatingClinic = null;
     final currentState = state;
     if (currentState is MapHomeLoadedState) {
       emit(currentState.copyWith(isNavigating: false));
@@ -288,7 +293,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
 
   @override
   Future<void> close() {
-    _liveLocationTimer?.cancel();
+    _isLiveNavigating = false;
     return super.close();
   }
 }

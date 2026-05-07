@@ -73,8 +73,8 @@ class CommentItemWidget extends StatelessWidget {
                       child: Text(
                         'like'.tr(),
                         style: TextStyle(
-                          fontWeight: comment.isLikedByMe ? FontWeight.bold : FontWeight.normal,
-                          color: comment.isLikedByMe ? AppColors.stitchPrimary : AppColors.textSecondary,
+                          fontWeight: comment.myReaction != ReactionType.none ? FontWeight.bold : FontWeight.normal,
+                          color: comment.myReaction != ReactionType.none ? AppColors.stitchPrimary : AppColors.textSecondary,
                           fontSize: 12,
                         ),
                       ),

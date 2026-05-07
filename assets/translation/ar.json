@@ -603,5 +603,15 @@
   "no_posts_yet": "لا توجد منشورات حتى الآن",
   "no_comments_yet": "لا توجد تعليقات حتى الآن",
   "post_created_successfully": "تم النشر بنجاح",
-  "comment_added_successfully": "تمت إضافة التعليق بنجاح"
+  "comment_added_successfully": "تمت إضافة التعليق بنجاح",
+  "see_more": "عرض المزيد",
+  "see_less": "عرض أقل",
+  "love": "حب",
+  "haha": "هاها",
+  "wow": "واو",
+  "sad": "حزين",
+  "angry": "غاضب",
+  "copy_link": "نسخ الرابط",
+  "report": "إبلاغ",
+  "delete": "حذف"
 }

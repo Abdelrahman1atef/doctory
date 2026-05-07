@@ -46,27 +46,33 @@ class CommunityCubit extends Cubit<CommunityStates> {
     );
   }
 
-  void toggleLike(String postId) async {
+  void toggleLike(String postId, {ReactionType type = ReactionType.like}) async {
     // Optimistic update
     final postIndex = posts.indexWhere((p) => p.id == postId);
     if (postIndex == -1) return;
 
     final post = posts[postIndex];
-    final isLiked = post.isLikedByMe;
+    final isLiked = post.myReaction != ReactionType.none;
+    
+    // If the same reaction is clicked again, we "unlike" it
+    final newReaction = (post.myReaction == type) ? ReactionType.none : type;
+    final newIsLiked = newReaction != ReactionType.none;
     
     // Update local state
     posts[postIndex] = post.copyWith(
-      isLikedByMe: !isLiked,
-      reactionCount: isLiked ? post.reactionCount - 1 : post.reactionCount + 1,
+      myReaction: newReaction,
+      reactionCount: (!isLiked && newIsLiked) 
+          ? post.reactionCount + 1 
+          : (isLiked && !newIsLiked) ? post.reactionCount - 1 : post.reactionCount,
     );
     
     emit(CommunitySuccessState(posts: List.from(posts), hasReachedMax: _hasReachedMax));
 
-    final result = await _communityRepo.togglePostReaction(postId);
+    final result = await _communityRepo.togglePostReaction(postId, type: type.value);
 
     result.fold(
       onSuccess: (_) {
-        emit(CommunityToggleLikeSuccessState(postId, !isLiked));
+        emit(CommunityToggleLikeSuccessState(postId, newIsLiked));
       },
       onFailure: (failure) {
         // Revert on failure

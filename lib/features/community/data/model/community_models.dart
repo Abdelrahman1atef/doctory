@@ -1,3 +1,23 @@
+enum ReactionType {
+  none(0),
+  like(1),
+  love(2),
+  haha(3),
+  wow(4),
+  sad(5),
+  angry(6);
+
+  final int value;
+  const ReactionType(this.value);
+
+  static ReactionType fromValue(int value) {
+    return ReactionType.values.firstWhere(
+      (e) => e.value == value,
+      orElse: () => ReactionType.none,
+    );
+  }
+}
+
 class PostModel {
   final String id;
   final String content;
@@ -8,7 +28,7 @@ class PostModel {
   final int reactionCount;
   final int commentCount;
   final List<MediaModel> media;
-  final bool isLikedByMe; // Default to false if not provided
+  final ReactionType myReaction;
 
   PostModel({
     required this.id,
@@ -20,7 +40,7 @@ class PostModel {
     required this.reactionCount,
     required this.commentCount,
     required this.media,
-    this.isLikedByMe = false,
+    this.myReaction = ReactionType.none,
   });
 
   factory PostModel.fromJson(Map<String, dynamic> json) {
@@ -36,7 +56,9 @@ class PostModel {
       media: json['media'] != null
           ? (json['media'] as List).map((i) => MediaModel.fromJson(i)).toList()
           : [],
-      isLikedByMe: json['isLikedByMe'] ?? false,
+      myReaction: json['myReaction'] != null
+          ? ReactionType.fromValue(json['myReaction'])
+          : (json['isLikedByMe'] == true ? ReactionType.like : ReactionType.none),
     );
   }
 
@@ -50,7 +72,7 @@ class PostModel {
     int? reactionCount,
     int? commentCount,
     List<MediaModel>? media,
-    bool? isLikedByMe,
+    ReactionType? myReaction,
   }) {
     return PostModel(
       id: id ?? this.id,
@@ -62,7 +84,7 @@ class PostModel {
       reactionCount: reactionCount ?? this.reactionCount,
       commentCount: commentCount ?? this.commentCount,
       media: media ?? this.media,
-      isLikedByMe: isLikedByMe ?? this.isLikedByMe,
+      myReaction: myReaction ?? this.myReaction,
     );
   }
 }
@@ -105,7 +127,7 @@ class CommentModel {
   final String createdAt;
   final int reactionCount;
   final int repliesCount;
-  final bool isLikedByMe;
+  final ReactionType myReaction;
 
   CommentModel({
     required this.id,
@@ -117,7 +139,7 @@ class CommentModel {
     required this.createdAt,
     required this.reactionCount,
     required this.repliesCount,
-    this.isLikedByMe = false,
+    this.myReaction = ReactionType.none,
   });
 
   factory CommentModel.fromJson(Map<String, dynamic> json) {
@@ -131,7 +153,9 @@ class CommentModel {
       createdAt: json['createdAt'] ?? '',
       reactionCount: json['reactionCount'] ?? 0,
       repliesCount: json['repliesCount'] ?? 0,
-      isLikedByMe: json['isLikedByMe'] ?? false,
+      myReaction: json['myReaction'] != null
+          ? ReactionType.fromValue(json['myReaction'])
+          : (json['isLikedByMe'] == true ? ReactionType.like : ReactionType.none),
     );
   }
   
@@ -145,7 +169,7 @@ class CommentModel {
     String? createdAt,
     int? reactionCount,
     int? repliesCount,
-    bool? isLikedByMe,
+    ReactionType? myReaction,
   }) {
     return CommentModel(
       id: id ?? this.id,
@@ -157,7 +181,7 @@ class CommentModel {
       createdAt: createdAt ?? this.createdAt,
       reactionCount: reactionCount ?? this.reactionCount,
       repliesCount: repliesCount ?? this.repliesCount,
-      isLikedByMe: isLikedByMe ?? this.isLikedByMe,
+      myReaction: myReaction ?? this.myReaction,
     );
   }
 }

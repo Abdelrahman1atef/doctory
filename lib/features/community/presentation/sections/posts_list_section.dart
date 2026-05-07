@@ -1,6 +1,8 @@
 import 'package:doctory/core/router/router_names.dart';
+import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/community/cubit/community_cubit.dart';
 import 'package:doctory/features/community/cubit/community_states.dart';
+import 'package:doctory/features/community/presentation/widgets/community_app_bar.dart';
 import 'package:doctory/features/community/presentation/widgets/post_card_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -46,27 +48,19 @@ class _PostsListSectionState extends State<PostsListSection> {
             current is CommunityErrorState,
         builder: (context, state) {
           final cubit = context.read<CommunityCubit>();
-      
+
           return RefreshIndicator(
             onRefresh: () async {
-              // Await the future so the indicator stays until loading is done
               await cubit.getPosts(refresh: true);
             },
             // Custom styling for the indicator
-            color: Theme.of(context).primaryColor, 
+            color: Theme.of(context).primaryColor,
             child: CustomScrollView(
               controller: _scrollController,
               // AlwaysScrollable ensures we can pull-to-refresh even if the list is empty or an error occurred
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
-                SliverAppBar(
-                  title: Text('community'.tr()),
-                  backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                  floating: true,
-                  snap: true,
-                  elevation: 0,
-                  scrolledUnderElevation: 0,
-                ),
+                CommunitySliverAppBar(title: 'community'.tr()),
                 if (state is CommunityLoadingState && !state.isPagination)
                   const SliverFillRemaining(
                     hasScrollBody: false,
@@ -95,7 +89,10 @@ class _PostsListSectionState extends State<PostsListSection> {
                     child: Center(
                       child: Text(
                         'no_posts_yet'.tr(),
-                        style: const TextStyle(color: Colors.grey, fontSize: 16),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   )
@@ -109,18 +106,35 @@ class _PostsListSectionState extends State<PostsListSection> {
                             child: Center(child: CircularProgressIndicator()),
                           );
                         }
-      
+
                         final post = cubit.posts[index];
-                        return PostCardWidget(
-                          post: post,
-                          onLikeTapped: () => cubit.toggleLike(post.id),
-                          onCommentTapped: () =>
-                              context.push(AppRoutes.postDetails, extra: post),
-                          onPostTapped: () =>
-                              context.push(AppRoutes.postDetails, extra: post),
+                        return Column(
+                          children: [
+                            PostCardWidget(
+                              post: post,
+                              onReactionTapped: (reaction) =>
+                                  cubit.toggleLike(post.id, type: reaction),
+                              onCommentTapped: () => context.push(
+                                AppRoutes.postDetails,
+                                extra: {'post': post, 'focusComment': true},
+                              ),
+                              onPostTapped: () => context.push(
+                                AppRoutes.postDetails,
+                                extra: {'post': post, 'focusComment': false},
+                              ),
+                            ),
+                            if (index < cubit.posts.length - 1)
+                              Container(
+                                height: 5,
+                                color: AppColors.grey100,
+                              ),
+                          ],
                         );
+
+
                       },
-                      childCount: cubit.posts.length +
+                      childCount:
+                          cubit.posts.length +
                           (state is CommunityLoadingState && state.isPagination
                               ? 1
                               : 0),

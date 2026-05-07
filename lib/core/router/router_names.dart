@@ -27,4 +27,5 @@ abstract class AppRoutes {
   static const String community = '/community';
   static const String postDetails = '/post-details';
   static const String createPost = '/create-post';
+  static const String postImageView = '/post-image-view';
 }
