@@ -619,5 +619,10 @@
   "video": "فيديو",
   "file": "ملف",
   "uploading_media": "جاري رفع الوسائط...",
-  "compressing_media": "جاري ضغط الوسائط..."
+  "compressing_media": "جاري ضغط الوسائط...",
+  "gallery": "المعرض",
+  "done": "تم",
+  "gallery_permission_denied": "التطبيق يحتاج إلى صلاحية الوصول للصور. يرجى تفعيلها من الإعدادات.",
+  "open_settings": "فتح الإعدادات",
+  "no_media_found": "لا توجد وسائط"
 }

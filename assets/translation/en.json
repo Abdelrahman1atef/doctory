@@ -621,5 +621,10 @@
   "video": "Video",
   "file": "File",
   "uploading_media": "Uploading media...",
-  "compressing_media": "Compressing media..."
+  "compressing_media": "Compressing media...",
+  "gallery": "Gallery",
+  "done": "Done",
+  "gallery_permission_denied": "The app needs photo library access. Please enable it in settings.",
+  "open_settings": "Open Settings",
+  "no_media_found": "No media found"
 }
