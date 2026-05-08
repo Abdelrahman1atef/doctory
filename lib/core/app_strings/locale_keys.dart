@@ -477,6 +477,7 @@ abstract class LocaleKeys {
   static const am = 'am';
   static const pm = 'pm';
   static const ratings = 'ratings';
+  static const rating = 'rating';
   static const total_rating = 'total_rating';
   static const no_ratings_yet = 'no_ratings_yet';
   static const trip_date_hint = 'trip_date_hint';
@@ -487,4 +488,7 @@ abstract class LocaleKeys {
   static const ignore_order = 'ignore_order';
   static const price_sort_asc = 'price_sort_asc';
   static const price_sort_desc = 'price_sort_desc';
+  static const post_published = 'post_published';
+  static const post_failed = 'post_failed';
+  static const dismiss = 'dismiss';
 }

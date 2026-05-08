@@ -37,7 +37,12 @@ class CommunityCubit extends Cubit<CommunityStates> {
           _hasReachedMax = !data.hasNextPage;
         }
         _isLoading = false;
-        emit(CommunitySuccessState(posts: List.from(posts), hasReachedMax: _hasReachedMax));
+        emit(
+          CommunitySuccessState(
+            posts: List.from(posts),
+            hasReachedMax: _hasReachedMax,
+          ),
+        );
       },
       onFailure: (failure) {
         _isLoading = false;
@@ -46,51 +51,57 @@ class CommunityCubit extends Cubit<CommunityStates> {
     );
   }
 
-  void toggleLike(String postId) async {
+  void toggleLike(
+    String postId, {
+    ReactionType type = ReactionType.like,
+  }) async {
     // Optimistic update
     final postIndex = posts.indexWhere((p) => p.id == postId);
     if (postIndex == -1) return;
 
     final post = posts[postIndex];
-    final isLiked = post.isLikedByMe;
-    
+    final isLiked = post.myReaction != ReactionType.none;
+
+    // If the same reaction is clicked again, we "unlike" it
+    final newReaction = (post.myReaction == type) ? ReactionType.none : type;
+    final newIsLiked = newReaction != ReactionType.none;
+
     // Update local state
     posts[postIndex] = post.copyWith(
-      isLikedByMe: !isLiked,
-      reactionCount: isLiked ? post.reactionCount - 1 : post.reactionCount + 1,
+      myReaction: newReaction,
+      reactionCount: (!isLiked && newIsLiked)
+          ? post.reactionCount + 1
+          : (isLiked && !newIsLiked)
+          ? post.reactionCount - 1
+          : post.reactionCount,
     );
-    
-    emit(CommunitySuccessState(posts: List.from(posts), hasReachedMax: _hasReachedMax));
 
-    final result = await _communityRepo.togglePostReaction(postId);
+    emit(
+      CommunitySuccessState(
+        posts: List.from(posts),
+        hasReachedMax: _hasReachedMax,
+      ),
+    );
+
+    final result = await _communityRepo.togglePostReaction(
+      postId,
+      type: type.value,
+    );
 
     result.fold(
       onSuccess: (_) {
-        emit(CommunityToggleLikeSuccessState(postId, !isLiked));
+        emit(CommunityToggleLikeSuccessState(postId, newIsLiked));
       },
       onFailure: (failure) {
         // Revert on failure
         posts[postIndex] = post;
-        emit(CommunitySuccessState(posts: List.from(posts), hasReachedMax: _hasReachedMax));
+        emit(
+          CommunitySuccessState(
+            posts: List.from(posts),
+            hasReachedMax: _hasReachedMax,
+          ),
+        );
         emit(CommunityToggleLikeErrorState(failure.message));
-      },
-    );
-  }
-
-  void createPost(String content, {List<Map<String, dynamic>>? media}) async {
-    emit(CommunityActionLoadingState());
-    
-    final result = await _communityRepo.createPost(content: content, media: media);
-    
-    result.fold(
-      onSuccess: (id) {
-        emit(CommunityCreatePostSuccessState("post_created_successfully"));
-        // Refresh posts after creation
-        getPosts(refresh: true);
-      },
-      onFailure: (failure) {
-        emit(CommunityCreatePostErrorState(failure.message));
-        emit(CommunitySuccessState(posts: List.from(posts), hasReachedMax: _hasReachedMax));
       },
     );
   }

@@ -4,6 +4,8 @@ import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/features/home/presentation/widgets/doctor_card_widget.dart';
 import 'package:doctory/features/home/presentation/widgets/clinic_card_widget.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:doctory/core/router/router_names.dart';
 
 import '../../../../core/utils/extensions.dart';
 
@@ -49,7 +51,12 @@ class HomeFeaturedListWidget extends StatelessWidget {
           ...clinics.map(
             (clinic) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: ClinicCardWidget(clinic: clinic),
+              child: ClinicCardWidget(
+                clinic: clinic,
+                onTap: () {
+                  context.push(AppRoutes.clinicDetails, extra: clinic);
+                },
+              ),
             ),
           ),
           const SizedBox(height: 16),
@@ -77,7 +84,12 @@ class HomeFeaturedListWidget extends StatelessWidget {
           ...doctors.map(
             (doctor) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
-              child: DoctorCardWidget(doctor: doctor),
+              child: DoctorCardWidget(
+                doctor: doctor,
+                onTap: () {
+                  context.push(AppRoutes.doctorDetails, extra: doctor);
+                },
+              ),
             ),
           ),
         ],

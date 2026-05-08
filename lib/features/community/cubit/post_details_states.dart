@@ -13,7 +13,7 @@ class PostDetailsSuccessState extends PostDetailsStates {
   final PostModel post;
   final List<CommentModel> comments;
   final bool hasReachedMax;
-  
+
   PostDetailsSuccessState({
     required this.post,
     required this.comments,
@@ -40,6 +40,7 @@ class PostDetailsAddCommentErrorState extends PostDetailsStates {
 }
 
 class PostDetailsToggleLikeSuccessState extends PostDetailsStates {}
+
 class PostDetailsToggleLikeErrorState extends PostDetailsStates {
   final String message;
   PostDetailsToggleLikeErrorState(this.message);
