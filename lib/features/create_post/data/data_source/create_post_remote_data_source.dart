@@ -7,9 +7,15 @@ abstract class CreatePostRemoteDataSource {
   Future<ApiResult<String>> uploadVideo(File file, {int place = 3});
   Future<ApiResult<String>> uploadAudio(File file, {int place = 4});
   Future<ApiResult<String>> uploadFile(File file, {int place = 4});
-  
-  Future<ApiResult<List<String>>> uploadMultipleImages(List<File> files, {int place = 2});
-  Future<ApiResult<List<String>>> uploadMultipleVideos(List<File> files, {int place = 3});
+
+  Future<ApiResult<List<String>>> uploadMultipleImages(
+    List<File> files, {
+    int place = 2,
+  });
+  Future<ApiResult<List<String>>> uploadMultipleVideos(
+    List<File> files, {
+    int place = 3,
+  });
 
   Future<ApiResult<String>> createPost({
     required String content,
@@ -26,10 +32,7 @@ class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
   Future<ApiResult<String>> uploadImage(File file, {int place = 2}) async {
     return await apiConsumer.uploadFile<String>(
       path: 'attachments/upload-image',
-      data: {
-        'File': await MultipartFile.fromFile(file.path),
-        'Place': place,
-      },
+      data: {'File': await MultipartFile.fromFile(file.path), 'Place': place},
       parser: (json) => (json['message'] ?? json['Message'] ?? '').toString(),
     );
   }
@@ -38,10 +41,7 @@ class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
   Future<ApiResult<String>> uploadVideo(File file, {int place = 3}) async {
     return await apiConsumer.uploadFile<String>(
       path: 'attachments/upload-video',
-      data: {
-        'File': await MultipartFile.fromFile(file.path),
-        'Place': place,
-      },
+      data: {'File': await MultipartFile.fromFile(file.path), 'Place': place},
       parser: (json) => (json['message'] ?? json['Message'] ?? '').toString(),
     );
   }
@@ -50,10 +50,7 @@ class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
   Future<ApiResult<String>> uploadAudio(File file, {int place = 4}) async {
     return await apiConsumer.uploadFile<String>(
       path: 'attachments/upload-audio',
-      data: {
-        'File': await MultipartFile.fromFile(file.path),
-        'Place': place,
-      },
+      data: {'File': await MultipartFile.fromFile(file.path), 'Place': place},
       parser: (json) => (json['message'] ?? json['Message'] ?? '').toString(),
     );
   }
@@ -62,25 +59,22 @@ class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
   Future<ApiResult<String>> uploadFile(File file, {int place = 4}) async {
     return await apiConsumer.uploadFile<String>(
       path: 'attachments/upload-file',
-      data: {
-        'File': await MultipartFile.fromFile(file.path),
-        'Place': place,
-      },
+      data: {'File': await MultipartFile.fromFile(file.path), 'Place': place},
       parser: (json) => (json['message'] ?? json['Message'] ?? '').toString(),
     );
   }
 
   @override
-  Future<ApiResult<List<String>>> uploadMultipleImages(List<File> files, {int place = 2}) async {
+  Future<ApiResult<List<String>>> uploadMultipleImages(
+    List<File> files, {
+    int place = 2,
+  }) async {
     final multipartFiles = await Future.wait(
-      files.map((f) => MultipartFile.fromFile(f.path)).toList()
+      files.map((f) => MultipartFile.fromFile(f.path)).toList(),
     );
     return await apiConsumer.uploadFile<List<String>>(
       path: 'attachments/upload-multiple-images',
-      data: {
-        'Files': multipartFiles,
-        'Place': place,
-      },
+      data: {'Files': multipartFiles, 'Place': place},
       parser: (json) {
         final data = json['data'] ?? json['Data'] ?? [];
         return (data as List).map((e) => e.toString()).toList();
@@ -89,16 +83,16 @@ class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
   }
 
   @override
-  Future<ApiResult<List<String>>> uploadMultipleVideos(List<File> files, {int place = 3}) async {
+  Future<ApiResult<List<String>>> uploadMultipleVideos(
+    List<File> files, {
+    int place = 3,
+  }) async {
     final multipartFiles = await Future.wait(
-      files.map((f) => MultipartFile.fromFile(f.path)).toList()
+      files.map((f) => MultipartFile.fromFile(f.path)).toList(),
     );
     return await apiConsumer.uploadFile<List<String>>(
       path: 'attachments/upload-multiple-videos',
-      data: {
-        'Files': multipartFiles,
-        'Place': place,
-      },
+      data: {'Files': multipartFiles, 'Place': place},
       parser: (json) {
         final data = json['data'] ?? json['Data'] ?? [];
         return (data as List).map((e) => e.toString()).toList();

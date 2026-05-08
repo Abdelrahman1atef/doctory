@@ -26,7 +26,10 @@ class PostOptionsBottomSheet extends StatelessWidget {
           if (post.authorId == 'me')
             ListTile(
               leading: const Icon(Icons.delete_outline, color: Colors.red),
-              title: Text('delete'.tr(), style: const TextStyle(color: Colors.red)),
+              title: Text(
+                'delete'.tr(),
+                style: const TextStyle(color: Colors.red),
+              ),
               onTap: () => Navigator.pop(context),
             ),
         ],

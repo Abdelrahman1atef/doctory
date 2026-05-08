@@ -16,7 +16,8 @@ class PostCardHeader extends StatelessWidget {
       children: [
         CircleAvatar(
           radius: 20,
-          backgroundImage: post.authorImage != null && post.authorImage!.isNotEmpty
+          backgroundImage:
+              post.authorImage != null && post.authorImage!.isNotEmpty
               ? NetworkImage(post.authorImage!)
               : null,
           backgroundColor: AppColors.grey100,
@@ -48,10 +49,7 @@ class PostCardHeader extends StatelessWidget {
           ),
         ),
         IconButton(
-          icon: const Icon(
-            Icons.more_horiz,
-            color: AppColors.textSecondary,
-          ),
+          icon: const Icon(Icons.more_horiz, color: AppColors.textSecondary),
           onPressed: () {
             showModalBottomSheet(
               context: context,

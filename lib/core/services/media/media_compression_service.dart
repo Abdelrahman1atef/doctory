@@ -39,7 +39,10 @@ class MediaCompressionService {
 
     // Progressive compression – start at 70 and step down
     for (int quality = 70; quality >= 20; quality -= 10) {
-      final compressed = await _compressImageWithQuality(file, quality: quality);
+      final compressed = await _compressImageWithQuality(
+        file,
+        quality: quality,
+      );
       final compressedSize = await compressed.length();
 
       debugPrint(

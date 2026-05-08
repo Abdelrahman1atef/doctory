@@ -49,7 +49,7 @@ class PostModel {
       content: json['content'] ?? '',
       authorId: json['authorId'] ?? '',
       authorName: json['authorName'],
-      authorImage: json['authorImage'],
+      authorImage: json['authorProfileImageUrl'] ?? json['authorImage'],
       createdAt: json['createdAt'] ?? '',
       reactionCount: json['reactionCount'] ?? 0,
       commentCount: json['commentCount'] ?? 0,
@@ -58,7 +58,9 @@ class PostModel {
           : [],
       myReaction: json['myReaction'] != null
           ? ReactionType.fromValue(json['myReaction'])
-          : (json['isLikedByMe'] == true ? ReactionType.like : ReactionType.none),
+          : (json['isLikedByMe'] == true
+                ? ReactionType.like
+                : ReactionType.none),
     );
   }
 
@@ -94,11 +96,7 @@ class MediaModel {
   final String url;
   final dynamic type;
 
-  MediaModel({
-    this.id,
-    required this.url,
-    this.type,
-  });
+  MediaModel({this.id, required this.url, this.type});
 
   factory MediaModel.fromJson(Map<String, dynamic> json) {
     return MediaModel(
@@ -106,6 +104,11 @@ class MediaModel {
       url: json['url'] ?? '',
       type: json['type'],
     );
+  }
+
+  String get fullUrl {
+    if (url.startsWith('http')) return url;
+    return 'https://doctory-icare.runasp.net/files/$url';
   }
 
   Map<String, dynamic> toJson() {
@@ -155,10 +158,12 @@ class CommentModel {
       repliesCount: json['repliesCount'] ?? 0,
       myReaction: json['myReaction'] != null
           ? ReactionType.fromValue(json['myReaction'])
-          : (json['isLikedByMe'] == true ? ReactionType.like : ReactionType.none),
+          : (json['isLikedByMe'] == true
+                ? ReactionType.like
+                : ReactionType.none),
     );
   }
-  
+
   CommentModel copyWith({
     String? id,
     String? postId,
@@ -191,11 +196,7 @@ class ReactionModel {
   final String? userName;
   final String type;
 
-  ReactionModel({
-    required this.userId,
-    this.userName,
-    required this.type,
-  });
+  ReactionModel({required this.userId, this.userName, required this.type});
 
   factory ReactionModel.fromJson(Map<String, dynamic> json) {
     return ReactionModel(
@@ -226,16 +227,21 @@ class PaginatedData<T> {
   });
 
   factory PaginatedData.fromJson(
-      Map<String, dynamic> json, T Function(Map<String, dynamic>) fromJsonT) {
+    Map<String, dynamic> json,
+    T Function(Map<String, dynamic>) fromJsonT,
+  ) {
     return PaginatedData<T>(
       items: (json['items'] ?? json['Items']) != null
-          ? ((json['items'] ?? json['Items']) as List).map((i) => fromJsonT(i)).toList()
+          ? ((json['items'] ?? json['Items']) as List)
+                .map((i) => fromJsonT(i))
+                .toList()
           : [],
       pageNumber: json['pageNumber'] ?? json['PageNumber'] ?? 1,
       pageSize: json['pageSize'] ?? json['PageSize'] ?? 20,
       totalPages: json['totalPages'] ?? json['TotalPages'] ?? 1,
       totalCount: json['totalCount'] ?? json['TotalCount'] ?? 0,
-      hasPreviousPage: json['hasPreviousPage'] ?? json['HasPreviousPage'] ?? false,
+      hasPreviousPage:
+          json['hasPreviousPage'] ?? json['HasPreviousPage'] ?? false,
       hasNextPage: json['hasNextPage'] ?? json['HasNextPage'] ?? false,
     );
   }

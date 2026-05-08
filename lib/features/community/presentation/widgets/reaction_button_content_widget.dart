@@ -11,7 +11,9 @@ class ReactionButtonContentWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = type != ReactionType.none ? _getReactionColor(type) : AppColors.textSecondary;
+    final color = type != ReactionType.none
+        ? _getReactionColor(type)
+        : AppColors.textSecondary;
     final icon = _getReactionIcon(type);
     final label = _getReactionLabel(type).tr();
 

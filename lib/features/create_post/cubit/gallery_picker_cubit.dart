@@ -76,10 +76,12 @@ class GalleryPickerCubit extends Cubit<GalleryPickerStates> {
   }
 
   void _emitLoadedState() {
-    emit(GalleryPickerLoadedState(
-      assets: List.from(_assets),
-      selectedAssets: List.from(_selectedAssets),
-      hasMore: _hasMore,
-    ));
+    emit(
+      GalleryPickerLoadedState(
+        assets: List.from(_assets),
+        selectedAssets: List.from(_selectedAssets),
+        hasMore: _hasMore,
+      ),
+    );
   }
 }

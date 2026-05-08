@@ -58,12 +58,12 @@ class PostDetailsCubit extends Cubit<PostDetailsStates> {
 
   void addComment(String content) async {
     emit(PostDetailsActionLoadingState());
-    
+
     final result = await _communityRepo.createComment(
       postId: post.id,
       content: content,
     );
-    
+
     result.fold(
       onSuccess: (id) {
         // Optimistically increment count
@@ -82,17 +82,22 @@ class PostDetailsCubit extends Cubit<PostDetailsStates> {
     final isLiked = post.myReaction != ReactionType.none;
     final newReaction = (post.myReaction == type) ? ReactionType.none : type;
     final newIsLiked = newReaction != ReactionType.none;
-    
+
     post = post.copyWith(
       myReaction: newReaction,
-      reactionCount: (!isLiked && newIsLiked) 
-          ? post.reactionCount + 1 
-          : (isLiked && !newIsLiked) ? post.reactionCount - 1 : post.reactionCount,
+      reactionCount: (!isLiked && newIsLiked)
+          ? post.reactionCount + 1
+          : (isLiked && !newIsLiked)
+          ? post.reactionCount - 1
+          : post.reactionCount,
     );
-    
+
     _emitSuccessState();
 
-    final result = await _communityRepo.togglePostReaction(post.id, type: type.value);
+    final result = await _communityRepo.togglePostReaction(
+      post.id,
+      type: type.value,
+    );
 
     result.fold(
       onSuccess: (_) {
@@ -101,7 +106,9 @@ class PostDetailsCubit extends Cubit<PostDetailsStates> {
       onFailure: (failure) {
         post = post.copyWith(
           myReaction: isLiked ? type : ReactionType.none,
-          reactionCount: isLiked ? post.reactionCount + 1 : post.reactionCount - 1,
+          reactionCount: isLiked
+              ? post.reactionCount + 1
+              : post.reactionCount - 1,
         );
         _emitSuccessState();
         emit(PostDetailsToggleLikeErrorState(failure.message));
@@ -109,7 +116,10 @@ class PostDetailsCubit extends Cubit<PostDetailsStates> {
     );
   }
 
-  void toggleCommentLike(String commentId, {ReactionType type = ReactionType.like}) async {
+  void toggleCommentLike(
+    String commentId, {
+    ReactionType type = ReactionType.like,
+  }) async {
     final commentIndex = comments.indexWhere((c) => c.id == commentId);
     if (commentIndex == -1) return;
 
@@ -120,14 +130,19 @@ class PostDetailsCubit extends Cubit<PostDetailsStates> {
 
     comments[commentIndex] = comment.copyWith(
       myReaction: newReaction,
-      reactionCount: (!isLiked && newIsLiked) 
-          ? comment.reactionCount + 1 
-          : (isLiked && !newIsLiked) ? comment.reactionCount - 1 : comment.reactionCount,
+      reactionCount: (!isLiked && newIsLiked)
+          ? comment.reactionCount + 1
+          : (isLiked && !newIsLiked)
+          ? comment.reactionCount - 1
+          : comment.reactionCount,
     );
-    
+
     _emitSuccessState();
 
-    final result = await _communityRepo.toggleCommentReaction(commentId, type: type.value);
+    final result = await _communityRepo.toggleCommentReaction(
+      commentId,
+      type: type.value,
+    );
 
     result.fold(
       onSuccess: (_) {},
@@ -140,10 +155,12 @@ class PostDetailsCubit extends Cubit<PostDetailsStates> {
   }
 
   void _emitSuccessState() {
-    emit(PostDetailsSuccessState(
-      post: post,
-      comments: List.from(comments),
-      hasReachedMax: _hasReachedMax,
-    ));
+    emit(
+      PostDetailsSuccessState(
+        post: post,
+        comments: List.from(comments),
+        hasReachedMax: _hasReachedMax,
+      ),
+    );
   }
 }

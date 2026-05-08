@@ -7,7 +7,10 @@ import 'package:go_router/go_router.dart';
 
 class CommunityRouter {
   static final List<RouteBase> routes = [
-    GoRoute(path: AppRoutes.community, builder: (context, state) => const CommunityView()),
+    GoRoute(
+      path: AppRoutes.community,
+      builder: (context, state) => const CommunityView(),
+    ),
   ];
 
   static final List<RouteBase> globalRoutes = [

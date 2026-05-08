@@ -20,11 +20,7 @@ class PostCardStats extends StatelessWidget {
       onTap: onPostTapped,
       child: Row(
         children: [
-          const Icon(
-            Icons.thumb_up,
-            size: 14,
-            color: AppColors.stitchPrimary,
-          ),
+          const Icon(Icons.thumb_up, size: 14, color: AppColors.stitchPrimary),
           4.pw,
           Text(
             '${post.reactionCount}',

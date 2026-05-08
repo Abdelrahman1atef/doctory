@@ -1,3 +1,4 @@
+import 'package:doctory/core/app_strings/locale_keys.dart';
 import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
@@ -64,7 +65,7 @@ class DoctorProfileSection extends StatelessWidget {
               Icons.work_outline,
             ),
             _buildStatCard(
-              'rating'.tr(),
+              LocaleKeys.rating.tr(),
               doctor.rating.toString(),
               Icons.star_border,
             ),

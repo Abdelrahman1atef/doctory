@@ -626,5 +626,9 @@
   "done": "Done",
   "gallery_permission_denied": "The app needs photo library access. Please enable it in settings.",
   "open_settings": "Open Settings",
-  "no_media_found": "No media found"
+  "no_media_found": "No media found",
+  "rating": "Rating",
+  "post_published": "Post published",
+  "post_failed": "Post failed",
+  "dismiss": "Dismiss"
 }

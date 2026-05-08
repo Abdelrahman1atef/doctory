@@ -47,11 +47,7 @@ class CommunitySliverAppBar extends StatelessWidget {
   final String title;
   final List<Widget>? actions;
 
-  const CommunitySliverAppBar({
-    super.key,
-    required this.title,
-    this.actions,
-  });
+  const CommunitySliverAppBar({super.key, required this.title, this.actions});
 
   @override
   Widget build(BuildContext context) {

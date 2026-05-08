@@ -624,5 +624,9 @@
   "done": "تم",
   "gallery_permission_denied": "التطبيق يحتاج إلى صلاحية الوصول للصور. يرجى تفعيلها من الإعدادات.",
   "open_settings": "فتح الإعدادات",
-  "no_media_found": "لا توجد وسائط"
+  "no_media_found": "لا توجد وسائط",
+  "rating": "التقييم",
+  "post_published": "تم نشر المنشور",
+  "post_failed": "فشل نشر المنشور",
+  "dismiss": "تجاهل"
 }

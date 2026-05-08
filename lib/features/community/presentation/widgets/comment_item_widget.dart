@@ -23,7 +23,8 @@ class CommentItemWidget extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 18,
-            backgroundImage: comment.authorImage != null && comment.authorImage!.isNotEmpty
+            backgroundImage:
+                comment.authorImage != null && comment.authorImage!.isNotEmpty
                 ? NetworkImage(comment.authorImage!)
                 : null,
             backgroundColor: AppColors.grey100,
@@ -65,7 +66,10 @@ class CommentItemWidget extends StatelessWidget {
                   children: [
                     Text(
                       _formatDate(comment.createdAt),
-                      style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                      style: const TextStyle(
+                        color: AppColors.textSecondary,
+                        fontSize: 12,
+                      ),
                     ),
                     16.pw,
                     InkWell(
@@ -73,19 +77,30 @@ class CommentItemWidget extends StatelessWidget {
                       child: Text(
                         'like'.tr(),
                         style: TextStyle(
-                          fontWeight: comment.myReaction != ReactionType.none ? FontWeight.bold : FontWeight.normal,
-                          color: comment.myReaction != ReactionType.none ? AppColors.stitchPrimary : AppColors.textSecondary,
+                          fontWeight: comment.myReaction != ReactionType.none
+                              ? FontWeight.bold
+                              : FontWeight.normal,
+                          color: comment.myReaction != ReactionType.none
+                              ? AppColors.stitchPrimary
+                              : AppColors.textSecondary,
                           fontSize: 12,
                         ),
                       ),
                     ),
                     if (comment.reactionCount > 0) ...[
                       8.pw,
-                      const Icon(Icons.thumb_up, size: 12, color: AppColors.stitchPrimary),
+                      const Icon(
+                        Icons.thumb_up,
+                        size: 12,
+                        color: AppColors.stitchPrimary,
+                      ),
                       4.pw,
                       Text(
                         '${comment.reactionCount}',
-                        style: const TextStyle(color: AppColors.textSecondary, fontSize: 12),
+                        style: const TextStyle(
+                          color: AppColors.textSecondary,
+                          fontSize: 12,
+                        ),
                       ),
                     ],
                   ],
@@ -101,7 +116,7 @@ class CommentItemWidget extends StatelessWidget {
   String _formatDate(String dateString) {
     try {
       final date = DateTime.parse(dateString);
-      // Just returning a simple format, ideally something like "2 hours ago" 
+      // Just returning a simple format, ideally something like "2 hours ago"
       return DateFormat('dd MMM, hh:mm a').format(date);
     } catch (e) {
       return dateString;

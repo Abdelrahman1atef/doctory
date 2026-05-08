@@ -197,7 +197,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
 
   Future<void> checkLiveLocation() async {
     if (!_isLiveNavigating || _navigatingClinic == null) return;
-    
+
     final currentState = state;
     if (currentState is! MapHomeLoadedState ||
         currentState.selectedClinic?.id != _navigatingClinic!.id) {
@@ -206,9 +206,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     }
 
     final position = await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(
-        accuracy: LocationAccuracy.high,
-      ),
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
     );
 
     // Check if user moved far enough from last fetch point (e.g. > 20 meters)
@@ -224,9 +222,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     }
 
     if (distance > 20) {
-      debugPrint(
-        '📍 [LiveNav] Moved ${distance.toInt()}m. Updating route...',
-      );
+      debugPrint('📍 [LiveNav] Moved ${distance.toInt()}m. Updating route...');
       await getRoute(
         startLat: position.latitude,
         startLng: position.longitude,

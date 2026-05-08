@@ -24,16 +24,25 @@ class CreatePostRepoImpl implements CreatePostRepo {
       List<Map<String, dynamic>> finalMedia = [];
 
       // Group images and videos for batch uploading
-      final images = media.where((m) => m.type == MediaType.image).map((m) => m.file).toList();
-      final videos = media.where((m) => m.type == MediaType.video).map((m) => m.file).toList();
-      final others = media.where((m) => m.type == MediaType.audio || m.type == MediaType.file).toList();
+      final images = media
+          .where((m) => m.type == MediaType.image)
+          .map((m) => m.file)
+          .toList();
+      final videos = media
+          .where((m) => m.type == MediaType.video)
+          .map((m) => m.file)
+          .toList();
+      final others = media
+          .where((m) => m.type == MediaType.audio || m.type == MediaType.file)
+          .toList();
 
       // Upload Images
       if (images.isNotEmpty) {
         if (images.length == 1) {
           final res = await remoteDataSource.uploadImage(images.first);
           res.fold(
-            onSuccess: (fileName) => finalMedia.add({'url': fileName, 'type': 'IMAGE'}),
+            onSuccess: (fileName) =>
+                finalMedia.add({'url': fileName, 'type': 1}),
             onFailure: (failure) => throw Exception(failure.message),
           );
         } else {
@@ -41,7 +50,7 @@ class CreatePostRepoImpl implements CreatePostRepo {
           res.fold(
             onSuccess: (fileNames) {
               for (var fileName in fileNames) {
-                finalMedia.add({'url': fileName, 'type': 'IMAGE'});
+                finalMedia.add({'url': fileName, 'type': 1});
               }
             },
             onFailure: (failure) => throw Exception(failure.message),
@@ -54,7 +63,8 @@ class CreatePostRepoImpl implements CreatePostRepo {
         if (videos.length == 1) {
           final res = await remoteDataSource.uploadVideo(videos.first);
           res.fold(
-            onSuccess: (fileName) => finalMedia.add({'url': fileName, 'type': 'VIDEO'}),
+            onSuccess: (fileName) =>
+                finalMedia.add({'url': fileName, 'type': 2}),
             onFailure: (failure) => throw Exception(failure.message),
           );
         } else {
@@ -62,7 +72,7 @@ class CreatePostRepoImpl implements CreatePostRepo {
           res.fold(
             onSuccess: (fileNames) {
               for (var fileName in fileNames) {
-                finalMedia.add({'url': fileName, 'type': 'VIDEO'});
+                finalMedia.add({'url': fileName, 'type': 2});
               }
             },
             onFailure: (failure) => throw Exception(failure.message),
@@ -75,13 +85,15 @@ class CreatePostRepoImpl implements CreatePostRepo {
         if (item.type == MediaType.audio) {
           final res = await remoteDataSource.uploadAudio(item.file);
           res.fold(
-            onSuccess: (fileName) => finalMedia.add({'url': fileName, 'type': 'AUDIO'}),
+            onSuccess: (fileName) =>
+                finalMedia.add({'url': fileName, 'type': 3}),
             onFailure: (failure) => throw Exception(failure.message),
           );
         } else if (item.type == MediaType.file) {
           final res = await remoteDataSource.uploadFile(item.file);
           res.fold(
-            onSuccess: (fileName) => finalMedia.add({'url': fileName, 'type': 'FILE'}),
+            onSuccess: (fileName) =>
+                finalMedia.add({'url': fileName, 'type': 4}),
             onFailure: (failure) => throw Exception(failure.message),
           );
         }

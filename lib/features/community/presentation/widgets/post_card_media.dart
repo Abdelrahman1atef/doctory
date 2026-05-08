@@ -11,7 +11,7 @@ class PostCardMedia extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (post.media.isEmpty) return const SizedBox.shrink();
-    
+
     // Only dealing with the first 4 images to make a compact grid
     final mediaToShow = post.media.take(4).toList();
     final hasMore = post.media.length > 4;
@@ -25,7 +25,11 @@ class PostCardMedia extends StatelessWidget {
     );
   }
 
-  Widget _buildGrid(BuildContext context, List<MediaModel> media, bool hasMore) {
+  Widget _buildGrid(
+    BuildContext context,
+    List<MediaModel> media,
+    bool hasMore,
+  ) {
     if (media.length == 1) {
       return _buildImage(context, media[0], 0, double.infinity, 250);
     } else if (media.length == 2) {
@@ -33,9 +37,25 @@ class PostCardMedia extends StatelessWidget {
         height: 200,
         child: Row(
           children: [
-            Expanded(child: _buildImage(context, media[0], 0, double.infinity, double.infinity)),
+            Expanded(
+              child: _buildImage(
+                context,
+                media[0],
+                0,
+                double.infinity,
+                double.infinity,
+              ),
+            ),
             const SizedBox(width: 4),
-            Expanded(child: _buildImage(context, media[1], 1, double.infinity, double.infinity)),
+            Expanded(
+              child: _buildImage(
+                context,
+                media[1],
+                1,
+                double.infinity,
+                double.infinity,
+              ),
+            ),
           ],
         ),
       );
@@ -44,15 +64,40 @@ class PostCardMedia extends StatelessWidget {
         height: 250,
         child: Row(
           children: [
-            Expanded(flex: 2, child: _buildImage(context, media[0], 0, double.infinity, double.infinity)),
+            Expanded(
+              flex: 2,
+              child: _buildImage(
+                context,
+                media[0],
+                0,
+                double.infinity,
+                double.infinity,
+              ),
+            ),
             const SizedBox(width: 4),
             Expanded(
               flex: 1,
               child: Column(
                 children: [
-                  Expanded(child: _buildImage(context, media[1], 1, double.infinity, double.infinity)),
+                  Expanded(
+                    child: _buildImage(
+                      context,
+                      media[1],
+                      1,
+                      double.infinity,
+                      double.infinity,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Expanded(child: _buildImage(context, media[2], 2, double.infinity, double.infinity)),
+                  Expanded(
+                    child: _buildImage(
+                      context,
+                      media[2],
+                      2,
+                      double.infinity,
+                      double.infinity,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -67,9 +112,25 @@ class PostCardMedia extends StatelessWidget {
             Expanded(
               child: Row(
                 children: [
-                  Expanded(child: _buildImage(context, media[0], 0, double.infinity, double.infinity)),
+                  Expanded(
+                    child: _buildImage(
+                      context,
+                      media[0],
+                      0,
+                      double.infinity,
+                      double.infinity,
+                    ),
+                  ),
                   const SizedBox(width: 4),
-                  Expanded(child: _buildImage(context, media[1], 1, double.infinity, double.infinity)),
+                  Expanded(
+                    child: _buildImage(
+                      context,
+                      media[1],
+                      1,
+                      double.infinity,
+                      double.infinity,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -77,13 +138,27 @@ class PostCardMedia extends StatelessWidget {
             Expanded(
               child: Row(
                 children: [
-                  Expanded(child: _buildImage(context, media[2], 2, double.infinity, double.infinity)),
+                  Expanded(
+                    child: _buildImage(
+                      context,
+                      media[2],
+                      2,
+                      double.infinity,
+                      double.infinity,
+                    ),
+                  ),
                   const SizedBox(width: 4),
                   Expanded(
                     child: Stack(
                       fit: StackFit.expand,
                       children: [
-                        _buildImage(context, media[3], 3, double.infinity, double.infinity),
+                        _buildImage(
+                          context,
+                          media[3],
+                          3,
+                          double.infinity,
+                          double.infinity,
+                        ),
                         if (hasMore)
                           Container(
                             color: Colors.black54,
@@ -109,18 +184,21 @@ class PostCardMedia extends StatelessWidget {
     }
   }
 
-  Widget _buildImage(BuildContext context, MediaModel media, int index, double width, double height) {
+  Widget _buildImage(
+    BuildContext context,
+    MediaModel media,
+    int index,
+    double width,
+    double height,
+  ) {
     final heroTag = "postImage_${post.id}_$index";
-    final imageUrl = media.url;
+    final imageUrl = media.fullUrl;
 
     return GestureDetector(
       onTap: () {
         context.push(
           AppRoutes.postImageView,
-          extra: {
-            'imageUrl': imageUrl,
-            'heroTag': heroTag,
-          },
+          extra: {'imageUrl': imageUrl, 'heroTag': heroTag},
         );
       },
       child: Hero(

@@ -24,7 +24,8 @@ class _ExpandableTextWidgetState extends State<ExpandableTextWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = widget.style ?? AppStyles.s14Medium.withColor(AppColors.textPrimary);
+    final textStyle =
+        widget.style ?? AppStyles.s14Medium.withColor(AppColors.textPrimary);
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -49,7 +50,9 @@ class _ExpandableTextWidgetState extends State<ExpandableTextWidget> {
                 Text(
                   widget.text,
                   maxLines: isExpanded ? null : widget.maxLines,
-                  overflow: isExpanded ? TextOverflow.visible : TextOverflow.ellipsis,
+                  overflow: isExpanded
+                      ? TextOverflow.visible
+                      : TextOverflow.ellipsis,
                   style: textStyle.copyWith(height: 1.5),
                 ),
                 if (!isExpanded)
@@ -57,7 +60,9 @@ class _ExpandableTextWidgetState extends State<ExpandableTextWidget> {
                     padding: const EdgeInsets.only(top: 4.0),
                     child: Text(
                       'see_more'.tr(),
-                      style: AppStyles.s14Bold.withColor(AppColors.stitchPrimary),
+                      style: AppStyles.s14Bold.withColor(
+                        AppColors.stitchPrimary,
+                      ),
                     ),
                   ),
               ],
@@ -66,6 +71,7 @@ class _ExpandableTextWidgetState extends State<ExpandableTextWidget> {
         } else {
           return Text(
             widget.text,
+            textAlign: TextAlign.start,
             style: textStyle.copyWith(height: 1.5),
           );
         }

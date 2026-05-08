@@ -2,9 +2,9 @@ import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/community/data/model/community_models.dart';
 import 'package:doctory/features/community/presentation/widgets/post_card_action_button.dart';
 import 'package:doctory/features/community/presentation/widgets/reaction_button_content_widget.dart';
-import 'package:easy_localization/easy_localization.dart'as easy_localization;
+import 'package:easy_localization/easy_localization.dart' as easy_localization;
 import 'package:flutter/material.dart';
-import 'package:flutter_reaction_button/flutter_reaction_button.dart';
+import 'package:doctory/core/common/widgets/reaction_button/flutter_reaction_button.dart';
 
 class PostCardActions extends StatelessWidget {
   final PostModel post;
@@ -36,18 +36,22 @@ class PostCardActions extends StatelessWidget {
               reactions: ReactionType.values
                   .where((r) => r != ReactionType.none)
                   .map((reaction) {
-                return Reaction<ReactionType>(
-                  value: reaction,
-                  previewIcon: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 4.0, vertical: 4.0),
-                    child: Text(
-                      ReactionEmojiHelper.getReactionEmoji(reaction),
-                      style: const TextStyle(fontSize: 28),
-                    ),
-                  ),
-                  icon: ReactionButtonContentWidget(type: reaction),
-                );
-              }).toList(),
+                    return Reaction<ReactionType>(
+                      value: reaction,
+                      previewIcon: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 4.0,
+                          vertical: 4.0,
+                        ),
+                        child: Text(
+                          ReactionEmojiHelper.getReactionEmoji(reaction),
+                          style: const TextStyle(fontSize: 28),
+                        ),
+                      ),
+                      icon: ReactionButtonContentWidget(type: reaction),
+                    );
+                  })
+                  .toList(),
               placeholder: const Reaction<ReactionType>(
                 value: ReactionType.none,
                 icon: ReactionButtonContentWidget(type: ReactionType.none),

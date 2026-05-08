@@ -7,7 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class CreatePostAppBarSection extends StatelessWidget implements PreferredSizeWidget {
+class CreatePostAppBarSection extends StatelessWidget
+    implements PreferredSizeWidget {
   final TextEditingController contentController;
 
   const CreatePostAppBarSection({super.key, required this.contentController});
@@ -17,38 +18,26 @@ class CreatePostAppBarSection extends StatelessWidget implements PreferredSizeWi
     return CommunityAppBar(
       title: 'create_post'.tr(),
       actions: [
-        BlocConsumer<CreatePostCubit, CreatePostStates>(
-          listener: (context, state) {
-            if (state is CreatePostSuccessState) {
-              context.pop(true);
-            } else if (state is CreatePostErrorState) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(state.message)),
-              );
-            }
-          },
+        BlocBuilder<CreatePostCubit, CreatePostStates>(
           builder: (context, state) {
-            final isLoading = state is CreatePostLoadingState;
             return TextButton(
-              onPressed: isLoading
-                  ? null
-                  : () {
-                      final text = contentController.text.trim();
-                      context.read<CreatePostCubit>().submitPost(text);
-                    },
-              child: isLoading
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(
-                      'post_action'.tr(),
-                      style: const TextStyle(
-                        color: AppColors.stitchPrimary,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
+              onPressed: () {
+                final text = contentController.text.trim();
+                final cubit = context.read<CreatePostCubit>();
+
+                // Only submit if there's content or media
+                if (text.isNotEmpty || cubit.selectedMedia.isNotEmpty) {
+                  cubit.submitPost(text);
+                  context.pop(true); // Pop immediately like Facebook
+                }
+              },
+              child: Text(
+                'post_action'.tr(),
+                style: const TextStyle(
+                  color: AppColors.stitchPrimary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
             );
           },
         ),

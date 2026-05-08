@@ -5,19 +5,43 @@ import 'package:doctory/features/community/data/model/community_models.dart';
 
 abstract class CommunityRepo {
   // Posts
-  Future<ApiResult<PaginatedData<PostModel>>> getPosts({int pageNumber = 1, int pageSize = 20});
+  Future<ApiResult<PaginatedData<PostModel>>> getPosts({
+    int pageNumber = 1,
+    int pageSize = 20,
+  });
   Future<ApiResult<PostModel>> getPostById(String id);
-  Future<ApiResult<String>> updatePost({required String postId, required String content});
+  Future<ApiResult<String>> updatePost({
+    required String postId,
+    required String content,
+  });
   Future<ApiResult<bool>> deletePost(String postId);
   Future<ApiResult<bool>> togglePostReaction(String postId, {int type = 0});
-  Future<ApiResult<PaginatedData<ReactionModel>>> getPostReactions(String postId, {int pageNumber = 1, int pageSize = 20});
+  Future<ApiResult<PaginatedData<ReactionModel>>> getPostReactions(
+    String postId, {
+    int pageNumber = 1,
+    int pageSize = 20,
+  });
 
   // Comments
-  Future<ApiResult<PaginatedData<CommentModel>>> getCommentsByPost(String postId, {int pageNumber = 1, int pageSize = 20});
-  Future<ApiResult<String>> createComment({required String postId, required String content, String? parentCommentId});
-  Future<ApiResult<String>> updateComment({required String commentId, required String content});
+  Future<ApiResult<PaginatedData<CommentModel>>> getCommentsByPost(
+    String postId, {
+    int pageNumber = 1,
+    int pageSize = 20,
+  });
+  Future<ApiResult<String>> createComment({
+    required String postId,
+    required String content,
+    String? parentCommentId,
+  });
+  Future<ApiResult<String>> updateComment({
+    required String commentId,
+    required String content,
+  });
   Future<ApiResult<bool>> deleteComment(String commentId);
-  Future<ApiResult<bool>> toggleCommentReaction(String commentId, {int type = 0});
+  Future<ApiResult<bool>> toggleCommentReaction(
+    String commentId, {
+    int type = 0,
+  });
 }
 
 class CommunityRepoImpl implements CommunityRepo {
@@ -26,9 +50,15 @@ class CommunityRepoImpl implements CommunityRepo {
   CommunityRepoImpl({required this.remoteDataSource});
 
   @override
-  Future<ApiResult<PaginatedData<PostModel>>> getPosts({int pageNumber = 1, int pageSize = 20}) async {
+  Future<ApiResult<PaginatedData<PostModel>>> getPosts({
+    int pageNumber = 1,
+    int pageSize = 20,
+  }) async {
     try {
-      return await remoteDataSource.getPosts(pageNumber: pageNumber, pageSize: pageSize);
+      return await remoteDataSource.getPosts(
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+      );
     } on Exception catch (e) {
       return ApiResult.failure(ErrorHandler.handleException(e));
     }
@@ -44,9 +74,15 @@ class CommunityRepoImpl implements CommunityRepo {
   }
 
   @override
-  Future<ApiResult<String>> updatePost({required String postId, required String content}) async {
+  Future<ApiResult<String>> updatePost({
+    required String postId,
+    required String content,
+  }) async {
     try {
-      return await remoteDataSource.updatePost(postId: postId, content: content);
+      return await remoteDataSource.updatePost(
+        postId: postId,
+        content: content,
+      );
     } on Exception catch (e) {
       return ApiResult.failure(ErrorHandler.handleException(e));
     }
@@ -62,7 +98,10 @@ class CommunityRepoImpl implements CommunityRepo {
   }
 
   @override
-  Future<ApiResult<bool>> togglePostReaction(String postId, {int type = 0}) async {
+  Future<ApiResult<bool>> togglePostReaction(
+    String postId, {
+    int type = 0,
+  }) async {
     try {
       return await remoteDataSource.togglePostReaction(postId, type: type);
     } on Exception catch (e) {
@@ -71,36 +110,66 @@ class CommunityRepoImpl implements CommunityRepo {
   }
 
   @override
-  Future<ApiResult<PaginatedData<ReactionModel>>> getPostReactions(String postId, {int pageNumber = 1, int pageSize = 20}) async {
+  Future<ApiResult<PaginatedData<ReactionModel>>> getPostReactions(
+    String postId, {
+    int pageNumber = 1,
+    int pageSize = 20,
+  }) async {
     try {
-      return await remoteDataSource.getPostReactions(postId, pageNumber: pageNumber, pageSize: pageSize);
+      return await remoteDataSource.getPostReactions(
+        postId,
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+      );
     } on Exception catch (e) {
       return ApiResult.failure(ErrorHandler.handleException(e));
     }
   }
 
   @override
-  Future<ApiResult<PaginatedData<CommentModel>>> getCommentsByPost(String postId, {int pageNumber = 1, int pageSize = 20}) async {
+  Future<ApiResult<PaginatedData<CommentModel>>> getCommentsByPost(
+    String postId, {
+    int pageNumber = 1,
+    int pageSize = 20,
+  }) async {
     try {
-      return await remoteDataSource.getCommentsByPost(postId, pageNumber: pageNumber, pageSize: pageSize);
+      return await remoteDataSource.getCommentsByPost(
+        postId,
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+      );
     } on Exception catch (e) {
       return ApiResult.failure(ErrorHandler.handleException(e));
     }
   }
 
   @override
-  Future<ApiResult<String>> createComment({required String postId, required String content, String? parentCommentId}) async {
+  Future<ApiResult<String>> createComment({
+    required String postId,
+    required String content,
+    String? parentCommentId,
+  }) async {
     try {
-      return await remoteDataSource.createComment(postId: postId, content: content, parentCommentId: parentCommentId);
+      return await remoteDataSource.createComment(
+        postId: postId,
+        content: content,
+        parentCommentId: parentCommentId,
+      );
     } on Exception catch (e) {
       return ApiResult.failure(ErrorHandler.handleException(e));
     }
   }
 
   @override
-  Future<ApiResult<String>> updateComment({required String commentId, required String content}) async {
+  Future<ApiResult<String>> updateComment({
+    required String commentId,
+    required String content,
+  }) async {
     try {
-      return await remoteDataSource.updateComment(commentId: commentId, content: content);
+      return await remoteDataSource.updateComment(
+        commentId: commentId,
+        content: content,
+      );
     } on Exception catch (e) {
       return ApiResult.failure(ErrorHandler.handleException(e));
     }
@@ -116,9 +185,15 @@ class CommunityRepoImpl implements CommunityRepo {
   }
 
   @override
-  Future<ApiResult<bool>> toggleCommentReaction(String commentId, {int type = 0}) async {
+  Future<ApiResult<bool>> toggleCommentReaction(
+    String commentId, {
+    int type = 0,
+  }) async {
     try {
-      return await remoteDataSource.toggleCommentReaction(commentId, type: type);
+      return await remoteDataSource.toggleCommentReaction(
+        commentId,
+        type: type,
+      );
     } on Exception catch (e) {
       return ApiResult.failure(ErrorHandler.handleException(e));
     }

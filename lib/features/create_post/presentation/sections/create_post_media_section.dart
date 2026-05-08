@@ -11,7 +11,9 @@ class CreatePostMediaSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<CreatePostCubit, CreatePostStates>(
-      buildWhen: (previous, current) => current is CreatePostMediaUpdatedState || current is CreatePostInitialState,
+      buildWhen: (previous, current) =>
+          current is CreatePostMediaUpdatedState ||
+          current is CreatePostInitialState,
       builder: (context, state) {
         final cubit = context.read<CreatePostCubit>();
         if (cubit.selectedMedia.isEmpty) {
@@ -29,7 +31,11 @@ class CreatePostMediaSection extends StatelessWidget {
     );
   }
 
-  Widget _buildGrid(CreatePostCubit cubit, List<SelectedMediaModel> media, bool hasMore) {
+  Widget _buildGrid(
+    CreatePostCubit cubit,
+    List<SelectedMediaModel> media,
+    bool hasMore,
+  ) {
     if (media.length == 1) {
       return _buildImage(cubit, media[0], 0, double.infinity, 400);
     } else if (media.length == 2) {
@@ -37,9 +43,25 @@ class CreatePostMediaSection extends StatelessWidget {
         height: 400,
         child: Row(
           children: [
-            Expanded(child: _buildImage(cubit, media[0], 0, double.infinity, double.infinity)),
+            Expanded(
+              child: _buildImage(
+                cubit,
+                media[0],
+                0,
+                double.infinity,
+                double.infinity,
+              ),
+            ),
             const SizedBox(width: 4),
-            Expanded(child: _buildImage(cubit, media[1], 1, double.infinity, double.infinity)),
+            Expanded(
+              child: _buildImage(
+                cubit,
+                media[1],
+                1,
+                double.infinity,
+                double.infinity,
+              ),
+            ),
           ],
         ),
       );
@@ -48,15 +70,40 @@ class CreatePostMediaSection extends StatelessWidget {
         height: 400,
         child: Row(
           children: [
-            Expanded(flex: 1, child: _buildImage(cubit, media[0], 0, double.infinity, double.infinity)),
+            Expanded(
+              flex: 1,
+              child: _buildImage(
+                cubit,
+                media[0],
+                0,
+                double.infinity,
+                double.infinity,
+              ),
+            ),
             const SizedBox(width: 4),
             Expanded(
               flex: 1,
               child: Column(
                 children: [
-                  Expanded(child: _buildImage(cubit, media[1], 1, double.infinity, double.infinity)),
+                  Expanded(
+                    child: _buildImage(
+                      cubit,
+                      media[1],
+                      1,
+                      double.infinity,
+                      double.infinity,
+                    ),
+                  ),
                   const SizedBox(height: 4),
-                  Expanded(child: _buildImage(cubit, media[2], 2, double.infinity, double.infinity)),
+                  Expanded(
+                    child: _buildImage(
+                      cubit,
+                      media[2],
+                      2,
+                      double.infinity,
+                      double.infinity,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -71,9 +118,25 @@ class CreatePostMediaSection extends StatelessWidget {
             Expanded(
               child: Row(
                 children: [
-                  Expanded(child: _buildImage(cubit, media[0], 0, double.infinity, double.infinity)),
+                  Expanded(
+                    child: _buildImage(
+                      cubit,
+                      media[0],
+                      0,
+                      double.infinity,
+                      double.infinity,
+                    ),
+                  ),
                   const SizedBox(width: 4),
-                  Expanded(child: _buildImage(cubit, media[1], 1, double.infinity, double.infinity)),
+                  Expanded(
+                    child: _buildImage(
+                      cubit,
+                      media[1],
+                      1,
+                      double.infinity,
+                      double.infinity,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -81,7 +144,15 @@ class CreatePostMediaSection extends StatelessWidget {
             Expanded(
               child: Row(
                 children: [
-                  Expanded(child: _buildImage(cubit, media[2], 2, double.infinity, double.infinity)),
+                  Expanded(
+                    child: _buildImage(
+                      cubit,
+                      media[2],
+                      2,
+                      double.infinity,
+                      double.infinity,
+                    ),
+                  ),
                   const SizedBox(width: 4),
                   Expanded(
                     child: _buildImage(
@@ -90,7 +161,9 @@ class CreatePostMediaSection extends StatelessWidget {
                       3,
                       double.infinity,
                       double.infinity,
-                      overlayText: hasMore ? '+${cubit.selectedMedia.length - 4}' : null,
+                      overlayText: hasMore
+                          ? '+${cubit.selectedMedia.length - 4}'
+                          : null,
                     ),
                   ),
                 ],

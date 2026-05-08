@@ -1,0 +1,1 @@
+enum ReactionsBoxAlignment { ltr, rtl }

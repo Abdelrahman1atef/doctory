@@ -9,14 +9,21 @@ class CommunityDI {
   static void setup() {
     // Data Sources
     sl.registerLazySingleton<CommunityRemoteDataSource>(
-        () => CommunityRemoteDataSourceImpl(apiConsumer: sl<ApiConsumer>()));
+      () => CommunityRemoteDataSourceImpl(apiConsumer: sl<ApiConsumer>()),
+    );
 
     // Repositories
     sl.registerLazySingleton<CommunityRepo>(
-        () => CommunityRepoImpl(remoteDataSource: sl<CommunityRemoteDataSource>()));
+      () =>
+          CommunityRepoImpl(remoteDataSource: sl<CommunityRemoteDataSource>()),
+    );
 
     // Cubits
-    sl.registerFactory<CommunityCubit>(() => CommunityCubit(sl<CommunityRepo>()));
-    sl.registerFactory<PostDetailsCubit>(() => PostDetailsCubit(sl<CommunityRepo>()));
+    sl.registerFactory<CommunityCubit>(
+      () => CommunityCubit(sl<CommunityRepo>()),
+    );
+    sl.registerFactory<PostDetailsCubit>(
+      () => PostDetailsCubit(sl<CommunityRepo>()),
+    );
   }
 }

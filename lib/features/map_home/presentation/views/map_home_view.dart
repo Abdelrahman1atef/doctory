@@ -13,7 +13,8 @@ class MapHomeView extends StatefulWidget {
   State<MapHomeView> createState() => _MapHomeViewState();
 }
 
-class _MapHomeViewState extends State<MapHomeView> with SingleTickerProviderStateMixin {
+class _MapHomeViewState extends State<MapHomeView>
+    with SingleTickerProviderStateMixin {
   late final MapHomeCubit _cubit;
   late final Ticker _ticker;
   Duration _lastTick = Duration.zero;
@@ -22,7 +23,7 @@ class _MapHomeViewState extends State<MapHomeView> with SingleTickerProviderStat
   void initState() {
     super.initState();
     _cubit = sl<MapHomeCubit>()..searchClinics(searchText: widget.searchQuery);
-    
+
     // Ticker pauses automatically when the widget is offstage (e.g. user is on another tab)
     _ticker = createTicker((elapsed) {
       if (elapsed - _lastTick > const Duration(seconds: 5)) {

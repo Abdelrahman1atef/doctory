@@ -32,6 +32,7 @@ class PostCardWidget extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 PostCardHeader(post: post),
                 12.ph,

@@ -7,16 +7,16 @@ import 'package:go_router/go_router.dart';
 
 class CreatePostRouter {
   static GoRoute get route => GoRoute(
-        path: AppRoutes.createPost,
-        builder: (context, state) => const CreatePostView(),
-        routes: [
-          GoRoute(
-            path: 'galleryPicker',
-            builder: (context, state) => BlocProvider(
-              create: (context) => GalleryPickerCubit(),
-              child: const GalleryPickerView(),
-            ),
-          ),
-        ],
-      );
+    path: AppRoutes.createPost,
+    builder: (context, state) => const CreatePostView(),
+    routes: [
+      GoRoute(
+        path: 'galleryPicker',
+        builder: (context, state) => BlocProvider(
+          create: (context) => GalleryPickerCubit(),
+          child: const GalleryPickerView(),
+        ),
+      ),
+    ],
+  );
 }

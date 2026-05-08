@@ -28,7 +28,8 @@ class _GalleryPickerViewState extends State<GalleryPickerView> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       context.read<GalleryPickerCubit>().loadMore();
     }
   }
@@ -46,7 +47,11 @@ class _GalleryPickerViewState extends State<GalleryPickerView> {
       appBar: AppBar(
         title: Text(
           'gallery'.tr(),
-          style: const TextStyle(color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
+          style: const TextStyle(
+            color: Colors.black,
+            fontSize: 18,
+            fontWeight: FontWeight.bold,
+          ),
         ),
         backgroundColor: Colors.white,
         elevation: 0,
@@ -54,26 +59,34 @@ class _GalleryPickerViewState extends State<GalleryPickerView> {
         actions: [
           BlocBuilder<GalleryPickerCubit, GalleryPickerStates>(
             builder: (context, state) {
-              if (state is GalleryPickerLoadedState && state.selectedAssets.isNotEmpty) {
+              if (state is GalleryPickerLoadedState &&
+                  state.selectedAssets.isNotEmpty) {
                 return TextButton(
                   onPressed: () {
                     context.pop(state.selectedAssets);
                   },
                   child: Text(
                     'done'.tr(),
-                    style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 16),
+                    style: TextStyle(
+                      color: AppColors.primary,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
                   ),
                 );
               }
               return const SizedBox.shrink();
             },
-          )
+          ),
         ],
       ),
       body: BlocBuilder<GalleryPickerCubit, GalleryPickerStates>(
         builder: (context, state) {
-          if (state is GalleryPickerLoadingState || state is GalleryPickerInitialState) {
-            return Center(child: CircularProgressIndicator(color: AppColors.primary));
+          if (state is GalleryPickerLoadingState ||
+              state is GalleryPickerInitialState) {
+            return Center(
+              child: CircularProgressIndicator(color: AppColors.primary),
+            );
           }
 
           if (state is GalleryPickerPermissionDeniedState) {
@@ -83,7 +96,11 @@ class _GalleryPickerViewState extends State<GalleryPickerView> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.photo_library, size: 60, color: Colors.grey),
+                    const Icon(
+                      Icons.photo_library,
+                      size: 60,
+                      color: Colors.grey,
+                    ),
                     const SizedBox(height: 16),
                     Text(
                       'gallery_permission_denied'.tr(),
@@ -116,7 +133,9 @@ class _GalleryPickerViewState extends State<GalleryPickerView> {
               itemCount: state.assets.length + (state.hasMore ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index == state.assets.length) {
-                  return Center(child: CircularProgressIndicator(color: AppColors.primary));
+                  return Center(
+                    child: CircularProgressIndicator(color: AppColors.primary),
+                  );
                 }
 
                 final asset = state.assets[index];
@@ -124,14 +143,18 @@ class _GalleryPickerViewState extends State<GalleryPickerView> {
                 final selectedIndex = state.selectedAssets.indexOf(asset);
 
                 return GestureDetector(
-                  onTap: () => context.read<GalleryPickerCubit>().toggleSelection(asset),
+                  onTap: () =>
+                      context.read<GalleryPickerCubit>().toggleSelection(asset),
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
                       FutureBuilder<Uint8List?>(
-                        future: asset.thumbnailDataWithSize(const ThumbnailSize(200, 200)),
+                        future: asset.thumbnailDataWithSize(
+                          const ThumbnailSize(200, 200),
+                        ),
                         builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
                             return Container(color: AppColors.grey100);
                           }
                           if (snapshot.hasData) {
@@ -147,7 +170,11 @@ class _GalleryPickerViewState extends State<GalleryPickerView> {
                         const Positioned(
                           bottom: 4,
                           right: 4,
-                          child: Icon(Icons.videocam, color: Colors.white, size: 20),
+                          child: Icon(
+                            Icons.videocam,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                         ),
                       if (isSelected)
                         Container(
@@ -164,7 +191,11 @@ class _GalleryPickerViewState extends State<GalleryPickerView> {
                             child: Center(
                               child: Text(
                                 '${selectedIndex + 1}',
-                                style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
                           ),

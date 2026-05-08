@@ -26,67 +26,81 @@ class MediaPreviewItem extends StatelessWidget {
       height: height,
       child: Stack(
         children: [
-        Container(
-          width: width,
-          height: height,
-          decoration: BoxDecoration(
-            color: AppColors.grey100,
-            image: media.type == MediaType.image
-                ? DecorationImage(
-                    image: FileImage(media.file),
-                    fit: BoxFit.cover,
+          Container(
+            width: width,
+            height: height,
+            decoration: BoxDecoration(color: AppColors.grey100),
+            child: media.type == MediaType.image
+                ? Stack(
+                    fit: StackFit.expand,
+                    children: [
+                      Image.file(
+                        media.file,
+                        fit: BoxFit.cover,
+                        cacheWidth: 800, // Optimize memory for previews
+                      ),
+                      if (media.isCompressing)
+                        Container(
+                          color: Colors.black26,
+                          child: const Center(
+                            child: SizedBox(
+                              width: 24,
+                              height: 24,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
                   )
-                : null,
-          ),
-          child: media.type != MediaType.image
-              ? Center(
-                  child: Icon(
-                    media.type == MediaType.video
-                        ? Icons.videocam
-                        : media.type == MediaType.audio
-                            ? Icons.audiotrack
-                            : Icons.insert_drive_file,
-                    size: 40,
-                    color: Colors.grey,
+                : Center(
+                    child: Icon(
+                      media.type == MediaType.video
+                          ? Icons.videocam
+                          : media.type == MediaType.audio
+                          ? Icons.audiotrack
+                          : Icons.insert_drive_file,
+                      size: 40,
+                      color: Colors.grey,
+                    ),
                   ),
-                )
-              : null,
-        ),
-        if (overlayText != null)
-          Positioned.fill(
-            child: Container(
-              color: Colors.black54,
-              alignment: Alignment.center,
-              child: Text(
-                overlayText!,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
+          ),
+          if (overlayText != null)
+            Positioned.fill(
+              child: Container(
+                color: Colors.black54,
+                alignment: Alignment.center,
+                child: Text(
+                  overlayText!,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ),
             ),
-          ),
-        Positioned(
-          top: 8,
-          right: 8,
-          child: GestureDetector(
-            onTap: onRemove,
-            child: Container(
-              padding: const EdgeInsets.all(4),
-              decoration: const BoxDecoration(
-                color: Colors.red,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.close,
-                size: 16,
-                color: Colors.white,
+          Positioned(
+            top: 8,
+            right: 8,
+            child: GestureDetector(
+              onTap: onRemove,
+              child: Container(
+                padding: const EdgeInsets.all(4),
+                decoration: const BoxDecoration(
+                  color: Colors.red,
+                  shape: BoxShape.circle,
+                ),
+                child: const Icon(Icons.close, size: 16, color: Colors.white),
               ),
             ),
           ),
-        ),
-      ],
-    ));
+        ],
+      ),
+    );
   }
 }
