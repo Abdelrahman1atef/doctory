@@ -491,4 +491,6 @@ abstract class LocaleKeys {
   static const post_published = 'post_published';
   static const post_failed = 'post_failed';
   static const dismiss = 'dismiss';
+  static const press_back_again_to_exit = 'press_back_again_to_exit';
+  static const booking_step_format = 'booking_step_format';
 }

@@ -628,5 +628,8 @@
   "rating": "التقييم",
   "post_published": "تم نشر المنشور",
   "post_failed": "فشل نشر المنشور",
-  "dismiss": "تجاهل"
+  "dismiss": "تجاهل",
+  "publishing_post": "جاري نشر المنشور...",
+  "press_back_again_to_exit": "اضغط مرة أخرى للخروج",
+  "booking_step_format": "الخطوة {} من {}"
 }

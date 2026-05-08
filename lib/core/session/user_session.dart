@@ -53,15 +53,21 @@ class UserSession {
     try {
       // Determine the user data map
       Map<String, dynamic> userData = {};
-      if (response.containsKey("user") && response["user"] is Map) {
-        userData = Map<String, dynamic>.from(response["user"] as Map);
-      } else if (response.containsKey("data") &&
-          response["data"] is Map &&
-          (response["data"] as Map).containsKey("user") &&
-          (response["data"] as Map)["user"] is Map) {
-        userData = Map<String, dynamic>.from(
-          (response["data"] as Map)["user"] as Map,
+
+      if (response.containsKey("data") && response["data"] is Map) {
+        final Map<String, dynamic> data = Map<String, dynamic>.from(
+          response["data"] as Map,
         );
+
+        // Check if user is inside data, or if data is the user object itself
+        if (data.containsKey("user") && data["user"] is Map) {
+          userData = Map<String, dynamic>.from(data["user"] as Map);
+        } else {
+          // Based on API, user info (fullName, email, id) is directly inside 'data'
+          userData = data;
+        }
+      } else if (response.containsKey("user") && response["user"] is Map) {
+        userData = Map<String, dynamic>.from(response["user"] as Map);
       } else if (response.containsKey("id") || response.containsKey("email")) {
         userData = response;
       }
@@ -71,7 +77,17 @@ class UserSession {
       }
 
       // Determine the token (accessToken, token, or access_token)
-      if (response.containsKey("accessToken") &&
+      if (response.containsKey("data") && response["data"] is Map) {
+        final data = response["data"] as Map;
+        if (data.containsKey("accessToken") && data["accessToken"] != null) {
+          token = data["accessToken"].toString();
+        } else if (data.containsKey("token") && data["token"] != null) {
+          token = data["token"].toString();
+        } else if (data.containsKey("access_token") &&
+            data["access_token"] != null) {
+          token = data["access_token"].toString();
+        }
+      } else if (response.containsKey("accessToken") &&
           response["accessToken"] != null) {
         token = response["accessToken"].toString();
       } else if (response.containsKey("token") && response["token"] != null) {
@@ -79,27 +95,17 @@ class UserSession {
       } else if (response.containsKey("access_token") &&
           response["access_token"] != null) {
         token = response["access_token"].toString();
-      } else if (response.containsKey("data") && response["data"] is Map) {
-        final data = response["data"] as Map;
-        if (data.containsKey("accessToken") && data["accessToken"] != null) {
-          token = data["accessToken"]?.toString() ?? '';
-        } else if (data.containsKey("token") && data["token"] != null) {
-          token = data["token"]?.toString() ?? '';
-        } else if (data.containsKey("access_token") &&
-            data["access_token"] != null) {
-          token = data["access_token"]?.toString() ?? '';
-        }
       }
 
       // Determine the refresh token
-      if (response.containsKey("refreshToken") &&
-          response["refreshToken"] != null) {
-        refreshToken = response["refreshToken"].toString();
-      } else if (response.containsKey("data") && response["data"] is Map) {
+      if (response.containsKey("data") && response["data"] is Map) {
         final data = response["data"] as Map;
         if (data.containsKey("refreshToken") && data["refreshToken"] != null) {
-          refreshToken = data["refreshToken"]?.toString() ?? '';
+          refreshToken = data["refreshToken"].toString();
         }
+      } else if (response.containsKey("refreshToken") &&
+          response["refreshToken"] != null) {
+        refreshToken = response["refreshToken"].toString();
       }
 
       await HiveService().put(
@@ -113,11 +119,9 @@ class UserSession {
         if (refreshToken.isNotEmpty) {
           await SecureStorage.saveRefreshToken(refreshToken);
         }
-        // Ensure CacheHelper also knows we are logged in for IntroCubit
         await CacheHelper.saveBool('isLoggedIn', true);
       }
 
-      // Update notifier last to trigger GoRouter redirect with correct token state
       userNotifier.value = userModel;
     } catch (e) {
       debugPrint("Error in saveUser: $e");

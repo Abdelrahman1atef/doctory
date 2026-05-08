@@ -630,5 +630,10 @@
   "rating": "Rating",
   "post_published": "Post published",
   "post_failed": "Post failed",
-  "dismiss": "Dismiss"
+  "dismiss": "Dismiss",
+  "publishing_post": "Publishing post...",
+  "press_back_again_to_exit": "Press back again to exit",
+  "choose_available_day": "Choose available day",
+  "review_details": "Review details",
+  "booking_step_format": "Step {} of {}"
 }

@@ -6,8 +6,9 @@ import '../../../../core/utils/extensions.dart';
 
 class HomeHeaderWidget extends StatelessWidget {
   final String userName;
+  final String? imageUrl;
 
-  const HomeHeaderWidget({super.key, required this.userName});
+  const HomeHeaderWidget({super.key, required this.userName, this.imageUrl});
 
   @override
   Widget build(BuildContext context) {
@@ -56,12 +57,17 @@ class HomeHeaderWidget extends StatelessWidget {
                 offset: const Offset(0, 4),
               ),
             ],
-            image: const DecorationImage(
-              image: NetworkImage(
-                'https://api.dicebear.com/7.x/avataaars/png?seed=Ahmed&backgroundColor=F8F9FA',
-              ),
-              fit: BoxFit.cover,
-            ),
+            image: (imageUrl != null && imageUrl!.isNotEmpty)
+                ? DecorationImage(
+                    image: NetworkImage(imageUrl!),
+                    fit: BoxFit.cover,
+                  )
+                : const DecorationImage(
+                    image: NetworkImage(
+                      'https://api.dicebear.com/7.x/avataaars/png?seed=Ahmed&backgroundColor=F8F9FA',
+                    ),
+                    fit: BoxFit.cover,
+                  ),
           ),
         ),
       ],

@@ -1,187 +1,117 @@
 import 'package:doctory/core/router/router_names.dart';
+import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/community/data/model/community_models.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
-class PostCardMedia extends StatelessWidget {
+class PostCardMedia extends StatefulWidget {
   final PostModel post;
 
   const PostCardMedia({super.key, required this.post});
 
   @override
+  State<PostCardMedia> createState() => _PostCardMediaState();
+}
+
+class _PostCardMediaState extends State<PostCardMedia> {
+  int _currentIndex = 0;
+
+  @override
   Widget build(BuildContext context) {
-    if (post.media.isEmpty) return const SizedBox.shrink();
+    if (widget.post.media.isEmpty) return const SizedBox.shrink();
 
-    // Only dealing with the first 4 images to make a compact grid
-    final mediaToShow = post.media.take(4).toList();
-    final hasMore = post.media.length > 4;
-
-    return Padding(
-      padding: const EdgeInsets.only(top: 8.0),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(8),
-        child: _buildGrid(context, mediaToShow, hasMore),
-      ),
-    );
-  }
-
-  Widget _buildGrid(
-    BuildContext context,
-    List<MediaModel> media,
-    bool hasMore,
-  ) {
-    if (media.length == 1) {
-      return _buildImage(context, media[0], 0, double.infinity, 250);
-    } else if (media.length == 2) {
-      return SizedBox(
-        height: 200,
-        child: Row(
-          children: [
-            Expanded(
-              child: _buildImage(
-                context,
-                media[0],
-                0,
-                double.infinity,
-                double.infinity,
-              ),
-            ),
-            const SizedBox(width: 4),
-            Expanded(
-              child: _buildImage(
-                context,
-                media[1],
-                1,
-                double.infinity,
-                double.infinity,
-              ),
-            ),
-          ],
-        ),
-      );
-    } else if (media.length == 3) {
-      return SizedBox(
-        height: 250,
-        child: Row(
-          children: [
-            Expanded(
-              flex: 2,
-              child: _buildImage(
-                context,
-                media[0],
-                0,
-                double.infinity,
-                double.infinity,
-              ),
-            ),
-            const SizedBox(width: 4),
-            Expanded(
-              flex: 1,
-              child: Column(
-                children: [
-                  Expanded(
-                    child: _buildImage(
-                      context,
-                      media[1],
-                      1,
-                      double.infinity,
-                      double.infinity,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Expanded(
-                    child: _buildImage(
-                      context,
-                      media[2],
-                      2,
-                      double.infinity,
-                      double.infinity,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-      );
-    } else {
-      return SizedBox(
-        height: 250,
-        child: Column(
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _buildImage(
-                      context,
-                      media[0],
-                      0,
-                      double.infinity,
-                      double.infinity,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: _buildImage(
-                      context,
-                      media[1],
-                      1,
-                      double.infinity,
-                      double.infinity,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 4),
-            Expanded(
-              child: Row(
-                children: [
-                  Expanded(
-                    child: _buildImage(
-                      context,
-                      media[2],
-                      2,
-                      double.infinity,
-                      double.infinity,
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  Expanded(
-                    child: Stack(
-                      fit: StackFit.expand,
-                      children: [
-                        _buildImage(
-                          context,
-                          media[3],
-                          3,
-                          double.infinity,
-                          double.infinity,
-                        ),
-                        if (hasMore)
-                          Container(
-                            color: Colors.black54,
-                            alignment: Alignment.center,
-                            child: Text(
-                              '+${post.media.length - 4}',
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 24,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+    if (widget.post.media.length == 1) {
+      return Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: _buildImage(
+            context,
+            widget.post.media[0],
+            0,
+            double.infinity,
+            250,
+          ),
         ),
       );
     }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 8.0),
+      child: Column(
+        children: [
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
+            child: SizedBox(
+              height: 300,
+              child: Stack(
+                children: [
+                  PageView.builder(
+                    itemCount: widget.post.media.length,
+                    onPageChanged: (index) {
+                      setState(() {
+                        _currentIndex = index;
+                      });
+                    },
+                    itemBuilder: (context, index) {
+                      return _buildImage(
+                        context,
+                        widget.post.media[index],
+                        index,
+                        double.infinity,
+                        double.infinity,
+                      );
+                    },
+                  ),
+                  // Positioned indicator
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 4,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.black54,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${_currentIndex + 1}/${widget.post.media.length}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          // Small dots indicator
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: List.generate(
+              widget.post.media.length,
+              (index) => Container(
+                width: 8,
+                height: 8,
+                margin: const EdgeInsets.symmetric(horizontal: 4),
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: _currentIndex == index
+                      ? AppColors.stitchPrimary
+                      : Colors.grey[300],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _buildImage(
@@ -191,7 +121,7 @@ class PostCardMedia extends StatelessWidget {
     double width,
     double height,
   ) {
-    final heroTag = "postImage_${post.id}_$index";
+    final heroTag = "postImage_${widget.post.id}_$index";
     final imageUrl = media.fullUrl;
 
     return GestureDetector(
