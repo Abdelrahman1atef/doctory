@@ -7,11 +7,6 @@ abstract class CommunityRemoteDataSource {
 
   Future<ApiResult<PostModel>> getPostById(String id);
 
-  Future<ApiResult<String>> createPost({
-    required String content,
-    List<Map<String, dynamic>>? media,
-  });
-
   Future<ApiResult<String>> updatePost({required String postId, required String content});
 
   Future<ApiResult<bool>> deletePost(String postId);
@@ -70,18 +65,6 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
     return await apiConsumer.get<PostModel>(
       path:'posts/$id',
       parser: (json) => PostModel.fromJson(json['data'] ?? json),
-    );
-  }
-
-  @override
-  Future<ApiResult<String>> createPost({
-    required String content,
-    List<Map<String, dynamic>>? media,
-  }) async {
-    return await apiConsumer.post<String>(
-      path:'posts/create',
-      body: {'content': content, if (media != null) 'media': media},
-      parser: (json) => (json['data'] ?? json['Data'] ?? json).toString(),
     );
   }
 

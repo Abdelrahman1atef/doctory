@@ -7,7 +7,6 @@ abstract class CommunityRepo {
   // Posts
   Future<ApiResult<PaginatedData<PostModel>>> getPosts({int pageNumber = 1, int pageSize = 20});
   Future<ApiResult<PostModel>> getPostById(String id);
-  Future<ApiResult<String>> createPost({required String content, List<Map<String, dynamic>>? media});
   Future<ApiResult<String>> updatePost({required String postId, required String content});
   Future<ApiResult<bool>> deletePost(String postId);
   Future<ApiResult<bool>> togglePostReaction(String postId, {int type = 0});
@@ -39,15 +38,6 @@ class CommunityRepoImpl implements CommunityRepo {
   Future<ApiResult<PostModel>> getPostById(String id) async {
     try {
       return await remoteDataSource.getPostById(id);
-    } on Exception catch (e) {
-      return ApiResult.failure(ErrorHandler.handleException(e));
-    }
-  }
-
-  @override
-  Future<ApiResult<String>> createPost({required String content, List<Map<String, dynamic>>? media}) async {
-    try {
-      return await remoteDataSource.createPost(content: content, media: media);
     } on Exception catch (e) {
       return ApiResult.failure(ErrorHandler.handleException(e));
     }

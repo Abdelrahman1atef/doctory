@@ -83,21 +83,4 @@ class CommunityCubit extends Cubit<CommunityStates> {
     );
   }
 
-  void createPost(String content, {List<Map<String, dynamic>>? media}) async {
-    emit(CommunityActionLoadingState());
-    
-    final result = await _communityRepo.createPost(content: content, media: media);
-    
-    result.fold(
-      onSuccess: (id) {
-        emit(CommunityCreatePostSuccessState("post_created_successfully"));
-        // Refresh posts after creation
-        getPosts(refresh: true);
-      },
-      onFailure: (failure) {
-        emit(CommunityCreatePostErrorState(failure.message));
-        emit(CommunitySuccessState(posts: List.from(posts), hasReachedMax: _hasReachedMax));
-      },
-    );
-  }
 }

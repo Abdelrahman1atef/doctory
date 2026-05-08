@@ -613,5 +613,11 @@
   "angry": "غاضب",
   "copy_link": "نسخ الرابط",
   "report": "إبلاغ",
-  "delete": "حذف"
+  "delete": "حذف",
+  "add_to_post": "إضافة للمنشور",
+  "photo": "صورة",
+  "video": "فيديو",
+  "file": "ملف",
+  "uploading_media": "جاري رفع الوسائط...",
+  "compressing_media": "جاري ضغط الوسائط..."
 }

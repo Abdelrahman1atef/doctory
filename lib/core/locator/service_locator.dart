@@ -17,7 +17,7 @@ import 'package:doctory/features/home/di/home_di.dart';
 import 'package:doctory/features/more/di/more_di.dart';
 import 'package:doctory/features/map_home/di/map_home_di.dart';
 import 'package:doctory/features/community/di/community_di.dart';
-
+import 'package:doctory/features/create_post/di/create_post_di.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
@@ -35,8 +35,6 @@ class ServiceLocator {
 
     // Register core services
     sl.registerLazySingleton<HiveService>(() => HiveService());
-
-
 
     // Initialize Firebase Analytics
     final analytics = FirebaseAnalytics.instance;
@@ -80,5 +78,6 @@ class ServiceLocator {
     MapHomeDI.setup();
     MoreDI.setup();
     CommunityDI.setup();
+    setupCreatePostDI();
   }
 }
