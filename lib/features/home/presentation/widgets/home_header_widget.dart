@@ -59,7 +59,7 @@ class HomeHeaderWidget extends StatelessWidget {
             ],
             image: (imageUrl != null && imageUrl!.isNotEmpty)
                 ? DecorationImage(
-                    image: NetworkImage(imageUrl!),
+                    image: NetworkImage(imageUrl!.toImageUrl),
                     fit: BoxFit.cover,
                   )
                 : const DecorationImage(

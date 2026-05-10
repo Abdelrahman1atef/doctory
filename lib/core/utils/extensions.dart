@@ -8,6 +8,12 @@ extension Photo on String {
   String png([String? path = "images"]) => 'assets/$path/$this.png';
   String svg([String path = "icons"]) => 'assets/$path/$this.svg';
   String jpeg([String path = "icons"]) => 'assets/$path/$this.jpg';
+
+  String get toImageUrl {
+    if (isEmpty) return '';
+    if (startsWith('http')) return this;
+    return 'https://doctory-icare.runasp.net/files/$this';
+  }
 }
 
 extension Dates on String {

@@ -1,6 +1,6 @@
 import 'package:doctory/core/cache/cache_helper.dart';
 import 'package:doctory/core/session/user_session.dart';
-import 'package:doctory/core/utils/app_assets.dart';
+
 import 'package:doctory/features/intro/data/model/intro_model.dart';
 import 'package:doctory/features/intro/cubit/intro_states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

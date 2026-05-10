@@ -3,6 +3,8 @@ import '../cache/cache_helper.dart';
 import '../cache/hive_service.dart';
 import '../cache/secure_storage.dart';
 import '../utils/general_constants.dart';
+import '../locator/service_locator.dart';
+import '../services/chat/chat_realtime_service.dart';
 
 // TODO: Resolve missing feature models or move them to core if they are shared
 // import '../../features/auth/data/models/response/user_model.dart';
@@ -120,6 +122,11 @@ class UserSession {
           await SecureStorage.saveRefreshToken(refreshToken);
         }
         await CacheHelper.saveBool('isLoggedIn', true);
+
+        // Initialize Chat Realtime Service
+        if (sl.isRegistered<ChatRealtimeService>()) {
+          sl<ChatRealtimeService>().initialize();
+        }
       }
 
       userNotifier.value = userModel;
@@ -130,6 +137,10 @@ class UserSession {
 
   /// Logout and clear session
   static Future<void> logout() async {
+    // Disconnect Chat Realtime Service
+    if (sl.isRegistered<ChatRealtimeService>()) {
+      await sl<ChatRealtimeService>().disconnect();
+    }
     token = '';
     refreshToken = '';
     userModel = null;
@@ -210,6 +221,14 @@ class UserSession {
           }
         }
       }
+      
+      if (token.isNotEmpty) {
+        // Initialize Chat Realtime Service
+        if (sl.isRegistered<ChatRealtimeService>()) {
+          sl<ChatRealtimeService>().initialize();
+        }
+      }
+
       return userModel;
     }
     return null;

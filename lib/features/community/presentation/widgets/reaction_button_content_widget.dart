@@ -1,6 +1,5 @@
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
-import 'package:doctory/core/utils/app_assets.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/community/data/model/community_models.dart';
 import 'package:easy_localization/easy_localization.dart';

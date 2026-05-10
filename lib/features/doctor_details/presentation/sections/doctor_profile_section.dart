@@ -24,7 +24,7 @@ class DoctorProfileSection extends StatelessWidget {
               shape: BoxShape.circle,
               border: Border.all(color: AppColors.stitchSurfaceLow, width: 4),
               image: DecorationImage(
-                image: NetworkImage(doctor.imageUrl ?? ''),
+                image: NetworkImage(doctor.imageUrl!.toImageUrl),
                 fit: BoxFit.cover,
                 onError: (_, __) {},
               ),

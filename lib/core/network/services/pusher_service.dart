@@ -4,6 +4,7 @@ import 'package:pusher_channels_flutter/pusher_channels_flutter.dart';
 import '../../config/pusher_config.dart';
 import '../../locator/service_locator.dart';
 import '../impl/dio_consumer.dart';
+import 'package:dio/dio.dart';
 
 class PusherService {
   static const String subscriptionSucceededEvent =
@@ -21,7 +22,10 @@ class PusherService {
   late String authEndPoint;
 
   Future<void> initialize(String channelName) async {
-    if (channelName.contains('Chat')) {
+    // For chat, we use the realtime auth endpoint
+    if (channelName.contains('Chat') || 
+        channelName.contains('presence-global') || 
+        channelName.contains('private-user-')) {
       authEndPoint = PusherConfig.authEndpointChat;
     } else {
       authEndPoint = PusherConfig.authEndpointTracking;
@@ -148,10 +152,20 @@ class PusherService {
 
   void _onMemberAdded(String channelName, PusherMember member) {
     log('Member added to $channelName: ${member.userId}');
+    final channelHandlers = _eventHandlers[channelName];
+    final handler = channelHandlers?['pusher:member_added'];
+    if (handler != null) {
+      handler(member);
+    }
   }
 
   void _onMemberRemoved(String channelName, PusherMember member) {
     log('Member removed from $channelName: ${member.userId}');
+    final channelHandlers = _eventHandlers[channelName];
+    final handler = channelHandlers?['pusher:member_removed'];
+    if (handler != null) {
+      handler(member);
+    }
   }
 
   // ------------------------
@@ -200,25 +214,50 @@ class PusherService {
   ) async {
     try {
       _socketId = socketId;
+      log('🔑 Authorizing channel: $channel with socket: $socketId');
+      
+      final dio = Dio();
+      dio.options.headers = {
+        'Authorization': 'Bearer ${sl<DioConsumer>().config.defaultHeaders["Authorization"] ?? ""}', // Note: UserSession.token handles this better, let's use the dioConsumer below instead
+      };
+
       final dioConsumer = sl<DioConsumer>();
-      final result = await dioConsumer.post<Map<String, dynamic>>(
+      
+      // Determine if we need application/x-www-form-urlencoded
+      final isChatAuth = authEndPoint.contains('realtime/auth');
+      
+      final headers = {
+        if (isChatAuth) 'Content-Type': 'application/x-www-form-urlencoded'
+      };
+      
+      // For some APIs, the body parameters must be precise
+      final body = {
+        'socket_id': socketId,
+        'channel_name': channel,
+      };
+
+      final result = await dioConsumer.post<dynamic>(
         path: authEndPoint,
-        body: {'socket_id': socketId, 'channel_name': channel},
-        headers: {"socket_id": socketId, "channel_name": channel},
-        parser: (json) => json,
+        body: body,
+        headers: headers,
+        parser: (json) => json, // DioConsumer will decode it if it's JSON
       );
 
       return result.fold(
         onSuccess: (data) {
-          return data;
+          log('✅ Pusher Auth Success');
+          if (data is String) {
+            return jsonDecode(data) as Map<String, dynamic>;
+          }
+          return data as Map<String, dynamic>;
         },
         onFailure: (failure) {
-          log(failure.message, name: "Pusher Auth Failure");
+          log('❌ Pusher Auth Failure: ${failure.message}');
           return null;
         },
       );
     } catch (e) {
-      log(e.toString(), name: "Pusher Error");
+      log('❌ Pusher Auth Error: $e');
       return null;
     }
   }

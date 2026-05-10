@@ -18,7 +18,7 @@ class PostCardHeader extends StatelessWidget {
           radius: 20,
           backgroundImage:
               post.authorImage != null && post.authorImage!.isNotEmpty
-              ? NetworkImage(post.authorImage!)
+              ? NetworkImage(post.authorImage!.toImageUrl)
               : null,
           backgroundColor: AppColors.grey100,
           child: post.authorImage == null || post.authorImage!.isEmpty
