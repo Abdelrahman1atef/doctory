@@ -51,6 +51,7 @@ class MapHomeLoadedState extends MapHomeStates {
   MapHomeLoadedState copyWith({
     List<ClinicModel>? clinics,
     ClinicModel? selectedClinic,
+    bool clearSelectedClinic = false,
     RouteModel? route,
     String? query,
     String? specializationId,
@@ -67,7 +68,7 @@ class MapHomeLoadedState extends MapHomeStates {
   }) {
     return MapHomeLoadedState(
       clinics: clinics ?? this.clinics,
-      selectedClinic: selectedClinic ?? this.selectedClinic,
+      selectedClinic: clearSelectedClinic ? null : (selectedClinic ?? this.selectedClinic),
       route: route ?? this.route,
       query: query ?? this.query,
       specializationId: specializationId ?? this.specializationId,

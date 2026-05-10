@@ -23,7 +23,10 @@ void main() async {
     final GoogleMapsFlutterPlatform mapsImplementation =
         GoogleMapsFlutterPlatform.instance;
     if (mapsImplementation is GoogleMapsFlutterAndroid) {
-      mapsImplementation.useAndroidViewSurface = true;
+      // Use Texture Layer Hybrid Composition for better scroll/gesture perf.
+      // This avoids the old Hybrid Composition (useAndroidViewSurface)
+      // which causes constant compositing overhead and map jank.
+      mapsImplementation.useAndroidViewSurface = false;
       try {
         await mapsImplementation.initializeWithRenderer(
           AndroidMapRenderer.latest,
@@ -61,7 +64,7 @@ void main() async {
   }
 
   await Future.wait([
-    // initGoogleMaps(), // Moved to background after runApp
+    initGoogleMaps(),
     initFirebase(),
     EasyLocalization.ensureInitialized(),
     AppThemeManager.instance.initialize(),
@@ -88,7 +91,4 @@ void main() async {
 
   // Initialize FCM in the background after runApp
   FBMessaging.initialize();
-
-  // Initialize Google Maps in the background after runApp
-  initGoogleMaps(); // No await here to avoid blocking and allow parallel execution
 }

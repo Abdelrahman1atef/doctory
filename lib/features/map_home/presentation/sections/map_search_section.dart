@@ -32,6 +32,19 @@ class _MapSearchSectionState extends State<MapSearchSection> {
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<MapHomeCubit, MapHomeStates>(
+      listenWhen: (prev, curr) {
+        if (prev is MapHomeLoadedState && curr is MapHomeLoadedState) {
+          return prev.query != curr.query;
+        }
+        return curr is MapHomeLoadedState;
+      },
+      buildWhen: (prev, curr) {
+        if (prev.runtimeType != curr.runtimeType) return true;
+        if (prev is MapHomeLoadedState && curr is MapHomeLoadedState) {
+          return prev.query != curr.query;
+        }
+        return true;
+      },
       listener: (context, state) {
         if (state is MapHomeLoadedState &&
             state.query != _searchController.text) {

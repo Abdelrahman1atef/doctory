@@ -41,6 +41,12 @@ class MapFabsSection extends StatelessWidget {
           bottom: bottomPadding,
           right: 16,
           child: BlocBuilder<MapHomeCubit, MapHomeStates>(
+            buildWhen: (prev, curr) {
+              if (prev is MapHomeLoadedState && curr is MapHomeLoadedState) {
+                return prev.selectedClinic?.id != curr.selectedClinic?.id;
+              }
+              return prev.runtimeType != curr.runtimeType;
+            },
             builder: (context, state) {
               final selectedClinic = (state is MapHomeLoadedState)
                   ? state.selectedClinic

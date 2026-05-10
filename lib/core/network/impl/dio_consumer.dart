@@ -137,6 +137,10 @@ class DioConsumer implements ApiConsumer {
       debugPrint('❌ [DioConsumer] Request error: $e');
       if (showLoading) AbherLoading.dismis();
       if (e is DioException) {
+        if (e.type == DioExceptionType.cancel) {
+          debugPrint('⚠️ [DioConsumer] Request cancelled: ${e.message}');
+          return ApiResult.failure(UnknownFailure(message: 'Request cancelled'));
+        }
         return ApiResult.failure(ErrorHandler.handleDioException(e));
       }
       return ApiResult.failure(
@@ -156,6 +160,7 @@ class DioConsumer implements ApiConsumer {
     Map<String, dynamic>? headers,
     T Function(Map<String, dynamic>)? parser,
     bool showLoading = false,
+    dynamic cancelToken,
   }) {
     _updateHeaders(method: 'GET');
     return _handleRequest<T>(
@@ -163,6 +168,7 @@ class DioConsumer implements ApiConsumer {
         path,
         queryParameters: queryParameters,
         options: Options(headers: headers),
+        cancelToken: cancelToken as CancelToken?,
       ),
       parser: parser,
       showLoading: showLoading,

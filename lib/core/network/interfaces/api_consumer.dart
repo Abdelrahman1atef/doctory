@@ -11,6 +11,7 @@ abstract class ApiConsumer {
     Map<String, dynamic>? headers,
     T Function(Map<String, dynamic>)? parser,
     bool showLoading = false,
+    dynamic cancelToken,
   });
 
   /// POST request

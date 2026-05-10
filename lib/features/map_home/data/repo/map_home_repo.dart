@@ -13,6 +13,7 @@ abstract class MapHomeRepo {
     int? radiusInKm,
     int? pageNumber,
     int? pageSize,
+    dynamic cancelToken,
   });
 
   Future<ApiResult<RouteModel>> getRoute({
@@ -20,6 +21,7 @@ abstract class MapHomeRepo {
     required double startLng,
     required double endLat,
     required double endLng,
+    dynamic cancelToken,
   });
 }
 
@@ -38,6 +40,7 @@ class MapHomeRepoImpl implements MapHomeRepo {
     int? radiusInKm,
     int? pageNumber,
     int? pageSize,
+    dynamic cancelToken,
   }) async {
     return await _remoteDataSource.searchClinics(
       searchText: searchText,
@@ -48,6 +51,7 @@ class MapHomeRepoImpl implements MapHomeRepo {
       radiusInKm: radiusInKm,
       pageNumber: pageNumber,
       pageSize: pageSize,
+      cancelToken: cancelToken,
     );
   }
 
@@ -57,12 +61,14 @@ class MapHomeRepoImpl implements MapHomeRepo {
     required double startLng,
     required double endLat,
     required double endLng,
+    dynamic cancelToken,
   }) async {
     return await _remoteDataSource.getRoute(
       startLat: startLat,
       startLng: startLng,
       endLat: endLat,
       endLng: endLng,
+      cancelToken: cancelToken,
     );
   }
 }

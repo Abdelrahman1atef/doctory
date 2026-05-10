@@ -29,9 +29,10 @@ class MapSection extends StatefulWidget {
 }
 
 class _MapSectionState extends State<MapSection> {
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
+  GoogleMapController? _mapController;
   Set<Marker> _customMarkers = {};
+  Set<Polyline> _cachedPolylines = {};
+  List<LatLng>? _lastPolylineCoords;
   String? _mapStyle;
   Brightness? _currentBrightness;
 
@@ -56,11 +57,18 @@ class _MapSectionState extends State<MapSection> {
   }
 
   @override
+  void dispose() {
+    _mapController?.dispose();
+    super.dispose();
+  }
+
+  @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     final brightness = Theme.of(context).brightness;
     if (_currentBrightness != brightness) {
       _currentBrightness = brightness;
+      MarkerGenerator.clearCache();
       _loadMapStyle();
     }
   }
@@ -143,7 +151,8 @@ class _MapSectionState extends State<MapSection> {
       return;
     }
 
-    final GoogleMapController controller = await _controller.future;
+    final GoogleMapController? controller = _mapController;
+    if (controller == null) return;
 
     if (widget.clinics.length == 1) {
       final clinic = widget.clinics.first;
@@ -181,7 +190,8 @@ class _MapSectionState extends State<MapSection> {
   Future<void> _getCurrentLocation() async {
     try {
       final position = await LocationHelper.getCurrentLocation();
-      final GoogleMapController controller = await _controller.future;
+      final GoogleMapController? controller = _mapController;
+      if (controller == null) return;
       controller.animateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
@@ -215,7 +225,8 @@ class _MapSectionState extends State<MapSection> {
       },
       listener: (context, state) async {
         if (state is MapHomeLoadedState) {
-          final controller = await _controller.future;
+          final controller = _mapController;
+          if (controller == null) return;
           if (state.isNavigating &&
               state.currentUserLat != null &&
               state.currentUserLng != null) {
@@ -245,19 +256,33 @@ class _MapSectionState extends State<MapSection> {
         }
       },
       child: BlocBuilder<MapHomeCubit, MapHomeStates>(
+        buildWhen: (prev, curr) {
+          if (prev.runtimeType != curr.runtimeType) return true;
+          if (prev is MapHomeLoadedState && curr is MapHomeLoadedState) {
+            return prev.route != curr.route ||
+                prev.isNavigating != curr.isNavigating;
+          }
+          return true;
+        },
         builder: (context, state) {
-          Set<Polyline> polylines = {};
           if (state is MapHomeLoadedState &&
               state.route != null &&
               state.route!.geometry.isNotEmpty) {
-            polylines.add(
-              Polyline(
-                polylineId: const PolylineId('route'),
-                points: state.route!.geometry,
-                color: AppColors.stitchPrimaryContainer,
-                width: 5,
-              ),
-            );
+            final coords = state.route!.geometry;
+            if (coords != _lastPolylineCoords) {
+              _lastPolylineCoords = coords;
+              _cachedPolylines = {
+                Polyline(
+                  polylineId: const PolylineId('route'),
+                  points: coords,
+                  color: AppColors.stitchPrimaryContainer,
+                  width: 5,
+                ),
+              };
+            }
+          } else {
+            _lastPolylineCoords = null;
+            _cachedPolylines = {};
           }
 
           return Stack(
@@ -271,15 +296,13 @@ class _MapSectionState extends State<MapSection> {
                 mapToolbarEnabled: false,
                 markerType: GoogleMapMarkerType.advancedMarker,
                 markers: _customMarkers,
-                polylines: polylines,
+                polylines: _cachedPolylines,
                 style: _mapStyle,
                 buildingsEnabled: false,
                 indoorViewEnabled: false,
                 tiltGesturesEnabled: false,
                 onMapCreated: (GoogleMapController controller) {
-                  if (!_controller.isCompleted) {
-                    _controller.complete(controller);
-                  }
+                  _mapController = controller;
                 },
               ),
               if (widget.sheetSizeNotifier != null)

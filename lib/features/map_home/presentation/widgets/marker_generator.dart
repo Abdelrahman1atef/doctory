@@ -3,11 +3,20 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MarkerGenerator {
+  static final Map<String, BitmapDescriptor> _cache = {};
+
+  static void clearCache() => _cache.clear();
+
   static Future<BitmapDescriptor> createCustomMarkerBitmap(
     String title, {
     bool isSelected = false,
     bool isRegistered = true,
   }) async {
+    final String cacheKey = '${title}_${isSelected}_$isRegistered';
+    if (_cache.containsKey(cacheKey)) {
+      return _cache[cacheKey]!;
+    }
+
     const int size = 40; // Scaled down for better map proportions
     final ui.PictureRecorder pictureRecorder = ui.PictureRecorder();
     final Canvas canvas = Canvas(pictureRecorder);
@@ -89,6 +98,9 @@ class MarkerGenerator {
 
     final img = await pictureRecorder.endRecording().toImage(size, size);
     final data = await img.toByteData(format: ui.ImageByteFormat.png);
-    return BitmapDescriptor.bytes(data!.buffer.asUint8List());
+    final bitmap = BitmapDescriptor.bytes(data!.buffer.asUint8List());
+    
+    _cache[cacheKey] = bitmap;
+    return bitmap;
   }
 }

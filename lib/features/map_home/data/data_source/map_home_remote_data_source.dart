@@ -1,7 +1,11 @@
+import 'package:doctory/core/error/failures.dart';
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import 'package:doctory/features/map_home/data/data_source/map_home_endpoints.dart';
 import 'package:doctory/features/map_home/data/model/map_home_models.dart';
 import 'package:doctory/features/map_home/data/model/route_model.dart';
+import 'package:flutter/foundation.dart';
+
+RouteModel _parseRoute(Map<String, dynamic> json) => RouteModel.fromJson(json);
 
 abstract class MapHomeRemoteDataSource {
   Future<ApiResult<ClinicSearchResponse>> searchClinics({
@@ -13,6 +17,7 @@ abstract class MapHomeRemoteDataSource {
     int? radiusInKm,
     int? pageNumber,
     int? pageSize,
+    dynamic cancelToken,
   });
 
   Future<ApiResult<RouteModel>> getRoute({
@@ -20,6 +25,7 @@ abstract class MapHomeRemoteDataSource {
     required double startLng,
     required double endLat,
     required double endLng,
+    dynamic cancelToken,
   });
 }
 
@@ -38,6 +44,7 @@ class MapHomeRemoteDataSourceImpl implements MapHomeRemoteDataSource {
     int? radiusInKm,
     int? pageNumber,
     int? pageSize,
+    dynamic cancelToken,
   }) async {
     return await _apiConsumer.get(
       path: MapHomeEndpoints.searchClinics,
@@ -51,6 +58,7 @@ class MapHomeRemoteDataSourceImpl implements MapHomeRemoteDataSource {
         if (pageNumber != null) 'PageNumber': pageNumber,
         if (pageSize != null) 'PageSize': pageSize,
       },
+      cancelToken: cancelToken,
       parser: (json) => ClinicSearchResponse.fromJson(json),
     );
   }
@@ -61,8 +69,10 @@ class MapHomeRemoteDataSourceImpl implements MapHomeRemoteDataSource {
     required double startLng,
     required double endLat,
     required double endLng,
+    dynamic cancelToken,
   }) async {
-    return await _apiConsumer.get(
+    // 1. Get raw JSON
+    final rawResult = await _apiConsumer.get<Map<String, dynamic>>(
       path: MapHomeEndpoints.getRoute,
       queryParameters: {
         'StartLat': startLat,
@@ -70,7 +80,22 @@ class MapHomeRemoteDataSourceImpl implements MapHomeRemoteDataSource {
         'EndLat': endLat,
         'EndLng': endLng,
       },
-      parser: (json) => RouteModel.fromJson(json),
+      cancelToken: cancelToken,
+    );
+
+    // 2. Map JSON to Model using compute (runs on background thread)
+    return rawResult.fold(
+      onSuccess: (data) async {
+        try {
+          final parsed = await compute(_parseRoute, data);
+          return ApiResult.success(parsed);
+        } catch (e) {
+          return ApiResult.failure(
+            UnknownFailure(message: 'Failed to parse route data'),
+          );
+        }
+      },
+      onFailure: (failure) async => ApiResult<RouteModel>.failure(failure),
     );
   }
 }

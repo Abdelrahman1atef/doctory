@@ -51,6 +51,12 @@ class _NearbyClinicsSheetState extends State<NearbyClinicsSheet> {
         maxChildSize: 0.85,
         builder: (context, scrollController) {
           return BlocBuilder<MapHomeCubit, MapHomeStates>(
+            buildWhen: (prev, curr) {
+              if (prev is MapHomeLoadedState && curr is MapHomeLoadedState) {
+                return prev.selectedClinic?.id != curr.selectedClinic?.id;
+              }
+              return prev.runtimeType != curr.runtimeType;
+            },
             builder: (context, state) {
               final selectedClinicId = (state is MapHomeLoadedState)
                   ? state.selectedClinic?.id

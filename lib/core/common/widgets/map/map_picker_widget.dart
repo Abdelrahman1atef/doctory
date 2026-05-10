@@ -46,8 +46,8 @@ class MapPickerWidget extends StatefulWidget {
 class _MapPickerWidgetState extends State<MapPickerWidget> {
   GoogleMapController? _controller;
   LatLng _current = const LatLng(24.7136, 46.6753);
-  String _address = '';
-  bool _loadingAddress = false;
+  final ValueNotifier<String> _addressNotifier = ValueNotifier('');
+  final ValueNotifier<bool> _loadingNotifier = ValueNotifier(false);
   bool _loadingLocation = false;
 
   @override
@@ -60,6 +60,8 @@ class _MapPickerWidgetState extends State<MapPickerWidget> {
   @override
   void dispose() {
     _controller?.dispose();
+    _addressNotifier.dispose();
+    _loadingNotifier.dispose();
     super.dispose();
   }
 
@@ -93,7 +95,7 @@ class _MapPickerWidgetState extends State<MapPickerWidget> {
 
   Future<void> _reverseGeocode(LatLng latLng) async {
     if (!mounted) return;
-    setState(() => _loadingAddress = true);
+    _loadingNotifier.value = true;
     try {
       final placemarks = await placemarkFromCoordinates(
         latLng.latitude,
@@ -106,14 +108,14 @@ class _MapPickerWidgetState extends State<MapPickerWidget> {
           p.thoroughfare,
         ].where((s) => s != null && s.isNotEmpty).join(' , ');
         if (mounted) {
-          setState(() => _address = address);
+          _addressNotifier.value = address;
           widget.onLocationPicked(latLng.latitude, latLng.longitude, address);
         }
       }
     } catch (_) {
-      if (mounted) setState(() => _address = '');
+      if (mounted) _addressNotifier.value = '';
     } finally {
-      if (mounted) setState(() => _loadingAddress = false);
+      if (mounted) _loadingNotifier.value = false;
     }
   }
 
@@ -173,41 +175,50 @@ class _MapPickerWidgetState extends State<MapPickerWidget> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // Address chip
-        if (_address.isNotEmpty || _loadingAddress)
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
-            decoration: BoxDecoration(
-              color: AppColors.lightWhite,
-              // border: Border.all(color: AppColors.primaryTeal),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Icon(
-                  Icons.location_on_rounded,
-                  color: AppColors.primaryTeal,
-                  size: 20,
-                ),
-                8.pw,
-                Flexible(
-                  child: _loadingAddress
-                      ? const SizedBox(
-                          height: 16,
-                          width: 16,
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        )
-                      : Text(
-                          _address,
-                          style: AppStyles.s14Bold.withColor(
-                            AppColors.primaryNavy,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                ),
-              ],
-            ),
-          ),
+        ValueListenableBuilder<bool>(
+          valueListenable: _loadingNotifier,
+          builder: (context, isLoading, child) {
+            return ValueListenableBuilder<String>(
+              valueListenable: _addressNotifier,
+              builder: (context, address, child) {
+                if (address.isEmpty && !isLoading) return const SizedBox.shrink();
+                return Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+                  decoration: BoxDecoration(
+                    color: AppColors.lightWhite,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(
+                        Icons.location_on_rounded,
+                        color: AppColors.primaryTeal,
+                        size: 20,
+                      ),
+                      8.pw,
+                      Flexible(
+                        child: isLoading
+                            ? const SizedBox(
+                                height: 16,
+                                width: 16,
+                                child: CircularProgressIndicator(strokeWidth: 2),
+                              )
+                            : Text(
+                                address,
+                                style: AppStyles.s14Bold.withColor(
+                                  AppColors.primaryNavy,
+                                ),
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            );
+          },
+        ),
         12.ph,
 
         // Map

@@ -45,6 +45,15 @@ class _MapHomeBodySectionState extends State<MapHomeBodySection> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<MapHomeCubit, MapHomeStates>(
+      buildWhen: (prev, curr) {
+        if (prev.runtimeType != curr.runtimeType) return true;
+        if (prev is MapHomeLoadedState && curr is MapHomeLoadedState) {
+          return prev.clinics != curr.clinics ||
+              prev.selectedClinic?.id != curr.selectedClinic?.id ||
+              prev.isNavigating != curr.isNavigating;
+        }
+        return true;
+      },
       //todo : remove this and use the real data from the cubit
       builder: (context, state) {
         final List<ClinicModel> clinics =

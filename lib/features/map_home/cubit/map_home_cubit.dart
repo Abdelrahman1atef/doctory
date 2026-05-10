@@ -7,13 +7,22 @@ import 'package:doctory/features/map_home/data/repo/map_home_repo.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:dio/dio.dart';
 
 class MapHomeCubit extends Cubit<MapHomeStates> {
   final MapHomeRepo _mapHomeRepo;
   bool _isLiveNavigating = false;
   ClinicModel? _navigatingClinic;
+  
+  LatLng? _cachedPosition;
+  CancelToken? _searchCancelToken;
+  CancelToken? _routeCancelToken;
+  Timer? _debounce;
 
-  MapHomeCubit(this._mapHomeRepo) : super(MapHomeInitialState());
+  MapHomeCubit(this._mapHomeRepo) : super(MapHomeInitialState()) {
+    LocationHelper.getCurrentLocation().then((pos) => _cachedPosition = pos);
+  }
 
   Future<void> searchClinics({
     String? searchText,
@@ -26,6 +35,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     int? pageSize,
   }) async {
     final currentState = state;
+    final isInitialLoad = currentState is MapHomeInitialState;
     List<ClinicModel> currentClinics = [];
     String? currentQuery;
     String? currentSpec;
@@ -45,61 +55,77 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
       currentRadius = radiusInKm ?? 5;
     }
 
-    emit(MapHomeLoadingState(clinics: currentClinics));
+    _debounce?.cancel();
+    
+    Future<void> performSearch() async {
+      emit(MapHomeLoadingState(clinics: currentClinics));
 
-    // Use custom location from state > provided params > GPS
-    double? lat = userLat;
-    double? lng = userLng;
-    if (lat == null || lng == null) {
-      if (currentState is MapHomeLoadedState &&
-          currentState.hasCustomLocation) {
-        lat = currentState.customLat;
-        lng = currentState.customLng;
-      } else {
-        final position = await LocationHelper.getCurrentLocation();
-        lat = position.latitude;
-        lng = position.longitude;
+      // Use custom location from state > provided params > GPS
+      double? lat = userLat;
+      double? lng = userLng;
+      if (lat == null || lng == null) {
+        if (state is MapHomeLoadedState && (state as MapHomeLoadedState).hasCustomLocation) {
+          lat = (state as MapHomeLoadedState).customLat;
+          lng = (state as MapHomeLoadedState).customLng;
+        } else {
+          final position = _cachedPosition ?? await LocationHelper.getCurrentLocation();
+          _cachedPosition = position;
+          lat = position.latitude;
+          lng = position.longitude;
+        }
       }
+
+      _searchCancelToken?.cancel('new search started');
+      _searchCancelToken = CancelToken();
+
+      final result = await _mapHomeRepo.searchClinics(
+        searchText: currentQuery,
+        specializationId: currentSpec,
+        userLat: lat,
+        userLng: lng,
+        isNearest: currentNearest,
+        radiusInKm: currentRadius,
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+        cancelToken: _searchCancelToken,
+      );
+
+      result.fold(
+        onSuccess: (data) {
+          if (state is MapHomeLoadedState) {
+            emit(
+              (state as MapHomeLoadedState).copyWith(
+                clinics: data.items,
+                query: currentQuery,
+                specializationId: currentSpec,
+                isNearest: currentNearest,
+                radiusInKm: currentRadius,
+              ),
+            );
+          } else {
+            emit(
+              MapHomeLoadedState(
+                clinics: data.items,
+                query: currentQuery,
+                specializationId: currentSpec,
+                isNearest: currentNearest,
+                radiusInKm: currentRadius,
+              ),
+            );
+          }
+        },
+        onFailure: (failure) =>
+            emit(MapHomeErrorState(failure.userMessage, clinics: currentClinics)),
+      );
     }
 
-    final result = await _mapHomeRepo.searchClinics(
-      searchText: currentQuery,
-      specializationId: currentSpec,
-      userLat: lat,
-      userLng: lng,
-      isNearest: currentNearest,
-      radiusInKm: currentRadius,
-      pageNumber: pageNumber,
-      pageSize: pageSize,
-    );
-
-    result.fold(
-      onSuccess: (data) {
-        if (state is MapHomeLoadedState) {
-          emit(
-            (state as MapHomeLoadedState).copyWith(
-              clinics: data.items,
-              query: currentQuery,
-              specializationId: currentSpec,
-              isNearest: currentNearest,
-              radiusInKm: currentRadius,
-            ),
-          );
-        } else {
-          emit(
-            MapHomeLoadedState(
-              clinics: data.items,
-              query: currentQuery,
-              specializationId: currentSpec,
-              isNearest: currentNearest,
-              radiusInKm: currentRadius,
-            ),
-          );
-        }
-      },
-      onFailure: (failure) =>
-          emit(MapHomeErrorState(failure.userMessage, clinics: currentClinics)),
-    );
+    if (isInitialLoad) {
+      await performSearch();
+    } else {
+      _debounce = Timer(const Duration(milliseconds: 300), () async {
+        await performSearch();
+      });
+    }
   }
 
   Future<void> getRoute({
@@ -111,12 +137,16 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     final currentState = state;
     if (currentState is! MapHomeLoadedState) return;
 
+    _routeCancelToken?.cancel('new route requested');
+    _routeCancelToken = CancelToken();
+
     // Use backend endpoint to get the route (which wraps OSRM data internally)
     final result = await _mapHomeRepo.getRoute(
       startLat: startLat,
       startLng: startLng,
       endLat: endLat,
       endLng: endLng,
+      cancelToken: _routeCancelToken,
     );
 
     result.fold(
@@ -134,6 +164,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
       emit(
         currentState.copyWith(
           selectedClinic: clinic,
+          clearSelectedClinic: false,
           isNavigating: false,
           lastRouteLat:
               null, // Reset last fetch location to force initial route
@@ -290,6 +321,9 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
   @override
   Future<void> close() {
     _isLiveNavigating = false;
+    _debounce?.cancel();
+    _searchCancelToken?.cancel();
+    _routeCancelToken?.cancel();
     return super.close();
   }
 }
