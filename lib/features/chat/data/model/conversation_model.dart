@@ -33,24 +33,24 @@ class ConversationModel {
 
   factory ConversationModel.fromJson(Map<String, dynamic> json) {
     return ConversationModel(
-      id: json['id'] ?? '',
-      isGroup: json['isGroup'] ?? false,
-      initiatorId: json['initiatorId'] ?? '',
-      initiatorName: json['initiatorName'] ?? '',
-      initiatorProfilePictureUrl: json['initiatorProfilePictureUrl'],
-      recipientId: json['recipientId'] ?? '',
-      recipientName: json['recipientName'] ?? '',
-      recipientProfilePictureUrl: json['recipientProfilePictureUrl'],
-      lastMessageContent: json['lastMessageContent'],
-      lastMessageDate: json['lastMessageDate'] != null 
-          ? DateTime.parse(json['lastMessageDate']) 
+      id: (json['id'] ?? json['Id'] ?? '').toString(),
+      isGroup: json['isGroup'] ?? json['IsGroup'] ?? false,
+      initiatorId: (json['initiatorId'] ?? json['InitiatorId'] ?? '').toString(),
+      initiatorName: (json['initiatorName'] ?? json['InitiatorName'] ?? '').toString(),
+      initiatorProfilePictureUrl: json['initiatorProfilePictureUrl'] ?? json['InitiatorProfilePictureUrl'],
+      recipientId: (json['recipientId'] ?? json['RecipientId'] ?? '').toString(),
+      recipientName: (json['recipientName'] ?? json['RecipientName'] ?? '').toString(),
+      recipientProfilePictureUrl: json['recipientProfilePictureUrl'] ?? json['RecipientProfilePictureUrl'],
+      lastMessageContent: json['lastMessageContent'] ?? json['LastMessageContent'],
+      lastMessageDate: (json['lastMessageDate'] ?? json['LastMessageDate']) != null 
+          ? DateTime.parse(json['lastMessageDate'] ?? json['LastMessageDate']) 
           : null,
-      unreadMessageCount: json['unreadMessageCount'] ?? 0,
-      createdAt: json['createdAt'] != null 
-          ? DateTime.parse(json['createdAt']) 
+      unreadMessageCount: json['unreadMessageCount'] ?? json['UnreadMessageCount'] ?? 0,
+      createdAt: (json['createdAt'] ?? json['CreatedAt']) != null 
+          ? DateTime.parse(json['createdAt'] ?? json['CreatedAt']) 
           : DateTime.now(),
-      messages: json['messages'] != null
-          ? (json['messages'] as List).map((i) => MessageModel.fromJson(i)).toList()
+      messages: (json['messages'] ?? json['Messages']) != null
+          ? ((json['messages'] ?? json['Messages']) as List).map((i) => MessageModel.fromJson(i)).toList()
           : null,
     );
   }

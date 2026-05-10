@@ -43,7 +43,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
 
         emit(ChatRoomLoaded(
           conversation: data,
-          messages: data.messages ?? [],
+          messages: (data.messages ?? []).reversed.toList(),
           isOtherUserOnline: _otherUserId != null ? realtimeService.isUserOnline(_otherUserId!) : false,
         ));
         
@@ -131,7 +131,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
           final currentMessages = refresh ? <MessageModel>[] : currentState.messages;
           
           // Filter out duplicates if refreshing or appending
-          final newMessages = data.where((m) => !currentMessages.any((cm) => cm.id == m.id)).toList();
+          final newMessages = data.where((m) => !currentMessages.any((cm) => cm.id == m.id)).toList().reversed.toList();
           
           emit(currentState.copyWith(messages: [...currentMessages, ...newMessages]));
         }

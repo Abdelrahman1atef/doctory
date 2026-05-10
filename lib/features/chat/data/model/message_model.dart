@@ -44,29 +44,33 @@ class MessageModel {
 
   factory MessageModel.fromJson(Map<String, dynamic> json) {
     return MessageModel(
-      id: json['id'] ?? '',
-      senderId: json['senderId'] ?? '',
-      senderName: json['senderName'] ?? '',
-      senderProfilePictureUrl: json['senderProfilePictureUrl'],
-      content: json['content'] ?? '',
-      isRead: json['isRead'] ?? false,
-      readAt: json['readAt'] != null ? DateTime.parse(json['readAt']) : null,
-      status: json['status']?.toString() ?? 'Sent',
-      createdAt: json['createdAt'] != null 
-          ? DateTime.parse(json['createdAt']) 
+      id: (json['id'] ?? json['Id'] ?? '').toString(),
+      senderId: (json['senderId'] ?? json['SenderId'] ?? '').toString(),
+      senderName: (json['senderName'] ?? json['SenderName'] ?? '').toString(),
+      senderProfilePictureUrl: json['senderProfilePictureUrl'] ?? json['SenderProfilePictureUrl'],
+      content: (json['content'] ?? json['Content'] ?? '').toString(),
+      isRead: json['isRead'] ?? json['IsRead'] ?? false,
+      readAt: (json['readAt'] ?? json['ReadAt']) != null 
+          ? DateTime.parse(json['readAt'] ?? json['ReadAt']) 
+          : null,
+      status: (json['status'] ?? json['Status'] ?? 'Sent').toString(),
+      createdAt: (json['createdAt'] ?? json['CreatedAt']) != null 
+          ? DateTime.parse(json['createdAt'] ?? json['CreatedAt']) 
           : DateTime.now(),
-      editedAt: json['editedAt'] != null ? DateTime.parse(json['editedAt']) : null,
-      isEdited: json['isEdited'] ?? false,
-      conversationId: json['conversationId'] ?? '',
-      replyToMessageId: json['replyToMessageId'],
-      replyToMessage: json['replyToMessage'] != null 
-          ? MessageModel.fromJson(json['replyToMessage']) 
+      editedAt: (json['editedAt'] ?? json['EditedAt']) != null 
+          ? DateTime.parse(json['editedAt'] ?? json['EditedAt']) 
           : null,
-      media: json['media'] != null 
-          ? (json['media'] as List).map((i) => MediaModel.fromJson(i)).toList() 
+      isEdited: json['isEdited'] ?? json['IsEdited'] ?? false,
+      conversationId: (json['conversationId'] ?? json['ConversationId'] ?? '').toString(),
+      replyToMessageId: (json['replyToMessageId'] ?? json['ReplyToMessageId'])?.toString(),
+      replyToMessage: (json['replyToMessage'] ?? json['ReplyToMessage']) != null 
+          ? MessageModel.fromJson(json['replyToMessage'] ?? json['ReplyToMessage']) 
           : null,
-      reactions: json['reactions'] != null 
-          ? (json['reactions'] as List).map((i) => ReactionModel.fromJson(i)).toList() 
+      media: (json['media'] ?? json['Media']) != null 
+          ? ( (json['media'] ?? json['Media']) as List).map((i) => MediaModel.fromJson(i)).toList() 
+          : null,
+      reactions: (json['reactions'] ?? json['Reactions']) != null 
+          ? ( (json['reactions'] ?? json['Reactions']) as List).map((i) => ReactionModel.fromJson(i)).toList() 
           : null,
     );
   }
