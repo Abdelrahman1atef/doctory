@@ -1,4 +1,6 @@
 import 'package:doctory/core/theme/app_colors.dart';
+import 'package:doctory/core/theme/app_typography.dart';
+import 'package:doctory/core/utils/app_assets.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/community/data/model/community_models.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -14,7 +16,6 @@ class ReactionButtonContentWidget extends StatelessWidget {
     final color = type != ReactionType.none
         ? _getReactionColor(type)
         : AppColors.textSecondary;
-    final icon = _getReactionIcon(type);
     final label = _getReactionLabel(type).tr();
 
     return Container(
@@ -23,16 +24,15 @@ class ReactionButtonContentWidget extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 20, color: color),
-          8.pw,
-          Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.w600,
-              fontSize: 14,
+          if (type == ReactionType.none)
+            Icon(_getReactionIcon(type), color: color, size: 20)
+          else
+            Text(
+              ReactionEmojiHelper.getReactionEmoji(type),
+              style: const TextStyle(fontSize: 18),
             ),
-          ),
+          8.pw,
+          Text(label, style: AppStyles.s12Bold.copyWith(color: color)),
         ],
       ),
     );

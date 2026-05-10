@@ -23,51 +23,47 @@ class PostCardActions extends StatelessWidget {
     return Row(
       children: [
         Expanded(
-          child: Directionality(
-            textDirection: TextDirection.ltr,
-            child: ReactionButton<ReactionType>(
-              onReactionChanged: (Reaction<ReactionType>? reaction) {
-                if (reaction != null && reaction.value != null) {
-                  onReactionTapped(reaction.value!);
-                } else {
-                  onReactionTapped(post.myReaction);
-                }
-              },
-              reactions: ReactionType.values
-                  .where((r) => r != ReactionType.none)
-                  .map((reaction) {
-                    return Reaction<ReactionType>(
-                      value: reaction,
-                      previewIcon: Padding(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 4.0,
-                          vertical: 4.0,
-                        ),
-                        child: Text(
-                          ReactionEmojiHelper.getReactionEmoji(reaction),
-                          style: const TextStyle(fontSize: 28),
-                        ),
+          child: ReactionButton<ReactionType>(
+            onReactionChanged: (Reaction<ReactionType>? reaction) {
+              if (reaction != null && reaction.value != null) {
+                onReactionTapped(reaction.value!);
+              } else {
+                onReactionTapped(post.myReaction);
+              }
+            },
+            reactions: ReactionType.values
+                .where((r) => r != ReactionType.none)
+                .map((reaction) {
+                  return Reaction<ReactionType>(
+                    value: reaction,
+                    previewIcon: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 4.0,
                       ),
-                      icon: ReactionButtonContentWidget(type: reaction),
-                    );
-                  })
-                  .toList(),
-              placeholder: const Reaction<ReactionType>(
-                value: ReactionType.none,
-                icon: ReactionButtonContentWidget(type: ReactionType.none),
-              ),
-              selectedReaction: post.myReaction != ReactionType.none
-                  ? Reaction<ReactionType>(
-                      value: post.myReaction,
-                      icon: ReactionButtonContentWidget(type: post.myReaction),
-                    )
-                  : null,
-              itemSize: const Size(40, 40),
-              boxElevation: 4,
-              boxRadius: 24,
-              boxColor: Colors.white,
-              boxPadding: const EdgeInsets.all(4),
+                      child: Text(
+                        ReactionEmojiHelper.getReactionEmoji(reaction),
+                        style: const TextStyle(fontSize: 28),
+                      ),
+                    ),
+                    icon: ReactionButtonContentWidget(type: reaction),
+                  );
+                })
+                .toList(),
+            placeholder: const Reaction<ReactionType>(
+              value: ReactionType.none,
+              icon: ReactionButtonContentWidget(type: ReactionType.none),
             ),
+            selectedReaction: post.myReaction != ReactionType.none
+                ? Reaction<ReactionType>(
+                    value: post.myReaction,
+                    icon: ReactionButtonContentWidget(type: post.myReaction),
+                  )
+                : null,
+            itemSize: const Size(40, 40),
+            boxElevation: 4,
+            boxRadius: 24,
+            boxColor: Colors.white,
+            boxPadding: const EdgeInsets.all(4),
           ),
         ),
         Expanded(

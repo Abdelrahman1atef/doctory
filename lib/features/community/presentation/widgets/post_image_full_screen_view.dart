@@ -1,3 +1,4 @@
+import 'package:doctory/core/common/widgets/images/abher_image.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -23,14 +24,20 @@ class PostImageFullScreenView extends StatelessWidget {
           onPressed: () => context.pop(),
         ),
       ),
-      body: Center(
-        child: InteractiveViewer(
-          child: Hero(
-            tag: heroTag,
-            child: Image.network(
-              imageUrl,
-              width: double.infinity,
-              fit: BoxFit.contain,
+      body: Container(
+        color: Colors.black,
+        child: Center(
+          child: InteractiveViewer(
+            minScale: 0.5,
+            maxScale: 4.0,
+            child: Hero(
+              tag: heroTag,
+              child: AbherImage(
+                imageUrl,
+                width: MediaQuery.of(context).size.width,
+                height: MediaQuery.of(context).size.height,
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ),

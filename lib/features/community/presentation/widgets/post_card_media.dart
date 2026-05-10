@@ -1,5 +1,5 @@
+import 'package:doctory/core/common/widgets/images/abher_image.dart';
 import 'package:doctory/core/router/router_names.dart';
-import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/community/data/model/community_models.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -40,14 +40,13 @@ class _PostCardMediaState extends State<PostCardMedia> {
       padding: const EdgeInsets.only(top: 8.0),
       child: Column(
         children: [
-          ClipRRect(
-            borderRadius: BorderRadius.circular(8),
-            child: SizedBox(
+           SizedBox(
               height: 300,
               child: Stack(
                 children: [
                   PageView.builder(
                     itemCount: widget.post.media.length,
+                    scrollDirection: Axis.horizontal,
                     onPageChanged: (index) {
                       setState(() {
                         _currentIndex = index;
@@ -89,26 +88,6 @@ class _PostCardMediaState extends State<PostCardMedia> {
                 ],
               ),
             ),
-          ),
-          const SizedBox(height: 8),
-          // Small dots indicator
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(
-              widget.post.media.length,
-              (index) => Container(
-                width: 8,
-                height: 8,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: _currentIndex == index
-                      ? AppColors.stitchPrimary
-                      : Colors.grey[300],
-                ),
-              ),
-            ),
-          ),
         ],
       ),
     );
@@ -133,16 +112,13 @@ class _PostCardMediaState extends State<PostCardMedia> {
       },
       child: Hero(
         tag: heroTag,
-        child: Image.network(
-          imageUrl,
-          width: width,
-          height: height,
-          fit: BoxFit.cover,
-          errorBuilder: (context, error, stackTrace) => Container(
+        child: Container(
+          color: Colors.grey[200],
+          child: AbherImage(
+            imageUrl,
             width: width,
             height: height,
-            color: Colors.grey[200],
-            child: const Icon(Icons.broken_image, size: 50, color: Colors.grey),
+            fit: BoxFit.cover,
           ),
         ),
       ),

@@ -1,6 +1,8 @@
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_typography.dart';
+
 class PostCardActionButton extends StatelessWidget {
   final IconData icon;
   final String label;
@@ -32,11 +34,7 @@ class PostCardActionButton extends StatelessWidget {
             8.pw,
             Text(
               label,
-              style: TextStyle(
-                color: color,
-                fontWeight: FontWeight.w600,
-                fontSize: 14,
-              ),
+              style: AppStyles.s12Bold.copyWith(color: color),
             ),
           ],
         ),
