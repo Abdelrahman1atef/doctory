@@ -112,7 +112,16 @@ class ChatRealtimeService {
       PusherConfig.presenceGlobalChannel,
       'pusher:member_added',
       (member) {
-        final userId = member.userId?.toString();
+        String? userId;
+        if (member is Map) {
+          userId = (member['user_id'] ?? member['userId'])?.toString();
+        } else {
+          // Fallback if it's a PusherMember object
+          try {
+            userId = member.userId?.toString();
+          } catch (_) {}
+        }
+        
         if (userId != null) {
           _onlineUsers.add(userId);
           _onlineUsersController.add(_onlineUsers);
@@ -124,7 +133,16 @@ class ChatRealtimeService {
       PusherConfig.presenceGlobalChannel,
       'pusher:member_removed',
       (member) {
-        final userId = member.userId?.toString();
+        String? userId;
+        if (member is Map) {
+          userId = (member['user_id'] ?? member['userId'])?.toString();
+        } else {
+          // Fallback if it's a PusherMember object
+          try {
+            userId = member.userId?.toString();
+          } catch (_) {}
+        }
+
         if (userId != null) {
           _onlineUsers.remove(userId);
           _onlineUsersController.add(_onlineUsers);
