@@ -89,22 +89,58 @@ class ChatMessageWidget extends StatelessWidget {
               if (message.media != null && message.media!.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(bottom: 8.0),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: CachedNetworkImage(
-                      imageUrl: message.media!.first.fileName.toImageUrl,
-                      placeholder: (context, url) => Container(
-                        height: 200,
-                        width: double.infinity,
-                        color: Colors.black12,
-                        child: const Center(
-                            child: CircularProgressIndicator(strokeWidth: 2)),
-                      ),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.error),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
+                  child: Builder(builder: (context) {
+                    final mediaItem = message.media!.first;
+                    if (mediaItem.mediaType == 0) { // Image
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: CachedNetworkImage(
+                          imageUrl: mediaItem.fileName.toImageUrl,
+                          placeholder: (context, url) => Container(
+                            height: 200,
+                            width: double.infinity,
+                            color: Colors.black12,
+                            child: const Center(
+                                child: CircularProgressIndicator(strokeWidth: 2)),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                          fit: BoxFit.cover,
+                        ),
+                      );
+                    } else {
+                      IconData iconData = Icons.insert_drive_file;
+                      String typeName = 'مستند';
+                      if (mediaItem.mediaType == 1) {
+                        iconData = Icons.videocam;
+                        typeName = 'فيديو';
+                      } else if (mediaItem.mediaType == 2) {
+                        iconData = Icons.audiotrack;
+                        typeName = 'صوت';
+                      }
+                      return Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: Colors.black.withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Icon(iconData, color: isMe ? Colors.white : AppColors.primary),
+                            const SizedBox(width: 8),
+                            Text(
+                              typeName,
+                              style: TextStyle(
+                                color: isMe ? Colors.white : Colors.black87,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    }
+                  }),
                 ),
               Text(
                 message.content,

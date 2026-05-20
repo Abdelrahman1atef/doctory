@@ -4,6 +4,8 @@ import 'package:image_picker/image_picker.dart';
 import '../../data/repo/chat_repo.dart';
 import '../../../../core/services/chat/chat_realtime_service.dart';
 import '../../data/model/message_model.dart';
+import '../../data/model/chat_media_attachment.dart';
+import 'dart:io';
 import '../../../../core/session/user_session.dart';
 import 'chat_room_states.dart';
 import 'package:file_picker/file_picker.dart' as file_picker;
@@ -242,7 +244,10 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         ? await _picker.pickVideo(source: source)
         : await _picker.pickImage(source: source);
     if (media != null) {
-      await sendMessage('', imagePath: media.path);
+      final attachment = isVideo 
+          ? ChatMediaAttachment.video(File(media.path))
+          : ChatMediaAttachment.image(File(media.path));
+      await sendMessage('', media: [attachment]);
     }
   }
 
@@ -250,7 +255,8 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     try {
       final result = await file_picker.FilePicker.platform.pickFiles();
       if (result != null && result.files.single.path != null) {
-        await sendMessage('', imagePath: result.files.single.path!);
+        final attachment = ChatMediaAttachment.document(File(result.files.single.path!));
+        await sendMessage('', media: [attachment]);
       }
     } catch (e) {
       // Handle file picker error
@@ -258,7 +264,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
   }
 
   Future<void> sendMessage(String content,
-      {String? replyToMessageId, String? imagePath}) async {
+      {String? replyToMessageId, List<ChatMediaAttachment>? media}) async {
     if (_conversationId == null || state is! ChatRoomLoaded) return;
 
     final currentState = state as ChatRoomLoaded;
@@ -282,7 +288,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       id: tempId,
       senderId: UserSession.userId ?? '',
       senderName: '', // Usually not needed for local UI if displaying "You"
-      content: imagePath != null ? 'رسالة وسائط' : content,
+      content: (media != null && media.isNotEmpty && content.isEmpty) ? 'رسالة وسائط' : content,
       isRead: false,
       status: 'Sending',
       createdAt: DateTime.now(),
@@ -307,7 +313,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       _conversationId!,
       content,
       replyToMessageId: effectiveReplyId,
-      imagePath: imagePath,
+      media: media,
     );
 
     result.fold(

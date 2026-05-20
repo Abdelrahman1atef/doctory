@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import '../../../../../core/network/interfaces/api_consumer.dart';
 import '../model/conversation_model.dart';
 import '../model/message_model.dart';
+import 'dart:io';
 
 abstract class ChatRemoteDataSource {
   Future<ApiResult<List<ConversationModel>>> getConversations({int pageNumber = 1, int pageSize = 10});
@@ -9,7 +10,8 @@ abstract class ChatRemoteDataSource {
   Future<ApiResult<ConversationModel>> getConversationDetail(String id);
   Future<ApiResult<String>> deleteConversation(String id);
   Future<ApiResult<List<MessageModel>>> getMessages(String conversationId, {int pageNumber = 1, int pageSize = 50});
-  Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId, String? imagePath});
+  Future<ApiResult<String>> uploadChatMedia(File file, {required String path, required int place});
+  Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId, List<Map<String, dynamic>>? mediaPayload});
   Future<ApiResult<String>> deleteMessage(String messageId);
   Future<ApiResult<bool>> setActiveConversation(String? conversationId);
   Future<ApiResult<bool>> sendTypingIndicator(String conversationId, bool isTyping);
@@ -96,20 +98,36 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId, String? imagePath}) async {
+  Future<ApiResult<String>> uploadChatMedia(File file, {required String path, required int place}) async {
+    return await apiConsumer.uploadFile<String>(
+      path: path,
+      data: {'file': await MultipartFile.fromFile(file.path), 'place': place},
+      parser: (json) {
+        if (json.containsKey('data')) {
+          return json['data'].toString();
+        }
+        return '';
+      },
+    );
+  }
+
+  @override
+  Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId, List<Map<String, dynamic>>? mediaPayload}) async {
     final Map<String, dynamic> body = {
       'content': content,
-      'replyToMessageId': ?replyToMessageId,
     };
 
-    if (imagePath != null) {
-      body['media'] = await MultipartFile.fromFile(imagePath);
+    if (replyToMessageId != null) {
+      body['replyToMessageId'] = replyToMessageId;
+    }
+
+    if (mediaPayload != null && mediaPayload.isNotEmpty) {
+      body['media'] = mediaPayload;
     }
 
     return await apiConsumer.post<MessageModel>(
       path: 'conversations/$conversationId/messages',
       body: body,
-      isFormData: imagePath != null,
       parser: (json) {
         if (json.containsKey('data')) {
           return MessageModel.fromJson(json['data']);
