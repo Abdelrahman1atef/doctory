@@ -9,7 +9,7 @@ abstract class ChatRepo {
   Future<ApiResult<ConversationModel>> getConversationDetail(String id);
   Future<ApiResult<String>> deleteConversation(String id);
   Future<ApiResult<List<MessageModel>>> getMessages(String conversationId, {int pageNumber = 1, int pageSize = 50});
-  Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId});
+  Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId, String? imagePath});
   Future<ApiResult<String>> deleteMessage(String messageId);
   Future<ApiResult<bool>> setActiveConversation(String? conversationId);
   Future<ApiResult<bool>> sendTypingIndicator(String conversationId, bool isTyping);
@@ -49,8 +49,8 @@ class ChatRepoImpl implements ChatRepo {
   }
 
   @override
-  Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId}) async {
-    return await remoteDataSource.sendMessage(conversationId, content, replyToMessageId: replyToMessageId);
+  Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId, String? imagePath}) async {
+    return await remoteDataSource.sendMessage(conversationId, content, replyToMessageId: replyToMessageId, imagePath: imagePath);
   }
 
   @override

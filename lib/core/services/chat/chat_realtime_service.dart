@@ -16,6 +16,7 @@ class ChatRealtimeService {
   final _conversationUpdatedController = StreamController<Map<String, dynamic>>.broadcast();
   final _typingController = StreamController<Map<String, dynamic>>.broadcast();
   final _messagesReadController = StreamController<String>.broadcast(); // returns conversationId
+  final _messagesDeliveredController = StreamController<String>.broadcast(); // returns conversationId
   final _onlineUsersController = StreamController<Set<String>>.broadcast();
 
   // Streams
@@ -23,6 +24,7 @@ class ChatRealtimeService {
   Stream<Map<String, dynamic>> get onConversationUpdated => _conversationUpdatedController.stream;
   Stream<Map<String, dynamic>> get onTypingChanged => _typingController.stream;
   Stream<String> get onMessagesRead => _messagesReadController.stream;
+  Stream<String> get onMessagesDelivered => _messagesDeliveredController.stream;
   Stream<Set<String>> get onOnlineUsersChanged => _onlineUsersController.stream;
 
   Set<String> _onlineUsers = {};
@@ -87,6 +89,18 @@ class ChatRealtimeService {
         final conversationId = data['conversationId']?.toString();
         if (conversationId != null) {
           _messagesReadController.add(conversationId);
+        }
+      },
+    );
+
+    // 5. Messages Delivered
+    _pusherService.registerEventHandler(
+      privateChannel,
+      PusherConfig.messagesDeliveredEvent,
+      (data) {
+        final conversationId = data['conversationId']?.toString();
+        if (conversationId != null) {
+          _messagesDeliveredController.add(conversationId);
         }
       },
     );

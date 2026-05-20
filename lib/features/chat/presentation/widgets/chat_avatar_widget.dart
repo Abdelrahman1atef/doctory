@@ -7,16 +7,13 @@ class ChatAvatarWidget extends StatelessWidget {
   final String name;
   final double radius;
   final bool isOnline;
-
   const ChatAvatarWidget({
-    Key? key,
+    super.key,
     this.imageUrl,
     required this.name,
     this.radius = 24.0,
     this.isOnline = false,
-  }) : super(key: key);
-
-  @override
+  });  @override
   Widget build(BuildContext context) {
     return Stack(
       children: [

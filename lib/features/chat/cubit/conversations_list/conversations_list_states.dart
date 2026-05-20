@@ -1,6 +1,6 @@
 import '../../data/model/conversation_model.dart';
 
-abstract class ConversationsListState {}
+sealed class ConversationsListState {}
 
 class ConversationsListInitial extends ConversationsListState {}
 

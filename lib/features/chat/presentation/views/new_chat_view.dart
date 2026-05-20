@@ -15,12 +15,26 @@ class NewChatView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<NewChatCubit>(),
-      child: const Scaffold(
-        appBar: CustomAppBar(title: 'محادثة جديدة'),
-        body: NewChatSection(),
+    return const Scaffold(
+      body: SafeArea(
+        child: NewChatBodySection(),
       ),
+    );
+  }
+}
+
+class NewChatBodySection extends StatelessWidget {
+  const NewChatBodySection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: const [
+        CustomAppBar(title: 'محادثة جديدة'),
+        Expanded(
+          child: NewChatSection(),
+        ),
+      ],
     );
   }
 }

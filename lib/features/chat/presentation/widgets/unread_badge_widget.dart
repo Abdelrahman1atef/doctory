@@ -4,7 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 class UnreadBadgeWidget extends StatelessWidget {
   final int count;
 
-  const UnreadBadgeWidget({Key? key, required this.count}) : super(key: key);
+  const UnreadBadgeWidget({super.key, required this.count});
 
   @override
   Widget build(BuildContext context) {

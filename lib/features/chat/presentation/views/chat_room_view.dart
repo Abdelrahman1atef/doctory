@@ -5,6 +5,7 @@ import '../../../../core/theme/app_typography.dart';
 import '../../../../core/locator/service_locator.dart';
 import '../../cubit/chat_room/chat_room_cubit.dart';
 import '../../cubit/chat_room/chat_room_states.dart';
+import '../../data/model/message_model.dart';
 import '../widgets/chat_message_widget.dart';
 import '../widgets/chat_avatar_widget.dart';
 import '../../../../core/session/user_session.dart';
@@ -17,15 +18,33 @@ class ChatRoomView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) =>
-          sl<ChatRoomCubit>()..openConversation(conversationId),
-      child: Scaffold(appBar: _ChatRoomAppBar(), body: const ChatRoomSection()),
+    return const Scaffold(
+      body: SafeArea(
+        child: ChatRoomBodySection(),
+      ),
     );
   }
 }
 
-class _ChatRoomAppBar extends StatelessWidget implements PreferredSizeWidget {
+class ChatRoomBodySection extends StatelessWidget {
+  const ChatRoomBodySection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: const [
+        ChatRoomAppBarSection(),
+        Expanded(
+          child: ChatRoomSection(),
+        ),
+      ],
+    );
+  }
+}
+
+class ChatRoomAppBarSection extends StatelessWidget {
+  const ChatRoomAppBarSection({super.key});
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ChatRoomCubit, ChatRoomState>(
@@ -40,14 +59,18 @@ class _ChatRoomAppBar extends StatelessWidget implements PreferredSizeWidget {
               ? state.conversation.recipientProfilePictureUrl
               : state.conversation.initiatorProfilePictureUrl;
 
-          return AppBar(
-            backgroundColor: Colors.white,
-            elevation: 0.5,
-            scrolledUnderElevation: 0,
-            iconTheme: const IconThemeData(color: Colors.black),
-            titleSpacing: 0,
-            title: Row(
+          return Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              border: Border(bottom: BorderSide(color: AppColors.grey200, width: 0.5)),
+            ),
+            child: Row(
               children: [
+                IconButton(
+                  icon: const Icon(Icons.arrow_back, color: Colors.black),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
                 ChatAvatarWidget(
                   name: name,
                   imageUrl: avatarUrl,
@@ -55,30 +78,47 @@ class _ChatRoomAppBar extends StatelessWidget implements PreferredSizeWidget {
                   isOnline: state.isOtherUserOnline,
                 ),
                 const SizedBox(width: 12),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(name, style: AppStyles.s16SemiBold),
-                    if (state.isOtherUserTyping)
-                      Text(
-                        'يكتب...',
-                        style: AppStyles.s12Medium.withColor(AppColors.primary),
-                      )
-                    else if (state.isOtherUserOnline)
-                      Text('متصل', style: AppStyles.s12Medium.withColor(AppColors.primary)),
-                  ],
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(name, style: AppStyles.s16SemiBold),
+                      if (state.isOtherUserTyping)
+                        Text(
+                          'يكتب...',
+                          style: AppStyles.s12Medium.withColor(AppColors.primary),
+                        )
+                      else if (state.isOtherUserOnline)
+                        Text(
+                          'متصل',
+                          style: AppStyles.s12Medium.withColor(AppColors.primary),
+                        ),
+                    ],
+                  ),
                 ),
               ],
             ),
           );
         }
-        return AppBar(backgroundColor: Colors.white, elevation: 0.5);
+        return Container(
+          height: kToolbarHeight,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border(bottom: BorderSide(color: AppColors.grey200, width: 0.5)),
+          ),
+          child: Row(
+            children: [
+              IconButton(
+                icon: const Icon(Icons.arrow_back, color: Colors.black),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        );
       },
     );
   }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(kToolbarHeight);
 }
 
 class ChatRoomSection extends StatefulWidget {
@@ -105,7 +145,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
           child: BlocBuilder<ChatRoomCubit, ChatRoomState>(
             builder: (context, state) {
               if (state is ChatRoomLoading) {
-                return  Center(
+                return Center(
                   child: CircularProgressIndicator(color: AppColors.primary),
                 );
               } else if (state is ChatRoomError) {
@@ -129,8 +169,63 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
             },
           ),
         ),
+        BlocBuilder<ChatRoomCubit, ChatRoomState>(
+          builder: (context, state) {
+            if (state is ChatRoomLoaded && state.replyingToMessage != null) {
+              return _buildReplyPreview(context, state.replyingToMessage!);
+            }
+            return const SizedBox.shrink();
+          },
+        ),
         _buildMessageInput(context),
       ],
+    );
+  }
+
+  Widget _buildReplyPreview(BuildContext context, MessageModel message) {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: AppColors.grey200)),
+      ),
+      child: Container(
+        padding: const EdgeInsets.all(8),
+        decoration: BoxDecoration(
+          color: AppColors.grey200.withValues(alpha: 0.1),
+          borderRadius: BorderRadius.circular(8),
+          border: Border(left: BorderSide(color: AppColors.primary, width: 4)),
+        ),
+        child: Row(
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                  message.senderId == UserSession.userId
+                      ? 'أنت'
+                      : message.senderName,
+                  style: AppStyles.s12Medium.semiBold
+                          .withColor(AppColors.primary),
+                    ),
+                    Text(
+                      message.content,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: AppStyles.s12Medium.withColor(AppColors.grey600),
+                  ),
+                ],
+              ),
+            ),
+            IconButton(
+              onPressed: () => context.read<ChatRoomCubit>().cancelReply(),
+              icon: const Icon(Icons.close, size: 20),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -150,6 +245,10 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
       child: SafeArea(
         child: Row(
           children: [
+            IconButton(
+              onPressed: () => _showMediaOptions(context),
+              icon: Icon(Icons.add_circle_outline, color: AppColors.primary),
+            ),
             Expanded(
               child: Container(
                 decoration: BoxDecoration(
@@ -185,12 +284,66 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
               },
               child: Container(
                 padding: const EdgeInsets.all(12),
-                decoration:  BoxDecoration(
+                decoration: BoxDecoration(
                   color: AppColors.primary,
                   shape: BoxShape.circle,
                 ),
                 child: const Icon(Icons.send, color: Colors.white, size: 20),
               ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showMediaOptions(BuildContext context) {
+    final cubit = context.read<ChatRoomCubit>();
+    showModalBottomSheet(
+      context: context,
+      builder: (ctx) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.image),
+              title: const Text('صورة من المعرض'),
+              onTap: () {
+                Navigator.pop(ctx);
+                cubit.pickAndSendMedia(isVideo: false);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera_alt),
+              title: const Text('صورة من الكاميرا'),
+              onTap: () {
+                Navigator.pop(ctx);
+                cubit.pickAndSendMedia(isVideo: false, fromCamera: true);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.videocam),
+              title: const Text('فيديو من المعرض'),
+              onTap: () {
+                Navigator.pop(ctx);
+                cubit.pickAndSendMedia(isVideo: true);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.video_call),
+              title: const Text('فيديو من الكاميرا'),
+              onTap: () {
+                Navigator.pop(ctx);
+                cubit.pickAndSendMedia(isVideo: true, fromCamera: true);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.insert_drive_file),
+              title: const Text('ملف'),
+              onTap: () {
+                Navigator.pop(ctx);
+                cubit.pickAndSendFile();
+              },
             ),
           ],
         ),

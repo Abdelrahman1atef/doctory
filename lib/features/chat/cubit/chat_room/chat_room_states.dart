@@ -1,7 +1,7 @@
 import '../../data/model/message_model.dart';
 import '../../data/model/conversation_model.dart';
 
-abstract class ChatRoomState {}
+sealed class ChatRoomState {}
 
 class ChatRoomInitial extends ChatRoomState {}
 
@@ -12,27 +12,15 @@ class ChatRoomLoaded extends ChatRoomState {
   final List<MessageModel> messages;
   final bool isOtherUserTyping;
   final bool isOtherUserOnline;
+  final MessageModel? replyingToMessage;
 
   ChatRoomLoaded({
     required this.conversation,
     required this.messages,
     this.isOtherUserTyping = false,
     this.isOtherUserOnline = false,
+    this.replyingToMessage,
   });
-
-  ChatRoomLoaded copyWith({
-    ConversationModel? conversation,
-    List<MessageModel>? messages,
-    bool? isOtherUserTyping,
-    bool? isOtherUserOnline,
-  }) {
-    return ChatRoomLoaded(
-      conversation: conversation ?? this.conversation,
-      messages: messages ?? this.messages,
-      isOtherUserTyping: isOtherUserTyping ?? this.isOtherUserTyping,
-      isOtherUserOnline: isOtherUserOnline ?? this.isOtherUserOnline,
-    );
-  }
 }
 
 class ChatRoomError extends ChatRoomState {

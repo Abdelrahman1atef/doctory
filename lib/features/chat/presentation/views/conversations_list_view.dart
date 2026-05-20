@@ -17,15 +17,27 @@ class ConversationsListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => sl<ConversationsListCubit>()..loadConversations(refresh: true),
-      child: Scaffold(
-        appBar: CustomAppBar(
-          title: 'الرسائل',
-        ),
-        body: const ConversationsListSection(),
-        floatingActionButton: const _NewChatFAB(),
+    return const Scaffold(
+      body: SafeArea(
+        child: ConversationsListBodySection(),
       ),
+      floatingActionButton: _NewChatFAB(),
+    );
+  }
+}
+
+class ConversationsListBodySection extends StatelessWidget {
+  const ConversationsListBodySection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: const [
+        CustomAppBar(title: 'الرسائل'),
+        Expanded(
+          child: ConversationsListSection(),
+        ),
+      ],
     );
   }
 }
@@ -84,6 +96,9 @@ class ConversationsListSection extends StatelessWidget {
                 return ConversationItemWidget(
                   conversation: conversation,
                   isOnline: isOnline,
+                  onDelete: () {
+                    context.read<ConversationsListCubit>().deleteConversation(conversation.id);
+                  },
                   onTap: () {
                     context.pushNamed(
                       ChatRouterNames.chatRoom,

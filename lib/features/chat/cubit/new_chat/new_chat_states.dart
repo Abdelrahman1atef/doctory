@@ -1,4 +1,4 @@
-abstract class NewChatState {}
+sealed class NewChatState {}
 
 class NewChatInitial extends NewChatState {}
 

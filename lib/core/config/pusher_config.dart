@@ -22,6 +22,7 @@ class PusherConfig {
   static const String conversationUpdatedEvent = 'conversation-updated';
   static const String typingEvent = 'typing';
   static const String messagesReadEvent = 'messages-read';
+  static const String messagesDeliveredEvent = 'messages-delivered';
 
   // Order tracking
   static String getOrderTrackingChannel(int orderId) =>
