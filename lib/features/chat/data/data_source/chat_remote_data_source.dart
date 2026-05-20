@@ -103,8 +103,8 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       path: path,
       data: {'file': await MultipartFile.fromFile(file.path), 'place': place},
       parser: (json) {
-        if (json.containsKey('data')) {
-          return json['data'].toString();
+        if (json.containsKey('message')) {
+          return json['message'].toString();
         }
         return '';
       },
@@ -120,7 +120,6 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     if (replyToMessageId != null) {
       body['replyToMessageId'] = replyToMessageId;
     }
-
     if (mediaPayload != null && mediaPayload.isNotEmpty) {
       body['media'] = mediaPayload;
     }

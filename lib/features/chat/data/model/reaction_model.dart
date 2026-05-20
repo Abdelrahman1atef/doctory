@@ -13,10 +13,10 @@ class ReactionModel {
 
   factory ReactionModel.fromJson(Map<String, dynamic> json) {
     return ReactionModel(
-      id: json['id'] ?? '',
-      userId: json['userId'] ?? '',
-      userName: json['userName'] ?? '',
-      reactionType: json['reactionType'] ?? '',
+      id: (json['id'] ?? '').toString(),
+      userId: (json['userId'] ?? '').toString(),
+      userName: (json['userName'] ?? '').toString(),
+      reactionType: (json['reactionType'] ?? '').toString(),
     );
   }
 }

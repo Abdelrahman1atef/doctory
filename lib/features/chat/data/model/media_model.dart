@@ -1,6 +1,6 @@
 class MediaModel {
   final String id;
-  final String mediaType;
+  final int mediaType;
   final String fileName;
 
   MediaModel({
@@ -11,9 +11,9 @@ class MediaModel {
 
   factory MediaModel.fromJson(Map<String, dynamic> json) {
     return MediaModel(
-      id: json['id'] ?? '',
-      mediaType: json['mediaType'] ?? 'Image',
-      fileName: json['fileName'] ?? '',
+      id: (json['id'] ?? '').toString(),
+      mediaType: int.tryParse((json['mediaType'] ?? 0).toString()) ?? 0,
+      fileName: (json['fileName'] ?? '').toString(),
     );
   }
 }

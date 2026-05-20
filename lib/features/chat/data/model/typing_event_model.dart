@@ -11,8 +11,8 @@ class TypingEventModel {
 
   factory TypingEventModel.fromJson(Map<String, dynamic> json) {
     return TypingEventModel(
-      conversationId: json['conversationId'] ?? '',
-      userId: json['userId'] ?? '',
+      conversationId: (json['conversationId'] ?? '').toString(),
+      userId: (json['userId'] ?? '').toString(),
       isTyping: json['isTyping'] ?? false,
     );
   }

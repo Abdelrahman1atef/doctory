@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -130,11 +131,32 @@ class ChatRoomSection extends StatefulWidget {
 
 class _ChatRoomSectionState extends State<ChatRoomSection> {
   final TextEditingController _messageController = TextEditingController();
+  bool _hasText = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _messageController.addListener(_onTextChanged);
+  }
 
   @override
   void dispose() {
+    _messageController.removeListener(_onTextChanged);
     _messageController.dispose();
     super.dispose();
+  }
+
+  void _onTextChanged() {
+    final hasText = _messageController.text.trim().isNotEmpty;
+    if (hasText != _hasText) {
+      setState(() => _hasText = hasText);
+    }
+  }
+
+  void _handleSend(BuildContext context) {
+    final content = _messageController.text.trim();
+    context.read<ChatRoomCubit>().sendMessage(content);
+    _messageController.clear();
   }
 
   @override
@@ -157,7 +179,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
                 );
               } else if (state is ChatRoomLoaded) {
                 return ListView.builder(
-                  reverse: true, // Show newest messages at bottom (0th index)
+                  reverse: true,
                   itemCount: state.messages.length,
                   itemBuilder: (context, index) {
                     final message = state.messages[index];
@@ -169,7 +191,31 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
             },
           ),
         ),
+        // Media Preview
         BlocBuilder<ChatRoomCubit, ChatRoomState>(
+          buildWhen: (prev, curr) {
+            if (prev is ChatRoomLoaded && curr is ChatRoomLoaded) {
+              return prev.selectedFilePath != curr.selectedFilePath ||
+                  prev.isUploadingMedia != curr.isUploadingMedia ||
+                  prev.uploadedFileName != curr.uploadedFileName;
+            }
+            return true;
+          },
+          builder: (context, state) {
+            if (state is ChatRoomLoaded && state.selectedFilePath != null) {
+              return _buildMediaPreview(context, state);
+            }
+            return const SizedBox.shrink();
+          },
+        ),
+        // Reply Preview
+        BlocBuilder<ChatRoomCubit, ChatRoomState>(
+          buildWhen: (prev, curr) {
+            if (prev is ChatRoomLoaded && curr is ChatRoomLoaded) {
+              return prev.replyingToMessage != curr.replyingToMessage;
+            }
+            return true;
+          },
           builder: (context, state) {
             if (state is ChatRoomLoaded && state.replyingToMessage != null) {
               return _buildReplyPreview(context, state.replyingToMessage!);
@@ -177,9 +223,119 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
             return const SizedBox.shrink();
           },
         ),
+        // Message Input
         _buildMessageInput(context),
       ],
     );
+  }
+
+  Widget _buildMediaPreview(BuildContext context, ChatRoomLoaded state) {
+    final isImage = state.uploadedMediaType == 0;
+    final filePath = state.selectedFilePath!;
+    final fileName = filePath.split('/').last.split('\\').last;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        border: Border(top: BorderSide(color: AppColors.grey200, width: 0.5)),
+      ),
+      child: Row(
+        children: [
+          // Thumbnail or file icon
+          if (isImage)
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Image.file(
+                File(filePath),
+                width: 56,
+                height: 56,
+                fit: BoxFit.cover,
+                errorBuilder: (_, __, ___) => Container(
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: AppColors.grey200.withValues(alpha: 0.2),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Icon(Icons.broken_image, color: AppColors.grey600),
+                ),
+              ),
+            )
+          else
+            Container(
+              width: 56,
+              height: 56,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(_getMediaIcon(state.uploadedMediaType), color: AppColors.primary, size: 24),
+                  const SizedBox(height: 2),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    child: Text(
+                      fileName,
+                      style: AppStyles.s10Medium.withColor(AppColors.grey600),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          const SizedBox(width: 12),
+          // Upload status
+          Expanded(
+            child: state.isUploadingMedia
+                ? Row(
+                    children: [
+                      SizedBox(
+                        width: 16,
+                        height: 16,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.primary,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Text('جاري الرفع...', style: AppStyles.s12Medium.withColor(AppColors.grey600)),
+                    ],
+                  )
+                : Text(
+                    state.uploadedFileName != null ? 'جاهز للإرسال' : fileName,
+                    style: AppStyles.s12Medium.withColor(AppColors.grey600),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+          ),
+          // Remove button
+          IconButton(
+            onPressed: () => context.read<ChatRoomCubit>().clearMedia(),
+            icon: const Icon(Icons.close, size: 20),
+            splashRadius: 20,
+          ),
+        ],
+      ),
+    );
+  }
+
+  IconData _getMediaIcon(int? mediaType) {
+    switch (mediaType) {
+      case 0:
+        return Icons.image;
+      case 1:
+        return Icons.videocam;
+      case 2:
+        return Icons.audiotrack;
+      case 3:
+        return Icons.insert_drive_file;
+      default:
+        return Icons.attach_file;
+    }
   }
 
   Widget _buildReplyPreview(BuildContext context, MessageModel message) {
@@ -230,70 +386,85 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
   }
 
   Widget _buildMessageInput(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            offset: const Offset(0, -2),
-            blurRadius: 4,
+    return BlocBuilder<ChatRoomCubit, ChatRoomState>(
+      buildWhen: (prev, curr) {
+        if (prev is ChatRoomLoaded && curr is ChatRoomLoaded) {
+          return prev.uploadedFileName != curr.uploadedFileName ||
+              prev.isUploadingMedia != curr.isUploadingMedia;
+        }
+        return true;
+      },
+      builder: (context, state) {
+        final hasMedia = state is ChatRoomLoaded && state.uploadedFileName != null;
+        final isUploading = state is ChatRoomLoaded && state.isUploadingMedia;
+        final showSend = _hasText || hasMedia;
+
+        return Container(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.05),
+                offset: const Offset(0, -2),
+                blurRadius: 4,
+              ),
+            ],
           ),
-        ],
-      ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            IconButton(
-              onPressed: () => _showMediaOptions(context),
-              icon: Icon(Icons.add_circle_outline, color: AppColors.primary),
-            ),
-            Expanded(
-              child: Container(
-                decoration: BoxDecoration(
-                  color: AppColors.grey200.withValues(alpha: 0.1),
-                  borderRadius: BorderRadius.circular(24),
+          child: SafeArea(
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () => _showMediaOptions(context),
+                  icon: Icon(Icons.add_circle_outline, color: AppColors.primary),
                 ),
-                child: TextField(
-                  controller: _messageController,
-                  decoration: const InputDecoration(
-                    hintText: 'اكتب رسالة...',
-                    border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
-                      horizontal: 16,
-                      vertical: 12,
+                Expanded(
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.grey200.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: TextField(
+                      controller: _messageController,
+                      decoration: const InputDecoration(
+                        hintText: 'اكتب رسالة...',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 12,
+                        ),
+                      ),
+                      onChanged: (text) {
+                        if (text.isNotEmpty) {
+                          context.read<ChatRoomCubit>().onTyping();
+                        }
+                      },
                     ),
                   ),
-                  onChanged: (text) {
-                    if (text.isNotEmpty) {
-                      context.read<ChatRoomCubit>().onTyping();
-                    }
-                  },
                 ),
-              ),
-            ),
-            const SizedBox(width: 8),
-            GestureDetector(
-              onTap: () {
-                final content = _messageController.text.trim();
-                if (content.isNotEmpty) {
-                  context.read<ChatRoomCubit>().sendMessage(content);
-                  _messageController.clear();
-                }
-              },
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  shape: BoxShape.circle,
+                const SizedBox(width: 8),
+                GestureDetector(
+                  onTap: (showSend && !isUploading)
+                      ? () => _handleSend(context)
+                      : null,
+                  child: Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: showSend ? AppColors.primary : AppColors.grey200,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      showSend ? Icons.send : Icons.mic,
+                      color: showSend ? Colors.white : AppColors.grey600,
+                      size: 20,
+                    ),
+                  ),
                 ),
-                child: const Icon(Icons.send, color: Colors.white, size: 20),
-              ),
+              ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 
@@ -310,7 +481,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
               title: const Text('صورة من المعرض'),
               onTap: () {
                 Navigator.pop(ctx);
-                cubit.pickAndSendMedia(isVideo: false);
+                cubit.pickMedia(isVideo: false);
               },
             ),
             ListTile(
@@ -318,7 +489,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
               title: const Text('صورة من الكاميرا'),
               onTap: () {
                 Navigator.pop(ctx);
-                cubit.pickAndSendMedia(isVideo: false, fromCamera: true);
+                cubit.pickMedia(isVideo: false, fromCamera: true);
               },
             ),
             ListTile(
@@ -326,7 +497,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
               title: const Text('فيديو من المعرض'),
               onTap: () {
                 Navigator.pop(ctx);
-                cubit.pickAndSendMedia(isVideo: true);
+                cubit.pickMedia(isVideo: true);
               },
             ),
             ListTile(
@@ -334,7 +505,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
               title: const Text('فيديو من الكاميرا'),
               onTap: () {
                 Navigator.pop(ctx);
-                cubit.pickAndSendMedia(isVideo: true, fromCamera: true);
+                cubit.pickMedia(isVideo: true, fromCamera: true);
               },
             ),
             ListTile(
@@ -342,7 +513,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
               title: const Text('ملف'),
               onTap: () {
                 Navigator.pop(ctx);
-                cubit.pickAndSendFile();
+                cubit.pickFile();
               },
             ),
           ],

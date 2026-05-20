@@ -32,22 +32,29 @@ class ConversationModel {
   });
 
   factory ConversationModel.fromJson(Map<String, dynamic> json) {
+    // Helper function to safely convert to string
+    String? getString(dynamic value) {
+      if (value == null) return null;
+      return value.toString();
+    }
+
     return ConversationModel(
-      id: (json['id'] ?? json['Id'] ?? '').toString(),
-      isGroup: json['isGroup'] ?? json['IsGroup'] ?? false,
-      initiatorId: (json['initiatorId'] ?? json['InitiatorId'] ?? '').toString(),
-      initiatorName: (json['initiatorName'] ?? json['InitiatorName'] ?? '').toString(),
-      initiatorProfilePictureUrl: json['initiatorProfilePictureUrl'] ?? json['InitiatorProfilePictureUrl'],
-      recipientId: (json['recipientId'] ?? json['RecipientId'] ?? '').toString(),
-      recipientName: (json['recipientName'] ?? json['RecipientName'] ?? '').toString(),
-      recipientProfilePictureUrl: json['recipientProfilePictureUrl'] ?? json['RecipientProfilePictureUrl'],
-      lastMessageContent: json['lastMessageContent'] ?? json['LastMessageContent'],
-      lastMessageDate: (json['lastMessageDate'] ?? json['LastMessageDate']) != null 
-          ? DateTime.parse(json['lastMessageDate'] ?? json['LastMessageDate']) 
+      id: getString(json['id'] ?? json['Id']) ?? '',
+      isGroup: (json['isGroup'] ?? json['IsGroup'] ?? false) as bool,
+      initiatorId: getString(json['initiatorId'] ?? json['InitiatorId']) ?? '',
+      initiatorName: getString(json['initiatorName'] ?? json['InitiatorName']) ?? '',
+      initiatorProfilePictureUrl: getString(json['initiatorProfilePictureUrl'] ?? json['InitiatorProfilePictureUrl']),
+      recipientId: getString(json['recipientId'] ?? json['RecipientId']) ?? '',
+      recipientName: getString(json['recipientName'] ?? json['RecipientName']) ?? '',
+      recipientProfilePictureUrl: getString(json['recipientProfilePictureUrl'] ?? json['RecipientProfilePictureUrl']),
+      lastMessageContent: getString(json['lastMessageContent'] ?? json['LastMessageContent']),
+      lastMessageDate: (json['lastMessageDate'] ?? json['LastMessageDate']) != null
+          ? DateTime.tryParse((json['lastMessageDate'] ?? json['LastMessageDate']).toString())
           : null,
-      unreadMessageCount: json['unreadMessageCount'] ?? json['UnreadMessageCount'] ?? 0,
-      createdAt: (json['createdAt'] ?? json['CreatedAt']) != null 
-          ? DateTime.parse(json['createdAt'] ?? json['CreatedAt']) 
+      unreadMessageCount: (json['unreadMessageCount'] ?? json['UnreadMessageCount'] ?? 0) as int,
+      createdAt: (json['createdAt'] ?? json['CreatedAt']) != null
+          ? (DateTime.tryParse((json['createdAt'] ?? json['CreatedAt']).toString()) ??
+          DateTime.now())
           : DateTime.now(),
       messages: (json['messages'] ?? json['Messages']) != null
           ? ((json['messages'] ?? json['Messages']) as List).map((i) => MessageModel.fromJson(i)).toList()

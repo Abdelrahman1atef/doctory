@@ -11,7 +11,8 @@ abstract class ChatRepo {
   Future<ApiResult<ConversationModel>> getConversationDetail(String id);
   Future<ApiResult<String>> deleteConversation(String id);
   Future<ApiResult<List<MessageModel>>> getMessages(String conversationId, {int pageNumber = 1, int pageSize = 50});
-  Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId, List<ChatMediaAttachment>? media});
+  Future<ApiResult<String>> uploadChatMedia(ChatMediaAttachment attachment);
+  Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId, List<Map<String, dynamic>>? mediaPayload});
   Future<ApiResult<String>> deleteMessage(String messageId);
   Future<ApiResult<bool>> setActiveConversation(String? conversationId);
   Future<ApiResult<bool>> sendTypingIndicator(String conversationId, bool isTyping);
@@ -51,54 +52,37 @@ class ChatRepoImpl implements ChatRepo {
   }
 
   @override
-  Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId, List<ChatMediaAttachment>? media}) async {
-    List<Map<String, dynamic>> mediaPayload = [];
-
-    if (media != null && media.isNotEmpty) {
-      for (var attachment in media) {
-        String path = 'attachments/upload-file';
-        switch (attachment.mediaType) {
-          case 0:
-            path = 'attachments/upload-image';
-            break;
-          case 1:
-            path = 'attachments/upload-video';
-            break;
-          case 2:
-            path = 'attachments/upload-audio';
-            break;
-          case 3:
-            path = 'attachments/upload-file';
-            break;
-        }
-
-        final result = await remoteDataSource.uploadChatMedia(
-          attachment.file,
-          path: path,
-          place: attachment.place,
-        );
-
-        final fileName = result.fold(
-          onSuccess: (name) => name,
-          onFailure: (_) => null,
-        );
-
-        if (fileName != null && fileName.isNotEmpty) {
-          mediaPayload.add({
-            'mediaType': attachment.mediaType,
-            'fileName': fileName,
-          });
-        } else {
-          return ApiResult.failure(ServerFailure(message: 'فشل في رفع بعض الوسائط'));
-        }
-      }
+  Future<ApiResult<String>> uploadChatMedia(ChatMediaAttachment attachment) async {
+    String path = 'attachments/upload-file';
+    switch (attachment.mediaType) {
+      case 0:
+        path = 'attachments/upload-image';
+        break;
+      case 1:
+        path = 'attachments/upload-video';
+        break;
+      case 2:
+        path = 'attachments/upload-audio';
+        break;
+      case 3:
+        path = 'attachments/upload-file';
+        break;
     }
 
+    return await remoteDataSource.uploadChatMedia(
+      attachment.file,
+      path: path,
+      place: attachment.place,
+    );
+  }
+
+  @override
+  Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId, List<Map<String, dynamic>>? mediaPayload}) async {
     return await remoteDataSource.sendMessage(
       conversationId,
       content,
       replyToMessageId: replyToMessageId,
-      mediaPayload: mediaPayload.isEmpty ? null : mediaPayload,
+      mediaPayload: mediaPayload,
     );
   }
 

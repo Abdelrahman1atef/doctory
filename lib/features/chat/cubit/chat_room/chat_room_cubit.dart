@@ -47,12 +47,16 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         final currentUserId = UserSession.userId;
         _otherUserId = data.initiatorId == currentUserId ? data.recipientId : data.initiatorId;
 
-        emit(ChatRoomLoaded(
-          conversation: data,
-          messages: (data.messages ?? []).reversed.toList(),
-          isOtherUserOnline: _otherUserId != null ? realtimeService.isUserOnline(_otherUserId!) : false,
-        ));
-        
+        emit(
+          ChatRoomLoaded(
+            conversation: data,
+            messages: (data.messages ?? []).reversed.toList(),
+            isOtherUserOnline: _otherUserId != null
+                ? realtimeService.isUserOnline(_otherUserId!)
+                : false,
+          ),
+        );
+
         _listenToRealtimeEvents();
       },
       onFailure: (failure) {
@@ -75,13 +79,15 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
           final message = MessageModel.fromJson(data);
           if (message.conversationId == _conversationId) {
             final updatedMessages = [message, ...currentState.messages];
-            emit(ChatRoomLoaded(
-              conversation: currentState.conversation,
-              messages: updatedMessages,
-              isOtherUserOnline: currentState.isOtherUserOnline,
-              isOtherUserTyping: currentState.isOtherUserTyping,
-              replyingToMessage: currentState.replyingToMessage,
-            ));
+            emit(
+              ChatRoomLoaded(
+                conversation: currentState.conversation,
+                messages: updatedMessages,
+                isOtherUserOnline: currentState.isOtherUserOnline,
+                isOtherUserTyping: currentState.isOtherUserTyping,
+                replyingToMessage: currentState.replyingToMessage,
+              ),
+            );
           }
         } catch (e) {
           // Fallback if parsing fails
@@ -98,13 +104,15 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
 
         if (conversationId == _conversationId && userId == _otherUserId) {
           final currentState = state as ChatRoomLoaded;
-          emit(ChatRoomLoaded(
-            conversation: currentState.conversation,
-            messages: currentState.messages,
-            isOtherUserOnline: currentState.isOtherUserOnline,
-            isOtherUserTyping: isTyping,
-            replyingToMessage: currentState.replyingToMessage,
-          ));
+          emit(
+            ChatRoomLoaded(
+              conversation: currentState.conversation,
+              messages: currentState.messages,
+              isOtherUserOnline: currentState.isOtherUserOnline,
+              isOtherUserTyping: isTyping,
+              replyingToMessage: currentState.replyingToMessage,
+            ),
+          );
         }
       }
     });
@@ -118,13 +126,15 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
           }
           return m;
         }).toList();
-        emit(ChatRoomLoaded(
-          conversation: currentState.conversation,
-          messages: updatedMessages,
-          isOtherUserOnline: currentState.isOtherUserOnline,
-          isOtherUserTyping: currentState.isOtherUserTyping,
-          replyingToMessage: currentState.replyingToMessage,
-        ));
+        emit(
+          ChatRoomLoaded(
+            conversation: currentState.conversation,
+            messages: updatedMessages,
+            isOtherUserOnline: currentState.isOtherUserOnline,
+            isOtherUserTyping: currentState.isOtherUserTyping,
+            replyingToMessage: currentState.replyingToMessage,
+          ),
+        );
       }
     });
 
@@ -138,13 +148,15 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
           }
           return m;
         }).toList();
-        emit(ChatRoomLoaded(
-          conversation: currentState.conversation,
-          messages: updatedMessages,
-          isOtherUserOnline: currentState.isOtherUserOnline,
-          isOtherUserTyping: currentState.isOtherUserTyping,
-          replyingToMessage: currentState.replyingToMessage,
-        ));
+        emit(
+          ChatRoomLoaded(
+            conversation: currentState.conversation,
+            messages: updatedMessages,
+            isOtherUserOnline: currentState.isOtherUserOnline,
+            isOtherUserTyping: currentState.isOtherUserTyping,
+            replyingToMessage: currentState.replyingToMessage,
+          ),
+        );
       }
     });
 
@@ -152,20 +164,22 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       if (state is ChatRoomLoaded && _otherUserId != null) {
         final isOnline = onlineUsers.contains(_otherUserId);
         final currentState = state as ChatRoomLoaded;
-        emit(ChatRoomLoaded(
-          conversation: currentState.conversation,
-          messages: currentState.messages,
-          isOtherUserOnline: isOnline,
-          isOtherUserTyping: currentState.isOtherUserTyping,
-          replyingToMessage: currentState.replyingToMessage,
-        ));
+        emit(
+          ChatRoomLoaded(
+            conversation: currentState.conversation,
+            messages: currentState.messages,
+            isOtherUserOnline: isOnline,
+            isOtherUserTyping: currentState.isOtherUserTyping,
+            replyingToMessage: currentState.replyingToMessage,
+          ),
+        );
       }
     });
   }
 
   Future<void> _loadOlderMessages({bool refresh = false}) async {
     if (_conversationId == null) return;
-    
+
     if (refresh) {
       _currentPage = 1;
       _hasMore = true;
@@ -182,17 +196,23 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         if (state is ChatRoomLoaded) {
           final currentState = state as ChatRoomLoaded;
           final currentMessages = refresh ? <MessageModel>[] : currentState.messages;
-          
+
           // Filter out duplicates if refreshing or appending
-          final newMessages = data.where((m) => !currentMessages.any((cm) => cm.id == m.id)).toList().reversed.toList();
-          
-          emit(ChatRoomLoaded(
-            conversation: currentState.conversation,
-            messages: [...currentMessages, ...newMessages],
-            isOtherUserOnline: currentState.isOtherUserOnline,
-            isOtherUserTyping: currentState.isOtherUserTyping,
-            replyingToMessage: currentState.replyingToMessage,
-          ));
+          final newMessages = data
+              .where((m) => !currentMessages.any((cm) => cm.id == m.id))
+              .toList()
+              .reversed
+              .toList();
+
+          emit(
+            ChatRoomLoaded(
+              conversation: currentState.conversation,
+              messages: [...currentMessages, ...newMessages],
+              isOtherUserOnline: currentState.isOtherUserOnline,
+              isOtherUserTyping: currentState.isOtherUserTyping,
+              replyingToMessage: currentState.replyingToMessage,
+            ),
+          );
         }
       },
       onFailure: (_) {
@@ -215,80 +235,128 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
   void setReplyMessage(MessageModel message) {
     if (state is ChatRoomLoaded) {
       final currentState = state as ChatRoomLoaded;
-      emit(ChatRoomLoaded(
-        conversation: currentState.conversation,
-        messages: currentState.messages,
-        isOtherUserOnline: currentState.isOtherUserOnline,
-        isOtherUserTyping: currentState.isOtherUserTyping,
-        replyingToMessage: message,
-      ));
+      emit(
+        ChatRoomLoaded(
+          conversation: currentState.conversation,
+          messages: currentState.messages,
+          isOtherUserOnline: currentState.isOtherUserOnline,
+          isOtherUserTyping: currentState.isOtherUserTyping,
+          replyingToMessage: message,
+        ),
+      );
     }
   }
 
   void cancelReply() {
     if (state is ChatRoomLoaded) {
       final currentState = state as ChatRoomLoaded;
-      emit(ChatRoomLoaded(
-        conversation: currentState.conversation,
-        messages: currentState.messages,
-        isOtherUserOnline: currentState.isOtherUserOnline,
-        isOtherUserTyping: currentState.isOtherUserTyping,
-        replyingToMessage: null,
-      ));
+      emit(
+        ChatRoomLoaded(
+          conversation: currentState.conversation,
+          messages: currentState.messages,
+          isOtherUserOnline: currentState.isOtherUserOnline,
+          isOtherUserTyping: currentState.isOtherUserTyping,
+          replyingToMessage: null,
+        ),
+      );
     }
   }
 
-  Future<void> pickAndSendMedia({required bool isVideo, bool fromCamera = false}) async {
+  Future<void> _uploadAttachment(ChatMediaAttachment attachment) async {
+    if (state is! ChatRoomLoaded) return;
+    final currentState = state as ChatRoomLoaded;
+    emit(
+      currentState.copyWith(
+        selectedFilePath: attachment.file.path,
+        isUploadingMedia: true,
+        clearMedia: false,
+      ),
+    );
+
+    final result = await chatRepo.uploadChatMedia(attachment);
+    result.fold(
+      onSuccess: (fileName) {
+        if (state is ChatRoomLoaded) {
+          final s = state as ChatRoomLoaded;
+          emit(
+            s.copyWith(
+              isUploadingMedia: false,
+              uploadedFileName: fileName,
+              uploadedMediaType: attachment.mediaType,
+            ),
+          );
+        }
+      },
+      onFailure: (failure) {
+        if (state is ChatRoomLoaded) {
+          final s = state as ChatRoomLoaded;
+          emit(s.copyWith(isUploadingMedia: false, clearMedia: true));
+        }
+      },
+    );
+  }
+
+  Future<void> pickMedia({required bool isVideo, bool fromCamera = false}) async {
     final source = fromCamera ? ImageSource.camera : ImageSource.gallery;
-    final XFile? media = isVideo 
+    final XFile? media = isVideo
         ? await _picker.pickVideo(source: source)
         : await _picker.pickImage(source: source);
     if (media != null) {
-      final attachment = isVideo 
+      final attachment = isVideo
           ? ChatMediaAttachment.video(File(media.path))
           : ChatMediaAttachment.image(File(media.path));
-      await sendMessage('', media: [attachment]);
+      await _uploadAttachment(attachment);
     }
   }
 
-  Future<void> pickAndSendFile() async {
+  Future<void> pickFile() async {
     try {
       final result = await file_picker.FilePicker.platform.pickFiles();
       if (result != null && result.files.single.path != null) {
         final attachment = ChatMediaAttachment.document(File(result.files.single.path!));
-        await sendMessage('', media: [attachment]);
+        await _uploadAttachment(attachment);
       }
     } catch (e) {
       // Handle file picker error
     }
   }
 
-  Future<void> sendMessage(String content,
-      {String? replyToMessageId, List<ChatMediaAttachment>? media}) async {
+  void clearMedia() {
+    if (state is ChatRoomLoaded) {
+      emit((state as ChatRoomLoaded).copyWith(clearMedia: true));
+    }
+  }
+
+  Future<void> sendMessage(String textContent, {String? replyToMessageId}) async {
     if (_conversationId == null || state is! ChatRoomLoaded) return;
 
     final currentState = state as ChatRoomLoaded;
-    final effectiveReplyId =
-        replyToMessageId ?? currentState.replyingToMessage?.id;
+    final effectiveReplyId = replyToMessageId ?? currentState.replyingToMessage?.id;
 
-    // Clear reply state immediately
-    if (currentState.replyingToMessage != null) {
-      emit(ChatRoomLoaded(
-        conversation: currentState.conversation,
-        messages: currentState.messages,
-        isOtherUserOnline: currentState.isOtherUserOnline,
-        isOtherUserTyping: currentState.isOtherUserTyping,
-        replyingToMessage: null,
-      ));
+    final fileName = currentState.uploadedFileName;
+    final mediaType = currentState.uploadedMediaType;
+
+    List<Map<String, dynamic>>? mediaPayload;
+    if (fileName != null && mediaType != null) {
+      mediaPayload = [
+        {'mediaType': mediaType, 'fileName': fileName},
+      ];
     }
+
+    final content = textContent.isEmpty && mediaPayload != null ? " " : textContent;
+    if (content.trim().isEmpty && mediaPayload == null) return;
+
+    // Clear reply and media states immediately
+    emit(currentState.copyWith(clearReply: true, clearMedia: true));
 
     // Optimistic Update
     final tempId = 'temp_${DateTime.now().millisecondsSinceEpoch}';
     final tempMessage = MessageModel(
       id: tempId,
       senderId: UserSession.userId ?? '',
-      senderName: '', // Usually not needed for local UI if displaying "You"
-      content: (media != null && media.isNotEmpty && content.isEmpty) ? 'رسالة وسائط' : content,
+      senderName: '',
+      // Usually not needed for local UI if displaying "You"
+      content: content.trim().isEmpty ? 'رسالة وسائط' : content,
       isRead: false,
       status: 'Sending',
       createdAt: DateTime.now(),
@@ -299,21 +367,15 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       isLocalPending: true,
     );
 
-    // Re-fetch current state because we might have emitted clearReply
+    // Re-fetch current state because we emitted clear states
     final latestState = state as ChatRoomLoaded;
-    emit(ChatRoomLoaded(
-      conversation: latestState.conversation,
-      messages: [tempMessage, ...latestState.messages],
-      isOtherUserOnline: latestState.isOtherUserOnline,
-      isOtherUserTyping: latestState.isOtherUserTyping,
-      replyingToMessage: latestState.replyingToMessage,
-    ));
+    emit(latestState.copyWith(messages: [tempMessage, ...latestState.messages]));
 
     final result = await chatRepo.sendMessage(
       _conversationId!,
       content,
       replyToMessageId: effectiveReplyId,
-      media: media,
+      mediaPayload: mediaPayload,
     );
 
     result.fold(
@@ -321,13 +383,15 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         if (state is ChatRoomLoaded) {
           final s = state as ChatRoomLoaded;
           final updatedMessages = s.messages.map((m) => m.id == tempId ? savedMessage : m).toList();
-          emit(ChatRoomLoaded(
-            conversation: s.conversation,
-            messages: updatedMessages,
-            isOtherUserOnline: s.isOtherUserOnline,
-            isOtherUserTyping: s.isOtherUserTyping,
-            replyingToMessage: s.replyingToMessage,
-          ));
+          emit(
+            ChatRoomLoaded(
+              conversation: s.conversation,
+              messages: updatedMessages,
+              isOtherUserOnline: s.isOtherUserOnline,
+              isOtherUserTyping: s.isOtherUserTyping,
+              replyingToMessage: s.replyingToMessage,
+            ),
+          );
         }
       },
       onFailure: (failure) {
@@ -340,13 +404,15 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
             }
             return m;
           }).toList();
-          emit(ChatRoomLoaded(
-            conversation: s.conversation,
-            messages: updatedMessages,
-            isOtherUserOnline: s.isOtherUserOnline,
-            isOtherUserTyping: s.isOtherUserTyping,
-            replyingToMessage: s.replyingToMessage,
-          ));
+          emit(
+            ChatRoomLoaded(
+              conversation: s.conversation,
+              messages: updatedMessages,
+              isOtherUserOnline: s.isOtherUserOnline,
+              isOtherUserTyping: s.isOtherUserTyping,
+              replyingToMessage: s.replyingToMessage,
+            ),
+          );
         }
       },
     );
@@ -358,15 +424,16 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
 
     // Optimistic remove
     final originalMessages = List<MessageModel>.from(currentState.messages);
-    final updatedMessages =
-        originalMessages.where((m) => m.id != messageId).toList();
-    emit(ChatRoomLoaded(
-      conversation: currentState.conversation,
-      messages: updatedMessages,
-      isOtherUserOnline: currentState.isOtherUserOnline,
-      isOtherUserTyping: currentState.isOtherUserTyping,
-      replyingToMessage: currentState.replyingToMessage,
-    ));
+    final updatedMessages = originalMessages.where((m) => m.id != messageId).toList();
+    emit(
+      ChatRoomLoaded(
+        conversation: currentState.conversation,
+        messages: updatedMessages,
+        isOtherUserOnline: currentState.isOtherUserOnline,
+        isOtherUserTyping: currentState.isOtherUserTyping,
+        replyingToMessage: currentState.replyingToMessage,
+      ),
+    );
 
     final result = await chatRepo.deleteMessage(messageId);
     result.fold(
@@ -377,13 +444,15 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         // Rollback on failure
         if (state is ChatRoomLoaded) {
           final currentState = state as ChatRoomLoaded;
-          emit(ChatRoomLoaded(
-            conversation: currentState.conversation,
-            messages: originalMessages,
-            isOtherUserOnline: currentState.isOtherUserOnline,
-            isOtherUserTyping: currentState.isOtherUserTyping,
-            replyingToMessage: currentState.replyingToMessage,
-          ));
+          emit(
+            ChatRoomLoaded(
+              conversation: currentState.conversation,
+              messages: originalMessages,
+              isOtherUserOnline: currentState.isOtherUserOnline,
+              isOtherUserTyping: currentState.isOtherUserTyping,
+              replyingToMessage: currentState.replyingToMessage,
+            ),
+          );
         }
       },
     );
