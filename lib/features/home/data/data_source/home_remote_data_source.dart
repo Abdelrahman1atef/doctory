@@ -32,6 +32,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   @override
   Future<ApiResult<List<DoctorModel>>> getRecommendedDoctors() async {
     await Future.delayed(const Duration(seconds: 1));
+    return ApiResult.success([]);
     return ApiResult.success([
       DoctorModel(
         id: '1',
@@ -55,6 +56,7 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
   @override
   Future<ApiResult<List<ClinicModel>>> getFeaturedClinics() async {
     await Future.delayed(const Duration(seconds: 1));
+    return ApiResult.success([]);
     return ApiResult.success([
       ClinicModel(
         id: '1',

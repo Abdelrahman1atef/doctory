@@ -10,6 +10,8 @@ import 'package:doctory/features/home/presentation/widgets/section_container_wid
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/utils/extensions.dart';
+
 /// Section that manages the Home BlocBuilder state and delegates
 /// rendering to the appropriate widgets/sections.
 class HomeContentSection extends StatelessWidget {
@@ -23,9 +25,7 @@ class HomeContentSection extends StatelessWidget {
       },
       child: BlocBuilder<HomeCubit, HomeStates>(
         buildWhen: (previous, current) =>
-            current is HomeSuccessState ||
-            current is HomeLoadingState ||
-            current is HomeErrorState,
+            current is HomeSuccessState || current is HomeLoadingState || current is HomeErrorState,
         builder: (context, state) {
           if (state is HomeLoadingState) {
             return const HomeLoadingWidget();
@@ -36,25 +36,40 @@ class HomeContentSection extends StatelessWidget {
           }
 
           if (state is HomeSuccessState) {
-            return ListView(
+            final hasFeaturedData =
+                (state.recommendedDoctors != null && state.recommendedDoctors!.isNotEmpty) ||
+                (state.featuredClinics != null && state.featuredClinics!.isNotEmpty);
+
+            return SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
               padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-              children: [
-                const HomeHeaderSection(),
-                const SizedBox(height: 24),
-                const HomeSearchSection(),
-                const SizedBox(height: 24),
-                SectionContainerWidget(
-                  child: HomeSpecialtiesSection(specialties: state.specialties),
-                ),
-                const SizedBox(height: 16),
-                SectionContainerWidget(
-                  child: HomeFeaturedSection(
-                    doctors: state.recommendedDoctors,
-                    clinics: state.featuredClinics,
+              child: Column(
+                mainAxisAlignment: hasFeaturedData
+                    ? MainAxisAlignment.start
+                    : MainAxisAlignment.center,
+                children: [
+                  const HomeHeaderSection(),
+                  if (!hasFeaturedData)
+                    250.ph
+                  ,
+                  const SizedBox(height: 24),
+                  const HomeSearchSection(),
+                  const SizedBox(height: 24),
+                  SectionContainerWidget(
+                    child: HomeSpecialtiesSection(specialties: state.specialties),
                   ),
-                ),
-                const SizedBox(height: 24),
-              ],
+                  if (hasFeaturedData) ...[
+                    const SizedBox(height: 16),
+                    SectionContainerWidget(
+                      child: HomeFeaturedSection(
+                        doctors: state.recommendedDoctors,
+                        clinics: state.featuredClinics,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 24),
+                ],
+              ),
             );
           }
 

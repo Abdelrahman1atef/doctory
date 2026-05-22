@@ -63,9 +63,7 @@ class HomeHeaderWidget extends StatelessWidget {
                     fit: BoxFit.cover,
                   )
                 : const DecorationImage(
-                    image: NetworkImage(
-                      'https://api.dicebear.com/7.x/avataaars/png?seed=Ahmed&backgroundColor=F8F9FA',
-                    ),
+                    image: AssetImage("assets/images/avatar.jpg"),
                     fit: BoxFit.cover,
                   ),
           ),

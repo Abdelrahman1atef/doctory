@@ -543,7 +543,7 @@
   "password_reset_success": "تم إعادة تعيين كلمة المرور بنجاح.",
   "internet_connected": "تم استعادة الاتصال بالإنترنت",
   "good_morning": "صباح الخير",
-  "hello_user": "أهلاً، {}",
+  "hello_user": "أهلا، {}",
   "how_can_we_help": "كيف يمكننا مساعدتك اليوم؟",
   "search_hint": "ابحث عن دكتور، تخصص، عيادة...",
   "specialties": "التخصصات",

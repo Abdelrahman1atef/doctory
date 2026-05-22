@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 
 class MapLocationFabWidget extends StatelessWidget {
   final VoidCallback onPressed;
+  final Object? heroTag;
 
-  const MapLocationFabWidget({super.key, required this.onPressed});
+  const MapLocationFabWidget({super.key, required this.onPressed, this.heroTag});
 
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
-      heroTag: 'map_location_fab',
+      heroTag: heroTag,
       onPressed: onPressed,
       backgroundColor: AppColors.stitchSurfaceLowest,
       child: const Icon(
