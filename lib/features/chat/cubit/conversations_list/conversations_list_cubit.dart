@@ -167,7 +167,10 @@ class ConversationsListCubit extends Cubit<ConversationsListState> {
   }
 
   @override
-  Future<void> close() {
+  Future<void> close() async {
+    // Disconnect Chat Realtime Service
+    await realtimeService.disconnect();
+    
     _newMessageSub?.cancel();
     _conversationUpdatedSub?.cancel();
     _unreadCountSub?.cancel();
