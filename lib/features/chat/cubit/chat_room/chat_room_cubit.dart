@@ -9,6 +9,7 @@ import 'dart:io';
 import '../../../../core/session/user_session.dart';
 import 'chat_room_states.dart';
 import 'package:file_picker/file_picker.dart' as file_picker;
+import 'package:easy_localization/easy_localization.dart';
 
 class ChatRoomCubit extends Cubit<ChatRoomState> {
   final ChatRepo chatRepo;
@@ -47,10 +48,11 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         final currentUserId = UserSession.userId;
         _otherUserId = data.initiatorId == currentUserId ? data.recipientId : data.initiatorId;
 
+        final messages = (data.messages ?? []).reversed.toList();
         emit(
           ChatRoomLoaded(
             conversation: data,
-            messages: (data.messages ?? []).reversed.toList(),
+            messages: messages,
             isOtherUserOnline: _otherUserId != null
                 ? realtimeService.isUserOnline(_otherUserId!)
                 : false,
@@ -58,11 +60,22 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         );
 
         _listenToRealtimeEvents();
+        _markAllAsRead(messages);
       },
       onFailure: (failure) {
         emit(ChatRoomError(failure.message));
       },
     );
+  }
+
+  void _markAllAsRead(List<MessageModel> messages) {
+    final String? convId = _conversationId;
+    if (convId == null) return;
+    for (var m in messages) {
+      if (m.senderId != UserSession.userId && !m.isRead) {
+        chatRepo.markMessageAsRead(convId, m.id);
+      }
+    }
   }
 
   void _listenToRealtimeEvents() {
@@ -78,6 +91,15 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         try {
           final message = MessageModel.fromJson(data);
           if (message.conversationId == _conversationId) {
+            final String convId = _conversationId!;
+            // Mark as delivered immediately
+            chatRepo.markMessageAsDelivered(convId, message.id);
+
+            // If user is in chat, mark as read too
+            if (message.senderId != UserSession.userId) {
+              chatRepo.markMessageAsRead(convId, message.id);
+            }
+
             final updatedMessages = [message, ...currentState.messages];
             emit(
               ChatRoomLoaded(
@@ -86,6 +108,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
                 isOtherUserOnline: currentState.isOtherUserOnline,
                 isOtherUserTyping: currentState.isOtherUserTyping,
                 replyingToMessage: currentState.replyingToMessage,
+                highlightedMessageId: currentState.highlightedMessageId,
               ),
             );
           }
@@ -111,18 +134,33 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
               isOtherUserOnline: currentState.isOtherUserOnline,
               isOtherUserTyping: isTyping,
               replyingToMessage: currentState.replyingToMessage,
+              highlightedMessageId: currentState.highlightedMessageId,
             ),
           );
         }
       }
     });
 
-    _messagesReadSub = realtimeService.onMessagesRead.listen((conversationId) {
-      if (state is ChatRoomLoaded && conversationId == _conversationId) {
+    _messagesReadSub = realtimeService.onMessagesRead.listen((data) {
+      String? convId;
+      String? msgId;
+
+      if (data is String) {
+        convId = data;
+      } else if (data is Map) {
+        convId = (data['conversationId'] ?? data['ConversationId'])?.toString();
+        msgId = (data['messageId'] ?? data['MessageId'])?.toString();
+      }
+
+      if (state is ChatRoomLoaded && convId == _conversationId) {
         final currentState = state as ChatRoomLoaded;
         final updatedMessages = currentState.messages.map((m) {
-          if (m.senderId == UserSession.userId && !m.isRead) {
-            return m.copyWith(isRead: true, readAt: DateTime.now(), status: 'Read');
+          if (msgId != null) {
+            if (m.id == msgId) return m.copyWith(isRead: true, status: 'Read');
+          } else {
+            if (m.senderId == UserSession.userId && !m.isRead) {
+              return m.copyWith(isRead: true, readAt: DateTime.now(), status: 'Read');
+            }
           }
           return m;
         }).toList();
@@ -133,18 +171,37 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
             isOtherUserOnline: currentState.isOtherUserOnline,
             isOtherUserTyping: currentState.isOtherUserTyping,
             replyingToMessage: currentState.replyingToMessage,
+            highlightedMessageId: currentState.highlightedMessageId,
           ),
         );
       }
     });
 
-    _messagesDeliveredSub = realtimeService.onMessagesDelivered.listen((conversationId) {
-      if (state is ChatRoomLoaded && conversationId == _conversationId) {
+    _messagesDeliveredSub = realtimeService.onMessagesDelivered.listen((data) {
+      String? convId;
+      String? msgId;
+
+      if (data is String) {
+        convId = data;
+      } else if (data is Map) {
+        convId = (data['conversationId'] ?? data['ConversationId'])?.toString();
+        msgId = (data['messageId'] ?? data['MessageId'])?.toString();
+      }
+
+      if (state is ChatRoomLoaded && convId == _conversationId) {
         final currentState = state as ChatRoomLoaded;
         final updatedMessages = currentState.messages.map((m) {
-          // If message is ours and currently 'Sent' or 'Sending', mark as 'Delivered'
-          if (m.senderId == UserSession.userId && !m.isRead && m.status != 'Read' && m.status != 'Delivered') {
-            return m.copyWith(status: 'Delivered');
+          if (msgId != null) {
+            if (m.id == msgId && !m.isRead && m.status != 'Read') {
+              return m.copyWith(status: 'Delivered');
+            }
+          } else {
+            if (m.senderId == UserSession.userId &&
+                !m.isRead &&
+                m.status != 'Read' &&
+                m.status != 'Delivered') {
+              return m.copyWith(status: 'Delivered');
+            }
           }
           return m;
         }).toList();
@@ -155,6 +212,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
             isOtherUserOnline: currentState.isOtherUserOnline,
             isOtherUserTyping: currentState.isOtherUserTyping,
             replyingToMessage: currentState.replyingToMessage,
+            highlightedMessageId: currentState.highlightedMessageId,
           ),
         );
       }
@@ -171,6 +229,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
             isOtherUserOnline: isOnline,
             isOtherUserTyping: currentState.isOtherUserTyping,
             replyingToMessage: currentState.replyingToMessage,
+            highlightedMessageId: currentState.highlightedMessageId,
           ),
         );
       }
@@ -178,7 +237,8 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
   }
 
   Future<void> _loadOlderMessages({bool refresh = false}) async {
-    if (_conversationId == null) return;
+    final String? convId = _conversationId;
+    if (convId == null) return;
 
     if (refresh) {
       _currentPage = 1;
@@ -188,7 +248,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       _currentPage++;
     }
 
-    final result = await chatRepo.getMessages(_conversationId!, pageNumber: _currentPage);
+    final result = await chatRepo.getMessages(convId, pageNumber: _currentPage);
     result.fold(
       onSuccess: (data) {
         if (data.length < 50) _hasMore = false;
@@ -211,6 +271,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
               isOtherUserOnline: currentState.isOtherUserOnline,
               isOtherUserTyping: currentState.isOtherUserTyping,
               replyingToMessage: currentState.replyingToMessage,
+              highlightedMessageId: currentState.highlightedMessageId,
             ),
           );
         }
@@ -227,8 +288,9 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
   }
 
   void onTyping() {
-    if (_conversationId != null) {
-      realtimeService.sendTypingIndicator(_conversationId!);
+    final String? convId = _conversationId;
+    if (convId != null) {
+      realtimeService.sendTypingIndicator(convId);
     }
   }
 
@@ -242,6 +304,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
           isOtherUserOnline: currentState.isOtherUserOnline,
           isOtherUserTyping: currentState.isOtherUserTyping,
           replyingToMessage: message,
+          highlightedMessageId: currentState.highlightedMessageId,
         ),
       );
     }
@@ -346,7 +409,8 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
   }
 
   Future<void> sendMessage(String textContent, {String? replyToMessageId}) async {
-    if (_conversationId == null || state is! ChatRoomLoaded) return;
+    final String? convId = _conversationId;
+    if (convId == null || state is! ChatRoomLoaded) return;
 
     final currentState = state as ChatRoomLoaded;
     final effectiveReplyId = replyToMessageId ?? currentState.replyingToMessage?.id;
@@ -379,7 +443,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       status: 'Sending',
       createdAt: DateTime.now(),
       isEdited: false,
-      conversationId: _conversationId!,
+      conversationId: convId,
       replyToMessageId: effectiveReplyId,
       replyToMessage: currentState.replyingToMessage,
       isLocalPending: true,
@@ -390,7 +454,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     emit(latestState.copyWith(messages: [tempMessage, ...latestState.messages]));
 
     final result = await chatRepo.sendMessage(
-      _conversationId!,
+      convId,
       content,
       replyToMessageId: effectiveReplyId,
       mediaPayload: mediaPayload,
@@ -408,6 +472,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
               isOtherUserOnline: s.isOtherUserOnline,
               isOtherUserTyping: s.isOtherUserTyping,
               replyingToMessage: s.replyingToMessage,
+              highlightedMessageId: s.highlightedMessageId,
             ),
           );
         }
@@ -429,6 +494,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
               isOtherUserOnline: s.isOtherUserOnline,
               isOtherUserTyping: s.isOtherUserTyping,
               replyingToMessage: s.replyingToMessage,
+              highlightedMessageId: s.highlightedMessageId,
             ),
           );
         }
@@ -450,6 +516,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         isOtherUserOnline: currentState.isOtherUserOnline,
         isOtherUserTyping: currentState.isOtherUserTyping,
         replyingToMessage: currentState.replyingToMessage,
+        highlightedMessageId: currentState.highlightedMessageId,
       ),
     );
 
@@ -469,6 +536,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
               isOtherUserOnline: currentState.isOtherUserOnline,
               isOtherUserTyping: currentState.isOtherUserTyping,
               replyingToMessage: currentState.replyingToMessage,
+              highlightedMessageId: currentState.highlightedMessageId,
             ),
           );
         }

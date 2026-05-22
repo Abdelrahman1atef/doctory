@@ -14,6 +14,8 @@ abstract class ChatRemoteDataSource {
   Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId, List<Map<String, dynamic>>? mediaPayload});
   Future<ApiResult<String>> deleteMessage(String messageId);
   Future<ApiResult<bool>> setActiveConversation(String? conversationId);
+  Future<ApiResult<bool>> markMessageAsRead(String conversationId, String messageId);
+  Future<ApiResult<bool>> markMessageAsDelivered(String conversationId, String messageId);
   Future<ApiResult<bool>> sendTypingIndicator(String conversationId, bool isTyping);
   Future<ApiResult<List<String>>> getTypingUsers(String conversationId);
   Future<ApiResult<List<String>>> getOnlineUsers();
@@ -154,6 +156,22 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
     return await apiConsumer.post<bool>(
       path: 'realtime/active-conversation',
       body: {'conversationId': conversationId},
+      parser: (_) => true,
+    );
+  }
+
+  @override
+  Future<ApiResult<bool>> markMessageAsRead(String conversationId, String messageId) async {
+    return await apiConsumer.post<bool>(
+      path: 'conversations/$conversationId/messages/$messageId/mark-read',
+      parser: (_) => true,
+    );
+  }
+
+  @override
+  Future<ApiResult<bool>> markMessageAsDelivered(String conversationId, String messageId) async {
+    return await apiConsumer.post<bool>(
+      path: 'conversations/$conversationId/messages/$messageId/mark-delivered',
       parser: (_) => true,
     );
   }

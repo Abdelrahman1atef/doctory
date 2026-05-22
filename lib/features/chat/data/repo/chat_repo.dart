@@ -15,6 +15,8 @@ abstract class ChatRepo {
   Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId, List<Map<String, dynamic>>? mediaPayload});
   Future<ApiResult<String>> deleteMessage(String messageId);
   Future<ApiResult<bool>> setActiveConversation(String? conversationId);
+  Future<ApiResult<bool>> markMessageAsRead(String conversationId, String messageId);
+  Future<ApiResult<bool>> markMessageAsDelivered(String conversationId, String messageId);
   Future<ApiResult<bool>> sendTypingIndicator(String conversationId, bool isTyping);
   Future<ApiResult<List<String>>> getTypingUsers(String conversationId);
   Future<ApiResult<List<String>>> getOnlineUsers();
@@ -94,6 +96,16 @@ class ChatRepoImpl implements ChatRepo {
   @override
   Future<ApiResult<bool>> setActiveConversation(String? conversationId) async {
     return await remoteDataSource.setActiveConversation(conversationId);
+  }
+
+  @override
+  Future<ApiResult<bool>> markMessageAsRead(String conversationId, String messageId) async {
+    return await remoteDataSource.markMessageAsRead(conversationId, messageId);
+  }
+
+  @override
+  Future<ApiResult<bool>> markMessageAsDelivered(String conversationId, String messageId) async {
+    return await remoteDataSource.markMessageAsDelivered(conversationId, messageId);
   }
 
   @override

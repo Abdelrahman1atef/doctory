@@ -15,16 +15,18 @@ class ChatRealtimeService {
   final _newMessageController = StreamController<Map<String, dynamic>>.broadcast();
   final _conversationUpdatedController = StreamController<Map<String, dynamic>>.broadcast();
   final _typingController = StreamController<Map<String, dynamic>>.broadcast();
-  final _messagesReadController = StreamController<String>.broadcast(); // returns conversationId
-  final _messagesDeliveredController = StreamController<String>.broadcast(); // returns conversationId
+  final _messagesReadController = StreamController<dynamic>.broadcast();
+  final _messagesDeliveredController = StreamController<dynamic>.broadcast();
+  final _unreadCountController = StreamController<Map<String, dynamic>>.broadcast();
   final _onlineUsersController = StreamController<Set<String>>.broadcast();
 
   // Streams
   Stream<Map<String, dynamic>> get onNewMessage => _newMessageController.stream;
   Stream<Map<String, dynamic>> get onConversationUpdated => _conversationUpdatedController.stream;
   Stream<Map<String, dynamic>> get onTypingChanged => _typingController.stream;
-  Stream<String> get onMessagesRead => _messagesReadController.stream;
-  Stream<String> get onMessagesDelivered => _messagesDeliveredController.stream;
+  Stream<dynamic> get onMessagesRead => _messagesReadController.stream;
+  Stream<dynamic> get onMessagesDelivered => _messagesDeliveredController.stream;
+  Stream<Map<String, dynamic>> get onUnreadCountChanged => _unreadCountController.stream;
   Stream<Set<String>> get onOnlineUsersChanged => _onlineUsersController.stream;
 
   Set<String> _onlineUsers = {};
@@ -86,10 +88,7 @@ class ChatRealtimeService {
       privateChannel,
       PusherConfig.messagesReadEvent,
       (data) {
-        final conversationId = data['conversationId']?.toString();
-        if (conversationId != null) {
-          _messagesReadController.add(conversationId);
-        }
+        _messagesReadController.add(data);
       },
     );
 
@@ -98,10 +97,16 @@ class ChatRealtimeService {
       privateChannel,
       PusherConfig.messagesDeliveredEvent,
       (data) {
-        final conversationId = data['conversationId']?.toString();
-        if (conversationId != null) {
-          _messagesDeliveredController.add(conversationId);
-        }
+        _messagesDeliveredController.add(data);
+      },
+    );
+
+    _pusherService.registerEventHandler(
+      privateChannel,
+      PusherConfig.unreadCountUpdatedEvent,
+      (data) {
+        debugPrint('🔢 ChatRealtime: Unread count updated');
+        _unreadCountController.add(data);
       },
     );
 
@@ -172,18 +177,27 @@ class ChatRealtimeService {
     if (socketId != null) {
       await _apiConsumer.post(
         path: 'realtime/connect',
-        body: {'connectionId': socketId},
+        body: {'ConnectionId': socketId},
       );
     }
   }
 
   Future<void> setActiveConversation(String? conversationId) async {
     _activeConversationId = conversationId;
-    if (conversationId != null) {
-      await _apiConsumer.post(
-        path: 'realtime/active-conversation',
-        body: {'conversationId': conversationId},
-      );
+    
+    // Only call the API if we have a valid conversationId.
+    // If conversationId is null, it means the user is leaving.
+    // We skip the API call for null to avoid 400 Bad Request errors 
+    // until the backend is updated to handle 'exit' signals correctly.
+    if (conversationId != null && conversationId.isNotEmpty) {
+      try {
+        await _apiConsumer.post(
+          path: 'realtime/active-conversation',
+          body: {'conversationId': conversationId},
+        );
+      } catch (e) {
+        debugPrint('ChatRealtime: Error setting active conversation to $conversationId: $e');
+      }
     }
   }
 
@@ -207,8 +221,8 @@ class ChatRealtimeService {
     await _apiConsumer.post(
       path: 'realtime/typing',
       body: {
-        'conversationId': conversationId,
-        'isTyping': isTyping,
+        'ConversationId': conversationId,
+        'IsTyping': isTyping,
       },
     );
   }
@@ -219,7 +233,7 @@ class ChatRealtimeService {
       try {
         await _apiConsumer.post(
           path: 'realtime/disconnect',
-          body: {'connectionId': socketId},
+          body: {'ConnectionId': socketId},
         );
       } catch (e) {
         debugPrint('Error disconnecting realtime: $e');
