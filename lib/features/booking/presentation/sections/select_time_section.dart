@@ -1,9 +1,9 @@
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
+import 'package:doctory/core/common/models/time_slot_model.dart';
 import 'package:doctory/features/booking/cubit/booking_cubit.dart';
 import 'package:doctory/features/booking/cubit/booking_states.dart';
-import 'package:doctory/features/booking/data/data_source/booking_mock_data.dart';
 import 'package:doctory/features/booking/presentation/widgets/booking_time_group.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -16,14 +16,47 @@ class SelectTimeSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<BookingCubit, BookingStates>(
-      buildWhen: (prev, curr) => curr is BookingStateUpdated,
       builder: (context, state) {
+        if (state is BookingSlotsLoading) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        if (state is BookingSlotsError) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(state.message, style: AppStyles.s14Medium.withColor(AppColors.error)),
+                const SizedBox(height: 12),
+                ElevatedButton(
+                  onPressed: () {
+                    final bookingState = context.read<BookingCubit>().state;
+                    if (bookingState is BookingStateUpdated && bookingState.selectedDate != null) {
+                      context.read<BookingCubit>().fetchAvailableSlots(bookingState.selectedDate!);
+                    }
+                  },
+                  child: const Text('Retry'),
+                ),
+              ],
+            ),
+          );
+        }
+
         if (state is! BookingStateUpdated || state.selectedDate == null) {
           return const SizedBox.shrink();
         }
 
-        final slots = BookingMockData.getTimeSlotsForDate(state.selectedDate!);
-        final categorized = BookingMockData.categorizeSlots(slots);
+        final slots = state.availableSlots ?? [];
+        if (slots.isEmpty) {
+          return Center(
+            child: Text(
+              'no_slots_available'.tr(),
+              style: AppStyles.s14Medium.withColor(AppColors.grey500),
+            ),
+          );
+        }
+
+        final categorized = _categorizeSlots(slots);
 
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16),
@@ -72,41 +105,70 @@ class SelectTimeSection extends StatelessWidget {
               ),
               24.ph,
               // Morning
-              BookingTimeGroup(
-                title: 'morning'.tr(),
-                icon: Icons.wb_sunny_outlined,
-                iconColor: const Color(0xFFFFA726),
-                slots: categorized['morning'] ?? [],
-                selectedSlot: state.selectedTime,
-                onSlotSelected: (slot) =>
-                    context.read<BookingCubit>().selectTime(slot),
-              ),
-              if ((categorized['morning'] ?? []).isNotEmpty) 24.ph,
+              if ((categorized['morning'] ?? []).isNotEmpty) ...[
+                BookingTimeGroup(
+                  title: 'morning'.tr(),
+                  icon: Icons.wb_sunny_outlined,
+                  iconColor: const Color(0xFFFFA726),
+                  slots: categorized['morning'] ?? [],
+                  selectedSlot: state.selectedTime,
+                  onSlotSelected: (slot) =>
+                      context.read<BookingCubit>().selectTime(slot),
+                ),
+                24.ph,
+              ],
               // Afternoon
-              BookingTimeGroup(
-                title: 'afternoon'.tr(),
-                icon: Icons.wb_cloudy_outlined,
-                iconColor: const Color(0xFF42A5F5),
-                slots: categorized['afternoon'] ?? [],
-                selectedSlot: state.selectedTime,
-                onSlotSelected: (slot) =>
-                    context.read<BookingCubit>().selectTime(slot),
-              ),
-              if ((categorized['afternoon'] ?? []).isNotEmpty) 24.ph,
+              if ((categorized['afternoon'] ?? []).isNotEmpty) ...[
+                BookingTimeGroup(
+                  title: 'afternoon'.tr(),
+                  icon: Icons.wb_cloudy_outlined,
+                  iconColor: const Color(0xFF42A5F5),
+                  slots: categorized['afternoon'] ?? [],
+                  selectedSlot: state.selectedTime,
+                  onSlotSelected: (slot) =>
+                      context.read<BookingCubit>().selectTime(slot),
+                ),
+                24.ph,
+              ],
               // Evening
-              BookingTimeGroup(
-                title: 'evening'.tr(),
-                icon: Icons.nights_stay_outlined,
-                iconColor: const Color(0xFF7E57C2),
-                slots: categorized['evening'] ?? [],
-                selectedSlot: state.selectedTime,
-                onSlotSelected: (slot) =>
-                    context.read<BookingCubit>().selectTime(slot),
-              ),
+              if ((categorized['evening'] ?? []).isNotEmpty) ...[
+                BookingTimeGroup(
+                  title: 'evening'.tr(),
+                  icon: Icons.nights_stay_outlined,
+                  iconColor: const Color(0xFF7E57C2),
+                  slots: categorized['evening'] ?? [],
+                  selectedSlot: state.selectedTime,
+                  onSlotSelected: (slot) =>
+                      context.read<BookingCubit>().selectTime(slot),
+                ),
+              ],
             ],
           ),
         );
       },
     );
+  }
+
+  Map<String, List<TimeSlotModel>> _categorizeSlots(List<TimeSlotModel> slots) {
+    final morning = <TimeSlotModel>[];
+    final afternoon = <TimeSlotModel>[];
+    final evening = <TimeSlotModel>[];
+
+    for (var slot in slots) {
+      final hour = slot.startTime.hour;
+      if (hour < 12) {
+        morning.add(slot);
+      } else if (hour < 17) {
+        afternoon.add(slot);
+      } else {
+        evening.add(slot);
+      }
+    }
+
+    return {
+      'morning': morning,
+      'afternoon': afternoon,
+      'evening': evening,
+    };
   }
 }

@@ -3,7 +3,6 @@ import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/booking/cubit/booking_cubit.dart';
 import 'package:doctory/features/booking/cubit/booking_states.dart';
-import 'package:doctory/features/booking/data/data_source/booking_mock_data.dart';
 import 'package:doctory/features/booking/presentation/widgets/booking_calendar_grid.dart';
 import 'package:doctory/features/booking/presentation/widgets/booking_doctor_card.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -16,7 +15,8 @@ class SelectDateSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final availableDates = BookingMockData.getAvailableDates();
+    // Generate dates for the next 30 days as available
+    final availableDates = List.generate(30, (index) => DateTime.now().add(Duration(days: index)));
 
     return BlocBuilder<BookingCubit, BookingStates>(
       buildWhen: (prev, curr) => curr is BookingStateUpdated,
