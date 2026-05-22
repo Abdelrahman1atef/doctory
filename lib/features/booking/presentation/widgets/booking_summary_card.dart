@@ -50,7 +50,7 @@ class BookingSummaryCard extends StatelessWidget {
                   color: AppColors.stitchPrimaryFixed,
                   image: doctor.imageUrl != null
                       ? DecorationImage(
-                          image: NetworkImage(doctor.imageUrl!),
+                          image: NetworkImage(doctor.imageUrl!.toImageUrl),
                           fit: BoxFit.cover,
                         )
                       : null,

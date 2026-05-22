@@ -1,5 +1,6 @@
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/router/router_names.dart';
+import 'package:doctory/features/chat/router/chat_router_names.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/more/cubit/more_cubit.dart';
 import 'package:doctory/features/more/cubit/more_states.dart';
@@ -36,6 +37,13 @@ class MoreOptionsSection extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                MoreOptionItem(
+                  title: 'الرسائل',
+                  icon: Icons.chat_bubble_outline_rounded,
+                  onTap: () {
+                    context.pushNamed(ChatRouterNames.conversationsList);
+                  },
+                ),
                 MoreOptionItem(
                   title: context.tr('logout'),
                   icon: Icons.logout_rounded,

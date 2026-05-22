@@ -25,7 +25,7 @@ class CommentItemWidget extends StatelessWidget {
             radius: 18,
             backgroundImage:
                 comment.authorImage != null && comment.authorImage!.isNotEmpty
-                ? NetworkImage(comment.authorImage!)
+                ? NetworkImage(comment.authorImage!.toImageUrl)
                 : null,
             backgroundColor: AppColors.grey100,
             child: comment.authorImage == null || comment.authorImage!.isEmpty

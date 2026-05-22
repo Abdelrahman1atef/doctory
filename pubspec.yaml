@@ -81,16 +81,21 @@ dependencies:
   flutter_image_compress: ^2.4.0
   video_compress: ^3.1.4
   photo_manager: ^3.9.0
+  google_maps_flutter_platform_interface: ^2.15.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^5.0.0
   mockito: ^5.5.0
   build_runner: ^2.7.1
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.0 # Added for native splash screen
-
+  flutter_lints: ^6.0.0
+  custom_lint: ^0.7.5
+  analyzer: ^7.0.0
+  hardcoded_strings_lint: 1.0.1
+  custom_lints:
+    path: packages/custom_lints
 flutter:
   uses-material-design: true
 

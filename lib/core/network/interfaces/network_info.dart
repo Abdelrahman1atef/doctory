@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 abstract class NetworkInfo {
@@ -10,5 +11,10 @@ class NetworkInfoImpl implements NetworkInfo {
   NetworkInfoImpl(this.connectionChecker);
 
   @override
-  Future<bool> get isConnected => connectionChecker.hasInternetAccess;
+  Future<bool> get isConnected async {
+    if (kDebugMode) {
+      return true; // Bypass connection check in debug mode to avoid local connection or emulator blocking issues
+    }
+    return connectionChecker.hasInternetAccess;
+  }
 }
