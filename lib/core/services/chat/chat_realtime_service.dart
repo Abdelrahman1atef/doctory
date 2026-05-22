@@ -22,11 +22,17 @@ class ChatRealtimeService {
 
   // Streams
   Stream<Map<String, dynamic>> get onNewMessage => _newMessageController.stream;
+
   Stream<Map<String, dynamic>> get onConversationUpdated => _conversationUpdatedController.stream;
+
   Stream<Map<String, dynamic>> get onTypingChanged => _typingController.stream;
+
   Stream<dynamic> get onMessagesRead => _messagesReadController.stream;
+
   Stream<dynamic> get onMessagesDelivered => _messagesDeliveredController.stream;
+
   Stream<Map<String, dynamic>> get onUnreadCountChanged => _unreadCountController.stream;
+
   Stream<Set<String>> get onOnlineUsersChanged => _onlineUsersController.stream;
 
   Set<String> _onlineUsers = {};
@@ -42,7 +48,7 @@ class ChatRealtimeService {
 
     // Initialize Pusher and subscribe to Global Presence Channel
     await _pusherService.initialize(PusherConfig.presenceGlobalChannel);
-    
+
     // Subscribe to Private User Channel
     final privateChannel = PusherConfig.getUserPrivateChannel(userId);
     await _pusherService.subscribeToChannel(privateChannel);
@@ -55,60 +61,42 @@ class ChatRealtimeService {
 
   void _registerEventHandlers(String privateChannel) {
     // 1. New Message
-    _pusherService.registerEventHandler(
-      privateChannel,
-      PusherConfig.newMessageEvent,
-      (data) {
-        debugPrint('📩 ChatRealtime: New message received');
-        _newMessageController.add(data);
-      },
-    );
+    _pusherService.registerEventHandler(privateChannel, PusherConfig.newMessageEvent, (data) {
+      debugPrint('📩 ChatRealtime: New message received');
+      _newMessageController.add(data);
+    });
 
     // 2. Conversation Updated
-    _pusherService.registerEventHandler(
-      privateChannel,
-      PusherConfig.conversationUpdatedEvent,
-      (data) {
-        debugPrint('🔄 ChatRealtime: Conversation updated');
-        _conversationUpdatedController.add(data);
-      },
-    );
+    _pusherService.registerEventHandler(privateChannel, PusherConfig.conversationUpdatedEvent, (
+      data,
+    ) {
+      debugPrint('🔄 ChatRealtime: Conversation updated');
+      _conversationUpdatedController.add(data);
+    });
 
     // 3. Typing
-    _pusherService.registerEventHandler(
-      privateChannel,
-      PusherConfig.typingEvent,
-      (data) {
-        _typingController.add(data);
-      },
-    );
+    _pusherService.registerEventHandler(privateChannel, PusherConfig.typingEvent, (data) {
+      _typingController.add(data);
+    });
 
     // 4. Messages Read
-    _pusherService.registerEventHandler(
-      privateChannel,
-      PusherConfig.messagesReadEvent,
-      (data) {
-        _messagesReadController.add(data);
-      },
-    );
+    _pusherService.registerEventHandler(privateChannel, PusherConfig.messagesReadEvent, (data) {
+      _messagesReadController.add(data);
+    });
 
     // 5. Messages Delivered
-    _pusherService.registerEventHandler(
-      privateChannel,
-      PusherConfig.messagesDeliveredEvent,
-      (data) {
-        _messagesDeliveredController.add(data);
-      },
-    );
+    _pusherService.registerEventHandler(privateChannel, PusherConfig.messagesDeliveredEvent, (
+      data,
+    ) {
+      _messagesDeliveredController.add(data);
+    });
 
-    _pusherService.registerEventHandler(
-      privateChannel,
-      PusherConfig.unreadCountUpdatedEvent,
-      (data) {
-        debugPrint('🔢 ChatRealtime: Unread count updated');
-        _unreadCountController.add(data);
-      },
-    );
+    _pusherService.registerEventHandler(privateChannel, PusherConfig.unreadCountUpdatedEvent, (
+      data,
+    ) {
+      debugPrint('🔢 ChatRealtime: Unread count updated');
+      _unreadCountController.add(data);
+    });
 
     // Presence Callbacks
     _pusherService.registerEventHandler(
@@ -127,26 +115,24 @@ class ChatRealtimeService {
       },
     );
 
-    _pusherService.registerEventHandler(
-      PusherConfig.presenceGlobalChannel,
-      'pusher:member_added',
-      (member) {
-        String? userId;
-        if (member is Map) {
-          userId = (member['user_id'] ?? member['userId'])?.toString();
-        } else {
-          // Fallback if it's a PusherMember object
-          try {
-            userId = member.userId?.toString();
-          } catch (_) {}
-        }
-        
-        if (userId != null) {
-          _onlineUsers.add(userId);
-          _onlineUsersController.add(_onlineUsers);
-        }
-      },
-    );
+    _pusherService.registerEventHandler(PusherConfig.presenceGlobalChannel, 'pusher:member_added', (
+      member,
+    ) {
+      String? userId;
+      if (member is Map) {
+        userId = (member['user_id'] ?? member['userId'])?.toString();
+      } else {
+        // Fallback if it's a PusherMember object
+        try {
+          userId = member.userId?.toString();
+        } catch (_) {}
+      }
+
+      if (userId != null) {
+        _onlineUsers.add(userId);
+        _onlineUsersController.add(_onlineUsers);
+      }
+    });
 
     _pusherService.registerEventHandler(
       PusherConfig.presenceGlobalChannel,
@@ -175,29 +161,24 @@ class ChatRealtimeService {
     await Future.delayed(const Duration(milliseconds: 500));
     final socketId = _pusherService.socketId;
     if (socketId != null) {
-      await _apiConsumer.post(
-        path: 'realtime/connect',
-        body: {'ConnectionId': socketId},
-      );
+      await _apiConsumer.post(path: 'realtime/connect', body: {'ConnectionId': socketId});
     }
   }
 
   Future<void> setActiveConversation(String? conversationId) async {
     _activeConversationId = conversationId;
-    
+
     // Only call the API if we have a valid conversationId.
     // If conversationId is null, it means the user is leaving.
-    // We skip the API call for null to avoid 400 Bad Request errors 
+    // We skip the API call for null to avoid 400 Bad Request errors
     // until the backend is updated to handle 'exit' signals correctly.
-    if (conversationId != null && conversationId.isNotEmpty) {
-      try {
-        await _apiConsumer.post(
-          path: 'realtime/active-conversation',
-          body: {'conversationId': conversationId},
-        );
-      } catch (e) {
-        debugPrint('ChatRealtime: Error setting active conversation to $conversationId: $e');
-      }
+    try {
+      await _apiConsumer.post(
+        path: 'realtime/active-conversation',
+        body: {'conversationId': conversationId},
+      );
+    } catch (e) {
+      debugPrint('ChatRealtime: Error setting active conversation to $conversationId: $e');
     }
   }
 
@@ -220,10 +201,7 @@ class ChatRealtimeService {
   Future<void> _sendTypingStatus(String conversationId, bool isTyping) async {
     await _apiConsumer.post(
       path: 'realtime/typing',
-      body: {
-        'ConversationId': conversationId,
-        'IsTyping': isTyping,
-      },
+      body: {'ConversationId': conversationId, 'IsTyping': isTyping},
     );
   }
 
@@ -231,21 +209,17 @@ class ChatRealtimeService {
     final socketId = _pusherService.socketId;
     if (socketId != null) {
       try {
-        await _apiConsumer.post(
-          path: 'realtime/disconnect',
-          body: {'ConnectionId': socketId},
-        );
+        // 1️⃣ إخبار الخادم بقطع الاتصال (Stage 4)
+        await _apiConsumer.post(path: 'realtime/disconnect', body: {'ConnectionId': socketId});
       } catch (e) {
-        debugPrint('Error disconnecting realtime: $e');
+        debugPrint('Error disconnecting realtime from server: $e');
       }
     }
-    
-    if (_userId != null) {
-      final privateChannel = PusherConfig.getUserPrivateChannel(_userId!);
-      await _pusherService.unsubscribeFromChannel(privateChannel);
-      await _pusherService.unsubscribeFromChannel(PusherConfig.presenceGlobalChannel);
-    }
-    
+
+    // 2️⃣ قطع اتصال Pusher (Stage 4)
+    _pusherService.disconnect();
+
+    // 3️⃣ تنظيف الـ Local state
     _onlineUsers.clear();
     _typingDebounceTimer?.cancel();
     _activeConversationId = null;
