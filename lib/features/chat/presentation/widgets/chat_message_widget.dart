@@ -8,6 +8,7 @@ import '../../data/model/message_model.dart';
 import '../../data/model/media_model.dart';
 import '../../../../core/session/user_session.dart';
 import '../../cubit/chat_room/chat_room_cubit.dart';
+import '../../data/model/message_status.dart';
 
 class ChatMessageWidget extends StatelessWidget {
   final MessageModel message;
@@ -204,8 +205,16 @@ class ChatMessageWidget extends StatelessWidget {
               const SizedBox(height: 4),
               Row(
                 mainAxisSize: MainAxisSize.min,
-                mainAxisAlignment: MainAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  if (isMe) ...[
+                    Icon(
+                      _getStatusIcon(message.status, message.isRead),
+                      size: 12,
+                      color: message.isRead ? Colors.blue : Colors.white70,
+                    ),
+                    const SizedBox(width: 4),
+                  ],
                   Text(
                     _formatTime(message.createdAt),
                     style: TextStyle(
@@ -213,14 +222,6 @@ class ChatMessageWidget extends StatelessWidget {
                       fontSize: 10,
                     ),
                   ),
-                  if (isMe) ...[
-                    const SizedBox(width: 4),
-                    Icon(
-                      _getStatusIcon(message.status, message.isRead),
-                      size: 12,
-                      color: message.isRead ? Colors.blue : Colors.white70,
-                    ),
-                  ],
                 ],
               ),
             ],
@@ -266,11 +267,11 @@ class ChatMessageWidget extends StatelessWidget {
     return "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
   }
 
-  IconData _getStatusIcon(String status, bool isRead) {
-    if (status == 'Failed') return Icons.error_outline;
-    if (status == 'Sending') return Icons.access_time;
-    if (isRead) return Icons.done_all;
-    if (status == 'Delivered') return Icons.done_all;
-    return Icons.check; // Sent
+  IconData _getStatusIcon(MessageStatus status, bool isRead) {
+    if (status == MessageStatus.failed) return Icons.error_outline;
+    if (status == MessageStatus.pending) return Icons.access_time;
+    if (status == MessageStatus.read) return Icons.done_all;
+    if (status == MessageStatus.delivered) return Icons.done_all;
+    return Icons.check;
   }
 }

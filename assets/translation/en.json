@@ -635,5 +635,14 @@
   "press_back_again_to_exit": "Press back again to exit",
   "choose_available_day": "Choose available day",
   "review_details": "Review details",
+  "no_slots_available": "No slots available",
+  "choose_available_day": "Choose available day",
+  "review_details": "Review details",
+  "patient_age": "Patient age",
+  "appointment_type": "Appointment type",
+  "in_person": "In person",
+  "online": "Online",
+  "follow_up": "Follow up",
+  "chronic_diseases_optional": "Chronic diseases (optional)",
   "booking_step_format": "Step {} of {}"
 }

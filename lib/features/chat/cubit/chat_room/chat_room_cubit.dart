@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import '../../data/model/message_status.dart';
 import '../../data/repo/chat_repo.dart';
 import '../../../../core/services/chat/chat_realtime_service.dart';
 import '../../data/model/message_model.dart';
@@ -156,10 +157,10 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         final currentState = state as ChatRoomLoaded;
         final updatedMessages = currentState.messages.map((m) {
           if (msgId != null) {
-            if (m.id == msgId) return m.copyWith(isRead: true, status: 'Read');
+            if (m.id == msgId) return m.copyWith(status: MessageStatus.read);
           } else {
-            if (m.senderId == UserSession.userId && !m.isRead) {
-              return m.copyWith(isRead: true, readAt: DateTime.now(), status: 'Read');
+            if (m.senderId == UserSession.userId && m.status != MessageStatus.read) {
+              return m.copyWith(status: MessageStatus.read);
             }
           }
           return m;
@@ -192,15 +193,16 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
         final currentState = state as ChatRoomLoaded;
         final updatedMessages = currentState.messages.map((m) {
           if (msgId != null) {
-            if (m.id == msgId && !m.isRead && m.status != 'Read') {
-              return m.copyWith(status: 'Delivered');
+            if (m.id == msgId &&
+                m.status != MessageStatus.read &&
+                m.status != MessageStatus.delivered) {
+              return m.copyWith(status: MessageStatus.delivered);
             }
           } else {
             if (m.senderId == UserSession.userId &&
-                !m.isRead &&
-                m.status != 'Read' &&
-                m.status != 'Delivered') {
-              return m.copyWith(status: 'Delivered');
+                m.status != MessageStatus.read &&
+                m.status != MessageStatus.delivered) {
+              return m.copyWith(status: MessageStatus.delivered);
             }
           }
           return m;
@@ -440,7 +442,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       // Usually not needed for local UI if displaying "You"
       content: content.trim().isEmpty ? 'رسالة وسائط' : content,
       isRead: false,
-      status: 'Sending',
+      status: MessageStatus.pending,
       createdAt: DateTime.now(),
       isEdited: false,
       conversationId: convId,
@@ -483,7 +485,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
           // Mark as failed instead of removing
           final updatedMessages = s.messages.map((m) {
             if (m.id == tempId) {
-              return m.copyWith(status: 'Failed');
+              return m.copyWith(status: MessageStatus.failed);
             }
             return m;
           }).toList();

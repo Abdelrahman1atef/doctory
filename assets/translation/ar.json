@@ -631,5 +631,14 @@
   "dismiss": "تجاهل",
   "publishing_post": "جاري نشر المنشور...",
   "press_back_again_to_exit": "اضغط مرة أخرى للخروج",
+  "no_slots_available": "لا توجد مواعيد متاحة",
+  "choose_available_day": "اختر يوماً متاحاً",
+  "review_details": "مراجعة التفاصيل",
+  "patient_age": "عمر المريض",
+  "appointment_type": "نوع الموعد",
+  "in_person": "في العيادة",
+  "online": "أونلاين",
+  "follow_up": "متابعة",
+  "chronic_diseases_optional": "أمراض مزمنة (اختياري)",
   "booking_step_format": "الخطوة {} من {}"
 }

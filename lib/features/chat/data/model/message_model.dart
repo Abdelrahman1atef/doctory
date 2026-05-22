@@ -1,5 +1,6 @@
 import 'media_model.dart';
 import 'reaction_model.dart';
+import 'message_status.dart';
 
 class MessageModel {
   final String id;
@@ -9,7 +10,7 @@ class MessageModel {
   final String content;
   final bool isRead;
   final DateTime? readAt;
-  final String status;
+  final MessageStatus status;
   final DateTime createdAt;
   final DateTime? editedAt;
   final bool isEdited;
@@ -55,7 +56,7 @@ class MessageModel {
       readAt: (json['readAt'] ?? json['ReadAt']) != null 
           ? DateTime.parse(json['readAt'] ?? json['ReadAt']) 
           : null,
-      status: parseStatus(json['status'] ?? json['Status']),
+      status: MessageStatus.fromValue(json['status'] ?? json['Status']),
       createdAt: (json['createdAt'] ?? json['CreatedAt']) != null 
           ? DateTime.parse(json['createdAt'] ?? json['CreatedAt']) 
           : DateTime.now(),
@@ -78,17 +79,8 @@ class MessageModel {
     );
   }
 
-  static String parseStatus(dynamic status) {
-    if (status == null) return 'Sent';
-    final s = status.toString();
-    if (s == '0') return 'Sent';
-    if (s == '1') return 'Delivered';
-    if (s == '2') return 'Read';
-    return s;
-  }
-
   MessageModel copyWith({
-    String? status,
+    MessageStatus? status,
     bool? isRead,
     DateTime? readAt,
     List<ReactionModel>? reactions,
