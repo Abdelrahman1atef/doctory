@@ -13,6 +13,7 @@ class ChatRoomLoaded extends ChatRoomState {
   final bool isOtherUserTyping;
   final bool isOtherUserOnline;
   final MessageModel? replyingToMessage;
+  final String? highlightedMessageId;
   
   // Media Preview and Upload Status
   final String? selectedFilePath;
@@ -26,6 +27,7 @@ class ChatRoomLoaded extends ChatRoomState {
     this.isOtherUserTyping = false,
     this.isOtherUserOnline = false,
     this.replyingToMessage,
+    this.highlightedMessageId,
     this.selectedFilePath,
     this.uploadedFileName,
     this.uploadedMediaType,
@@ -38,12 +40,14 @@ class ChatRoomLoaded extends ChatRoomState {
     bool? isOtherUserTyping,
     bool? isOtherUserOnline,
     MessageModel? replyingToMessage,
+    String? highlightedMessageId,
     String? selectedFilePath,
     String? uploadedFileName,
     int? uploadedMediaType,
     bool? isUploadingMedia,
     bool clearReply = false,
     bool clearMedia = false,
+    bool clearHighlight = false,
   }) {
     return ChatRoomLoaded(
       conversation: conversation ?? this.conversation,
@@ -51,6 +55,7 @@ class ChatRoomLoaded extends ChatRoomState {
       isOtherUserTyping: isOtherUserTyping ?? this.isOtherUserTyping,
       isOtherUserOnline: isOtherUserOnline ?? this.isOtherUserOnline,
       replyingToMessage: clearReply ? null : (replyingToMessage ?? this.replyingToMessage),
+      highlightedMessageId: clearHighlight ? null : (highlightedMessageId ?? this.highlightedMessageId),
       selectedFilePath: clearMedia ? null : (selectedFilePath ?? this.selectedFilePath),
       uploadedFileName: clearMedia ? null : (uploadedFileName ?? this.uploadedFileName),
       uploadedMediaType: clearMedia ? null : (uploadedMediaType ?? this.uploadedMediaType),

@@ -257,8 +257,26 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
           isOtherUserOnline: currentState.isOtherUserOnline,
           isOtherUserTyping: currentState.isOtherUserTyping,
           replyingToMessage: null,
+          highlightedMessageId: currentState.highlightedMessageId,
         ),
       );
+    }
+  }
+
+  void jumpToMessage(String messageId) {
+    if (state is ChatRoomLoaded) {
+      final currentState = state as ChatRoomLoaded;
+      emit(currentState.copyWith(highlightedMessageId: messageId));
+
+      // Clear highlight after 2 seconds
+      Future.delayed(const Duration(seconds: 2), () {
+        if (state is ChatRoomLoaded) {
+          final s = state as ChatRoomLoaded;
+          if (s.highlightedMessageId == messageId) {
+            emit(s.copyWith(clearHighlight: true));
+          }
+        }
+      });
     }
   }
 

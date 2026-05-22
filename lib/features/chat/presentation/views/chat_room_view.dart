@@ -10,20 +10,16 @@ import '../../data/model/message_model.dart';
 import '../widgets/chat_message_widget.dart';
 import '../widgets/chat_avatar_widget.dart';
 import '../../../../core/session/user_session.dart';
+import '../../../../core/common/widgets/layout/abher_empty_state.dart';
 
 class ChatRoomView extends StatelessWidget {
   final String conversationId;
 
-  const ChatRoomView({Key? key, required this.conversationId})
-    : super(key: key);
+  const ChatRoomView({Key? key, required this.conversationId}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      body: SafeArea(
-        child: ChatRoomBodySection(),
-      ),
-    );
+    return const Scaffold(body: SafeArea(child: ChatRoomBodySection()));
   }
 }
 
@@ -35,9 +31,7 @@ class ChatRoomBodySection extends StatelessWidget {
     return Column(
       children: const [
         ChatRoomAppBarSection(),
-        Expanded(
-          child: ChatRoomSection(),
-        ),
+        Expanded(child: ChatRoomSection()),
       ],
     );
   }
@@ -51,8 +45,7 @@ class ChatRoomAppBarSection extends StatelessWidget {
     return BlocBuilder<ChatRoomCubit, ChatRoomState>(
       builder: (context, state) {
         if (state is ChatRoomLoaded) {
-          final isInitiator =
-              state.conversation.initiatorId == UserSession.userId;
+          final isInitiator = state.conversation.initiatorId == UserSession.userId;
           final name = isInitiator
               ? state.conversation.recipientName
               : state.conversation.initiatorName;
@@ -86,15 +79,9 @@ class ChatRoomAppBarSection extends StatelessWidget {
                     children: [
                       Text(name, style: AppStyles.s16SemiBold),
                       if (state.isOtherUserTyping)
-                        Text(
-                          'يكتب...',
-                          style: AppStyles.s12Medium.withColor(AppColors.primary),
-                        )
+                        Text('يكتب...', style: AppStyles.s12Medium.withColor(AppColors.primary))
                       else if (state.isOtherUserOnline)
-                        Text(
-                          'متصل',
-                          style: AppStyles.s12Medium.withColor(AppColors.primary),
-                        ),
+                        Text('متصل', style: AppStyles.s12Medium.withColor(AppColors.primary)),
                     ],
                   ),
                 ),
@@ -131,6 +118,7 @@ class ChatRoomSection extends StatefulWidget {
 
 class _ChatRoomSectionState extends State<ChatRoomSection> {
   final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
   bool _hasText = false;
 
   @override
@@ -143,6 +131,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
   void dispose() {
     _messageController.removeListener(_onTextChanged);
     _messageController.dispose();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -159,31 +148,57 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
     _messageController.clear();
   }
 
+  void _scrollToMessage(String messageId, List<MessageModel> messages) {
+    final index = messages.indexWhere((m) => m.id == messageId);
+    if (index != -1) {
+      // In a reversed list, the index is correct for the position
+      // We use animateTo with a calculated offset or jumpTo
+      // Since it's a dynamic list, using a GlobalKey or a simpler approach might be needed
+      // But for now, we'll try a basic jump based on average item height or just a simple animate
+      // Improved: Use an itemScrollController if we used scrollable_positioned_list,
+      // but with ListView, we can approximate or just use the index if we have fixed heights.
+      // For now, we'll just try to scroll to the index position.
+      _scrollController.animateTo(
+        index * 80.0, // Rough estimate of item height
+        duration: const Duration(milliseconds: 500),
+        curve: Curves.easeInOut,
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         Expanded(
-          child: BlocBuilder<ChatRoomCubit, ChatRoomState>(
+          child: BlocConsumer<ChatRoomCubit, ChatRoomState>(
+            listener: (context, state) {
+              if (state is ChatRoomLoaded && state.highlightedMessageId != null) {
+                _scrollToMessage(state.highlightedMessageId!, state.messages);
+              }
+            },
             builder: (context, state) {
               if (state is ChatRoomLoading) {
-                return Center(
-                  child: CircularProgressIndicator(color: AppColors.primary),
-                );
+                return Center(child: CircularProgressIndicator(color: AppColors.primary));
               } else if (state is ChatRoomError) {
-                return Center(
-                  child: Text(
-                    state.message,
-                    style: AppStyles.s16SemiBold,
-                  ),
-                );
+                return Center(child: Text(state.message, style: AppStyles.s16SemiBold));
               } else if (state is ChatRoomLoaded) {
+                if (state.messages.isEmpty) {
+                  return const AbherEmptyState(
+                    title: 'لا توجد رسائل بعد',
+                    subtitle: 'ابدأ المحادثة الآن بكلمة طيبة',
+                  );
+                }
                 return ListView.builder(
+                  controller: _scrollController,
                   reverse: true,
                   itemCount: state.messages.length,
                   itemBuilder: (context, index) {
                     final message = state.messages[index];
-                    return ChatMessageWidget(message: message);
+                    return ChatMessageWidget(
+                      message: message,
+                      isHighlighted: state.highlightedMessageId == message.id,
+                    );
                   },
                 );
               }
@@ -296,13 +311,13 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
                       SizedBox(
                         width: 16,
                         height: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: AppColors.primary,
-                        ),
+                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
                       ),
                       const SizedBox(width: 8),
-                      Text('جاري الرفع...', style: AppStyles.s12Medium.withColor(AppColors.grey600)),
+                      Text(
+                        'جاري الرفع...',
+                        style: AppStyles.s12Medium.withColor(AppColors.grey600),
+                      ),
                     ],
                   )
                 : Text(
@@ -360,14 +375,11 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(
-                  message.senderId == UserSession.userId
-                      ? 'أنت'
-                      : message.senderName,
-                  style: AppStyles.s12Medium.semiBold
-                          .withColor(AppColors.primary),
-                    ),
-                    Text(
-                      message.content,
+                    message.senderId == UserSession.userId ? 'أنت' : message.senderName,
+                    style: AppStyles.s12Medium.semiBold.withColor(AppColors.primary),
+                  ),
+                  Text(
+                    message.content,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: AppStyles.s12Medium.withColor(AppColors.grey600),
@@ -429,10 +441,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
                       decoration: const InputDecoration(
                         hintText: 'اكتب رسالة...',
                         border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 12,
-                        ),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                       ),
                       onChanged: (text) {
                         if (text.isNotEmpty) {
@@ -444,9 +453,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
                 ),
                 const SizedBox(width: 8),
                 GestureDetector(
-                  onTap: (showSend && !isUploading)
-                      ? () => _handleSend(context)
-                      : null,
+                  onTap: (showSend && !isUploading) ? () => _handleSend(context) : null,
                   child: Container(
                     padding: const EdgeInsets.all(12),
                     decoration: BoxDecoration(

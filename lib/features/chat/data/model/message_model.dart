@@ -16,6 +16,7 @@ class MessageModel {
   final String conversationId;
   final String? replyToMessageId;
   final MessageModel? replyToMessage;
+  final String? mediaPreview;
   final List<MediaModel>? media;
   final List<ReactionModel>? reactions;
 
@@ -37,6 +38,7 @@ class MessageModel {
     required this.conversationId,
     this.replyToMessageId,
     this.replyToMessage,
+    this.mediaPreview,
     this.media,
     this.reactions,
     this.isLocalPending = false,
@@ -66,6 +68,7 @@ class MessageModel {
       replyToMessage: (json['replyToMessage'] ?? json['ReplyToMessage']) != null 
           ? MessageModel.fromJson(json['replyToMessage'] ?? json['ReplyToMessage']) 
           : null,
+      mediaPreview: json['mediaPreview'] ?? json['MediaPreview'],
       media: (json['media'] ?? json['Media']) != null 
           ? ( (json['media'] ?? json['Media']) as List).map((i) => MediaModel.fromJson(i)).toList() 
           : null,
@@ -96,6 +99,7 @@ class MessageModel {
       conversationId: conversationId,
       replyToMessageId: replyToMessageId,
       replyToMessage: replyToMessage,
+      mediaPreview: mediaPreview,
       media: media,
       reactions: reactions ?? this.reactions,
       isLocalPending: isLocalPending,

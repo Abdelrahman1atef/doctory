@@ -3,6 +3,7 @@ import 'message_model.dart';
 class ConversationModel {
   final String id;
   final bool isGroup;
+  final bool isEmpty;
   final String initiatorId;
   final String initiatorName;
   final String? initiatorProfilePictureUrl;
@@ -18,6 +19,7 @@ class ConversationModel {
   ConversationModel({
     required this.id,
     required this.isGroup,
+    this.isEmpty = false,
     required this.initiatorId,
     required this.initiatorName,
     this.initiatorProfilePictureUrl,
@@ -41,6 +43,7 @@ class ConversationModel {
     return ConversationModel(
       id: getString(json['id'] ?? json['Id']) ?? '',
       isGroup: (json['isGroup'] ?? json['IsGroup'] ?? false) as bool,
+      isEmpty: (json['isEmpty'] ?? json['IsEmpty'] ?? false) as bool,
       initiatorId: getString(json['initiatorId'] ?? json['InitiatorId']) ?? '',
       initiatorName: getString(json['initiatorName'] ?? json['InitiatorName']) ?? '',
       initiatorProfilePictureUrl: getString(json['initiatorProfilePictureUrl'] ?? json['InitiatorProfilePictureUrl']),
@@ -67,10 +70,12 @@ class ConversationModel {
     DateTime? lastMessageDate,
     int? unreadMessageCount,
     List<MessageModel>? messages,
+    bool? isEmpty,
   }) {
     return ConversationModel(
       id: id,
       isGroup: isGroup,
+      isEmpty: isEmpty ?? this.isEmpty,
       initiatorId: initiatorId,
       initiatorName: initiatorName,
       initiatorProfilePictureUrl: initiatorProfilePictureUrl,
