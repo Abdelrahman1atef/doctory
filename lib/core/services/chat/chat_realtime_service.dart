@@ -179,10 +179,12 @@ class ChatRealtimeService {
 
   Future<void> setActiveConversation(String? conversationId) async {
     _activeConversationId = conversationId;
-    await _apiConsumer.post(
-      path: 'realtime/active-conversation',
-      body: {'conversationId': conversationId},
-    );
+    if (conversationId != null) {
+      await _apiConsumer.post(
+        path: 'realtime/active-conversation',
+        body: {'conversationId': conversationId},
+      );
+    }
   }
 
   /// Sends typing indicator with built-in 2-second debounce

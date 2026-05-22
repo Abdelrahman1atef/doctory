@@ -5,15 +5,18 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/extensions.dart';
 import '../../data/model/message_model.dart';
+import '../../data/model/media_model.dart';
 import '../../../../core/session/user_session.dart';
 import '../../cubit/chat_room/chat_room_cubit.dart';
 
 class ChatMessageWidget extends StatelessWidget {
   final MessageModel message;
+  final bool isHighlighted;
 
   const ChatMessageWidget({
     super.key,
     required this.message,
+    this.isHighlighted = false,
   });
 
   @override
@@ -24,66 +27,112 @@ class ChatMessageWidget extends StatelessWidget {
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: GestureDetector(
         onLongPress: () => _showMessageOptions(context),
-        child: Container(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 500),
           margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
           padding: const EdgeInsets.all(12.0),
           constraints: BoxConstraints(
-            maxWidth: MediaQuery.of(context).size.width * 0.75,
+            maxWidth: MediaQuery
+                .of(context)
+                .size
+                .width * 0.75,
           ),
           decoration: BoxDecoration(
-            color: isMe
+            color: isHighlighted
+                ? (isMe ? AppColors.primary.withValues(alpha: 0.8) : Colors.yellow.withValues(
+                alpha: 0.3))
+                : (isMe
                 ? AppColors.primary
-                : AppColors.secondary.withValues(alpha: 0.1),
+                : AppColors.secondary.withValues(alpha: 0.1)),
             borderRadius: BorderRadius.only(
               topLeft: const Radius.circular(16),
               topRight: const Radius.circular(16),
               bottomLeft:
-                  isMe ? const Radius.circular(16) : const Radius.circular(4),
+              isMe ? const Radius.circular(16) : const Radius.circular(4),
               bottomRight:
-                  isMe ? const Radius.circular(4) : const Radius.circular(16),
+              isMe ? const Radius.circular(4) : const Radius.circular(16),
             ),
+            border: isHighlighted ? Border.all(color: AppColors.primary, width: 1) : null,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (message.replyToMessage != null)
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  margin: const EdgeInsets.only(bottom: 8),
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: Colors.black.withValues(alpha: 0.05),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border(
-                      left: BorderSide(
-                        color: isMe ? Colors.white70 : AppColors.primary,
-                        width: 4,
+                GestureDetector(
+                  onTap: () {
+                    if (message.replyToMessageId != null) {
+                      context.read<ChatRoomCubit>().jumpToMessage(message.replyToMessageId!);
+                    }
+                  },
+                  child: Container(
+                    padding: const EdgeInsets.all(8),
+                    margin: const EdgeInsets.only(bottom: 8),
+                    width: double.infinity,
+                    decoration: BoxDecoration(
+                      color: Colors.black.withValues(alpha: 0.05),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border(
+                        left: BorderSide(
+                          color: isMe ? Colors.white70 : AppColors.primary,
+                          width: 4,
+                        ),
                       ),
                     ),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        message.replyToMessage!.senderId == UserSession.userId
-                            ? 'أنت'
-                            : message.replyToMessage!.senderName,
-                        style: TextStyle(
-                          color: isMe ? Colors.white : AppColors.primary,
-                          fontSize: 10,
-                          fontWeight: FontWeight.bold,
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                message.replyToMessage!.senderId == UserSession.userId
+                                    ? 'أنت'
+                                    : message.replyToMessage!.senderName,
+                                style: TextStyle(
+                                  color: isMe ? Colors.white : AppColors.primary,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              Text(
+                                message.replyToMessage!
+                                    .content
+                                    .trim()
+                                    .isEmpty && message.replyToMessage!.mediaPreview != null
+                                    ? (message.replyToMessage!.media != null &&
+                                    message.replyToMessage!.media!.isNotEmpty
+                                    ? (message.replyToMessage!.media!.first.type == 'image'
+                                    ? 'صورة'
+                                    : 'ملف')
+                                    : 'وسائط')
+                                    : message.replyToMessage!.content,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(
+                                  color: isMe ? Colors.white70 : Colors.black54,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                      Text(
-                        message.replyToMessage!.content,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          color: isMe ? Colors.white70 : Colors.black54,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
+                        if (message.replyToMessage!.mediaPreview != null)
+                          Padding(
+                            padding: const EdgeInsets.only(right: 8.0),
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(4),
+                              child: CachedNetworkImage(
+                                imageUrl: message.replyToMessage!.mediaPreview!.toImageUrl,
+                                width: 36,
+                                height: 36,
+                                fit: BoxFit.cover,
+                                errorWidget: (context, url, error) =>
+                                const Icon(Icons.image, size: 20),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
                 ),
               if (message.media != null && message.media!.isNotEmpty)
@@ -91,30 +140,34 @@ class ChatMessageWidget extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 8.0),
                   child: Builder(builder: (context) {
                     final mediaItem = message.media!.first;
-                    if (mediaItem.mediaType == 0) { // Image
+                    final bool isImage = mediaItem.type == 'image' || mediaItem.mediaType == 0;
+                    final String imageUrl = mediaItem.url ?? mediaItem.fileName.toImageUrl;
+
+                    if (isImage) {
                       return ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: CachedNetworkImage(
-                          imageUrl: mediaItem.fileName.toImageUrl,
-                          placeholder: (context, url) => Container(
-                            height: 200,
-                            width: double.infinity,
-                            color: Colors.black12,
-                            child: const Center(
-                                child: CircularProgressIndicator(strokeWidth: 2)),
-                          ),
+                          imageUrl: imageUrl,
+                          placeholder: (context, url) =>
+                              Container(
+                                height: 200,
+                                width: double.infinity,
+                                color: Colors.black12,
+                                child: const Center(
+                                    child: CircularProgressIndicator(strokeWidth: 2)),
+                              ),
                           errorWidget: (context, url, error) =>
-                              const Icon(Icons.error),
+                          const Icon(Icons.error),
                           fit: BoxFit.cover,
                         ),
                       );
                     } else {
                       IconData iconData = Icons.insert_drive_file;
                       String typeName = 'مستند';
-                      if (mediaItem.mediaType == 1) {
+                      if (mediaItem.type == 'video' || mediaItem.mediaType == 1) {
                         iconData = Icons.videocam;
                         typeName = 'فيديو';
-                      } else if (mediaItem.mediaType == 2) {
+                      } else if (mediaItem.type == 'audio' || mediaItem.mediaType == 2) {
                         iconData = Icons.audiotrack;
                         typeName = 'صوت';
                       }
@@ -181,30 +234,31 @@ class ChatMessageWidget extends StatelessWidget {
     final cubit = context.read<ChatRoomCubit>();
     showModalBottomSheet(
       context: context,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.reply),
-              title: const Text('رد'),
-              onTap: () {
-                cubit.setReplyMessage(message);
-                Navigator.pop(context);
-              },
+      builder: (context) =>
+          SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.reply),
+                  title: const Text('رد'),
+                  onTap: () {
+                    cubit.setReplyMessage(message);
+                    Navigator.pop(context);
+                  },
+                ),
+                if (message.senderId == UserSession.userId)
+                  ListTile(
+                    leading: const Icon(Icons.delete, color: Colors.red),
+                    title: const Text('حذف', style: TextStyle(color: Colors.red)),
+                    onTap: () {
+                      cubit.deleteMessage(message.id);
+                      Navigator.pop(context);
+                    },
+                  ),
+              ],
             ),
-            if (message.senderId == UserSession.userId)
-              ListTile(
-                leading: const Icon(Icons.delete, color: Colors.red),
-                title: const Text('حذف', style: TextStyle(color: Colors.red)),
-                onTap: () {
-                  cubit.deleteMessage(message.id);
-                  Navigator.pop(context);
-                },
-              ),
-          ],
-        ),
-      ),
+          ),
     );
   }
 
