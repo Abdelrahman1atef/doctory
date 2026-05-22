@@ -168,11 +168,7 @@ class ChatRealtimeService {
   Future<void> setActiveConversation(String? conversationId) async {
     _activeConversationId = conversationId;
 
-    // Only call the API if we have a valid conversationId.
-    // If conversationId is null, it means the user is leaving.
-    // We skip the API call for null to avoid 400 Bad Request errors
-    // until the backend is updated to handle 'exit' signals correctly.
-    try {
+      try {
       await _apiConsumer.post(
         path: 'realtime/active-conversation',
         body: {'conversationId': conversationId},

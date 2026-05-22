@@ -10,6 +10,7 @@ import '../../../../core/session/user_session.dart';
 class ConversationItemWidget extends StatelessWidget {
   final ConversationModel conversation;
   final bool isOnline;
+  final bool isTyping;
   final VoidCallback onTap;
   final VoidCallback? onDelete;
 
@@ -17,6 +18,7 @@ class ConversationItemWidget extends StatelessWidget {
     super.key,
     required this.conversation,
     required this.isOnline,
+    required this.isTyping,
     required this.onTap,
     this.onDelete,
   });
@@ -88,18 +90,23 @@ class ConversationItemWidget extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(
-                            conversation.lastMessageContent ??
-                                'Started a conversation',
-                            style: conversation.unreadMessageCount > 0
+                            isTyping
+                                ? 'يكتب...'
+                                : (conversation.lastMessageContent ??
+                                    'Started a conversation'),
+                            style: isTyping
                                 ? AppStyles.s14SemiBold
                                     .withColor(AppColors.primary)
-                                : AppStyles.s14Medium
-                                    .withColor(AppColors.grey600),
+                                : (conversation.unreadMessageCount > 0
+                                    ? AppStyles.s14SemiBold
+                                        .withColor(AppColors.primary)
+                                    : AppStyles.s14Medium
+                                        .withColor(AppColors.grey600)),
                             maxLines: 1,
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
-                        if (conversation.unreadMessageCount > 0) ...[
+                        if (conversation.unreadMessageCount > 0 && !isTyping) ...[
                           const SizedBox(width: 8),
                           UnreadBadgeWidget(
                               count: conversation.unreadMessageCount),

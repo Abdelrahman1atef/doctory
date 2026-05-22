@@ -18,9 +18,7 @@ class ConversationsListView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const Scaffold(
-      body: SafeArea(
-        child: ConversationsListBodySection(),
-      ),
+      body: SafeArea(child: ConversationsListBodySection()),
       floatingActionButton: _NewChatFAB(),
     );
   }
@@ -34,9 +32,7 @@ class ConversationsListBodySection extends StatelessWidget {
     return Column(
       children: const [
         CustomAppBar(title: 'الرسائل'),
-        Expanded(
-          child: ConversationsListSection(),
-        ),
+        Expanded(child: ConversationsListSection()),
       ],
     );
   }
@@ -65,7 +61,7 @@ class ConversationsListSection extends StatelessWidget {
     return BlocBuilder<ConversationsListCubit, ConversationsListState>(
       builder: (context, state) {
         if (state is ConversationsListLoading) {
-          return  Center(child: CircularProgressIndicator(color: AppColors.primary));
+          return Center(child: CircularProgressIndicator(color: AppColors.primary));
         } else if (state is ConversationsListError) {
           return Center(child: Text(state.message, style: AppStyles.s16SemiBold));
         } else if (state is ConversationsListLoaded) {
@@ -86,16 +82,20 @@ class ConversationsListSection extends StatelessWidget {
               separatorBuilder: (context, index) => const Divider(height: 1, indent: 80),
               itemBuilder: (context, index) {
                 final conversation = state.conversations[index];
-                
+
                 // Determine other user id for online status
-                final isInitiator = conversation.initiatorId == UserSession.userId; 
-                final otherUserId = isInitiator ? conversation.recipientId : conversation.initiatorId;
-                
+                final isInitiator = conversation.initiatorId == UserSession.userId;
+                final otherUserId = isInitiator
+                    ? conversation.recipientId
+                    : conversation.initiatorId;
+
                 final isOnline = state.onlineUserIds.contains(otherUserId);
+                final isTyping = state.typingUserIds.contains(conversation.id);
 
                 return ConversationItemWidget(
                   conversation: conversation,
                   isOnline: isOnline,
+                  isTyping: isTyping,
                   onDelete: () {
                     context.read<ConversationsListCubit>().deleteConversation(conversation.id);
                   },

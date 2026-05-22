@@ -9,10 +9,12 @@ class ConversationsListLoading extends ConversationsListState {}
 class ConversationsListLoaded extends ConversationsListState {
   final List<ConversationModel> conversations;
   final Set<String> onlineUserIds;
+  final Set<String> typingUserIds;
 
   ConversationsListLoaded({
     required this.conversations,
     required this.onlineUserIds,
+    this.typingUserIds = const {},
   });
 }
 

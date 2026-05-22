@@ -14,10 +14,12 @@ class ConversationsListCubit extends Cubit<ConversationsListState> {
   StreamSubscription? _conversationUpdatedSub;
   StreamSubscription? _unreadCountSub;
   StreamSubscription? _onlineUsersSub;
+  StreamSubscription? _typingSub;
 
   int _currentPage = 1;
   bool _hasMore = true;
   Timer? _refreshDebounce;
+  final Set<String> _typingUserIds = {}; // ConversationId -> IsTyping
 
   ConversationsListCubit(this.chatRepo, this.realtimeService) : super(ConversationsListInitial()) {
     _listenToRealtimeEvents();
@@ -26,7 +28,6 @@ class ConversationsListCubit extends Cubit<ConversationsListState> {
   void _listenToRealtimeEvents() {
     _newMessageSub = realtimeService.onNewMessage.listen((data) {
       final senderId = data['senderId'] ?? data['SenderId'];
-      // Only refresh if someone else sent the message
       if (senderId != UserSession.userId) {
         _debouncedRefresh();
       }
@@ -52,6 +53,7 @@ class ConversationsListCubit extends Cubit<ConversationsListState> {
         emit(ConversationsListLoaded(
           conversations: updatedConversations,
           onlineUserIds: currentState.onlineUserIds,
+          typingUserIds: currentState.typingUserIds,
         ));
       }
     });
@@ -62,6 +64,29 @@ class ConversationsListCubit extends Cubit<ConversationsListState> {
         emit(ConversationsListLoaded(
           conversations: currentState.conversations,
           onlineUserIds: onlineUsers,
+          typingUserIds: currentState.typingUserIds,
+        ));
+      }
+    });
+
+    _typingSub = realtimeService.onTypingChanged.listen((data) {
+      final conversationId = data['conversationId']?.toString();
+      final isTyping = data['isTyping'] as bool? ?? false;
+
+      if (conversationId != null && state is ConversationsListLoaded) {
+        final currentState = state as ConversationsListLoaded;
+        final updatedTyping = Set<String>.from(currentState.typingUserIds);
+
+        if (isTyping) {
+          updatedTyping.add(conversationId);
+        } else {
+          updatedTyping.remove(conversationId);
+        }
+
+        emit(ConversationsListLoaded(
+          conversations: currentState.conversations,
+          onlineUserIds: currentState.onlineUserIds,
+          typingUserIds: updatedTyping,
         ));
       }
     });
@@ -82,7 +107,7 @@ class ConversationsListCubit extends Cubit<ConversationsListState> {
       if (!_hasMore) return;
     }
 
-    if (state is! ConversationsListLoaded || refresh) {
+    if (state is! ConversationsListLoaded) {
       emit(ConversationsListLoading());
     }
 
@@ -95,14 +120,23 @@ class ConversationsListCubit extends Cubit<ConversationsListState> {
           _currentPage++;
         }
         
+        final onlineUserIds = (state is ConversationsListLoaded) 
+            ? (state as ConversationsListLoaded).onlineUserIds 
+            : <String>{};
+        final typingUserIds = (state is ConversationsListLoaded) 
+            ? (state as ConversationsListLoaded).typingUserIds 
+            : <String>{};
         
         emit(ConversationsListLoaded(
-          conversations: data,
-          onlineUserIds: {}, // Will be populated by the stream immediately
+          conversations: refresh ? data : [...(state is ConversationsListLoaded ? (state as ConversationsListLoaded).conversations : []), ...data],
+          onlineUserIds: onlineUserIds,
+          typingUserIds: typingUserIds,
         ));
       },
       onFailure: (failure) {
-        emit(ConversationsListError(failure.message));
+        if (state is! ConversationsListLoaded) {
+          emit(ConversationsListError(failure.message));
+        }
       },
     );
   }
@@ -111,24 +145,22 @@ class ConversationsListCubit extends Cubit<ConversationsListState> {
     final currentState = state;
     if (currentState is! ConversationsListLoaded) return;
 
-    // Optimistic remove
     final originalList = List<ConversationModel>.from(currentState.conversations);
     final updatedList = originalList.where((c) => c.id != id).toList();
     emit(ConversationsListLoaded(
       conversations: updatedList,
       onlineUserIds: currentState.onlineUserIds,
+      typingUserIds: currentState.typingUserIds,
     ));
 
     final result = await chatRepo.deleteConversation(id);
     result.fold(
-      onSuccess: (_) {
-        // Already removed
-      },
+      onSuccess: (_) {},
       onFailure: (failure) {
-        // Rollback
         emit(ConversationsListLoaded(
           conversations: originalList,
           onlineUserIds: currentState.onlineUserIds,
+          typingUserIds: currentState.typingUserIds,
         ));
       },
     );
@@ -140,6 +172,7 @@ class ConversationsListCubit extends Cubit<ConversationsListState> {
     _conversationUpdatedSub?.cancel();
     _unreadCountSub?.cancel();
     _onlineUsersSub?.cancel();
+    _typingSub?.cancel();
     _refreshDebounce?.cancel();
     return super.close();
   }
