@@ -83,7 +83,7 @@ class ConversationItemWidget extends StatelessWidget {
                         ),
                         if (conversation.lastMessageDate != null)
                           Text(
-                            _formatDate(conversation.lastMessageDate!),
+                            _formatDate(context, conversation.lastMessageDate!),
                             style: AppStyles.s12Medium.withColor(AppColors.grey600),
                           ),
                       ],
@@ -171,13 +171,13 @@ class ConversationItemWidget extends StatelessWidget {
     return Text(content, style: textStyle, maxLines: 1, overflow: TextOverflow.ellipsis);
   }
 
-  String _formatDate(DateTime date) {
+  String _formatDate(BuildContext context, DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
 
     if (difference.inDays == 0) {
       // Return time in 12h format if it's today
-      return DateFormat('hh:mm a').format(date);
+      return DateFormat('hh:mm a', context.locale.languageCode).format(date);
     } else if (difference.inDays == 1) {
       return "Yesterday";
     } else {
