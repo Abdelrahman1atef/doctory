@@ -1,3 +1,4 @@
+import 'package:doctory/core/services/media/audio_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:doctory/core/cache/cache_helper.dart';
@@ -72,6 +73,7 @@ class ServiceLocator {
 
     // Register shared services
     sl.registerLazySingleton<PusherService>(() => PusherService());
+    sl.registerLazySingleton<AudioService>(() => AudioService());
 
     // Register feature services
     IntroDI.setup();

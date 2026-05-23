@@ -11,6 +11,7 @@ import '../widgets/chat_message_widget.dart';
 import '../widgets/chat_avatar_widget.dart';
 import '../../../../core/session/user_session.dart';
 import '../../../../core/common/widgets/layout/abher_empty_state.dart';
+import '../widgets/message_input_widget.dart';
 
 class ChatRoomView extends StatelessWidget {
   final String conversationId;
@@ -411,65 +412,13 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
         final isUploading = state is ChatRoomLoaded && state.isUploadingMedia;
         final showSend = _hasText || hasMedia;
 
-        return Container(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
-                offset: const Offset(0, -2),
-                blurRadius: 4,
-              ),
-            ],
-          ),
-          child: SafeArea(
-            child: Row(
-              children: [
-                IconButton(
-                  onPressed: () => _showMediaOptions(context),
-                  icon: Icon(Icons.add_circle_outline, color: AppColors.primary),
-                ),
-                Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: AppColors.grey200.withValues(alpha: 0.1),
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    child: TextField(
-                      controller: _messageController,
-                      decoration: const InputDecoration(
-                        hintText: 'اكتب رسالة...',
-                        border: InputBorder.none,
-                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      ),
-                      onChanged: (text) {
-                        if (text.isNotEmpty) {
-                          context.read<ChatRoomCubit>().onTyping();
-                        }
-                      },
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                GestureDetector(
-                  onTap: (showSend && !isUploading) ? () => _handleSend(context) : null,
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: showSend ? AppColors.primary : AppColors.grey200,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      showSend ? Icons.send : Icons.mic,
-                      color: showSend ? Colors.white : AppColors.grey600,
-                      size: 20,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
+        return MessageInputWidget(
+          onSend: (text) => context.read<ChatRoomCubit>().sendMessage(text),
+          onSendVoice: (path) => context.read<ChatRoomCubit>().sendVoiceMessage(path),
+          onTyping: () => context.read<ChatRoomCubit>().onTyping(),
+          onPickMedia:  ({required bool isVideo, required bool fromCamera}) => context.read<ChatRoomCubit>().pickMedia(isVideo: isVideo,
+              fromCamera: fromCamera),
+          onPickFile: () => context.read<ChatRoomCubit>().pickFile(),
         );
       },
     );

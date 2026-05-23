@@ -410,28 +410,50 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     }
   }
 
-  Future<void> sendMessage(String textContent, {String? replyToMessageId}) async {
+  Future<void> sendVoiceMessage(String path) async {
+    final attachment = ChatMediaAttachment.audio(File(path));
+    
+    // Upload audio
+    final uploadResult = await chatRepo.uploadChatMedia(attachment);
+    uploadResult.fold(
+      onSuccess: (fileName) async {
+        // Send as message
+        final mediaPayload = [
+          {'mediaType': attachment.mediaType, 'fileName': fileName},
+        ];
+        await sendMessage("", mediaPayload: mediaPayload);
+      },
+      onFailure: (failure) {
+        // Handle upload failure
+      },
+    );
+  }
+
+  Future<void> sendMessage(String textContent, {String? replyToMessageId, List<Map<String, dynamic>>? mediaPayload}) async {
     final String? convId = _conversationId;
     if (convId == null || state is! ChatRoomLoaded) return;
 
     final currentState = state as ChatRoomLoaded;
     final effectiveReplyId = replyToMessageId ?? currentState.replyingToMessage?.id;
 
-    final fileName = currentState.uploadedFileName;
-    final mediaType = currentState.uploadedMediaType;
+    // Use passed mediaPayload if provided (for voice notes), else fallback to cubit state
+    final fileName = mediaPayload != null ? mediaPayload.first['fileName'] : currentState.uploadedFileName;
+    final mediaType = mediaPayload != null ? mediaPayload.first['mediaType'] : currentState.uploadedMediaType;
 
-    List<Map<String, dynamic>>? mediaPayload;
+    List<Map<String, dynamic>>? finalMediaPayload;
     if (fileName != null && mediaType != null) {
-      mediaPayload = [
+      finalMediaPayload = [
         {'mediaType': mediaType, 'fileName': fileName},
       ];
     }
 
-    final content = textContent.isEmpty && mediaPayload != null ? " " : textContent;
-    if (content.trim().isEmpty && mediaPayload == null) return;
+    final content = textContent.isEmpty && finalMediaPayload != null ? " " : textContent;
+    if (content.trim().isEmpty && finalMediaPayload == null) return;
 
-    // Clear reply and media states immediately
-    emit(currentState.copyWith(clearReply: true, clearMedia: true));
+    // Clear reply and media states immediately if not a voice note (voice note handles its own media state)
+    if (mediaPayload == null) {
+        emit(currentState.copyWith(clearReply: true, clearMedia: true));
+    }
 
     // Optimistic Update
     final tempId = 'temp_${DateTime.now().millisecondsSinceEpoch}';
@@ -439,8 +461,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       id: tempId,
       senderId: UserSession.userId ?? '',
       senderName: '',
-      // Usually not needed for local UI if displaying "You"
-      content: content.trim().isEmpty ? 'رسالة وسائط' : content,
+      content: content.trim().isEmpty ? 'رسالة صوتية' : content,
       isRead: false,
       status: MessageStatus.pending,
       createdAt: DateTime.now(),
@@ -459,7 +480,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       convId,
       content,
       replyToMessageId: effectiveReplyId,
-      mediaPayload: mediaPayload,
+      mediaPayload: finalMediaPayload,
     );
 
     result.fold(
@@ -482,7 +503,6 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       onFailure: (failure) {
         if (state is ChatRoomLoaded) {
           final s = state as ChatRoomLoaded;
-          // Mark as failed instead of removing
           final updatedMessages = s.messages.map((m) {
             if (m.id == tempId) {
               return m.copyWith(status: MessageStatus.failed);

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/services/media/audio_service.dart';
+import '../../../../core/locator/service_locator.dart';
 
 class MessageInputWidget extends StatefulWidget {
   final ValueChanged<String> onSend;
+  final ValueChanged<String> onSendVoice; // Added for voice notes
   final VoidCallback onTyping;
   final Function({required bool isVideo, required bool fromCamera}) onPickMedia;
   final VoidCallback onPickFile;
@@ -10,6 +13,7 @@ class MessageInputWidget extends StatefulWidget {
   const MessageInputWidget({
     super.key,
     required this.onSend,
+    required this.onSendVoice,
     required this.onTyping,
     required this.onPickMedia,
     required this.onPickFile,
@@ -21,6 +25,9 @@ class MessageInputWidget extends StatefulWidget {
 
 class _MessageInputWidgetState extends State<MessageInputWidget> {
   final TextEditingController _controller = TextEditingController();
+  final AudioService _audioService = sl<AudioService>();
+  bool _isRecording = false;
+  String? _recordingPath;
 
   @override
   void dispose() {
@@ -33,6 +40,24 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
     if (text.isNotEmpty) {
       widget.onSend(text);
       _controller.clear();
+    }
+  }
+
+  Future<void> _toggleRecording() async {
+    if (_isRecording) {
+      final path = await _audioService.stopRecording();
+      setState(() => _isRecording = false);
+      if (path != null) {
+        widget.onSendVoice(path);
+      }
+    } else {
+      final path = await _audioService.startRecording();
+      if (path != null) {
+        setState(() {
+          _isRecording = true;
+          _recordingPath = path;
+        });
+      }
     }
   }
 
@@ -118,15 +143,16 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                 ),
                 child: TextField(
                   controller: _controller,
-                  decoration: const InputDecoration(
-                    hintText: 'اكتب رسالة...',
+                  decoration: InputDecoration(
+                    hintText: _isRecording ? 'جاري التسجيل...' : 'اكتب رسالة...',
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(
+                    contentPadding: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 12,
                     ),
                   ),
                   onChanged: (text) {
+                    setState(() {}); // Trigger rebuild to update button icon
                     if (text.isNotEmpty) {
                       widget.onTyping();
                     }
@@ -136,14 +162,22 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
             ),
             const SizedBox(width: 8),
             GestureDetector(
-              onTap: _handleSend,
+              onTap: _controller.text.trim().isNotEmpty
+                  ? _handleSend
+                  : _toggleRecording,
               child: Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.primary,
+                  color: _isRecording ? Colors.red : AppColors.primary,
                   shape: BoxShape.circle,
                 ),
-                child: const Icon(Icons.send, color: Colors.white, size: 20),
+                child: Icon(
+                  _isRecording
+                      ? Icons.stop
+                      : (_controller.text.trim().isNotEmpty ? Icons.send : Icons.mic),
+                  color: Colors.white,
+                  size: 20,
+                ),
               ),
             ),
           ],
