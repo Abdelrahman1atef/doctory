@@ -11,16 +11,13 @@ import '../../data/model/message_status.dart';
 import 'image_preview_widget.dart';
 import 'video_player_widget.dart';
 import 'audio_message_widget.dart';
+import '../../../../core/services/media/file_opener_service.dart';
 
 class ChatMessageWidget extends StatelessWidget {
   final MessageModel message;
   final bool isHighlighted;
 
-  const ChatMessageWidget({
-    super.key,
-    required this.message,
-    this.isHighlighted = false,
-  });
+  const ChatMessageWidget({super.key, required this.message, this.isHighlighted = false});
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +33,9 @@ class ChatMessageWidget extends StatelessWidget {
           padding: const EdgeInsets.all(8.0),
           decoration: BoxDecoration(
             color: isHighlighted
-                ? (isMe ? AppColors.primary.withValues(alpha: 0.8) : Colors.yellow.withValues(alpha: 0.3))
+                ? (isMe
+                      ? AppColors.primary.withValues(alpha: 0.8)
+                      : Colors.yellow.withValues(alpha: 0.3))
                 : (isMe ? AppColors.primary : Colors.white),
             borderRadius: BorderRadius.only(
               topLeft: const Radius.circular(16),
@@ -54,19 +53,16 @@ class ChatMessageWidget extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 4.0),
                   child: _buildMediaContent(message.media!.first, isMe),
                 ),
-              
+
               if (message.content.trim().isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
                   child: Text(
                     message.content,
-                    style: TextStyle(
-                      color: isMe ? Colors.white : Colors.black87,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(color: isMe ? Colors.white : Colors.black87, fontSize: 14),
                   ),
                 ),
-                
+
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 8.0),
                 child: Row(
@@ -74,10 +70,7 @@ class ChatMessageWidget extends StatelessWidget {
                   children: [
                     Text(
                       _formatTime(message.createdAt),
-                      style: TextStyle(
-                        color: isMe ? Colors.white70 : Colors.black54,
-                        fontSize: 10,
-                      ),
+                      style: TextStyle(color: isMe ? Colors.white70 : Colors.black54, fontSize: 10),
                     ),
                     if (isMe) ...[
                       const SizedBox(width: 4),
@@ -97,22 +90,60 @@ class ChatMessageWidget extends StatelessWidget {
     );
   }
 
+  String _toImageUrl(String fileName) {
+    if (fileName.isEmpty) return '';
+    if (fileName.startsWith('http')) return fileName;
+    return 'https://doctory-icare.runasp.net/files/$fileName';
+  }
+
   Widget _buildMediaContent(dynamic media, bool isMe) {
     final isImage = media.type == 'image' || media.mediaType == 0;
     final isVideo = media.type == 'video' || media.mediaType == 1;
     final isAudio = media.type == 'audio' || media.mediaType == 2;
 
     if (isImage) {
-      return ImagePreviewWidget(imageUrl: media.url ?? media.fileName.toImageUrl);
+      return ImagePreviewWidget(
+        imageUrl: media.url ?? (media.fileName != null ? _toImageUrl(media.fileName) : ''),
+      );
     } else if (isVideo) {
-      return VideoPlayerWidget(videoUrl: media.url ?? media.fileName.toImageUrl);
+      return VideoPlayerWidget(
+        videoUrl: media.url ?? (media.fileName != null ? _toImageUrl(media.fileName) : ''),
+      );
     } else if (isAudio) {
-      return AudioMessageWidget(audioUrl: media.url ?? media.fileName.toImageUrl, isMe: isMe);
+      return AudioMessageWidget(
+        audioUrl: media.url ?? (media.fileName != null ? _toImageUrl(media.fileName) : ''),
+        isMe: isMe,
+      );
+    } else {
+      return GestureDetector(
+        onTap: () async {
+          final url = media.url ?? (media.fileName != null ? _toImageUrl(media.fileName) : '');
+          if (url.isNotEmpty) {
+            await FileOpenerService.openFile(url);
+          }
+        },
+        child: Container(
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: AppColors.primary.withValues(alpha: 0.1),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Icon(Icons.insert_drive_file),
+              const SizedBox(width: 8),
+              Text(media.fileName ?? 'ملف'),
+            ],
+          ),
+        ),
+      );
     }
     return const SizedBox.shrink();
   }
 
-  String _formatTime(DateTime date) => "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
+  String _formatTime(DateTime date) =>
+      "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
 
   IconData _getStatusIcon(MessageStatus status, bool isRead) {
     if (status == MessageStatus.failed) return Icons.error_outline;

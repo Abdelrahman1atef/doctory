@@ -9,6 +9,7 @@ class MessageInputWidget extends StatefulWidget {
   final VoidCallback onTyping;
   final Function({required bool isVideo, required bool fromCamera}) onPickMedia;
   final VoidCallback onPickFile;
+  final bool showSend;
 
   const MessageInputWidget({
     super.key,
@@ -17,6 +18,7 @@ class MessageInputWidget extends StatefulWidget {
     required this.onTyping,
     required this.onPickMedia,
     required this.onPickFile,
+    required this.showSend,
   });
 
   @override
@@ -37,7 +39,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
 
   void _handleSend() {
     final text = _controller.text.trim();
-    if (text.isNotEmpty) {
+    if (text.isNotEmpty || widget.showSend) {
       widget.onSend(text);
       _controller.clear();
     }
@@ -162,7 +164,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
             ),
             const SizedBox(width: 8),
             GestureDetector(
-              onTap: _controller.text.trim().isNotEmpty
+              onTap: (_controller.text.trim().isNotEmpty || widget.showSend)
                   ? _handleSend
                   : _toggleRecording,
               child: Container(
@@ -174,7 +176,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                 child: Icon(
                   _isRecording
                       ? Icons.stop
-                      : (_controller.text.trim().isNotEmpty ? Icons.send : Icons.mic),
+                      : ((_controller.text.trim().isNotEmpty || widget.showSend) ? Icons.send : Icons.mic),
                   color: Colors.white,
                   size: 20,
                 ),

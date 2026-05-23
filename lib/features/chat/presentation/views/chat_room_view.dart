@@ -419,6 +419,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
           onPickMedia:  ({required bool isVideo, required bool fromCamera}) => context.read<ChatRoomCubit>().pickMedia(isVideo: isVideo,
               fromCamera: fromCamera),
           onPickFile: () => context.read<ChatRoomCubit>().pickFile(),
+          showSend: showSend,
         );
       },
     );
