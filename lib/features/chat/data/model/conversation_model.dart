@@ -1,3 +1,5 @@
+import 'last_message_content_type.dart';
+import 'media_type.dart';
 import 'message_model.dart';
 
 class ConversationModel {
@@ -11,6 +13,8 @@ class ConversationModel {
   final String recipientName;
   final String? recipientProfilePictureUrl;
   final String? lastMessageContent;
+  final LastMessageContentType lastMessageContentType;
+  final MediaType lastMessageMediaType;
   final DateTime? lastMessageDate;
   final int unreadMessageCount;
   final DateTime createdAt;
@@ -27,6 +31,8 @@ class ConversationModel {
     required this.recipientName,
     this.recipientProfilePictureUrl,
     this.lastMessageContent,
+    this.lastMessageContentType = LastMessageContentType.text,
+    this.lastMessageMediaType = MediaType.image,
     this.lastMessageDate,
     this.unreadMessageCount = 0,
     required this.createdAt,
@@ -46,27 +52,41 @@ class ConversationModel {
       isEmpty: (json['isEmpty'] ?? json['IsEmpty'] ?? false) as bool,
       initiatorId: getString(json['initiatorId'] ?? json['InitiatorId']) ?? '',
       initiatorName: getString(json['initiatorName'] ?? json['InitiatorName']) ?? '',
-      initiatorProfilePictureUrl: getString(json['initiatorProfilePictureUrl'] ?? json['InitiatorProfilePictureUrl']),
+      initiatorProfilePictureUrl: getString(
+        json['initiatorProfilePictureUrl'] ?? json['InitiatorProfilePictureUrl'],
+      ),
       recipientId: getString(json['recipientId'] ?? json['RecipientId']) ?? '',
       recipientName: getString(json['recipientName'] ?? json['RecipientName']) ?? '',
-      recipientProfilePictureUrl: getString(json['recipientProfilePictureUrl'] ?? json['RecipientProfilePictureUrl']),
+      recipientProfilePictureUrl: getString(
+        json['recipientProfilePictureUrl'] ?? json['RecipientProfilePictureUrl'],
+      ),
       lastMessageContent: getString(json['lastMessageContent'] ?? json['LastMessageContent']),
+      lastMessageContentType: LastMessageContentType.fromValue(
+        json['lastMessageContentType'] ?? json['LastMessageContentType'],
+      ),
+      lastMessageMediaType: MediaType.fromValue(
+        json['lastMessageMediaType'] ?? json['LastMessageMediaType'],
+      ),
       lastMessageDate: (json['lastMessageDate'] ?? json['LastMessageDate']) != null
           ? DateTime.tryParse((json['lastMessageDate'] ?? json['LastMessageDate']).toString())
           : null,
       unreadMessageCount: (json['unreadMessageCount'] ?? json['UnreadMessageCount'] ?? 0) as int,
       createdAt: (json['createdAt'] ?? json['CreatedAt']) != null
           ? (DateTime.tryParse((json['createdAt'] ?? json['CreatedAt']).toString()) ??
-          DateTime.now())
+                DateTime.now())
           : DateTime.now(),
       messages: (json['messages'] ?? json['Messages']) != null
-          ? ((json['messages'] ?? json['Messages']) as List).map((i) => MessageModel.fromJson(i)).toList()
+          ? ((json['messages'] ?? json['Messages']) as List)
+                .map((i) => MessageModel.fromJson(i))
+                .toList()
           : null,
     );
   }
 
   ConversationModel copyWith({
     String? lastMessageContent,
+    LastMessageContentType? lastMessageContentType,
+    MediaType? lastMessageMediaType,
     DateTime? lastMessageDate,
     int? unreadMessageCount,
     List<MessageModel>? messages,
@@ -83,6 +103,8 @@ class ConversationModel {
       recipientName: recipientName,
       recipientProfilePictureUrl: recipientProfilePictureUrl,
       lastMessageContent: lastMessageContent ?? this.lastMessageContent,
+      lastMessageContentType: lastMessageContentType ?? this.lastMessageContentType,
+      lastMessageMediaType: lastMessageMediaType ?? this.lastMessageMediaType,
       lastMessageDate: lastMessageDate ?? this.lastMessageDate,
       unreadMessageCount: unreadMessageCount ?? this.unreadMessageCount,
       createdAt: createdAt,

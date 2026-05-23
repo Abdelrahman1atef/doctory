@@ -620,6 +620,8 @@
   "photo": "Photo",
   "video": "Video",
   "file": "File",
+  "audio": "Audio",
+  "voice": "Voice",
   "uploading_media": "Uploading media...",
   "compressing_media": "Compressing media...",
   "gallery": "Gallery",

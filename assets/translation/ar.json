@@ -618,6 +618,8 @@
   "photo": "صورة",
   "video": "فيديو",
   "file": "ملف",
+  "audio": "صوت",
+  "voice": "رسالة صوتية",
   "uploading_media": "جاري رفع الوسائط...",
   "compressing_media": "جاري ضغط الوسائط...",
   "gallery": "المعرض",
