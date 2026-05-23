@@ -115,6 +115,11 @@ class ChatMessageWidget extends StatelessWidget {
         isMe: isMe,
       );
     } else {
+      final fileName = media.fileName ?? '';
+      final isPdf = fileName.toLowerCase().endsWith('.pdf') || media.mediaType == 3;
+      final icon = isPdf ? Icons.picture_as_pdf : Icons.insert_drive_file;
+      final color = isPdf ? Colors.red : AppColors.primary;
+
       return GestureDetector(
         onTap: () async {
           final url = media.url ?? (media.fileName != null ? _toImageUrl(media.fileName) : '');
@@ -125,15 +130,18 @@ class ChatMessageWidget extends StatelessWidget {
         child: Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
-            color: AppColors.primary.withValues(alpha: 0.1),
+            color: color.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(8),
           ),
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.insert_drive_file),
+              Icon(icon, color: color),
               const SizedBox(width: 8),
-              Text(media.fileName ?? 'ملف'),
+              Text(
+                fileName.isNotEmpty ? fileName : 'ملف',
+                style: TextStyle(color: color),
+              ),
             ],
           ),
         ),
