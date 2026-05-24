@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -191,6 +192,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
                   );
                 }
                 return ListView.builder(
+                  scrollCacheExtent: ScrollCacheExtent.pixels(1000),
                   controller: _scrollController,
                   reverse: true,
                   itemCount: state.messages.length,
@@ -416,8 +418,8 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
           onSend: (text) => context.read<ChatRoomCubit>().sendMessage(text),
           onSendVoice: (path) => context.read<ChatRoomCubit>().sendVoiceMessage(path),
           onTyping: () => context.read<ChatRoomCubit>().onTyping(),
-          onPickMedia:  ({required bool isVideo, required bool fromCamera}) => context.read<ChatRoomCubit>().pickMedia(isVideo: isVideo,
-              fromCamera: fromCamera),
+          onPickMedia: ({required bool isVideo, required bool fromCamera}) =>
+              context.read<ChatRoomCubit>().pickMedia(isVideo: isVideo, fromCamera: fromCamera),
           onPickFile: () => context.read<ChatRoomCubit>().pickFile(),
           showSend: showSend,
         );
