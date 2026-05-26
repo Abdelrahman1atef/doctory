@@ -11,6 +11,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/utils/extensions.dart';
+
 class MoreOptionsSection extends StatelessWidget {
   const MoreOptionsSection({super.key});
 
@@ -37,6 +39,13 @@ class MoreOptionsSection extends StatelessWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                MoreOptionItem(
+                  title: context.l10n('personal_profile'),
+                  icon: Icons.person_outline_rounded,
+                  onTap: () {
+                    context.push(AppRoutes.profile);
+                  },
+                ),
                 MoreOptionItem(
                   title: 'الرسائل',
                   icon: Icons.chat_bubble_outline_rounded,

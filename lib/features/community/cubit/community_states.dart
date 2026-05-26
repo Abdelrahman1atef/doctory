@@ -43,3 +43,15 @@ class CommunityCreatePostErrorState extends CommunityStates {
   final String message;
   CommunityCreatePostErrorState(this.message);
 }
+
+class CommunityReactionsLoadingState extends CommunityStates {}
+
+class CommunityReactionsSuccessState extends CommunityStates {
+  final List<ReactionModel> reactions;
+  CommunityReactionsSuccessState(this.reactions);
+}
+
+class CommunityReactionsErrorState extends CommunityStates {
+  final String message;
+  CommunityReactionsErrorState(this.message);
+}

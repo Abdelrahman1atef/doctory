@@ -194,7 +194,7 @@ class CommentModel {
 class ReactionModel {
   final String userId;
   final String? userName;
-  final String type;
+  final ReactionType type;
 
   ReactionModel({required this.userId, this.userName, required this.type});
 
@@ -202,7 +202,9 @@ class ReactionModel {
     return ReactionModel(
       userId: json['userId'] ?? '',
       userName: json['userName'],
-      type: json['type']?.toString() ?? '',
+      type: json['type'] != null
+          ? ReactionType.fromValue(json['type'])
+          : ReactionType.like,
     );
   }
 }

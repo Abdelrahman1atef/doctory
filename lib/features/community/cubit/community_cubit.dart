@@ -105,4 +105,14 @@ class CommunityCubit extends Cubit<CommunityStates> {
       },
     );
   }
+
+  Future<void> getPostReactions(String postId, {int page = 1}) async {
+    emit(CommunityReactionsLoadingState());
+    final result =
+        await _communityRepo.getPostReactions(postId, pageNumber: page);
+    result.fold(
+      onSuccess: (data) => emit(CommunityReactionsSuccessState(data.items)),
+      onFailure: (failure) => emit(CommunityReactionsErrorState(failure.message)),
+    );
+  }
 }

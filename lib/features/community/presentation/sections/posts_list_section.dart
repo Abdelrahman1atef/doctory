@@ -5,6 +5,7 @@ import 'package:doctory/core/services/post_upload_service.dart';
 import 'package:doctory/features/community/cubit/community_cubit.dart';
 import 'package:doctory/features/community/cubit/community_states.dart';
 import 'package:doctory/features/community/presentation/widgets/posts_list_widget.dart';
+import 'package:doctory/features/community/presentation/widgets/reactions_bottom_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -81,15 +82,29 @@ class _PostsListSectionState extends State<PostsListSection> {
               extra: {'post': post, 'focusComment': false},
             ),
             onReactionsTapped: (post) {
+              final cubit = context.read<CommunityCubit>();
               showModalBottomSheet(
                 context: context,
                 builder: (_) => BlocProvider.value(
-                  value: context.read<CommunityCubit>(),
+                  value: cubit,
                   child: BlocBuilder<CommunityCubit, CommunityStates>(
                     builder: (context, state) {
-                      // Note: This logic assumes CommunityCubit can also handle post reactions
-                      // For simplicity, we trigger the fetch here if needed.
-                      return const Center(child: Text("Reactions List"));
+                      if (state is CommunityReactionsLoadingState) {
+                        return const Center(child: CircularProgressIndicator());
+                      }
+                      if (state is CommunityReactionsSuccessState) {
+                        return ReactionsBottomSheet(
+                          fetchReactions: (p) =>
+                              cubit.getPostReactions(post.id, page: p),
+                          reactions: state.reactions,
+                          isLoading: false,
+                        );
+                      }
+                      // Fetch reactions when the bottom sheet is first built
+                      WidgetsBinding.instance.addPostFrameCallback((_) {
+                        cubit.getPostReactions(post.id);
+                      });
+                      return const Center(child: CircularProgressIndicator());
                     },
                   ),
                 ),
