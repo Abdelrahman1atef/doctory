@@ -13,7 +13,9 @@ class RegisterFormWidget extends StatelessWidget {
   final TextEditingController nameController;
   final TextEditingController emailController;
   final TextEditingController phoneController;
-  final TextEditingController birthDateController;
+  final TextEditingController dayController;
+  final TextEditingController monthController;
+  final TextEditingController yearController;
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
   final String selectedGender;
@@ -22,7 +24,6 @@ class RegisterFormWidget extends StatelessWidget {
   final Function(String) onGenderChanged;
   final VoidCallback onTogglePassword;
   final VoidCallback onToggleConfirmPassword;
-  final VoidCallback onPickDate;
   final VoidCallback onSubmit;
   final VoidCallback onGoogleSignIn;
   final VoidCallback onFacebookSignIn;
@@ -34,7 +35,9 @@ class RegisterFormWidget extends StatelessWidget {
     required this.nameController,
     required this.emailController,
     required this.phoneController,
-    required this.birthDateController,
+    required this.dayController,
+    required this.monthController,
+    required this.yearController,
     required this.passwordController,
     required this.confirmPasswordController,
     required this.selectedGender,
@@ -43,7 +46,6 @@ class RegisterFormWidget extends StatelessWidget {
     required this.onGenderChanged,
     required this.onTogglePassword,
     required this.onToggleConfirmPassword,
-    required this.onPickDate,
     required this.onSubmit,
     required this.onGoogleSignIn,
     required this.onFacebookSignIn,
@@ -131,20 +133,80 @@ class RegisterFormWidget extends StatelessWidget {
 
           20.ph,
 
-          /// Birth Date
-          StitchTextField(
-            controller: birthDateController,
-            label: context.l10n('birth_date'),
-            hintText: 'YYYY-MM-DD',
-            readOnly: true,
-            onTap: onPickDate,
-            prefixIcon: const Icon(
-              Icons.calendar_today_outlined,
-              color: AppColors.stitchPrimary,
+          /// Birth Date Split (Day, Month, Year)
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: context.l10n('birth_date'),
+                  style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
+                ),
+                TextSpan(
+                  text: ' ${context.l10n('optional')}',
+                  style: AppStyles.s14Bold.copyWith(color: AppColors.textSecondary),
+                ),
+              ],
             ),
-            validator: (value) => value == null || value.isEmpty
-                ? context.l10n('field_required')
-                : null,
+          ),
+          8.ph,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                flex: 2,
+                child: StitchTextField(
+                  controller: dayController,
+                  hintText: context.l10n('day'),
+                  keyboardType: TextInputType.number,
+                  maxLength: 2,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  isRequired: false,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return null;
+                    final day = int.tryParse(value);
+                    if (day == null || day < 1 || day > 31) return '';
+                    return null;
+                  },
+                ),
+              ),
+              12.pw,
+              Expanded(
+                flex: 2,
+                child: StitchTextField(
+                  controller: monthController,
+                  hintText: context.l10n('month'),
+                  keyboardType: TextInputType.number,
+                  maxLength: 2,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  isRequired: false,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return null;
+                    final month = int.tryParse(value);
+                    if (month == null || month < 1 || month > 12) return '';
+                    return null;
+                  },
+                ),
+              ),
+              12.pw,
+              Expanded(
+                flex: 3,
+                child: StitchTextField(
+                  controller: yearController,
+                  hintText: context.l10n('year'),
+                  keyboardType: TextInputType.number,
+                  maxLength: 4,
+                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                  isRequired: false,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return null;
+                    final year = int.tryParse(value);
+                    if (year == null || year < 1900 || year > DateTime.now().year)
+                      return '';
+                    return null;
+                  },
+                ),
+              ),
+            ],
           ),
 
           20.ph,

@@ -34,6 +34,11 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
     _conversationId = conversationId;
     emit(ChatRoomLoading());
 
+    // Ensure realtime is initialized (e.g. after logout/login or app backgrounding)
+    if (!realtimeService.isInitialized) {
+      await realtimeService.initialize();
+    }
+
     // Call both simultaneously: Set Active Conversation AND Get Conversation Details
     await Future.wait([
       realtimeService.setActiveConversation(conversationId),

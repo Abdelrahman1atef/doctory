@@ -19,6 +19,7 @@ class PusherService {
   final Map<String, Map<String, void Function(dynamic)>> _eventHandlers = {};
 
   bool _isInitialized = false;
+  bool get isInitialized => _isInitialized;
   late String authEndPoint;
 
   Future<void> initialize(String channelName) async {

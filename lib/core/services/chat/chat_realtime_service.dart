@@ -35,6 +35,8 @@ class ChatRealtimeService {
 
   Stream<Set<String>> get onOnlineUsersChanged => _onlineUsersController.stream;
 
+  bool get isInitialized => _pusherService.isInitialized;
+
   Set<String> _onlineUsers = {};
   Timer? _typingDebounceTimer;
   bool _isCurrentlyTyping = false;

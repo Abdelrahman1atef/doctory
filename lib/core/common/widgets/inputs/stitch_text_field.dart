@@ -21,6 +21,7 @@ class StitchTextField extends StatelessWidget {
 
   final List<TextInputFormatter>? inputFormatters;
   final int? maxLength;
+  final bool isRequired;
 
   const StitchTextField({
     super.key,
@@ -39,6 +40,7 @@ class StitchTextField extends StatelessWidget {
     this.inputFormatters,
     this.maxLength,
     this.textDirection,
+    this.isRequired = true,
   });
 
   @override
@@ -47,7 +49,22 @@ class StitchTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (label != null) ...[
-          Text(label!, style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface)),
+          RichText(
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: label!,
+                  style:
+                      AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
+                ),
+                if (isRequired)
+                  TextSpan(
+                    text: ' *',
+                    style: AppStyles.s14Bold.copyWith(color: Colors.red),
+                  ),
+              ],
+            ),
+          ),
           const SizedBox(height: 8),
         ],
         Directionality(

@@ -58,6 +58,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     _debounce?.cancel();
     
     Future<void> performSearch() async {
+      if (isClosed) return;
       emit(MapHomeLoadingState(clinics: currentClinics));
 
       // Use custom location from state > provided params > GPS
@@ -90,8 +91,11 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
         cancelToken: _searchCancelToken,
       );
 
+      if (isClosed) return;
+
       result.fold(
         onSuccess: (data) {
+          if (isClosed) return;
           if (state is MapHomeLoadedState) {
             emit(
               (state as MapHomeLoadedState).copyWith(
@@ -114,8 +118,12 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
             );
           }
         },
-        onFailure: (failure) =>
-            emit(MapHomeErrorState(failure.userMessage, clinics: currentClinics)),
+        onFailure: (failure) {
+          if (isClosed) return;
+          if (failure is! CancelFailure) {
+            emit(MapHomeErrorState(failure.userMessage, clinics: currentClinics));
+          }
+        },
       );
     }
 
@@ -149,8 +157,13 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
       cancelToken: _routeCancelToken,
     );
 
+    if (isClosed) return;
+
     result.fold(
-      onSuccess: (data) => emit(currentState.copyWith(route: data)),
+      onSuccess: (data) {
+        if (isClosed) return;
+        emit(currentState.copyWith(route: data));
+      },
       onFailure: (failure) {
         // Silently fail for route — don't break the UI
         debugPrint('Route fetch failed (Backend): ${failure.message}');
@@ -161,6 +174,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
   void selectClinic(ClinicModel clinic) async {
     final currentState = state;
     if (currentState is MapHomeLoadedState) {
+      if (isClosed) return;
       emit(
         currentState.copyWith(
           selectedClinic: clinic,
@@ -188,6 +202,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
         startLng = position.longitude;
 
         // Update state with fetch location and heading
+        if (isClosed) return;
         if (state is MapHomeLoadedState) {
           emit(
             (state as MapHomeLoadedState).copyWith(
@@ -207,6 +222,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
       );
 
       // Update state with fetch location
+      if (isClosed) return;
       if (state is MapHomeLoadedState) {
         emit(
           (state as MapHomeLoadedState).copyWith(
@@ -240,6 +256,8 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
       locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
     );
 
+    if (isClosed) return;
+
     // Check if user moved far enough from last fetch point (e.g. > 20 meters)
     double distance = 999; // Default to large if no last point
     if (currentState.lastRouteLat != null &&
@@ -261,6 +279,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
         endLng: _navigatingClinic!.lng ?? 0.0,
       );
 
+      if (isClosed) return;
       if (state is MapHomeLoadedState) {
         emit(
           (state as MapHomeLoadedState).copyWith(
@@ -276,6 +295,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
       debugPrint(
         '📍 [LiveNav] Minor movement (${distance.toInt()}m). Skipping route update.',
       );
+      if (isClosed) return;
       emit(
         currentState.copyWith(
           currentUserLat: position.latitude,
@@ -290,6 +310,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
   void setCustomLocation(double lat, double lng) {
     final currentState = state;
     if (currentState is MapHomeLoadedState) {
+      if (isClosed) return;
       emit(currentState.copyWith(customLat: lat, customLng: lng));
     }
   }
@@ -298,6 +319,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
   void clearCustomLocation() {
     final currentState = state;
     if (currentState is MapHomeLoadedState) {
+      if (isClosed) return;
       emit(currentState.clearCustomLocation());
     }
   }
@@ -305,6 +327,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
   void startNavigation() {
     final currentState = state;
     if (currentState is MapHomeLoadedState && currentState.route != null) {
+      if (isClosed) return;
       emit(currentState.copyWith(isNavigating: true));
     }
   }
@@ -314,6 +337,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     _navigatingClinic = null;
     final currentState = state;
     if (currentState is MapHomeLoadedState) {
+      if (isClosed) return;
       emit(currentState.copyWith(isNavigating: false));
     }
   }

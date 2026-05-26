@@ -156,6 +156,16 @@ class UnknownFailure extends Failure {
   }) : super(message: message ?? 'unexpected_error_occurred'.tr());
 }
 
+/// Cancelled request failures
+class CancelFailure extends Failure {
+  CancelFailure({
+    String? message,
+    super.code = 'CANCELLED',
+    super.originalError,
+    super.stackTrace,
+  }) : super(message: message ?? 'request_cancelled'.tr());
+}
+
 /// Extension methods for Failure
 extension FailureExtensions on Failure {
   /// Check if failure is network related

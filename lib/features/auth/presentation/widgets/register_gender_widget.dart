@@ -20,7 +20,7 @@ class RegisterGenderWidget extends StatelessWidget {
       children: [
         Text(
           context.l10n('gender'),
-          style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
+          style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
         ),
         8.ph,
         Row(

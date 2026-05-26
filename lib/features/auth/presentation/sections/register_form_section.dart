@@ -24,7 +24,9 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
   final _phoneController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  final _birthDateController = TextEditingController();
+  final _dayController = TextEditingController();
+  final _monthController = TextEditingController();
+  final _yearController = TextEditingController();
 
   String _selectedGender = 'male';
   bool _obscurePassword = true;
@@ -37,7 +39,9 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
     _phoneController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
-    _birthDateController.dispose();
+    _dayController.dispose();
+    _monthController.dispose();
+    _yearController.dispose();
     super.dispose();
   }
 
@@ -59,6 +63,11 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
 
   void _onSubmit() {
     if (_formKey.currentState!.validate()) {
+      final day = _dayController.text.padLeft(2, '0');
+      final month = _monthController.text.padLeft(2, '0');
+      final year = _yearController.text;
+      final birthDate = '$year-$month-$day';
+
       context.read<AuthCubit>().signup(
         SignupRequest(
           fullName: _nameController.text.trim(),
@@ -66,24 +75,10 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
           password: _passwordController.text,
           confirmPassword: _confirmPasswordController.text,
           phoneNumber: _getFormattedPhone(),
-          birthDate: _birthDateController.text,
+          birthDate: birthDate,
           gender: _getGenderValue(),
         ),
       );
-    }
-  }
-
-  Future<void> _onPickDate() async {
-    DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now().subtract(const Duration(days: 365 * 20)),
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
-    if (picked != null) {
-      setState(() {
-        _birthDateController.text = picked.toIso8601String().split('T')[0];
-      });
     }
   }
 
@@ -114,7 +109,9 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
         nameController: _nameController,
         emailController: _emailController,
         phoneController: _phoneController,
-        birthDateController: _birthDateController,
+        dayController: _dayController,
+        monthController: _monthController,
+        yearController: _yearController,
         passwordController: _passwordController,
         confirmPasswordController: _confirmPasswordController,
         selectedGender: _selectedGender,
@@ -125,7 +122,6 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
             setState(() => _obscurePassword = !_obscurePassword),
         onToggleConfirmPassword: () =>
             setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
-        onPickDate: _onPickDate,
         onSubmit: _onSubmit,
         onGoogleSignIn: () => context.read<AuthCubit>().signInWithGoogle(),
         onFacebookSignIn: () => context.read<AuthCubit>().signInWithFacebook(),
