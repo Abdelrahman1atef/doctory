@@ -102,6 +102,7 @@ class RegisterFormWidget extends StatelessWidget {
             keyboardType: TextInputType.phone,
             maxLength: 11,
             inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+            textDirection: TextDirection.ltr,
             prefixIcon: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12),
               child: Row(

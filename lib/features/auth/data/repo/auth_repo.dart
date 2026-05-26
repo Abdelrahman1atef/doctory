@@ -39,7 +39,14 @@ class AuthRepoImpl implements AuthRepo {
 
   @override
   Future<ApiResult<AuthResponse>> signup(SignupRequest request) async {
-    return await _dataSource.signup(request);
+    final result = await _dataSource.signup(request);
+    return result.fold(
+      onSuccess: (response) async {
+        await _saveAuthSession(response);
+        return ApiResult.success(response);
+      },
+      onFailure: (failure) => ApiResult.failure(failure),
+    );
   }
 
   @override
@@ -59,9 +66,6 @@ class AuthRepoImpl implements AuthRepo {
     final result = await _dataSource.verify(email, code);
     return result.fold(
       onSuccess: (response) async {
-        if (response.accessToken.isNotEmpty) {
-          await _saveAuthSession(response);
-        }
         return ApiResult.success(response);
       },
       onFailure: (failure) => ApiResult.failure(failure),

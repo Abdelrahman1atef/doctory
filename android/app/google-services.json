@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "1077893614286-nb5jnkte6g633k36f3bgno46nre2elqo.apps.googleusercontent.com",
+          "client_id": "1077893614286-kf613gevsk5pq68739hfr34h5vfjt708.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.doctory",
-            "certificate_hash": "06e6327e5d8e26a239ab17fe9642bb5b7620775b"
+            "certificate_hash": "f9540eef24a665c1e215fe6050bb13f423b0426c"
           }
         },
         {

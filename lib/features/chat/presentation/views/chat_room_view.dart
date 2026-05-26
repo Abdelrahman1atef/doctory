@@ -82,8 +82,9 @@ class ChatRoomAppBarSection extends StatelessWidget {
                       Text(name, style: AppStyles.s16SemiBold),
                       if (state.isOtherUserTyping)
                         Text('يكتب...', style: AppStyles.s12Medium.withColor(AppColors.primary))
-                      else if (state.isOtherUserOnline)
-                        Text('متصل', style: AppStyles.s12Medium.withColor(AppColors.primary)),
+                      else
+                        if (state.isOtherUserOnline)
+                          Text('متصل', style: AppStyles.s12Medium.withColor(AppColors.primary)),
                     ],
                   ),
                 ),
@@ -138,7 +139,9 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
   }
 
   void _onTextChanged() {
-    final hasText = _messageController.text.trim().isNotEmpty;
+    final hasText = _messageController.text
+        .trim()
+        .isNotEmpty;
     if (hasText != _hasText) {
       setState(() => _hasText = hasText);
     }
@@ -192,7 +195,6 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
                   );
                 }
                 return ListView.builder(
-                  scrollCacheExtent: ScrollCacheExtent.pixels(1000),
                   controller: _scrollController,
                   reverse: true,
                   itemCount: state.messages.length,
@@ -250,7 +252,11 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
   Widget _buildMediaPreview(BuildContext context, ChatRoomLoaded state) {
     final isImage = state.uploadedMediaType == 0;
     final filePath = state.selectedFilePath!;
-    final fileName = filePath.split('/').last.split('\\').last;
+    final fileName = filePath
+        .split('/')
+        .last
+        .split('\\')
+        .last;
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -269,15 +275,16 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
                 width: 56,
                 height: 56,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  width: 56,
-                  height: 56,
-                  decoration: BoxDecoration(
-                    color: AppColors.grey200.withValues(alpha: 0.2),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Icon(Icons.broken_image, color: AppColors.grey600),
-                ),
+                errorBuilder: (_, __, ___) =>
+                    Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        color: AppColors.grey200.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: Icon(Icons.broken_image, color: AppColors.grey600),
+                    ),
               ),
             )
           else
@@ -310,25 +317,25 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
           Expanded(
             child: state.isUploadingMedia
                 ? Row(
-                    children: [
-                      SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        'جاري الرفع...',
-                        style: AppStyles.s12Medium.withColor(AppColors.grey600),
-                      ),
-                    ],
-                  )
+              children: [
+                SizedBox(
+                  width: 16,
+                  height: 16,
+                  child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'جاري الرفع...',
+                  style: AppStyles.s12Medium.withColor(AppColors.grey600),
+                ),
+              ],
+            )
                 : Text(
-                    state.uploadedFileName != null ? 'جاهز للإرسال' : fileName,
-                    style: AppStyles.s12Medium.withColor(AppColors.grey600),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
+              state.uploadedFileName != null ? 'جاهز للإرسال' : fileName,
+              style: AppStyles.s12Medium.withColor(AppColors.grey600),
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+            ),
           ),
           // Remove button
           IconButton(
@@ -431,53 +438,54 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
     final cubit = context.read<ChatRoomCubit>();
     showModalBottomSheet(
       context: context,
-      builder: (ctx) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.image),
-              title: const Text('صورة من المعرض'),
-              onTap: () {
-                Navigator.pop(ctx);
-                cubit.pickMedia(isVideo: false);
-              },
+      builder: (ctx) =>
+          SafeArea(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                ListTile(
+                  leading: const Icon(Icons.image),
+                  title: const Text('صورة من المعرض'),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    cubit.pickMedia(isVideo: false);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.camera_alt),
+                  title: const Text('صورة من الكاميرا'),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    cubit.pickMedia(isVideo: false, fromCamera: true);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.videocam),
+                  title: const Text('فيديو من المعرض'),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    cubit.pickMedia(isVideo: true);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.video_call),
+                  title: const Text('فيديو من الكاميرا'),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    cubit.pickMedia(isVideo: true, fromCamera: true);
+                  },
+                ),
+                ListTile(
+                  leading: const Icon(Icons.insert_drive_file),
+                  title: const Text('ملف'),
+                  onTap: () {
+                    Navigator.pop(ctx);
+                    cubit.pickFile();
+                  },
+                ),
+              ],
             ),
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: const Text('صورة من الكاميرا'),
-              onTap: () {
-                Navigator.pop(ctx);
-                cubit.pickMedia(isVideo: false, fromCamera: true);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.videocam),
-              title: const Text('فيديو من المعرض'),
-              onTap: () {
-                Navigator.pop(ctx);
-                cubit.pickMedia(isVideo: true);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.video_call),
-              title: const Text('فيديو من الكاميرا'),
-              onTap: () {
-                Navigator.pop(ctx);
-                cubit.pickMedia(isVideo: true, fromCamera: true);
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.insert_drive_file),
-              title: const Text('ملف'),
-              onTap: () {
-                Navigator.pop(ctx);
-                cubit.pickFile();
-              },
-            ),
-          ],
-        ),
-      ),
+          ),
     );
   }
 }

@@ -1,5 +1,6 @@
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
+import 'package:easy_localization/easy_localization.dart' as easy_localization;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -16,6 +17,7 @@ class StitchTextField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final bool readOnly;
   final VoidCallback? onTap;
+  final TextDirection? textDirection;
 
   final List<TextInputFormatter>? inputFormatters;
   final int? maxLength;
@@ -36,6 +38,7 @@ class StitchTextField extends StatelessWidget {
     this.onTap,
     this.inputFormatters,
     this.maxLength,
+    this.textDirection,
   });
 
   @override
@@ -44,51 +47,48 @@ class StitchTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (label != null) ...[
-          Text(
-            label!,
-            style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
-          ),
+          Text(label!, style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface)),
           const SizedBox(height: 8),
         ],
-        TextFormField(
-          controller: controller,
-          keyboardType: keyboardType,
-          validator: validator,
-          obscureText: obscureText,
-          readOnly: readOnly,
-          onTap: onTap,
-          inputFormatters: inputFormatters,
-          maxLength: maxLength,
-          decoration: InputDecoration(
-            counterText: '',
-            hintText: hintText,
-            hintStyle: AppStyles.s14Medium.copyWith(color: AppColors.textHint),
-            filled: true,
-            fillColor: AppColors.stitchSurfaceLow,
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 24,
-              vertical: 18,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: BorderSide.none,
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: AppColors.stitchPrimary,
-                width: 2,
+        Directionality(
+          textDirection: textDirection ?? (context.locale == const Locale('ar')
+              ? TextDirection.rtl
+              : TextDirection.ltr),
+          child: TextFormField(
+            controller: controller,
+            keyboardType: keyboardType,
+            validator: validator,
+            obscureText: obscureText,
+            readOnly: readOnly,
+            onTap: onTap,
+            inputFormatters: inputFormatters,
+            maxLength: maxLength,
+            textDirection: textDirection,
+            decoration: InputDecoration(
+              counterText: '',
+              hintText: hintText,
+              hintStyle: AppStyles.s14Medium.copyWith(color: AppColors.textHint),
+              filled: true,
+              fillColor: AppColors.stitchSurfaceLow,
+              contentPadding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
               ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide.none,
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: AppColors.stitchPrimary, width: 2),
+              ),
+              prefixIcon: prefix ?? prefixIcon,
+              prefixIconConstraints: const BoxConstraints(minWidth: 56),
+              suffixIcon: suffixIcon,
             ),
-            prefixIcon: prefix ?? prefixIcon,
-            prefixIconConstraints: const BoxConstraints(minWidth: 56),
-            suffixIcon: suffixIcon,
+            style: AppStyles.s16Medium.copyWith(color: AppColors.onSurface),
           ),
-          style: AppStyles.s16Medium.copyWith(color: AppColors.onSurface),
         ),
       ],
     );

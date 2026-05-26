@@ -218,7 +218,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   Future<ApiResult<List<dynamic>>> searchUsers(String query) async {
     return await apiConsumer.get<List<dynamic>>(
       path: 'auth/users/search',
-      queryParameters: {'query': query},
+      queryParameters: {'searchTerm': query},
       parser: (json) {
         if (json.containsKey('data') && json['data'] is List) {
           return json['data'] as List;
