@@ -42,12 +42,20 @@ class GenderSelectionWidget extends StatelessWidget {
                 onTap: () => onGenderChanged('male'),
               ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 8),
             Expanded(
               child: _GenderChip(
                 label: context.l10n('female'),
                 isSelected: selectedGender == 'female',
                 onTap: () => onGenderChanged('female'),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: _GenderChip(
+                label: context.l10n('other'),
+                isSelected: selectedGender == 'other',
+                onTap: () => onGenderChanged('other'),
               ),
             ),
           ],
