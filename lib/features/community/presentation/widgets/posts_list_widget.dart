@@ -16,6 +16,7 @@ class PostsListWidget extends StatelessWidget {
   final void Function() onRetry;
   final void Function(PostModel, ReactionType) onReactionTapped;
   final void Function(PostModel) onCommentTapped;
+  final void Function(PostModel) onReactionsTapped;
   final void Function(PostModel) onPostTapped;
 
   const PostsListWidget({
@@ -29,6 +30,7 @@ class PostsListWidget extends StatelessWidget {
     required this.onRetry,
     required this.onReactionTapped,
     required this.onCommentTapped,
+    required this.onReactionsTapped,
     required this.onPostTapped,
   });
 
@@ -94,6 +96,7 @@ class PostsListWidget extends StatelessWidget {
                         onReactionTapped: (reaction) =>
                             onReactionTapped(post, reaction),
                         onCommentTapped: () => onCommentTapped(post),
+                        onReactionsTapped: () => onReactionsTapped(post),
                         onPostTapped: () => onPostTapped(post),
                       ),
                       if (index < posts.length - 1)

@@ -80,6 +80,21 @@ class _PostsListSectionState extends State<PostsListSection> {
               AppRoutes.postDetails,
               extra: {'post': post, 'focusComment': false},
             ),
+            onReactionsTapped: (post) {
+              showModalBottomSheet(
+                context: context,
+                builder: (_) => BlocProvider.value(
+                  value: context.read<CommunityCubit>(),
+                  child: BlocBuilder<CommunityCubit, CommunityStates>(
+                    builder: (context, state) {
+                      // Note: This logic assumes CommunityCubit can also handle post reactions
+                      // For simplicity, we trigger the fetch here if needed.
+                      return const Center(child: Text("Reactions List"));
+                    },
+                  ),
+                ),
+              );
+            },
           );
         },
       ),

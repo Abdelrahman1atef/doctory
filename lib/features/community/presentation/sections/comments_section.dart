@@ -49,6 +49,8 @@ class _CommentsSectionState extends State<CommentsSection> {
               : false,
           scrollController: _scrollController,
           onLikeTapped: (comment) => cubit.toggleCommentLike(comment.id),
+          onEditTapped: (comment, content) =>
+              cubit.updateComment(comment.id, content),
         );
       },
     );

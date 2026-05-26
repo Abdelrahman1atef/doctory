@@ -9,6 +9,7 @@ class CommentsListWidget extends StatelessWidget {
   final bool isPagination;
   final ScrollController scrollController;
   final void Function(CommentModel) onLikeTapped;
+  final void Function(CommentModel, String) onEditTapped;
 
   const CommentsListWidget({
     super.key,
@@ -17,6 +18,7 @@ class CommentsListWidget extends StatelessWidget {
     this.isPagination = false,
     required this.scrollController,
     required this.onLikeTapped,
+    required this.onEditTapped,
   });
 
   @override
@@ -57,6 +59,7 @@ class CommentsListWidget extends StatelessWidget {
         return CommentItemWidget(
           comment: comment,
           onLikeTapped: () => onLikeTapped(comment),
+          onEditTapped: (content) => onEditTapped(comment, content),
         );
       },
     );

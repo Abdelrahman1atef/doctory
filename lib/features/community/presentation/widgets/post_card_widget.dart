@@ -12,6 +12,7 @@ class PostCardWidget extends StatelessWidget {
   final PostModel post;
   final Function(ReactionType) onReactionTapped;
   final VoidCallback onCommentTapped;
+  final VoidCallback onReactionsTapped;
   final VoidCallback? onPostTapped;
 
   const PostCardWidget({
@@ -19,6 +20,7 @@ class PostCardWidget extends StatelessWidget {
     required this.post,
     required this.onReactionTapped,
     required this.onCommentTapped,
+    required this.onReactionsTapped,
     this.onPostTapped,
   });
 
@@ -48,6 +50,7 @@ class PostCardWidget extends StatelessWidget {
                 PostCardStats(
                   post: post,
                   onPostTapped: onPostTapped ?? onCommentTapped,
+                  onReactionsTapped: onReactionsTapped,
                 ),
                 Divider(height: 24, thickness: 1, color: AppColors.grey100),
                 PostCardActions(

@@ -3,6 +3,8 @@ import 'package:doctory/features/community/data/model/community_models.dart';
 import 'package:doctory/features/community/data/repo/community_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../core/network/interfaces/api_result.dart';
+
 class PostDetailsCubit extends Cubit<PostDetailsStates> {
   final CommunityRepo _communityRepo;
 
@@ -32,10 +34,7 @@ class PostDetailsCubit extends Cubit<PostDetailsStates> {
 
     _isLoading = true;
 
-    final result = await _communityRepo.getCommentsByPost(
-      post.id,
-      pageNumber: _currentPage,
-    );
+    final result = await _communityRepo.getCommentsByPost(post.id, pageNumber: _currentPage);
 
     result.fold(
       onSuccess: (data) {
@@ -59,10 +58,7 @@ class PostDetailsCubit extends Cubit<PostDetailsStates> {
   void addComment(String content) async {
     emit(PostDetailsActionLoadingState());
 
-    final result = await _communityRepo.createComment(
-      postId: post.id,
-      content: content,
-    );
+    final result = await _communityRepo.createComment(postId: post.id, content: content);
 
     result.fold(
       onSuccess: (id) {
@@ -94,10 +90,7 @@ class PostDetailsCubit extends Cubit<PostDetailsStates> {
 
     _emitSuccessState();
 
-    final result = await _communityRepo.togglePostReaction(
-      post.id,
-      type: type.value,
-    );
+    final result = await _communityRepo.togglePostReaction(post.id, type: type.value);
 
     result.fold(
       onSuccess: (_) {
@@ -106,9 +99,7 @@ class PostDetailsCubit extends Cubit<PostDetailsStates> {
       onFailure: (failure) {
         post = post.copyWith(
           myReaction: isLiked ? type : ReactionType.none,
-          reactionCount: isLiked
-              ? post.reactionCount + 1
-              : post.reactionCount - 1,
+          reactionCount: isLiked ? post.reactionCount + 1 : post.reactionCount - 1,
         );
         _emitSuccessState();
         emit(PostDetailsToggleLikeErrorState(failure.message));
@@ -116,10 +107,7 @@ class PostDetailsCubit extends Cubit<PostDetailsStates> {
     );
   }
 
-  void toggleCommentLike(
-    String commentId, {
-    ReactionType type = ReactionType.like,
-  }) async {
+  void toggleCommentLike(String commentId, {ReactionType type = ReactionType.like}) async {
     final commentIndex = comments.indexWhere((c) => c.id == commentId);
     if (commentIndex == -1) return;
 
@@ -139,10 +127,7 @@ class PostDetailsCubit extends Cubit<PostDetailsStates> {
 
     _emitSuccessState();
 
-    final result = await _communityRepo.toggleCommentReaction(
-      commentId,
-      type: type.value,
-    );
+    final result = await _communityRepo.toggleCommentReaction(commentId, type: type.value);
 
     result.fold(
       onSuccess: (_) {},
@@ -151,6 +136,33 @@ class PostDetailsCubit extends Cubit<PostDetailsStates> {
         _emitSuccessState();
         emit(PostDetailsToggleLikeErrorState(failure.message));
       },
+    );
+  }
+
+  Future<void> updateComment(String commentId, String content) async {
+    emit(PostDetailsActionLoadingState());
+    final result = await _communityRepo.updateComment(commentId: commentId, content: content);
+    result.fold(
+      onSuccess: (_) {
+        final index = comments.indexWhere((c) => c.id == commentId);
+        if (index != -1) {
+          comments[index] = comments[index].copyWith(content: content);
+          _emitSuccessState();
+        }
+      },
+      onFailure: (failure) {
+        emit(PostDetailsErrorState(failure.message));
+        _emitSuccessState();
+      },
+    );
+  }
+
+  Future<void> getPostReactions(String postId, {int page = 1}) async {
+    emit(PostReactionsLoadingState());
+    final result = await _communityRepo.getPostReactions(postId, pageNumber: page);
+    result.fold(
+      onSuccess: (data) => emit(PostReactionsSuccessState(data.items)),
+      onFailure: (failure) => emit(PostReactionsErrorState(failure.message)),
     );
   }
 

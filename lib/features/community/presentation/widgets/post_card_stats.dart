@@ -7,38 +7,47 @@ import 'package:flutter/material.dart';
 class PostCardStats extends StatelessWidget {
   final PostModel post;
   final VoidCallback onPostTapped;
+  final VoidCallback onReactionsTapped;
 
   const PostCardStats({
     super.key,
     required this.post,
     required this.onPostTapped,
+    required this.onReactionsTapped,
   });
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPostTapped,
-      child: Row(
-        children: [
-          const Icon(Icons.thumb_up, size: 14, color: AppColors.stitchPrimary),
-          4.pw,
-          Text(
-            '${post.reactionCount}',
-            style: const TextStyle(
-              color: AppColors.textSecondary,
-              fontSize: 13,
-            ),
+    return Row(
+      children: [
+        GestureDetector(
+          onTap: onReactionsTapped,
+          child: Row(
+            children: [
+              const Icon(Icons.thumb_up, size: 14, color: AppColors.stitchPrimary),
+              4.pw,
+              Text(
+                '${post.reactionCount}',
+                style: const TextStyle(
+                  color: AppColors.textSecondary,
+                  fontSize: 13,
+                ),
+              ),
+            ],
           ),
-          const Spacer(),
-          Text(
+        ),
+        const Spacer(),
+        GestureDetector(
+          onTap: onPostTapped,
+          child: Text(
             '${post.commentCount} ${'comments'.tr()}',
             style: const TextStyle(
               color: AppColors.textSecondary,
               fontSize: 13,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

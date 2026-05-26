@@ -45,3 +45,15 @@ class PostDetailsToggleLikeErrorState extends PostDetailsStates {
   final String message;
   PostDetailsToggleLikeErrorState(this.message);
 }
+
+class PostReactionsLoadingState extends PostDetailsStates {}
+
+class PostReactionsSuccessState extends PostDetailsStates {
+  final List<ReactionModel> reactions;
+  PostReactionsSuccessState(this.reactions);
+}
+
+class PostReactionsErrorState extends PostDetailsStates {
+  final String message;
+  PostReactionsErrorState(this.message);
+}

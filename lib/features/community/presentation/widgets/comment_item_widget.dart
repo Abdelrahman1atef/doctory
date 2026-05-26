@@ -1,21 +1,40 @@
+import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/community/data/model/community_models.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-class CommentItemWidget extends StatelessWidget {
+class CommentItemWidget extends StatefulWidget {
   final CommentModel comment;
   final VoidCallback onLikeTapped;
+  final Function(String) onEditTapped;
 
   const CommentItemWidget({
     super.key,
     required this.comment,
     required this.onLikeTapped,
+    required this.onEditTapped,
   });
 
   @override
+  State<CommentItemWidget> createState() => _CommentItemWidgetState();
+}
+
+class _CommentItemWidgetState extends State<CommentItemWidget> {
+  bool _isEditing = false;
+  final TextEditingController _editController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    _editController.text = widget.comment.content;
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final isMe = widget.comment.authorId == UserSession.userId;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: Row(
@@ -23,12 +42,13 @@ class CommentItemWidget extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 18,
-            backgroundImage:
-                comment.authorImage != null && comment.authorImage!.isNotEmpty
-                ? NetworkImage(comment.authorImage!.toImageUrl)
+            backgroundImage: widget.comment.authorImage != null &&
+                    widget.comment.authorImage!.isNotEmpty
+                ? NetworkImage(widget.comment.authorImage!.toImageUrl)
                 : null,
             backgroundColor: AppColors.grey100,
-            child: comment.authorImage == null || comment.authorImage!.isEmpty
+            child: widget.comment.authorImage == null ||
+                    widget.comment.authorImage!.isEmpty
                 ? const Icon(Icons.person, color: Colors.grey, size: 20)
                 : null,
           ),
@@ -46,18 +66,40 @@ class CommentItemWidget extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        comment.authorName ?? 'user'.tr(),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 13,
-                        ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            widget.comment.authorName ?? 'user'.tr(),
+                            style: const TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 13,
+                            ),
+                          ),
+                          if (isMe)
+                            if (_isEditing)
+                              IconButton(
+                                icon: const Icon(Icons.check, size: 16),
+                                onPressed: () {
+                                  widget.onEditTapped(_editController.text);
+                                  setState(() => _isEditing = false);
+                                },
+                              )
+                            else
+                              IconButton(
+                                icon: const Icon(Icons.edit, size: 16),
+                                onPressed: () =>
+                                    setState(() => _isEditing = true),
+                              ),
+                        ],
                       ),
                       4.ph,
-                      Text(
-                        comment.content,
-                        style: const TextStyle(fontSize: 14, height: 1.4),
-                      ),
+                      _isEditing
+                          ? TextField(controller: _editController)
+                          : Text(
+                              widget.comment.content,
+                              style: const TextStyle(fontSize: 14, height: 1.4),
+                            ),
                     ],
                   ),
                 ),
@@ -65,7 +107,7 @@ class CommentItemWidget extends StatelessWidget {
                 Row(
                   children: [
                     Text(
-                      _formatDate(comment.createdAt),
+                      _formatDate(widget.comment.createdAt),
                       style: const TextStyle(
                         color: AppColors.textSecondary,
                         fontSize: 12,
@@ -73,21 +115,21 @@ class CommentItemWidget extends StatelessWidget {
                     ),
                     16.pw,
                     InkWell(
-                      onTap: onLikeTapped,
+                      onTap: widget.onLikeTapped,
                       child: Text(
                         'like'.tr(),
                         style: TextStyle(
-                          fontWeight: comment.myReaction != ReactionType.none
+                          fontWeight: widget.comment.myReaction != ReactionType.none
                               ? FontWeight.bold
                               : FontWeight.normal,
-                          color: comment.myReaction != ReactionType.none
+                          color: widget.comment.myReaction != ReactionType.none
                               ? AppColors.stitchPrimary
                               : AppColors.textSecondary,
                           fontSize: 12,
                         ),
                       ),
                     ),
-                    if (comment.reactionCount > 0) ...[
+                    if (widget.comment.reactionCount > 0) ...[
                       8.pw,
                       const Icon(
                         Icons.thumb_up,
@@ -96,7 +138,7 @@ class CommentItemWidget extends StatelessWidget {
                       ),
                       4.pw,
                       Text(
-                        '${comment.reactionCount}',
+                        '${widget.comment.reactionCount}',
                         style: const TextStyle(
                           color: AppColors.textSecondary,
                           fontSize: 12,
@@ -116,7 +158,6 @@ class CommentItemWidget extends StatelessWidget {
   String _formatDate(String dateString) {
     try {
       final date = DateTime.parse(dateString);
-      // Just returning a simple format, ideally something like "2 hours ago"
       return DateFormat('dd MMM, hh:mm a').format(date);
     } catch (e) {
       return dateString;
