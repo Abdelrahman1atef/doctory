@@ -28,7 +28,7 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
   final _monthController = TextEditingController();
   final _yearController = TextEditingController();
 
-  String _selectedGender = 'male';
+  String? _selectedGender;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
@@ -50,7 +50,8 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
     return phone.startsWith('0') ? phone.substring(1) : phone;
   }
 
-  int _getGenderValue() {
+  int? _getGenderValue() {
+    if (_selectedGender == null) return null;
     switch (_selectedGender) {
       case 'male':
         return 1;
@@ -63,10 +64,15 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
 
   void _onSubmit() {
     if (_formKey.currentState!.validate()) {
-      final day = _dayController.text.padLeft(2, '0');
-      final month = _monthController.text.padLeft(2, '0');
-      final year = _yearController.text;
-      final birthDate = '$year-$month-$day';
+      String? birthDate;
+      if (_dayController.text.isNotEmpty &&
+          _monthController.text.isNotEmpty &&
+          _yearController.text.isNotEmpty) {
+        final day = _dayController.text.padLeft(2, '0');
+        final month = _monthController.text.padLeft(2, '0');
+        final year = _yearController.text;
+        birthDate = '$year-$month-$day';
+      }
 
       context.read<AuthCubit>().signup(
         SignupRequest(

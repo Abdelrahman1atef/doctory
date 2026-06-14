@@ -18,7 +18,7 @@ class RegisterFormWidget extends StatelessWidget {
   final TextEditingController yearController;
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
-  final String selectedGender;
+  final String? selectedGender;
   final bool obscurePassword;
   final bool obscureConfirmPassword;
   final Function(String) onGenderChanged;

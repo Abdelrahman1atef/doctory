@@ -4,12 +4,12 @@ import 'package:doctory/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
 
 class GenderSelectionWidget extends StatelessWidget {
-  final String selectedGender;
+  final String? selectedGender;
   final Function(String) onGenderChanged;
 
   const GenderSelectionWidget({
     super.key,
-    required this.selectedGender,
+    this.selectedGender,
     required this.onGenderChanged,
   });
 

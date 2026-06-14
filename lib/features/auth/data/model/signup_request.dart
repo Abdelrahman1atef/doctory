@@ -4,8 +4,8 @@ class SignupRequest {
   final String password;
   final String confirmPassword;
   final String phoneNumber;
-  final String birthDate;
-  final int gender;
+  final String? birthDate;
+  final int? gender;
 
   SignupRequest({
     required this.fullName,
@@ -13,8 +13,8 @@ class SignupRequest {
     required this.password,
     required this.confirmPassword,
     required this.phoneNumber,
-    required this.birthDate,
-    required this.gender,
+    this.birthDate,
+    this.gender,
   });
 
   Map<String, dynamic> toJson() {
@@ -24,8 +24,8 @@ class SignupRequest {
       'password': password,
       'confirmPassword': confirmPassword,
       'phoneNumber': phoneNumber,
-      'birthDate': birthDate,
-      'gender': gender,
+      if (birthDate != null) 'birthDate': birthDate,
+      if (gender != null) 'gender': gender,
     };
   }
 }

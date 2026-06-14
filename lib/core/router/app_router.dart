@@ -24,7 +24,7 @@ import 'package:doctory/core/session/user_session.dart';
 /// GoRouter configuration
 class AppRouter {
   // Changed temporarily for testing the new clinic locator feature
-  static String initialRoute = AppRoutes.completeProfile;
+  static String initialRoute = AppRoutes.splash;
 
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
