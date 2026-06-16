@@ -82,7 +82,7 @@ class ProfileFormWidget extends StatelessWidget {
             validator: (value) {
               if (value == null || value.isEmpty)
                 return context.l10n('field_required');
-              if (value.length != 11) return context.l10n('invalid_phone');
+              if (value.length != 10) return context.l10n('invalid_phone');
               return null;
             },
           ),
@@ -240,7 +240,7 @@ class _GenderChip extends StatelessWidget {
         duration: const Duration(milliseconds: 300),
         padding: const EdgeInsets.symmetric(vertical: 16),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.stitchPrimary : Colors.white,
+          color: isSelected ? AppColors.stitchPrimaryContainer : Colors.white,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: isSelected ? AppColors.stitchPrimary : AppColors.cardBorder,

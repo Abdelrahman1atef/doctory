@@ -117,7 +117,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
 
   @override
   Future<ApiResult<bool>> updateProfile(UpdateProfileRequest request) async {
-    return await _apiConsumer.put(
+    return await _apiConsumer.patch(
       path: AuthEndpoints.updateProfile,
       body: request.toJson(),
       parser: (json) => json['success'] ?? true,

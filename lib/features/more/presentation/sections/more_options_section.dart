@@ -36,33 +36,37 @@ class MoreOptionsSection extends StatelessWidget {
         },
         child: Builder(
           builder: (context) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                MoreOptionItem(
-                  title: context.l10n('personal_profile'),
-                  icon: Icons.person_outline_rounded,
-                  onTap: () {
-                    context.push(AppRoutes.profile);
-                  },
-                ),
-                MoreOptionItem(
-                  title: 'الرسائل',
-                  icon: Icons.chat_bubble_outline_rounded,
-                  onTap: () {
-                    context.pushNamed(ChatRouterNames.conversationsList);
-                  },
-                ),
-                MoreOptionItem(
-                  title: context.tr('logout'),
-                  icon: Icons.logout_rounded,
-                  textColor: AppColors.error,
-                  iconColor: AppColors.error,
-                  onTap: () {
-                    context.read<MoreCubit>().logout();
-                  },
-                ),
-              ],
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  MoreOptionItem(
+                    title: context.l10n('personal_profile'),
+                    icon: Icons.person_outline_rounded,
+                    onTap: () {
+                      context.push(AppRoutes.profile);
+                    },
+                  ),
+                  12.ph,
+                  MoreOptionItem(
+                    title: 'الرسائل',
+                    icon: Icons.chat_bubble_outline_rounded,
+                    onTap: () {
+                      context.pushNamed(ChatRouterNames.conversationsList);
+                    },
+                  ),
+                  12.ph,
+                  MoreOptionItem(
+                    title: context.tr('logout'),
+                    icon: Icons.logout_rounded,
+                    textColor: AppColors.error,
+                    iconColor: AppColors.error,
+                    onTap: () {
+                      context.read<MoreCubit>().logout();
+                    },
+                  ),
+                ],
+              ),
             );
           },
         ),

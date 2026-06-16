@@ -21,11 +21,11 @@ class HomeHeaderWidget extends StatelessWidget {
           children: [
             Text(
               context.l10n('good_morning'),
-              style: AppStyles.s14Medium.copyWith(
+              style: AppStyles.s16Medium.copyWith(
                 color: AppColors.textSecondary,
               ),
             ),
-            const SizedBox(height: 4),
+            10.ph,
             Text(
               context.l10n('hello_user', args: [userName]),
               style: AppStyles.s16Bold.copyWith(

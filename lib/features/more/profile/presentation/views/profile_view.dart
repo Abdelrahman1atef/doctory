@@ -7,6 +7,9 @@ import 'package:doctory/features/more/profile/presentation/sections/profile_body
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/app_typography.dart';
+
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
 
@@ -18,7 +21,8 @@ class ProfileView extends StatelessWidget {
             ..getProfile(),
       child: Scaffold(
         appBar: AppBar(
-          title: Text(context.l10n('personal_profile')),
+          title: Text(context.l10n('personal_profile'),style: AppStyles.s20SemiBold.withColor(AppColors.textPrimary)),
+
           centerTitle: true,
         ),
         body: const SafeArea(

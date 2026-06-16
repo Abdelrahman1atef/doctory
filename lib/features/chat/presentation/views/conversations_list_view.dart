@@ -29,8 +29,8 @@ class ConversationsListBodySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: const [
+    return const Column(
+      children: [
         CustomAppBar(title: 'الرسائل'),
         Expanded(child: ConversationsListSection()),
       ],
@@ -39,7 +39,7 @@ class ConversationsListBodySection extends StatelessWidget {
 }
 
 class _NewChatFAB extends StatelessWidget {
-  const _NewChatFAB({Key? key}) : super(key: key);
+  const _NewChatFAB({super.key});
 
   @override
   Widget build(BuildContext context) {

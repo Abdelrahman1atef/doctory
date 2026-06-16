@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/theme/app_typography.dart';
+
 class LayoutView extends StatefulWidget {
   final StatefulNavigationShell navigationShell;
 
@@ -64,6 +66,8 @@ class _LayoutViewState extends State<LayoutView> {
           selectedItemColor: AppColors.stitchPrimary,
           unselectedItemColor: AppColors.textSecondary,
           type: BottomNavigationBarType.fixed,
+          selectedLabelStyle:  AppStyles.s12Bold.withColor(AppColors.textPrimary),
+          unselectedLabelStyle:  AppStyles.s12Medium.withColor(AppColors.textPrimary),
           items: [
             BottomNavigationBarItem(
               icon: const Icon(Icons.home_outlined),

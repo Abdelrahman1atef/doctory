@@ -99,7 +99,7 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
         }
 
         if (state is SignupSuccessState) {
-          context.push(AppRoutes.otpVerification, extra: state.email);
+          context.push(AppRoutes.home);
         } else if (state is AuthSuccessState) {
           context.go(AppRoutes.completeProfile);
         } else if (state is AuthErrorState) {
