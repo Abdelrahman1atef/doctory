@@ -1,5 +1,7 @@
 import 'package:doctory/core/cache/cache_helper.dart';
 import 'package:doctory/core/session/user_session.dart';
+import 'package:doctory/core/locator/service_locator.dart';
+import 'package:doctory/features/home/cubit/home_cubit.dart';
 
 import 'package:doctory/features/intro/data/model/intro_model.dart';
 import 'package:doctory/features/intro/cubit/intro_states.dart';
@@ -30,6 +32,9 @@ class IntroCubit extends Cubit<IntroStates> {
   void checkUserStatus() async {
     // Populate UserSession from cache
     await UserSession.getUser();
+
+    // Start prefetching home data in the background
+    sl<HomeCubit>().getHomeData();
 
     // محاكاة تأخير الشاشة لمدة ثانيتين كما في المشروع الأصلي
     await Future<void>.delayed(const Duration(seconds: 2));

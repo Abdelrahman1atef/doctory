@@ -1,3 +1,4 @@
+import 'package:doctory/core/services/alerts.dart';
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/features/chat/data/repo/chat_repo.dart';
@@ -38,7 +39,7 @@ class PostOptionsBottomSheet extends StatelessWidget {
                     }
                   },
                   onFailure: (failure) {
-                    SmartDialog.showToast(failure.message);
+                    Alerts.showToast(failure.message);
                   },
                 );
               },

@@ -91,12 +91,13 @@ class ClinicModel {
       ? addressAr!
       : (address ?? '');
 
-  /// Distance formatted in km
+  /// Distance formatted (input is in meters from API)
   String get distanceFormatted {
-    final km = distance; // Already in km from API
-    if (km < 1) {
-      return '${(km * 1000).toStringAsFixed(0)} m';
+    final meters = distance;
+    if (meters < 1000) {
+      return '${meters.round()} m';
     }
+    final km = meters / 1000;
     return '${km.toStringAsFixed(1)} km';
   }
 

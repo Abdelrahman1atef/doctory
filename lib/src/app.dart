@@ -1,3 +1,4 @@
+import 'package:doctory/core/services/alerts.dart';
 import 'package:doctory/core/router/app_router.dart';
 import 'package:doctory/core/common/widgets/layout/abher_responsive_wrapper.dart';
 import 'package:doctory/core/theme/theme_manager.dart';
@@ -36,17 +37,14 @@ class _DoctoryState extends State<Doctory> {
         listenWhen: (previous, current) => current is ConnectivityChanged,
         listener: (context, state) {
           if (state is ConnectivityChanged) {
-            if (!state.isConnected) {
-              SmartDialog.showToast(
-                'no_internet_connection'.tr(),
-                displayTime: const Duration(seconds: 5),
-              );
-            } else {
-              SmartDialog.showToast(
-                'internet_connected'.tr(),
-                displayTime: const Duration(seconds: 2),
-              );
-            }
+            // if (!state.isConnected) {
+            //   Alerts.showToast(
+            //     'no_internet_connection'.tr(),
+            //     displayTime: const Duration(seconds: 5),
+            //   );
+            // } else {
+            //   Alerts.showToast('internet_connected'.tr(), displayTime: const Duration(seconds: 2));
+            // }
           }
         },
         child: ValueListenableBuilder<ThemeMode>(

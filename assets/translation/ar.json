@@ -593,6 +593,8 @@
   "specialization": "التخصص",
   "sort_by_nearest": "الترتيب حسب الأقرب",
   "search_radius": "نطاق البحث",
+  "selected": "محدد",
+  "all": "الكل",
   "apply_filters": "تطبيق الفلاتر",
   "session_expired_login_again": "انتهت الجلسة، يرجى تسجيل الدخول مرة أخرى",
   "search_location": "موقع البحث",

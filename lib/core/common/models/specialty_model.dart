@@ -2,13 +2,19 @@ class SpecialtyModel {
   final String id;
   final String name;
   final String? nameAr;
-  final String iconAsset;
+  final String? description;
+  final String? iconUrl;
+  final String? iconAsset;
+  final bool isFamous;
 
   SpecialtyModel({
     required this.id,
     required this.name,
     this.nameAr,
-    required this.iconAsset,
+    this.description,
+    this.iconUrl,
+    this.iconAsset,
+    this.isFamous = false,
   });
 
   /// The display name
@@ -19,12 +25,23 @@ class SpecialtyModel {
     return SpecialtyModel(
       id: json['id']?.toString() ?? '',
       name: json['name'] ?? '',
-      nameAr: json['nameAr'],
-      iconAsset: json['iconAsset'] ?? '',
+      nameAr: json['arName'] ?? json['nameAr'],
+      description: json['description'],
+      iconUrl: json['iconUrl'],
+      iconAsset: json['iconAsset'],
+      isFamous: json['isFamous'] ?? false,
     );
   }
 
   Map<String, dynamic> toJson() {
-    return {'id': id, 'name': name, 'nameAr': nameAr, 'iconAsset': iconAsset};
+    return {
+      'id': id,
+      'name': name,
+      'arName': nameAr,
+      'description': description,
+      'iconUrl': iconUrl,
+      'iconAsset': iconAsset,
+      'isFamous': isFamous,
+    };
   }
 }

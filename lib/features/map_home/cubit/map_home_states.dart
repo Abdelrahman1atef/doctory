@@ -1,4 +1,5 @@
 import 'package:doctory/core/common/models/clinic_model.dart';
+import 'package:doctory/core/common/models/specialty_model.dart';
 import 'package:doctory/features/map_home/data/model/route_model.dart';
 
 abstract class MapHomeStates {}
@@ -12,6 +13,7 @@ class MapHomeLoadingState extends MapHomeStates {
 
 class MapHomeLoadedState extends MapHomeStates {
   final List<ClinicModel> clinics;
+  final List<SpecialtyModel> specializations;
   final ClinicModel? selectedClinic;
   final RouteModel? route;
   final String? query;
@@ -29,6 +31,7 @@ class MapHomeLoadedState extends MapHomeStates {
 
   MapHomeLoadedState({
     this.clinics = const [],
+    this.specializations = const [],
     this.selectedClinic,
     this.route,
     this.query,
@@ -50,6 +53,7 @@ class MapHomeLoadedState extends MapHomeStates {
 
   MapHomeLoadedState copyWith({
     List<ClinicModel>? clinics,
+    List<SpecialtyModel>? specializations,
     ClinicModel? selectedClinic,
     bool clearSelectedClinic = false,
     RouteModel? route,
@@ -68,6 +72,7 @@ class MapHomeLoadedState extends MapHomeStates {
   }) {
     return MapHomeLoadedState(
       clinics: clinics ?? this.clinics,
+      specializations: specializations ?? this.specializations,
       selectedClinic: clearSelectedClinic ? null : (selectedClinic ?? this.selectedClinic),
       route: route ?? this.route,
       query: query ?? this.query,
@@ -89,6 +94,7 @@ class MapHomeLoadedState extends MapHomeStates {
   MapHomeLoadedState clearCustomLocation() {
     return MapHomeLoadedState(
       clinics: clinics,
+      specializations: specializations,
       selectedClinic: selectedClinic,
       route: route,
       query: query,

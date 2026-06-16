@@ -10,6 +10,8 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:dio/dio.dart';
 
+import '../../../core/common/models/specialty_model.dart';
+
 class MapHomeCubit extends Cubit<MapHomeStates> {
   final MapHomeRepo _mapHomeRepo;
   bool _isLiveNavigating = false;
@@ -22,6 +24,25 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
 
   MapHomeCubit(this._mapHomeRepo) : super(MapHomeInitialState()) {
     LocationHelper.getCurrentLocation().then((pos) => _cachedPosition = pos);
+    getSpecializations();
+  }
+
+  Future<void> getSpecializations() async {
+    final result = await _mapHomeRepo.getSpecializations(isFamous: true);
+    result.fold(
+      onSuccess: (data) {
+        if (isClosed) return;
+        final currentState = state;
+        if (currentState is MapHomeLoadedState) {
+          emit(currentState.copyWith(specializations: data.items));
+        } else if (currentState is MapHomeInitialState) {
+           emit(MapHomeLoadedState(specializations: data.items));
+        }
+      },
+      onFailure: (failure) {
+        debugPrint('Failed to fetch specializations: ${failure.message}');
+      },
+    );
   }
 
   Future<void> searchClinics({
@@ -33,10 +54,13 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     int? radiusInKm,
     int? pageNumber,
     int? pageSize,
+    bool clearSpecialization = false,
   }) async {
     final currentState = state;
-    final isInitialLoad = currentState is MapHomeInitialState;
+    final isInitialLoad = currentState is MapHomeInitialState || (currentState is MapHomeLoadedState && currentState.clinics.isEmpty && currentState.query == null && currentState.specializationId == null);
+    
     List<ClinicModel> currentClinics = [];
+    List<SpecialtyModel> currentSpecializations = [];
     String? currentQuery;
     String? currentSpec;
     bool currentNearest = true;
@@ -44,8 +68,9 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
 
     if (currentState is MapHomeLoadedState) {
       currentClinics = currentState.clinics;
+      currentSpecializations = currentState.specializations;
       currentQuery = searchText ?? currentState.query;
-      currentSpec = specializationId ?? currentState.specializationId;
+      currentSpec = clearSpecialization ? null : (specializationId ?? currentState.specializationId);
       currentNearest = isNearest ?? currentState.isNearest;
       currentRadius = radiusInKm ?? currentState.radiusInKm;
     } else {
@@ -100,6 +125,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
             emit(
               (state as MapHomeLoadedState).copyWith(
                 clinics: data.items,
+                specializations: currentSpecializations,
                 query: currentQuery,
                 specializationId: currentSpec,
                 isNearest: currentNearest,
@@ -110,6 +136,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
             emit(
               MapHomeLoadedState(
                 clinics: data.items,
+                specializations: currentSpecializations,
                 query: currentQuery,
                 specializationId: currentSpec,
                 isNearest: currentNearest,

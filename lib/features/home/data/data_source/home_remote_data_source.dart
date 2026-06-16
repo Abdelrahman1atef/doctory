@@ -1,32 +1,41 @@
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import 'package:doctory/core/common/models/shared_models.dart';
+import 'package:doctory/core/network/util/paginated_data.dart';
 
 abstract class HomeRemoteDataSource {
-  Future<ApiResult<List<SpecialtyModel>>> getSpecialties();
+  Future<ApiResult<PaginatedData<SpecialtyModel>>> getSpecialties({
+    int? pageNumber,
+    int? pageSize,
+    bool? isFamous,
+  });
   Future<ApiResult<List<DoctorModel>>> getRecommendedDoctors();
   Future<ApiResult<List<ClinicModel>>> getFeaturedClinics();
 }
 
 class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
-  // Using dummy data since endpoints are not ready yet
+  final ApiConsumer _apiConsumer;
+
+  HomeRemoteDataSourceImpl(this._apiConsumer);
 
   @override
-  Future<ApiResult<List<SpecialtyModel>>> getSpecialties() async {
-    await Future.delayed(const Duration(seconds: 1));
-    return ApiResult.success([
-      SpecialtyModel(
-        id: '1',
-        name: 'أسنان',
-        iconAsset: 'assets/icons/tooth.svg',
-      ),
-      SpecialtyModel(id: '2', name: 'قلب', iconAsset: 'assets/icons/heart.svg'),
-      SpecialtyModel(id: '3', name: 'عيون', iconAsset: 'assets/icons/eye.svg'),
-      SpecialtyModel(
-        id: '4',
-        name: 'باطنة',
-        iconAsset: 'assets/icons/stomach.svg',
-      ),
-    ]);
+  Future<ApiResult<PaginatedData<SpecialtyModel>>> getSpecialties({
+    int? pageNumber,
+    int? pageSize,
+    bool? isFamous,
+  }) async {
+    return await _apiConsumer.get<PaginatedData<SpecialtyModel>>(
+      path: 'specializations',
+      queryParameters: {
+        if (pageNumber != null) 'PageNumber': pageNumber,
+        if (pageSize != null) 'PageSize': pageSize,
+        if (isFamous != null) 'IsFamous': isFamous,
+      },
+      parser:
+          (json) => PaginatedData.fromJson(
+            json['data'],
+            (item) => SpecialtyModel.fromJson(item),
+          ),
+    );
   }
 
   @override

@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:doctory/core/locator/service_locator.dart';
+import 'package:doctory/core/services/alerts.dart';
 import 'package:doctory/core/services/media/my_media.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/more/profile/cubit/profile_cubit.dart';
@@ -50,7 +51,7 @@ class _ProfileBodySectionState extends State<ProfileBodySection> {
       final day = _dayController.text.padLeft(2, '0');
       final month = _monthController.text.padLeft(2, '0');
       final year = _yearController.text;
-      
+
       String? birthDate;
       if (day.isNotEmpty && month.isNotEmpty && year.isNotEmpty) {
         birthDate = '$year-$month-$day';
@@ -99,9 +100,9 @@ class _ProfileBodySectionState extends State<ProfileBodySection> {
         }
 
         if (state is ProfileUpdateSuccess) {
-          SmartDialog.showToast(context.l10n(state.message));
+          Alerts.snack(text: context.l10n(state.message), state: SnackState.success);
         } else if (state is ProfileUpdateError) {
-          SmartDialog.showToast(state.message);
+          Alerts.snack(text: state.message, state: SnackState.failed);
         }
 
         if (state is ProfileLoadSuccess) {
@@ -109,7 +110,7 @@ class _ProfileBodySectionState extends State<ProfileBodySection> {
           _nameController.text = user.fullName;
           _phoneController.text = user.phoneNumber ?? '';
           _selectedGender = _getGenderString(user.gender);
-          
+
           if (user.birthDate != null && user.birthDate!.contains('-')) {
             final parts = user.birthDate!.split('-');
             if (parts.length == 3) {
@@ -149,8 +150,7 @@ class _ProfileBodySectionState extends State<ProfileBodySection> {
                 monthController: _monthController,
                 yearController: _yearController,
                 selectedGender: _selectedGender,
-                onGenderChanged: (gender) =>
-                    setState(() => _selectedGender = gender),
+                onGenderChanged: (gender) => setState(() => _selectedGender = gender),
                 onSubmit: _onSubmit,
               ),
             ],

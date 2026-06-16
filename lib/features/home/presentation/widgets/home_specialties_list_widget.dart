@@ -8,11 +8,13 @@ import '../../../../core/utils/extensions.dart';
 class HomeSpecialtiesListWidget extends StatelessWidget {
   final List<SpecialtyModel> specialties;
   final VoidCallback onSeeAll;
+  final Function(SpecialtyModel)? onSpecialtyTap;
 
   const HomeSpecialtiesListWidget({
     super.key,
     required this.specialties,
     required this.onSeeAll,
+    this.onSpecialtyTap,
   });
 
   @override
@@ -46,7 +48,11 @@ class HomeSpecialtiesListWidget extends StatelessWidget {
             itemCount: specialties.length,
             separatorBuilder: (_, __) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
-              return SpecialtyItemWidget(specialty: specialties[index]);
+              final specialty = specialties[index];
+              return SpecialtyItemWidget(
+                specialty: specialty,
+                onTap: () => onSpecialtyTap?.call(specialty),
+              );
             },
           ),
         ),

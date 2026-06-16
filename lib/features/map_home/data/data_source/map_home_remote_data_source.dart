@@ -1,5 +1,7 @@
+import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/core/error/failures.dart';
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
+import 'package:doctory/core/network/util/paginated_data.dart';
 import 'package:doctory/features/map_home/data/data_source/map_home_endpoints.dart';
 import 'package:doctory/features/map_home/data/model/map_home_models.dart';
 import 'package:doctory/features/map_home/data/model/route_model.dart';
@@ -26,6 +28,12 @@ abstract class MapHomeRemoteDataSource {
     required double endLat,
     required double endLng,
     dynamic cancelToken,
+  });
+
+  Future<ApiResult<PaginatedData<SpecialtyModel>>> getSpecializations({
+    int? pageNumber,
+    int? pageSize,
+    bool? isFamous,
   });
 }
 
@@ -96,6 +104,27 @@ class MapHomeRemoteDataSourceImpl implements MapHomeRemoteDataSource {
         }
       },
       onFailure: (failure) async => ApiResult<RouteModel>.failure(failure),
+    );
+  }
+
+  @override
+  Future<ApiResult<PaginatedData<SpecialtyModel>>> getSpecializations({
+    int? pageNumber,
+    int? pageSize,
+    bool? isFamous,
+  }) async {
+    return await _apiConsumer.get<PaginatedData<SpecialtyModel>>(
+      path: 'specializations',
+      queryParameters: {
+        if (pageNumber != null) 'PageNumber': pageNumber,
+        if (pageSize != null) 'PageSize': pageSize,
+        if (isFamous != null) 'IsFamous': isFamous,
+      },
+      parser:
+          (json) => PaginatedData.fromJson(
+            json['data'],
+            (item) => SpecialtyModel.fromJson(item),
+          ),
     );
   }
 }

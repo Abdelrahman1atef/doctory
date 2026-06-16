@@ -1,3 +1,4 @@
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:doctory/core/common/widgets/snackbars/custom_toast_widget.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -8,7 +9,7 @@ import 'package:doctory/core/theme/app_colors.dart';
 import '../app_strings/locale_keys.dart';
 import '../utils/extensions.dart';
 
-enum SnackState { success, failed }
+enum SnackState { success, failed, info }
 
 class Alerts {
   static Future<T?> dialog<T>(
@@ -56,35 +57,6 @@ class Alerts {
       ),
     );
   }
-
-  // static Future yesOrNoDialog(
-  //   BuildContext context, {
-  //   required String title,
-  //   required String action1title,
-  //   required String action2title,
-  //   required Function action1,
-  //   required Function action2,
-  //   Widget? icon,
-  //   RouteSettings? routeSettings,
-  //   EdgeInsets? insetPadding,
-  //   AlignmentGeometry? alignment,
-  //   Color? backgroundColor,
-  // }) {
-  //   return showDialog(
-  //     context: context,
-  //     routeSettings: routeSettings,
-  //     builder: (context) => alertDialog(
-  //       backgroundColor,
-  //       alignment,
-  //       icon,
-  //       title,
-  //       action1,
-  //       action1title,
-  //       action2,
-  //       action2title,
-  //     ),
-  //   );
-  // }
 
   static Future<T?> bottomSheet<T>(
     BuildContext context, {
@@ -158,23 +130,6 @@ class Alerts {
     );
   }
 
-  // static defaultError() {
-  //   return SmartDialog.show(
-  //     builder: (context) => SizedBox(
-  //       width: 400,
-  //       child: Dialog(
-  //         shape: RoundedRectangleBorder(
-  //           borderRadius: BorderRadius.circular(25),
-  //         ),
-  //         child: SnackDesgin(
-  //           state: SnackState.failed,
-  //           text: LocaleKeys.something_went_wrong.tr(),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
-
   static void snack({required String text, required SnackState state}) {
     BotToast.showCustomText(
       align: Alignment.center,
@@ -195,7 +150,9 @@ class Alerts {
             Icon(
               state == SnackState.success
                   ? Icons.check_circle_outline
-                  : Icons.error_outline,
+                  : (state == SnackState.failed
+                      ? Icons.error_outline
+                      : Icons.info_outline),
               color: Colors.white,
             ),
             const SizedBox(width: 12),
@@ -207,7 +164,9 @@ class Alerts {
                   Text(
                     state == SnackState.success
                         ? context.tr('success')
-                        : context.tr('error'),
+                        : (state == SnackState.failed
+                            ? context.tr('error')
+                            : context.tr('info')),
                     style: AppStyles.s16Bold.copyWith(color: Colors.white),
                   ),
                   5.ph,
@@ -222,12 +181,49 @@ class Alerts {
         ),
         backgroundColor: state == SnackState.success
             ? AppColors.stitchPrimary
-            : AppColors.errorColor,
+            : (state == SnackState.failed
+                ? AppColors.errorColor
+                : AppColors.stitchPrimaryContainer),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
         duration: const Duration(seconds: 4),
         elevation: 6,
       ),
+    );
+  }
+
+  /// Show a toast message using SmartDialog
+  static void showToast(
+    String message, {
+    Duration displayTime = const Duration(seconds: 2),
+    Color? backgroundColor,
+  }) {
+    SmartDialog.showToast(
+      message,
+      displayTime: displayTime,
+      alignment: Alignment.bottomCenter,
+      maskColor: Colors.transparent,
+      builder:
+          (context) => Container(
+            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+            decoration: BoxDecoration(
+              color: backgroundColor ?? AppColors.stitchPrimaryContainer,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black,
+                  blurRadius: 10,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Text(
+              message,
+              style: AppStyles.s14Bold.copyWith(color: Colors.white),
+              textAlign: TextAlign.center,
+            ),
+          ),
     );
   }
 }

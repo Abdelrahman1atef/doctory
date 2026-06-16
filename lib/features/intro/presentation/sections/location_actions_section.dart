@@ -1,3 +1,4 @@
+import 'package:doctory/core/services/alerts.dart';
 import 'package:doctory/core/cache/cache_helper.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/theme/app_colors.dart';
@@ -18,7 +19,7 @@ class LocationActionsSection extends StatelessWidget {
     // Test if location services are enabled.
     serviceEnabled = await Geolocator.isLocationServiceEnabled();
     if (!serviceEnabled && context.mounted) {
-      SmartDialog.showToast(context.tr('location_services_disabled'));
+      Alerts.showToast(context.tr('location_services_disabled'));
       // We could ask user to enable it, but for now we continue
     }
 
@@ -27,7 +28,7 @@ class LocationActionsSection extends StatelessWidget {
       permission = await Geolocator.requestPermission();
       if (permission == LocationPermission.denied) {
         if (context.mounted) {
-          SmartDialog.showToast(context.tr('location_permission_denied'));
+          Alerts.showToast(context.tr('location_permission_denied'));
           context.go(AppRoutes.home);
         }
         return;
@@ -36,7 +37,7 @@ class LocationActionsSection extends StatelessWidget {
 
     if (permission == LocationPermission.deniedForever) {
       if (context.mounted) {
-        SmartDialog.showToast(
+        Alerts.showToast(
           context.tr('location_permission_permanently_denied'),
         );
         context.go(AppRoutes.home);

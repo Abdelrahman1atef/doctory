@@ -175,28 +175,35 @@ class MapClinicCardWidget extends StatelessWidget {
               16.ph,
               Row(
                 children: [
-                  Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: AppColors.stitchPrimaryContainer.withValues(
-                        alpha: 0.1,
+                  if (clinic.isRegistered) ...[
+                    Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AppColors.stitchPrimaryContainer.withValues(
+                          alpha: 0.1,
+                        ),
+                        shape: BoxShape.circle,
                       ),
-                      shape: BoxShape.circle,
+                      child: const Icon(
+                        Icons.phone,
+                        color: AppColors.stitchPrimaryContainer,
+                        size: 20,
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.phone,
-                      color: AppColors.stitchPrimaryContainer,
-                      size: 20,
-                    ),
-                  ),
-                  12.pw,
+                    12.pw,
+                  ],
                   Expanded(
                     child: ElevatedButton(
-                      onPressed:
-                          onTap, // Still allow tapping to select/go to details
+                      onPressed: clinic.isRegistered
+                          ? onTap // Still allow tapping to select/go to details
+                          : null, // Disable for non-registered if detail navigation is restricted
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: AppColors.stitchPrimaryContainer,
-                        foregroundColor: Colors.white,
+                        backgroundColor: clinic.isRegistered
+                            ? AppColors.stitchPrimaryContainer
+                            : AppColors.stitchSurfaceLow,
+                        foregroundColor: clinic.isRegistered
+                            ? Colors.white
+                            : AppColors.stitchSecondary,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -205,12 +212,12 @@ class MapClinicCardWidget extends StatelessWidget {
                       child: Text(
                         clinic.isRegistered
                             ? 'book_appointment'.tr()
-                            : 'navigate'.tr(),
+                            : 'selected'.tr(),
                         style: AppStyles.s14Bold,
                       ),
                     ),
                   ),
-                  if (isSelected && onNavPressed != null) ...[
+                  if (isSelected && onNavPressed != null ) ...[
                     8.pw,
                     IconButton.filled(
                       onPressed: onNavPressed,

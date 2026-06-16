@@ -2,9 +2,14 @@ import 'package:doctory/core/error/error_handler.dart';
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import 'package:doctory/features/home/data/data_source/home_remote_data_source.dart';
 import 'package:doctory/core/common/models/shared_models.dart';
+import 'package:doctory/core/network/util/paginated_data.dart';
 
 abstract class HomeRepo {
-  Future<ApiResult<List<SpecialtyModel>>> getSpecialties();
+  Future<ApiResult<PaginatedData<SpecialtyModel>>> getSpecialties({
+    int? pageNumber,
+    int? pageSize,
+    bool? isFamous,
+  });
   Future<ApiResult<List<DoctorModel>>> getRecommendedDoctors();
   Future<ApiResult<List<ClinicModel>>> getFeaturedClinics();
 }
@@ -15,9 +20,17 @@ class HomeRepoImpl implements HomeRepo {
   HomeRepoImpl(this._remoteDataSource);
 
   @override
-  Future<ApiResult<List<SpecialtyModel>>> getSpecialties() async {
+  Future<ApiResult<PaginatedData<SpecialtyModel>>> getSpecialties({
+    int? pageNumber,
+    int? pageSize,
+    bool? isFamous,
+  }) async {
     try {
-      return await _remoteDataSource.getSpecialties();
+      return await _remoteDataSource.getSpecialties(
+        pageNumber: pageNumber,
+        pageSize: pageSize,
+        isFamous: isFamous,
+      );
     } on Exception catch (e) {
       return ApiResult.failure(ErrorHandler.handleException(e));
     }

@@ -595,6 +595,8 @@
   "specialization": "Specialization",
   "sort_by_nearest": "Sort by Nearest",
   "search_radius": "Search Radius",
+  "selected": "Selected",
+  "all": "All",
   "apply_filters": "Apply Filters",
   "session_expired_login_again": "Session expired, please login again",
   "search_location": "Search Location",

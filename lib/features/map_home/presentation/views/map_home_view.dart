@@ -42,6 +42,7 @@ class _MapHomeViewState extends State<MapHomeView> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.searchQuery);
     return BlocProvider.value(
       value: _cubit,
       child: const Scaffold(body: MapHomeBodySection()),

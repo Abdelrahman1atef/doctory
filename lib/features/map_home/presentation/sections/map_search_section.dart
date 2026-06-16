@@ -2,6 +2,7 @@ import 'package:doctory/features/map_home/presentation/widgets/map_filter_bottom
 import 'package:doctory/features/map_home/presentation/widgets/map_filter_chip_widget.dart';
 import 'package:doctory/features/map_home/presentation/widgets/map_search_bar_widget.dart';
 import 'package:doctory/features/map_home/presentation/widgets/map_search_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:doctory/features/map_home/cubit/map_home_cubit.dart';
 import 'package:doctory/features/map_home/cubit/map_home_states.dart';
@@ -52,6 +53,10 @@ class _MapSearchSectionState extends State<MapSearchSection> {
         }
       },
       builder: (context, state) {
+        final specializations = (state is MapHomeLoadedState) ? state.specializations : [];
+        final selectedSpecId = (state is MapHomeLoadedState) ? state.specializationId : null;
+        final hasQuery = state is MapHomeLoadedState && state.query != null && state.query!.isNotEmpty;
+
         return MapSearchWidget(
           searchBar: MapSearchBarWidget(
             controller: _searchController,
@@ -74,44 +79,27 @@ class _MapSearchSectionState extends State<MapSearchSection> {
           filterChips: Row(
             children: [
               MapFilterChipWidget(
-                label: 'All',
-                isSelected:
-                    state is MapHomeLoadedState &&
-                    (state.query == null || state.query!.isEmpty),
+                label: 'all'.tr(),
+                isSelected: selectedSpecId == null && !hasQuery,
                 onTap: () {
-                  context.read<MapHomeCubit>().searchClinics();
-                },
-              ),
-              MapFilterChipWidget(
-                label: 'Dental',
-                isSelected:
-                    state is MapHomeLoadedState && state.query == 'Dental',
-                onTap: () {
+                  _searchController.clear();
                   context.read<MapHomeCubit>().searchClinics(
-                    searchText: 'Dental',
+                    searchText: '',
+                    clearSpecialization: true,
                   );
                 },
               ),
-              MapFilterChipWidget(
-                label: 'Cardiology',
-                isSelected:
-                    state is MapHomeLoadedState && state.query == 'Cardiology',
-                onTap: () {
-                  context.read<MapHomeCubit>().searchClinics(
-                    searchText: 'Cardiology',
-                  );
-                },
-              ),
-              MapFilterChipWidget(
-                label: 'Eye Care',
-                isSelected:
-                    state is MapHomeLoadedState && state.query == 'Eye Care',
-                onTap: () {
-                  context.read<MapHomeCubit>().searchClinics(
-                    searchText: 'Eye Care',
-                  );
-                },
-              ),
+              ...specializations.map((spec) {
+                return MapFilterChipWidget(
+                  label: spec.name,
+                  isSelected: selectedSpecId == spec.id,
+                  onTap: () {
+                    context.read<MapHomeCubit>().searchClinics(
+                      specializationId: spec.id,
+                    );
+                  },
+                );
+              }),
             ],
           ),
         );

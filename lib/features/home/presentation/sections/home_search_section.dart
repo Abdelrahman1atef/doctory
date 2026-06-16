@@ -21,7 +21,7 @@ class _HomeSearchSectionState extends State<HomeSearchSection> {
       await LocationHelper.checkAndRequestPermission();
 
       if (mounted) {
-        context.push(AppRoutes.mapHome, extra: query);
+        context.go(AppRoutes.mapHome, extra: query);
       }
     }
   }

@@ -15,6 +15,7 @@ abstract class AppRoutes {
   static const String home = '/home';
   static const String more = '/more';
   static const String profile = '/profile';
+  static const String specializations = '/specializations';
 
   // Clinic Locator Features
   static const String mapHome = '/map-home';
