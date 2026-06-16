@@ -34,6 +34,15 @@ class _MapHomeViewState extends State<MapHomeView> {
   }
 
   @override
+  void didUpdateWidget(covariant MapHomeView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.searchQuery != oldWidget.searchQuery) {
+      debugPrint('📍 [MapHomeView] Search query updated: ${widget.searchQuery}');
+      _cubit.searchClinics(searchText: widget.searchQuery);
+    }
+  }
+
+  @override
   void dispose() {
     _locationTimer?.cancel();
     _cubit.close();
@@ -42,7 +51,6 @@ class _MapHomeViewState extends State<MapHomeView> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.searchQuery);
     return BlocProvider.value(
       value: _cubit,
       child: const Scaffold(body: MapHomeBodySection()),

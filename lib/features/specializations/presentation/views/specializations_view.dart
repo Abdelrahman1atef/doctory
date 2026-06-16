@@ -140,7 +140,7 @@ class _SpecialtyItemWidget extends StatelessWidget {
           color: AppColors.stitchSecondary,
         ),
         onTap: () {
-          context.go(AppRoutes.mapHome, extra: specialty.name);
+          context.go(AppRoutes.mapHome, extra: (context.locale.languageCode=="ar"?specialty.nameAr: specialty.name));
         },
       ),
     );
