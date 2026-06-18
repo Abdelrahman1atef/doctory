@@ -478,6 +478,13 @@ abstract class LocaleKeys {
   static const pm = 'pm';
   static const ratings = 'ratings';
   static const rating = 'rating';
+  static const patient_reviews = 'patient_reviews';
+  static const write_review = 'write_review';
+  static const submit_review = 'submit_review';
+  static const cleanliness = 'cleanliness';
+  static const doctor_behavior = 'doctor_behavior';
+  static const reception = 'reception';
+  static const submit_review_success = 'submit_review_success';
   static const total_rating = 'total_rating';
   static const no_ratings_yet = 'no_ratings_yet';
   static const trip_date_hint = 'trip_date_hint';

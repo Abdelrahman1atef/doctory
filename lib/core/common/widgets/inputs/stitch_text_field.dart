@@ -20,7 +20,7 @@ class StitchTextField extends StatelessWidget {
   final TextDirection? textDirection;
 
   final List<TextInputFormatter>? inputFormatters;
-  final int? maxLength;
+  final int? maxLength,maxLines;
   final bool isRequired;
 
   const StitchTextField({
@@ -40,7 +40,7 @@ class StitchTextField extends StatelessWidget {
     this.inputFormatters,
     this.maxLength,
     this.textDirection,
-    this.isRequired = true,
+    this.isRequired = true, this.maxLines,
   });
 
   @override
@@ -78,6 +78,7 @@ class StitchTextField extends StatelessWidget {
             obscureText: obscureText,
             readOnly: readOnly,
             onTap: onTap,
+            maxLines:maxLines,
             inputFormatters: inputFormatters,
             maxLength: maxLength,
             textDirection: textDirection,

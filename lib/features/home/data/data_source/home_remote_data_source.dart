@@ -26,9 +26,9 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
     return await _apiConsumer.get<PaginatedData<SpecialtyModel>>(
       path: 'specializations',
       queryParameters: {
-        if (pageNumber != null) 'PageNumber': pageNumber,
-        if (pageSize != null) 'PageSize': pageSize,
-        if (isFamous != null) 'IsFamous': isFamous,
+        'PageNumber': ?pageNumber,
+        'PageSize': ?pageSize,
+        'IsFamous': ?isFamous,
       },
       parser:
           (json) => PaginatedData.fromJson(

@@ -26,6 +26,7 @@ class SpecializationsCubit extends Cubit<SpecializationsStates> {
     final result = await _homeRepo.getSpecialties(
       pageNumber: _pageNumber,
       pageSize: _pageSize,
+        isFamous: false
     );
 
     result.fold(

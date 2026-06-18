@@ -48,6 +48,8 @@ class _SpecializationsViewState extends State<SpecializationsView> {
       appBar: AppBar(
         title: Text('specialties'.tr(), style: AppStyles.s20SemiBold.withColor(AppColors.textPrimary),),
         centerTitle: true,
+        scrolledUnderElevation: 0,
+        elevation: 0,
         leading: IconButton(
           onPressed: () => context.pop(),
           icon: const Icon(Icons.arrow_back_ios_new, size: 20),

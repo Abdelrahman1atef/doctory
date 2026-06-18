@@ -5,6 +5,7 @@ import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/patient_reviews/cubit/patient_reviews_cubit.dart';
 import 'package:doctory/features/patient_reviews/cubit/patient_reviews_states.dart';
 import 'package:doctory/features/patient_reviews/presentation/widgets/review_card_widget.dart';
+import 'package:doctory/features/patient_reviews/presentation/widgets/write_review_bottom_sheet.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -146,21 +147,33 @@ class PatientReviewsView extends StatelessWidget {
               ),
               child: SizedBox(
                 width: double.infinity,
-                child: OutlinedButton(
-                  onPressed: () {
-                    // Navigate to write review or show bottom sheet
-                  },
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.stitchPrimaryContainer,
-                    side: const BorderSide(
-                      color: AppColors.stitchPrimaryContainer,
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(16),
-                    ),
-                  ),
-                  child: Text('write_review'.tr(), style: AppStyles.s16Bold),
+                child: Builder(
+                  builder: (scaffoldContext) {
+                    return OutlinedButton(
+                      onPressed: () {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          backgroundColor: Colors.transparent,
+                          builder: (_) => BlocProvider.value(
+                            value: scaffoldContext.read<PatientReviewsCubit>(),
+                            child: WriteReviewBottomSheet(entityId: entityId),
+                          ),
+                        );
+                      },
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.stitchPrimaryContainer,
+                        side: const BorderSide(
+                          color: AppColors.stitchPrimaryContainer,
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 16),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(16),
+                        ),
+                      ),
+                      child: Text('write_review'.tr(), style: AppStyles.s16Bold),
+                    );
+                  }
                 ),
               ),
             ),

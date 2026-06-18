@@ -9,6 +9,9 @@ class DoctorModel {
   final String? nextAppointment;
   final String? imageUrl;
   final double rating;
+  final double? cleanlinessRating;
+  final double? behaviorRating;
+  final double? receptionRating;
   final int reviewsCount;
   final int? experience; // in years
   final int? patientsCount;
@@ -16,7 +19,7 @@ class DoctorModel {
   final String? bioAr;
   final List<String>? qualifications;
   final Map<String, List<TimeSlotModel>>?
-  availableSlots; // Map of ISO Date String to slots
+      availableSlots; // Map of ISO Date String to slots
 
   DoctorModel({
     required this.id,
@@ -27,6 +30,9 @@ class DoctorModel {
     this.nextAppointment,
     this.imageUrl,
     this.rating = 0.0,
+    this.cleanlinessRating,
+    this.behaviorRating,
+    this.receptionRating,
     this.reviewsCount = 0,
     this.experience,
     this.patientsCount,
@@ -43,8 +49,8 @@ class DoctorModel {
   /// The display specialty: prefer Arabic if available, fallback to specialty.
   String get displaySpecialty =>
       (specialtyAr != null && specialtyAr!.isNotEmpty)
-      ? specialtyAr!
-      : specialty;
+          ? specialtyAr!
+          : specialty;
 
   /// The display bio
   String get displayBio =>
@@ -70,6 +76,9 @@ class DoctorModel {
       nextAppointment: json['nextAppointment'],
       imageUrl: json['imageUrl'],
       rating: (json['rating'] ?? 0.0).toDouble(),
+      cleanlinessRating: (json['cleanlinessRating'] ?? 0.0).toDouble(),
+      behaviorRating: (json['behaviorRating'] ?? 0.0).toDouble(),
+      receptionRating: (json['receptionRating'] ?? 0.0).toDouble(),
       reviewsCount: json['reviewsCount'] ?? 0,
       experience: json['experience'],
       patientsCount: json['patientsCount'],
@@ -100,6 +109,9 @@ class DoctorModel {
       'nextAppointment': nextAppointment,
       'imageUrl': imageUrl,
       'rating': rating,
+      'cleanlinessRating': cleanlinessRating,
+      'behaviorRating': behaviorRating,
+      'receptionRating': receptionRating,
       'reviewsCount': reviewsCount,
       'experience': experience,
       'patientsCount': patientsCount,

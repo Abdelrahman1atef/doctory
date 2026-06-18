@@ -1,3 +1,4 @@
+import 'package:doctory/core/app_strings/locale_keys.dart';
 import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
@@ -43,7 +44,7 @@ class ReviewCardWidget extends StatelessWidget {
                   const Icon(Icons.star_rounded, color: Colors.amber, size: 18),
                   4.pw,
                   Text(
-                    review.rating.toString(),
+                    review.rating.toStringAsFixed(1),
                     style: AppStyles.s14Bold.withColor(
                       AppColors.stitchSecondary,
                     ),
@@ -59,12 +60,58 @@ class ReviewCardWidget extends StatelessWidget {
               AppColors.stitchSecondary.withValues(alpha: 0.6),
             ),
           ),
-          12.ph,
+          16.ph,
+          // Detailed Ratings
+          Wrap(
+            spacing: 12,
+            runSpacing: 8,
+            children: [
+              _buildSmallRatingTag(
+                LocaleKeys.cleanliness.tr(),
+                review.cleanlinessRating,
+              ),
+              _buildSmallRatingTag(
+                LocaleKeys.doctor_behavior.tr(),
+                review.behaviorRating,
+              ),
+              _buildSmallRatingTag(
+                LocaleKeys.reception.tr(),
+                review.receptionRating,
+              ),
+            ],
+          ),
+          16.ph,
           Text(
             review.comment,
             style: AppStyles.s14Medium
                 .withColor(AppColors.textPrimary)
                 .copyWith(height: 1.4),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSmallRatingTag(String label, double rating) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColors.stitchSurfaceLow.withValues(alpha: 0.3),
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            label,
+            style: AppStyles.s10Medium.withColor(AppColors.stitchSecondary),
+          ),
+          6.pw,
+          const Icon(Icons.star_rounded, color: Colors.amber, size: 12),
+          2.pw,
+          Text(
+            rating.toStringAsFixed(1),
+            style: AppStyles.s10Bold.withColor(AppColors.stitchSecondary),
           ),
         ],
       ),

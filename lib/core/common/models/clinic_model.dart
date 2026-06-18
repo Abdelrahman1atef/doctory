@@ -8,6 +8,9 @@ class ClinicModel {
   final String? descriptionAr;
   final String? imageUrl;
   final double rating;
+  final double? cleanlinessRating;
+  final double? behaviorRating;
+  final double? receptionRating;
 
   // Extended fields for details
   final String? address;
@@ -18,7 +21,7 @@ class ClinicModel {
   final int reviewsCount;
   final List<String>? photos;
   final Map<String, String>?
-  operatingHours; // e.g., {'Monday': '09:00 - 17:00'}
+      operatingHours; // e.g., {'Monday': '09:00 - 17:00'}
   final bool isOpen;
   final List<DoctorModel>? doctors;
   final List<String>? specialties;
@@ -34,6 +37,9 @@ class ClinicModel {
     this.descriptionAr,
     this.imageUrl,
     this.rating = 0.0,
+    this.cleanlinessRating,
+    this.behaviorRating,
+    this.receptionRating,
     this.address,
     this.addressAr,
     this.phone,
@@ -52,29 +58,29 @@ class ClinicModel {
 
   /// Mock data for UI testing
   static List<ClinicModel> get mockClinics => [
-    ClinicModel(
-      id: '1',
-      name: 'عيادة النور (Registered)',
-      description: 'عيادة مسجلة في نظامنا بكل البيانات',
-      isRegistered: true,
-      rating: 4.8,
-      lat: 31.0409,
-      lng: 31.3785,
-      address: 'المنصورة، شارع المشاية',
-      isOpen: true,
-    ),
-    ClinicModel(
-      id: '2',
-      name: 'مستشفى الشفاء (Google Maps)',
-      description: 'بيانات مسترجعة من بحث جوجل - بدون تقييم',
-      isRegistered: false,
-      rating: 0.0,
-      lat: 31.0348,
-      lng: 31.3575,
-      address: 'المنصورة، حي الجامعة',
-      isOpen: false,
-    ),
-  ];
+        ClinicModel(
+          id: '1',
+          name: 'عيادة النور (Registered)',
+          description: 'عيادة مسجلة في نظامنا بكل البيانات',
+          isRegistered: true,
+          rating: 4.8,
+          lat: 31.0409,
+          lng: 31.3785,
+          address: 'المنصورة، شارع المشاية',
+          isOpen: true,
+        ),
+        ClinicModel(
+          id: '2',
+          name: 'مستشفى الشفاء (Google Maps)',
+          description: 'بيانات مسترجعة من بحث جوجل - بدون تقييم',
+          isRegistered: false,
+          rating: 0.0,
+          lat: 31.0348,
+          lng: 31.3575,
+          address: 'المنصورة، حي الجامعة',
+          isOpen: false,
+        ),
+      ];
 
   /// The display name
   String get displayName =>
@@ -83,8 +89,8 @@ class ClinicModel {
   /// The display description
   String get displayDescription =>
       (descriptionAr != null && descriptionAr!.isNotEmpty)
-      ? descriptionAr!
-      : description;
+          ? descriptionAr!
+          : description;
 
   /// The display address
   String get displayAddress => (addressAr != null && addressAr!.isNotEmpty)
@@ -110,6 +116,9 @@ class ClinicModel {
       descriptionAr: json['descriptionAr'],
       imageUrl: json['imageUrl'],
       rating: (json['rating'] ?? 0.0).toDouble(),
+      cleanlinessRating: (json['cleanlinessRating'] ?? 0.0).toDouble(),
+      behaviorRating: (json['behaviorRating'] ?? 0.0).toDouble(),
+      receptionRating: (json['receptionRating'] ?? 0.0).toDouble(),
       address: json['address'],
       addressAr: json['addressAr'],
       phone: json['phone'],
@@ -123,8 +132,8 @@ class ClinicModel {
       isOpen: json['isOpen'] ?? true,
       doctors: json['doctors'] != null
           ? (json['doctors'] as List)
-                .map((e) => DoctorModel.fromJson(e))
-                .toList()
+              .map((e) => DoctorModel.fromJson(e))
+              .toList()
           : null,
       specialties: json['specialties'] != null
           ? List<String>.from(json['specialties'])
@@ -144,6 +153,9 @@ class ClinicModel {
       'descriptionAr': descriptionAr,
       'imageUrl': imageUrl,
       'rating': rating,
+      'cleanlinessRating': cleanlinessRating,
+      'behaviorRating': behaviorRating,
+      'receptionRating': receptionRating,
       'address': address,
       'addressAr': addressAr,
       'phone': phone,

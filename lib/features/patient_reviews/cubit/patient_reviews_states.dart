@@ -15,3 +15,7 @@ class PatientReviewsError extends PatientReviewsStates {
   final String message;
   PatientReviewsError(this.message);
 }
+
+class PatientReviewSubmitting extends PatientReviewsStates {}
+
+class PatientReviewSubmitted extends PatientReviewsStates {}
