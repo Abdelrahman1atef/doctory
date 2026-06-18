@@ -8,4 +8,4 @@ Future<void> setupLocator() async {
 
 /// Quick access to service locator
 /// Use this instead of importing GetIt directly
-final locator = ServiceLocator;
+const locator = ServiceLocator;

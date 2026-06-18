@@ -28,7 +28,7 @@ class DoctorProfileSection extends StatelessWidget {
               image: DecorationImage(
                 image: NetworkImage(doctor.imageUrl!.toImageUrl),
                 fit: BoxFit.cover,
-                onError: (_, __) {},
+                onError: (_, _) {},
               ),
             ),
             child: doctor.imageUrl == null

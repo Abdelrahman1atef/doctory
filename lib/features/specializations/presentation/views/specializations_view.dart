@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
-import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/specializations/cubit/specializations_cubit.dart';
 import 'package:doctory/features/specializations/cubit/specializations_states.dart';
 import 'package:easy_localization/easy_localization.dart';

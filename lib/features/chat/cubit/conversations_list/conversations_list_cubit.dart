@@ -19,7 +19,6 @@ class ConversationsListCubit extends Cubit<ConversationsListState> {
   int _currentPage = 1;
   bool _hasMore = true;
   Timer? _refreshDebounce;
-  final Set<String> _typingUserIds = {}; // ConversationId -> IsTyping
 
   ConversationsListCubit(this.chatRepo, this.realtimeService) : super(ConversationsListInitial()) {
     _listenToRealtimeEvents();

@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:audio_waveforms/audio_waveforms.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/services/media/audio_service.dart';
-import '../../../../core/locator/service_locator.dart';
 
 class MessageInputWidget extends StatefulWidget {
   final ValueChanged<String> onSend;

@@ -6,13 +6,15 @@ import 'package:doctory/features/booking/presentation/widgets/booking_info_row.d
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-/// Summary card displayed on the confirmation step.
 class BookingSummaryCard extends StatelessWidget {
   final DoctorModel doctor;
   final DateTime selectedDate;
   final TimeSlotModel selectedTime;
   final double consultationFee;
   final String currency;
+  final int appointmentType;
+  final String patientName;
+  final String patientPhone;
 
   const BookingSummaryCard({
     super.key,
@@ -21,6 +23,9 @@ class BookingSummaryCard extends StatelessWidget {
     required this.selectedTime,
     required this.consultationFee,
     required this.currency,
+    this.appointmentType = 1,
+    this.patientName = '',
+    this.patientPhone = '',
   });
 
   @override
@@ -56,11 +61,7 @@ class BookingSummaryCard extends StatelessWidget {
                       : null,
                 ),
                 child: doctor.imageUrl == null
-                    ? const Icon(
-                        Icons.person,
-                        color: AppColors.stitchPrimary,
-                        size: 28,
-                      )
+                    ? const Icon(Icons.person, color: AppColors.stitchPrimary, size: 28)
                     : null,
               ),
               14.pw,
@@ -68,39 +69,57 @@ class BookingSummaryCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(
-                      doctor.displayName,
-                      style: AppStyles.s16Bold.withColor(
-                        AppColors.stitchPrimaryContainer,
-                      ),
+                    Text(doctor.displayName,
+                      style: AppStyles.s16Bold.withColor(AppColors.stitchPrimaryContainer),
                     ),
                     4.ph,
-                    Text(
-                      doctor.displaySpecialty,
-                      style: AppStyles.s13Medium.withColor(
-                        AppColors.stitchSecondary,
-                      ),
+                    Text(doctor.displaySpecialty,
+                      style: AppStyles.s13Medium.withColor(AppColors.stitchSecondary),
                     ),
                   ],
                 ),
               ),
             ],
           ),
-          20.ph,
+          16.ph,
+          if (patientName.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: BookingInfoRow(
+                icon: Icons.person_outline,
+                label: 'patient'.tr(),
+                value: patientName,
+              ),
+            ),
+          if (patientPhone.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: BookingInfoRow(
+                icon: Icons.phone_outlined,
+                label: 'phone'.tr(),
+                value: patientPhone,
+              ),
+            ),
           Container(height: 1, color: AppColors.grey200),
-          20.ph,
+          16.ph,
           BookingInfoRow(
             icon: Icons.calendar_month_rounded,
             label: 'date'.tr(),
             value: DateFormat('EEEE, MMM d, yyyy').format(selectedDate),
           ),
-          16.ph,
+          12.ph,
           BookingInfoRow(
             icon: Icons.schedule_rounded,
             label: 'time'.tr(),
             value: DateFormat('hh:mm a').format(selectedTime.startTime),
           ),
-          16.ph,
+          12.ph,
+          BookingInfoRow(
+            icon: Icons.category_outlined,
+            label: 'appointment_type'.tr(),
+            value: _typeLabel(appointmentType),
+          ),
+          12.ph,
           BookingInfoRow(
             icon: Icons.payments_rounded,
             label: 'consultation_fee'.tr(),
@@ -115,11 +134,7 @@ class BookingSummaryCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(
-                  Icons.info_outline_rounded,
-                  size: 18,
-                  color: AppColors.info,
-                ),
+                const Icon(Icons.info_outline_rounded, size: 18, color: AppColors.info),
                 10.pw,
                 Expanded(
                   child: Text(
@@ -133,5 +148,14 @@ class BookingSummaryCard extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _typeLabel(int type) {
+    switch (type) {
+      case 1: return 'in_person'.tr();
+      case 2: return 'online'.tr();
+      case 3: return 'follow_up'.tr();
+      default: return '';
+    }
   }
 }

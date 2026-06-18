@@ -54,7 +54,7 @@ class _MapHomeBodySectionState extends State<MapHomeBodySection> {
         }
         return true;
       },
-      //todo : remove this and use the real data from the cubit
+      // TODO(dev): remove this and use the real data from the cubit
       builder: (context, state) {
         final List<ClinicModel> clinics =
             (state is MapHomeLoadedState && state.clinics.isNotEmpty)

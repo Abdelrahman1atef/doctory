@@ -41,12 +41,9 @@ class ChatRealtimeService {
   Timer? _typingDebounceTimer;
   bool _isCurrentlyTyping = false;
   String? _activeConversationId;
-  String? _userId;
-
   Future<void> initialize() async {
     final userId = UserSession.userId;
     if (userId == null) return;
-    _userId = userId;
 
     // Initialize Pusher and subscribe to Global Presence Channel
     await _pusherService.initialize(PusherConfig.presenceGlobalChannel);
@@ -221,7 +218,6 @@ class ChatRealtimeService {
     _onlineUsers.clear();
     _typingDebounceTimer?.cancel();
     _activeConversationId = null;
-    _userId = null;
     _isCurrentlyTyping = false;
   }
 

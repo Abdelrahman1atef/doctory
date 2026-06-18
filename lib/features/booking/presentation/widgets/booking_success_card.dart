@@ -2,15 +2,17 @@ import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
+import 'package:doctory/features/booking/domain/enums/appointment_type.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-/// Success card with booking details and reference number.
 class BookingSuccessCard extends StatelessWidget {
   final DoctorModel doctor;
   final DateTime selectedDate;
   final TimeSlotModel selectedTime;
   final String? bookingRef;
+  final AppointmentType appointmentType;
+  final String patientName;
 
   const BookingSuccessCard({
     super.key,
@@ -18,6 +20,8 @@ class BookingSuccessCard extends StatelessWidget {
     required this.selectedDate,
     required this.selectedTime,
     this.bookingRef,
+    this.appointmentType = AppointmentType.inPerson,
+    this.patientName = '',
   });
 
   @override
@@ -38,7 +42,6 @@ class BookingSuccessCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Checkmark
           Container(
             width: 72,
             height: 72,
@@ -46,18 +49,12 @@ class BookingSuccessCard extends StatelessWidget {
               shape: BoxShape.circle,
               color: AppColors.success.withValues(alpha: 0.1),
             ),
-            child: const Icon(
-              Icons.check_circle_rounded,
-              color: AppColors.success,
-              size: 48,
-            ),
+            child: const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 48),
           ),
           16.ph,
           Text(
             'booking_success'.tr(),
-            style: AppStyles.s20Bold.withColor(
-              AppColors.stitchPrimaryContainer,
-            ),
+            style: AppStyles.s20Bold.withColor(AppColors.stitchPrimaryContainer),
             textAlign: TextAlign.center,
           ),
           8.ph,
@@ -67,7 +64,6 @@ class BookingSuccessCard extends StatelessWidget {
             textAlign: TextAlign.center,
           ),
           20.ph,
-          // Reference
           if (bookingRef != null) ...[
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
@@ -78,14 +74,9 @@ class BookingSuccessCard extends StatelessWidget {
               child: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  const Icon(
-                    Icons.confirmation_number_outlined,
-                    size: 18,
-                    color: AppColors.stitchPrimary,
-                  ),
+                  const Icon(Icons.confirmation_number_outlined, size: 18, color: AppColors.stitchPrimary),
                   8.pw,
-                  Text(
-                    bookingRef!,
+                  Text(bookingRef!,
                     style: AppStyles.s16Bold.withColor(AppColors.stitchPrimary),
                   ),
                 ],
@@ -95,7 +86,6 @@ class BookingSuccessCard extends StatelessWidget {
           ],
           Container(height: 1, color: AppColors.grey200),
           20.ph,
-          // Doctor
           Row(
             children: [
               Container(
@@ -112,36 +102,39 @@ class BookingSuccessCard extends StatelessWidget {
                       : null,
                 ),
                 child: doctor.imageUrl == null
-                    ? const Icon(
-                        Icons.person,
-                        color: AppColors.stitchPrimary,
-                        size: 24,
-                      )
+                    ? const Icon(Icons.person, color: AppColors.stitchPrimary, size: 24)
                     : null,
               ),
               12.pw,
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    doctor.displayName,
-                    style: AppStyles.s14Bold.withColor(
-                      AppColors.stitchPrimaryContainer,
-                    ),
+                  Text(doctor.displayName,
+                    style: AppStyles.s14Bold.withColor(AppColors.stitchPrimaryContainer),
                   ),
                   4.ph,
-                  Text(
-                    doctor.displaySpecialty,
-                    style: AppStyles.s12Medium.withColor(
-                      AppColors.stitchSecondary,
-                    ),
+                  Text(doctor.displaySpecialty,
+                    style: AppStyles.s12Medium.withColor(AppColors.stitchSecondary),
                   ),
                 ],
               ),
             ],
           ),
+          12.ph,
+          if (patientName.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Row(
+                children: [
+                  const Icon(Icons.person_outline, size: 16, color: AppColors.stitchPrimary),
+                  8.pw,
+                  Text(patientName,
+                    style: AppStyles.s13Medium.withColor(AppColors.textPrimary),
+                  ),
+                ],
+              ),
+            ),
           16.ph,
-          // Date & Time
           Row(
             children: [
               Expanded(

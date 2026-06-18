@@ -24,7 +24,7 @@ class Reaction<T> {
   final T? value;
 
   @override
-  bool operator ==(Object? other) {
+  bool operator ==(Object other) {
     return other is Reaction &&
         icon == other.icon &&
         icon.key == other.icon.key &&

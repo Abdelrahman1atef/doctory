@@ -78,7 +78,7 @@ class StitchTextField extends StatelessWidget {
             obscureText: obscureText,
             readOnly: readOnly,
             onTap: onTap,
-            maxLines:maxLines,
+            maxLines: obscureText ? 1 : maxLines,
             inputFormatters: inputFormatters,
             maxLength: maxLength,
             textDirection: textDirection,

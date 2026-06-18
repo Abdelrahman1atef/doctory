@@ -18,6 +18,7 @@ class AbherImage extends StatelessWidget {
   final double? radius;
   final bool? isCircle;
   final Color? color;
+
   const AbherImage(
     this.path, {
     super.key,
@@ -30,7 +31,9 @@ class AbherImage extends StatelessWidget {
   });
 
   bool get isNetwork => path.startsWith('http');
+
   bool get isAsset => path.startsWith('assets/');
+
   bool get isFile => !isNetwork && !isAsset;
 
   MediaSource get mediaSource => isAsset
@@ -106,7 +109,6 @@ class AbherImage extends StatelessWidget {
           fit: fit,
           width: width,
           height: height,
-          color: color,
         );
       case MediaSource.network:
         return CachedNetworkImage(
@@ -114,10 +116,8 @@ class AbherImage extends StatelessWidget {
           fit: fit,
           width: width,
           height: height,
-          placeholder: (ctx, url) =>
-              const Center(child: CircularProgressIndicator()),
-          errorWidget: (ctx, url, error) =>
-              const Icon(Icons.image_not_supported),
+          placeholder: (ctx, url) => const Center(child: CircularProgressIndicator()),
+          errorWidget: (ctx, url, error) => const Icon(Icons.image_not_supported),
         );
       case MediaSource.file:
         return Image.file(File(path), fit: fit, width: width, height: height);
@@ -133,7 +133,7 @@ class AbherImage extends StatelessWidget {
         fit: fit ?? BoxFit.contain,
         width: width,
         height: height,
-        color: color,
+        colorFilter: color != null ? ColorFilter.mode(color!, BlendMode.srcIn) : null,
       );
     } else if (mediaSource == MediaSource.network) {
       return SvgPicture.network(
@@ -141,8 +141,7 @@ class AbherImage extends StatelessWidget {
         fit: fit ?? BoxFit.contain,
         width: width,
         height: height,
-        placeholderBuilder: (_) =>
-            const Center(child: CircularProgressIndicator()),
+        placeholderBuilder: (_) => const Center(child: CircularProgressIndicator()),
       );
     }
     return const Icon(Icons.image_not_supported);

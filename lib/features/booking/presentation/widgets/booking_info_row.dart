@@ -3,21 +3,40 @@ import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
 
-/// A reusable info row with icon + label + value for summary cards.
 class BookingInfoRow extends StatelessWidget {
-  final IconData icon;
   final String label;
   final String value;
+  final IconData? icon;
+  final TextStyle? valueStyle;
 
   const BookingInfoRow({
     super.key,
-    required this.icon,
+    this.icon,
     required this.label,
     required this.value,
+    this.valueStyle,
   });
 
   @override
   Widget build(BuildContext context) {
+    final content = Row(
+      children: [
+        Expanded(
+          child: Text(
+            label,
+            style: AppStyles.s14Medium.withColor(AppColors.grey500),
+          ),
+        ),
+        12.pw,
+        Text(
+          value,
+          style: valueStyle ?? AppStyles.s14Bold.withColor(AppColors.textPrimary),
+        ),
+      ],
+    );
+
+    if (icon == null) return content;
+
     return Row(
       children: [
         Container(
@@ -30,19 +49,18 @@ class BookingInfoRow extends StatelessWidget {
           child: Icon(icon, size: 18, color: AppColors.stitchPrimary),
         ),
         12.pw,
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              label,
-              style: AppStyles.s12Medium.withColor(AppColors.grey500),
-            ),
-            2.ph,
-            Text(
-              value,
-              style: AppStyles.s14Bold.withColor(AppColors.textPrimary),
-            ),
-          ],
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(label, style: AppStyles.s12Medium.withColor(AppColors.grey500)),
+              2.ph,
+              Text(
+                value,
+                style: valueStyle ?? AppStyles.s14Bold.withColor(AppColors.textPrimary),
+              ),
+            ],
+          ),
         ),
       ],
     );

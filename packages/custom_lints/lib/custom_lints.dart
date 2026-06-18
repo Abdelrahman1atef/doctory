@@ -26,7 +26,7 @@ class _AvoidHardcodedTrKeys extends DartLintRule {
   @override
   void run(
       CustomLintResolver resolver,
-      ErrorReporter reporter,
+      DiagnosticReporter reporter,
       CustomLintContext context,
       ) {    context.registry.addMethodInvocation((node) {
       if (node.methodName.name != 'tr') return;

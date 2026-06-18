@@ -1,10 +1,8 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../core/locator/service_locator.dart';
 import '../../cubit/chat_room/chat_room_cubit.dart';
 import '../../cubit/chat_room/chat_room_states.dart';
 import '../../data/model/message_model.dart';
@@ -147,12 +145,6 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
     }
   }
 
-  void _handleSend(BuildContext context) {
-    final content = _messageController.text.trim();
-    context.read<ChatRoomCubit>().sendMessage(content);
-    _messageController.clear();
-  }
-
   void _scrollToMessage(String messageId, List<MessageModel> messages) {
     final index = messages.indexWhere((m) => m.id == messageId);
     if (index != -1) {
@@ -275,7 +267,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
                 width: 56,
                 height: 56,
                 fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) =>
+                errorBuilder: (_, _, _) =>
                     Container(
                       width: 56,
                       height: 56,
@@ -418,7 +410,6 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
       },
       builder: (context, state) {
         final hasMedia = state is ChatRoomLoaded && state.uploadedFileName != null;
-        final isUploading = state is ChatRoomLoaded && state.isUploadingMedia;
         final showSend = _hasText || hasMedia;
 
         return MessageInputWidget(
@@ -434,58 +425,4 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
     );
   }
 
-  void _showMediaOptions(BuildContext context) {
-    final cubit = context.read<ChatRoomCubit>();
-    showModalBottomSheet(
-      context: context,
-      builder: (ctx) =>
-          SafeArea(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.image),
-                  title: const Text('صورة من المعرض'),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    cubit.pickMedia(isVideo: false);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.camera_alt),
-                  title: const Text('صورة من الكاميرا'),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    cubit.pickMedia(isVideo: false, fromCamera: true);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.videocam),
-                  title: const Text('فيديو من المعرض'),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    cubit.pickMedia(isVideo: true);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.video_call),
-                  title: const Text('فيديو من الكاميرا'),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    cubit.pickMedia(isVideo: true, fromCamera: true);
-                  },
-                ),
-                ListTile(
-                  leading: const Icon(Icons.insert_drive_file),
-                  title: const Text('ملف'),
-                  onTap: () {
-                    Navigator.pop(ctx);
-                    cubit.pickFile();
-                  },
-                ),
-              ],
-            ),
-          ),
-    );
-  }
 }

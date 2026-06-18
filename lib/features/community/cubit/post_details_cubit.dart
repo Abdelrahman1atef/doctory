@@ -3,8 +3,6 @@ import 'package:doctory/features/community/data/model/community_models.dart';
 import 'package:doctory/features/community/data/repo/community_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../core/network/interfaces/api_result.dart';
-
 class PostDetailsCubit extends Cubit<PostDetailsStates> {
   final CommunityRepo _communityRepo;
 

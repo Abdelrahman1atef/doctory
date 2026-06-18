@@ -10,7 +10,6 @@ import 'dart:io';
 import '../../../../core/session/user_session.dart';
 import 'chat_room_states.dart';
 import 'package:file_picker/file_picker.dart' as file_picker;
-import 'package:easy_localization/easy_localization.dart';
 
 class ChatRoomCubit extends Cubit<ChatRoomState> {
   final ChatRepo chatRepo;

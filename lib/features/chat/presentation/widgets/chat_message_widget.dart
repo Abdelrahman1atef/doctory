@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cached_network_image/cached_network_image.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/theme/app_typography.dart';
-import '../../../../core/utils/extensions.dart';
 import '../../data/model/message_model.dart';
 import '../../../../core/session/user_session.dart';
 import '../../cubit/chat_room/chat_room_cubit.dart';
@@ -147,7 +144,6 @@ class ChatMessageWidget extends StatelessWidget {
         ),
       );
     }
-    return const SizedBox.shrink();
   }
 
   String _formatTime(DateTime date) =>

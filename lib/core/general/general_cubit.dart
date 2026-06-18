@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import '../theme/theme_manager.dart';
@@ -10,7 +11,7 @@ class GeneralCubit extends Cubit<GeneralState> {
     _monitorConnectivity();
   }
 
-  static GeneralCubit get(context) => BlocProvider.of(context);
+  static GeneralCubit get(BuildContext context) => BlocProvider.of(context);
 
   StreamSubscription<InternetStatus>? _connectivitySubscription;
   bool _isConnected = true;

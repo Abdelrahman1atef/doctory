@@ -5,7 +5,7 @@ import 'package:share_plus/share_plus.dart';
 class ShareHelper {
   static Future<void> shareApp() async {
     const String androidAppId = 'com.masader.Abhr';
-    // TODO: Add iOS App ID when available
+    // TODO(dev): Add iOS App ID when available
     const String playStoreUrl =
         'https://play.google.com/store/apps/details?id=$androidAppId';
 

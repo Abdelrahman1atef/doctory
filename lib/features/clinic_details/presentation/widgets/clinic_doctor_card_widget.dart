@@ -33,7 +33,7 @@ class ClinicDoctorCardWidget extends StatelessWidget {
             CircleAvatar(
               radius: 40,
               backgroundImage: NetworkImage(doctor.imageUrl?.toImageUrl ?? ''),
-              onBackgroundImageError: (_, __) {},
+              onBackgroundImageError: (_, _) {},
               backgroundColor: AppColors.stitchSurfaceLow,
               child: doctor.imageUrl == null
                   ? const Icon(Icons.person, color: AppColors.stitchSecondary)

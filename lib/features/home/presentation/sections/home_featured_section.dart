@@ -20,10 +20,10 @@ class HomeFeaturedSection extends StatelessWidget {
       doctors: doctors,
       clinics: clinics,
       onSeeAllClinics: () {
-        // TODO: Navigate to all clinics
+        // TODO(dev): Navigate to all clinics
       },
       onSeeAllDoctors: () {
-        // TODO: Navigate to all doctors
+        // TODO(dev): Navigate to all doctors
       },
     );
   }

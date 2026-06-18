@@ -11,7 +11,6 @@ import 'unread_badge_widget.dart';
 import '../../../../core/session/user_session.dart';
 
 import '../../../../core/app_strings/locale_keys.dart';
-import 'package:easy_localization/easy_localization.dart';
 
 class ConversationItemWidget extends StatelessWidget {
   final ConversationModel conversation;

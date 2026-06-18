@@ -518,10 +518,10 @@ extension LayoutExtensions on Widget {
   }
 
   /// add Expanded to parent widget
-  Widget expand({flex = 1}) => Expanded(flex: flex, child: this);
+  Widget expand({int flex = 1}) => Expanded(flex: flex, child: this);
 
   /// add Flexible to parent widget
-  Widget flexible({flex = 1, FlexFit? fit, bool buildWhen = true}) {
+  Widget flexible({int flex = 1, FlexFit? fit, bool buildWhen = true}) {
     return buildWhen
         ? Flexible(flex: flex, fit: fit ?? FlexFit.loose, child: this)
         : this;

@@ -6,7 +6,7 @@ import '../utils/general_constants.dart';
 import '../locator/service_locator.dart';
 import '../services/chat/chat_realtime_service.dart';
 
-// TODO: Resolve missing feature models or move them to core if they are shared
+// TODO(dev): Resolve missing feature models or move them to core if they are shared
 // import '../../features/auth/data/models/response/user_model.dart';
 // import '../../features/splash/data/models/settings_model.dart';
 

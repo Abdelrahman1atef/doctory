@@ -2,12 +2,12 @@ import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 
-/// Styled text field for booking form inputs.
-class BookingTextField extends StatelessWidget {
+class BookingTextField extends StatefulWidget {
   final String label;
   final IconData icon;
   final int maxLines;
   final TextInputType? keyboardType;
+  final String? initialValue;
   final ValueChanged<String> onChanged;
 
   const BookingTextField({
@@ -16,29 +16,56 @@ class BookingTextField extends StatelessWidget {
     required this.icon,
     this.maxLines = 1,
     this.keyboardType,
+    this.initialValue,
     required this.onChanged,
   });
 
   @override
+  State<BookingTextField> createState() => _BookingTextFieldState();
+}
+
+class _BookingTextFieldState extends State<BookingTextField> {
+  late TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialValue ?? '');
+  }
+
+  @override
+  void didUpdateWidget(BookingTextField oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.initialValue != oldWidget.initialValue &&
+        widget.initialValue != _controller.text) {
+      _controller.text = widget.initialValue ?? '';
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return TextField(
-      onChanged: onChanged,
-      maxLines: maxLines,
-      keyboardType: keyboardType,
+      controller: _controller,
+      onChanged: widget.onChanged,
+      maxLines: widget.maxLines,
+      keyboardType: widget.keyboardType,
       style: AppStyles.s14Medium.withColor(AppColors.textPrimary),
       decoration: InputDecoration(
-        labelText: label,
+        labelText: widget.label,
         labelStyle: AppStyles.s14Medium.withColor(AppColors.grey500),
         prefixIcon: Padding(
-          padding: EdgeInsets.only(bottom: maxLines > 1 ? 40 : 0),
-          child: Icon(icon, color: AppColors.stitchSecondary, size: 20),
+          padding: EdgeInsets.only(bottom: widget.maxLines > 1 ? 40 : 0),
+          child: Icon(widget.icon, color: AppColors.stitchSecondary, size: 20),
         ),
         filled: true,
         fillColor: AppColors.stitchSurfaceLowest,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 16,
-          vertical: 14,
-        ),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
           borderSide: const BorderSide(color: AppColors.grey200),
@@ -49,10 +76,7 @@ class BookingTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: const BorderSide(
-            color: AppColors.stitchPrimary,
-            width: 1.5,
-          ),
+          borderSide: const BorderSide(color: AppColors.stitchPrimary, width: 1.5),
         ),
       ),
     );

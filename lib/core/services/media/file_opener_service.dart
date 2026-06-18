@@ -1,5 +1,6 @@
-import 'package:doctory/core/services/alerts.dart';
+import 'dart:developer';
 import 'dart:io';
+import 'package:doctory/core/services/alerts.dart';
 import 'package:dio/dio.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
@@ -26,7 +27,7 @@ class FileOpenerService {
     } catch (e) {
       SmartDialog.dismiss();
       Alerts.showToast("حدث خطأ أثناء فتح الملف");
-      print('Error opening file: $e');
+      log('Error opening file: $e');
     }
   }
 }

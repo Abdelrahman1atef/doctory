@@ -1,4 +1,3 @@
-import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/community/data/model/community_models.dart';
 import 'package:doctory/features/community/presentation/widgets/reaction_button_content_widget.dart';
 import 'package:easy_localization/easy_localization.dart';

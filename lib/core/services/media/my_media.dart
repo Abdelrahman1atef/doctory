@@ -40,7 +40,7 @@ class MediaService {
       );
       return image != null ? File(image.path) : null;
     } catch (e) {
-      print('Error picking image from gallery: $e');
+      log('Error picking image from gallery: $e');
       final permissionGranted = await _handlePermission(Permission.photos);
       if (permissionGranted) {
         return pickImageFromGallery();
@@ -59,7 +59,7 @@ class MediaService {
       );
       return image != null ? File(image.path) : null;
     } catch (e) {
-      print('Error picking image from camera: $e');
+      log('Error picking image from camera: $e');
       final permissionGranted = await _handlePermission(Permission.camera);
       if (permissionGranted) {
         return pickImageFromCamera();
@@ -79,7 +79,7 @@ class MediaService {
       }
       return null;
     } catch (e) {
-      print('Error picking files: $e');
+      log('Error picking files: $e');
       final permissionGranted = await _handlePermission(Permission.storage);
       if (permissionGranted) {
         return pickFiles(allowMultiple: allowMultiple);

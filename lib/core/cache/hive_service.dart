@@ -1,5 +1,6 @@
-import 'package:hive_flutter/hive_flutter.dart';
+import 'dart:developer';
 import 'dart:io';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:path_provider/path_provider.dart';
 
 class HiveService {
@@ -25,7 +26,9 @@ class HiveService {
             '1',
             hiveDir.path,
           ]);
-        } catch (e) {}
+        } catch (e) {
+          log('HiveService.init iOS xattr error: $e');
+        }
       }
     }
   }
@@ -66,23 +69,23 @@ class HiveService {
         await box.close();
       }
     } catch (e) {
-      print('Hive closeBox error: $e');
+      log('Hive closeBox error: $e');
     }
   }
 
   Future<void> logBoxKeys(String boxName) async {
     final box = await openBox(boxName);
-    print('Hive box [$boxName] keys:');
+    log('Hive box [$boxName] keys:');
     for (var key in box.keys) {
-      print(' - $key');
+      log(' - $key');
     }
   }
 
   Future<void> logBoxData(String boxName) async {
     final box = await openBox(boxName);
-    print('Hive box [$boxName] data:');
+    log('Hive box [$boxName] data:');
     for (var key in box.keys) {
-      print(' - $key: ${box.get(key)}');
+      log(' - $key: ${box.get(key)}');
     }
   }
 }

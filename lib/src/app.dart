@@ -1,4 +1,3 @@
-import 'package:doctory/core/services/alerts.dart';
 import 'package:doctory/core/router/app_router.dart';
 import 'package:doctory/core/common/widgets/layout/abher_responsive_wrapper.dart';
 import 'package:doctory/core/theme/theme_manager.dart';

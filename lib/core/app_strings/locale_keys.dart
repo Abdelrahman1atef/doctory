@@ -504,4 +504,11 @@ abstract class LocaleKeys {
   static const voice = 'voice';
   static const press_back_again_to_exit = 'press_back_again_to_exit';
   static const booking_step_format = 'booking_step_format';
+  static const choose_appointment_type = 'choose_appointment_type';
+  static const in_person_desc = 'in_person_desc';
+  static const online_desc = 'online_desc';
+  static const follow_up_desc = 'follow_up_desc';
+  static const enter_patient_details = 'enter_patient_details';
+  static const payment_processed = 'payment_processed';
+  static const confirm_payment_to_finish = 'confirm_payment_to_finish';
 }

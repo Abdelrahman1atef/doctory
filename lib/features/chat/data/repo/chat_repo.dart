@@ -1,5 +1,4 @@
 import '../../../../../core/network/interfaces/api_result.dart';
-import '../../../../../core/error/failures.dart';
 import '../model/chat_media_attachment.dart';
 import '../model/conversation_model.dart';
 import '../model/message_model.dart';

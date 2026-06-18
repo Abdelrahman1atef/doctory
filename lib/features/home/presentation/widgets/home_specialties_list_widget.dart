@@ -49,7 +49,7 @@ class HomeSpecialtiesListWidget extends StatelessWidget {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: specialties.length,
-            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            separatorBuilder: (_, _) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
               final specialty = specialties[index];
               return SpecialtyItemWidget(

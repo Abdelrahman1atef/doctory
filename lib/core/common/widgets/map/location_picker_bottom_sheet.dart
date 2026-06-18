@@ -95,7 +95,7 @@ class _LocationPickerBottomSheetState extends State<LocationPickerBottomSheet> {
       initialChildSize: 0.92,
       maxChildSize: 0.95,
       minChildSize: 0.6,
-      builder: (_, __) {
+      builder: (_, _) {
         return Container(
           decoration: const BoxDecoration(
             color: Colors.white,

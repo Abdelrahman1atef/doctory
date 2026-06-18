@@ -37,8 +37,8 @@ class HomeContentSection extends StatelessWidget {
 
           if (state is HomeSuccessState) {
             final hasFeaturedData =
-                (state.recommendedDoctors != null && state.recommendedDoctors!.isNotEmpty) ||
-                (state.featuredClinics != null && state.featuredClinics!.isNotEmpty);
+                state.recommendedDoctors.isNotEmpty ||
+                state.featuredClinics.isNotEmpty;
 
             return SingleChildScrollView(
               physics: const AlwaysScrollableScrollPhysics(),

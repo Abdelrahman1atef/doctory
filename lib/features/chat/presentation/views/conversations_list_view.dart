@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../core/locator/service_locator.dart';
 import '../../../../core/session/user_session.dart';
 import '../../../../core/common/widgets/layout/custom_appbar.dart';
 import '../../../../core/common/widgets/layout/abher_empty_state.dart';
@@ -39,7 +38,7 @@ class ConversationsListBodySection extends StatelessWidget {
 }
 
 class _NewChatFAB extends StatelessWidget {
-  const _NewChatFAB({super.key});
+  const _NewChatFAB();
 
   @override
   Widget build(BuildContext context) {
