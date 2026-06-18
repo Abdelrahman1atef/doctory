@@ -152,7 +152,6 @@ class BookingCubit extends Cubit<BookingState> {
 
   Future<void> fetchAvailableSlots(DateTime date) async {
     final data = _data;
-    if (data.isSlotsLoading) return;
 
     emit(BookingData(
       doctor: data.doctor,
@@ -555,7 +554,7 @@ class BookingCubit extends Cubit<BookingState> {
 
   void retrySlotFetch() {
     final data = _data;
-    if (data.selectedDate != null) {
+    if (data.selectedDate != null && !data.isSlotsLoading) {
       fetchAvailableSlots(data.selectedDate!);
     }
   }
