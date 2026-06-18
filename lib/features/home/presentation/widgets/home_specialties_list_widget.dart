@@ -22,23 +22,26 @@ class HomeSpecialtiesListWidget extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              context.l10n('specialties'),
-              style: AppStyles.s16Bold.copyWith(color: AppColors.textPrimary),
-            ),
-            TextButton(
-              onPressed: onSeeAll,
-              child: Text(
-                context.l10n('see_all'),
-                style: AppStyles.s14Medium.copyWith(
-                  color: AppColors.stitchPrimary,
+        Padding(
+          padding: const EdgeInsetsDirectional.symmetric(horizontal: 16).copyWith(top: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                context.l10n('specialties'),
+                style: AppStyles.s16Bold.copyWith(color: AppColors.textPrimary),
+              ),
+              TextButton(
+                onPressed: onSeeAll,
+                child: Text(
+                  context.l10n('see_all'),
+                  style: AppStyles.s14Medium.copyWith(
+                    color: AppColors.stitchPrimary,
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         const SizedBox(height: 8),
         SizedBox(

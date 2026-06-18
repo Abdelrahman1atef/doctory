@@ -1,10 +1,12 @@
 import 'package:doctory/core/app_strings/locale_keys.dart';
 import 'package:doctory/core/common/models/shared_models.dart';
+import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class DoctorProfileSection extends StatelessWidget {
   final DoctorModel doctor;
@@ -48,6 +50,33 @@ class DoctorProfileSection extends StatelessWidget {
         Text(
           doctor.displaySpecialty,
           style: AppStyles.s16Medium.withColor(AppColors.stitchSecondary),
+        ),
+        8.ph,
+        GestureDetector(
+          onTap: () => context.push(
+            AppRoutes.patientReviews,
+            extra: doctor,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.star_rounded, color: Colors.amber, size: 20),
+              4.pw,
+              Text(
+                doctor.rating.toString(),
+                style: AppStyles.s14Bold.withColor(
+                  AppColors.stitchSecondary,
+                ),
+              ),
+              8.pw,
+              Text(
+                '(${doctor.reviewsCount} ${'reviews'.tr()})',
+                style: AppStyles.s14Medium
+                    .withColor(AppColors.stitchSecondary)
+                    .underline(),
+              ),
+            ],
+          ),
         ),
         24.ph,
         // Stats Row

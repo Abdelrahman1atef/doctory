@@ -48,6 +48,8 @@ class _SpecializationsViewState extends State<SpecializationsView> {
       appBar: AppBar(
         title: Text('specialties'.tr(), style: AppStyles.s20SemiBold.withColor(AppColors.textPrimary),),
         centerTitle: true,
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
         leading: IconButton(
@@ -130,7 +132,7 @@ class _SpecialtyItemWidget extends StatelessWidget {
             color: AppColors.stitchPrimaryContainer.withValues(alpha: 0.1),
             borderRadius: BorderRadius.circular(10),
           ),
-          child: CachedNetworkImage(imageUrl: specialty.iconUrl??""),
+          child: CachedNetworkImage(imageUrl: specialty.iconUrl??"",errorWidget: (context, url, error) => const Icon(Icons.medical_services_outlined),),
         ),
         title: Text(
          (context.locale.languageCode=="ar"?specialty.nameAr: specialty.name)??"",
