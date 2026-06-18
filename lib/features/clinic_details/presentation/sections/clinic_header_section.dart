@@ -1,9 +1,11 @@
 import 'package:doctory/core/common/models/shared_models.dart';
+import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 class ClinicHeaderSection extends StatelessWidget {
   final ClinicModel clinic;
@@ -38,11 +40,14 @@ class ClinicHeaderSection extends StatelessWidget {
                     ),
                   ),
                   8.pw,
-                  Text(
-                    '(${clinic.reviewsCount} ${'reviews'.tr()})',
-                    style: AppStyles.s14Medium
-                        .withColor(AppColors.stitchSecondary)
-                        .underline(),
+                  GestureDetector(
+                    onTap: () => context.push(AppRoutes.patientReviews,extra: clinic,),
+                    child: Text(
+                      '(${clinic.reviewsCount} ${'reviews'.tr()})',
+                      style: AppStyles.s14Medium
+                          .withColor(AppColors.stitchSecondary)
+                          .underline(),
+                    ),
                   ),
                 ],
               ),

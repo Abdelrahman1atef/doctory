@@ -52,18 +52,19 @@ class DoctorProfileSection extends StatelessWidget {
         24.ph,
         // Stats Row
         Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            _buildStatCard(
-              'patients'.tr(),
-              '${doctor.patientsCount ?? 0}+',
-              Icons.people_outline,
-            ),
+            // _buildStatCard(
+            //   'patients'.tr(),
+            //   '${doctor.patientsCount ?? 0}+',
+            //   Icons.people_outline,
+            // ),
             _buildStatCard(
               'experience'.tr(),
               '${doctor.experience ?? 0} ${'years'.tr()}',
               Icons.work_outline,
             ),
+            20.pw,
             _buildStatCard(
               LocaleKeys.rating.tr(),
               doctor.rating.toString(),

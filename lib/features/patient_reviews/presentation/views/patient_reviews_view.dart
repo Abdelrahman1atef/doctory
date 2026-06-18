@@ -133,7 +133,7 @@ class PatientReviewsView extends StatelessWidget {
             ),
             // Write Review Button
             Container(
-              padding: const EdgeInsets.all(16),
+              padding: const EdgeInsets.all(16).copyWith(bottom: MediaQuery.paddingOf(context).bottom),
               decoration: BoxDecoration(
                 color: AppColors.stitchSurfaceLowest,
                 boxShadow: [
