@@ -698,5 +698,19 @@
   "appointment": "Appointment",
   "details": "Details",
   "review_step": "Review",
-  "confirmation": "Confirmation"
+  "confirmation": "Confirmation",
+  "my_appointments": "My Appointments",
+  "current": "Current",
+  "last": "Last",
+  "canceled": "Canceled",
+  "no_appointments": "No appointments yet",
+  "booking_ref": "Booking Ref",
+  "confirmed": "Confirmed",
+  "pending": "Pending",
+  "completed": "Completed",
+  "cancelled": "Cancelled",
+  "appointment_details": "Appointment Details",
+  "cancel_appointment": "Cancel Appointment",
+  "cancel_confirm_message": "Are you sure you want to cancel this appointment?",
+  "appointment_cancelled": "Appointment cancelled successfully"
 }

@@ -693,5 +693,19 @@
   "appointment": "الموعد",
   "details": "التفاصيل",
   "review_step": "المراجعة",
-  "confirmation": "التأكيد"
+  "confirmation": "التأكيد",
+  "my_appointments": "مواعيدي",
+  "current": "الحالية",
+  "last": "السابقة",
+  "canceled": "الملغية",
+  "no_appointments": "لا توجد مواعيد حتى الآن",
+  "booking_ref": "رقم الحجز",
+  "confirmed": "مؤكد",
+  "pending": "قيد الانتظار",
+  "completed": "مكتمل",
+  "cancelled": "ملغي",
+  "appointment_details": "تفاصيل الموعد",
+  "cancel_appointment": "إلغاء الموعد",
+  "cancel_confirm_message": "هل أنت متأكد من إلغاء هذا الموعد؟",
+  "appointment_cancelled": "تم إلغاء الموعد بنجاح"
 }

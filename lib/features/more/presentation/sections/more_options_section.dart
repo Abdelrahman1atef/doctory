@@ -48,6 +48,15 @@ class MoreOptionsSection extends StatelessWidget {
                     },
                   ),
                   12.ph,
+                  12.ph,
+                  MoreOptionItem(
+                    title: 'my_appointments'.tr(),
+                    icon: Icons.calendar_month_outlined,
+                    onTap: () {
+                      context.push(AppRoutes.myAppointments);
+                    },
+                  ),
+                  12.ph,
                   MoreOptionItem(
                     title: 'الرسائل',
                     icon: Icons.chat_bubble_outline_rounded,

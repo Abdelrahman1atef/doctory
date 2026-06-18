@@ -23,6 +23,7 @@ import 'package:doctory/features/create_post/di/create_post_di.dart';
 import 'package:doctory/features/chat/di/chat_di.dart';
 import 'package:doctory/features/booking/di/booking_di.dart';
 import 'package:doctory/features/specializations/di/specializations_di.dart';
+import 'package:doctory/features/my_appointments/di/my_appointments_di.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
@@ -89,5 +90,6 @@ class ServiceLocator {
     setupChatDI(sl);
     setupBookingDI(sl);
     setupSpecializationsLocator();
+    setupMyAppointmentsDI(sl);
   }
 }
