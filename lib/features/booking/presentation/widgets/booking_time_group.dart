@@ -3,6 +3,7 @@ import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/booking/presentation/widgets/booking_time_slot_chip.dart';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 /// A group of time slots under a category label (Morning/Afternoon/Evening).
@@ -43,7 +44,7 @@ class BookingTimeGroup extends StatelessWidget {
             ),
             8.pw,
             Text(
-              '(${slots.where((s) => s.isAvailable).length} available)',
+              '(${'x_available'.tr(args: [slots.where((s) => s.isAvailable).length.toString()])})',
               style: AppStyles.s12Medium.withColor(AppColors.grey500),
             ),
           ],

@@ -1,6 +1,7 @@
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class BookingTextField extends StatefulWidget {
   final String label;
@@ -9,6 +10,7 @@ class BookingTextField extends StatefulWidget {
   final TextInputType? keyboardType;
   final String? initialValue;
   final ValueChanged<String> onChanged;
+  final List<TextInputFormatter>? inputFormatters;
 
   const BookingTextField({
     super.key,
@@ -18,6 +20,7 @@ class BookingTextField extends StatefulWidget {
     this.keyboardType,
     this.initialValue,
     required this.onChanged,
+    this.inputFormatters,
   });
 
   @override
@@ -55,6 +58,7 @@ class _BookingTextFieldState extends State<BookingTextField> {
       onChanged: widget.onChanged,
       maxLines: widget.maxLines,
       keyboardType: widget.keyboardType,
+      inputFormatters: widget.inputFormatters,
       style: AppStyles.s14Medium.withColor(AppColors.textPrimary),
       decoration: InputDecoration(
         labelText: widget.label,

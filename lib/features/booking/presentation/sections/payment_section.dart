@@ -22,7 +22,7 @@ class PaymentSection extends StatelessWidget {
         final reservation = state.reservation;
         if (reservation == null) return const SizedBox.shrink();
 
-        final timeLeft = reservation.expiresAt.difference(DateTime.now());
+        final timeLeft = reservation.expiresAt?.difference(DateTime.now()) ?? Duration.zero;
 
         return SingleChildScrollView(
           padding: const EdgeInsets.all(16),

@@ -38,7 +38,7 @@ class ReviewBookingSection extends StatelessWidget {
                 selectedDate: state.selectedDate!,
                 selectedTime: state.selectedTime!,
                 consultationFee: state.reservation?.amount ?? 150.0,
-                currency: state.reservation?.currency ?? 'SAR',
+                currency: state.reservation?.currency ?? 'EGP',
                 appointmentType: state.appointmentType.value,
                 patientName: state.patientName,
                 patientPhone: state.patientPhone,

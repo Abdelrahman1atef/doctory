@@ -112,13 +112,13 @@ class BookingSummaryCard extends StatelessWidget {
           BookingInfoRow(
             icon: Icons.calendar_month_rounded,
             label: 'date'.tr(),
-            value: DateFormat('EEEE, MMM d, yyyy').format(selectedDate),
+            value: DateFormat('EEEE, MMM d, yyyy', context.locale.toLanguageTag()).format(selectedDate),
           ),
           12.ph,
           BookingInfoRow(
             icon: Icons.schedule_rounded,
             label: 'time'.tr(),
-            value: DateFormat('hh:mm a').format(selectedTime.startTime),
+            value: DateFormat('hh:mm a', context.locale.toLanguageTag()).format(selectedTime.startTime),
           ),
           12.ph,
           BookingInfoRow(
@@ -130,7 +130,7 @@ class BookingSummaryCard extends StatelessWidget {
           BookingInfoRow(
             icon: Icons.payments_rounded,
             label: 'consultation_fee'.tr(),
-            value: '$currency ${consultationFee.toStringAsFixed(0)}',
+            value: '${'currency_egp'.tr()} ${consultationFee.toStringAsFixed(0)}',
           ),
           20.ph,
           Container(

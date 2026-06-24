@@ -27,12 +27,12 @@ class BookingPaymentSummary extends StatelessWidget {
         children: [
           BookingInfoRow(
             label: 'consultation_fee'.tr(),
-            value: '${amount.toStringAsFixed(0)} $currency',
+            value: '${amount.toStringAsFixed(0)} ${'currency_egp'.tr()}',
           ),
           const Divider(height: 24),
           BookingInfoRow(
             label: 'total'.tr(),
-            value: '${amount.toStringAsFixed(0)} $currency',
+            value: '${amount.toStringAsFixed(0)} ${'currency_egp'.tr()}',
             valueStyle: AppStyles.s18Bold.withColor(AppColors.stitchPrimary),
           ),
         ],

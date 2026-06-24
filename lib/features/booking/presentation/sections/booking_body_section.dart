@@ -1,3 +1,4 @@
+import 'package:doctory/core/services/alerts.dart';
 import 'package:doctory/features/booking/cubit/booking_cubit.dart';
 import 'package:doctory/features/booking/cubit/booking_state.dart';
 import 'package:doctory/features/booking/domain/enums/booking_step.dart';
@@ -25,9 +26,7 @@ class BookingBodySection extends StatelessWidget {
           (prev is! BookingData || prev.submissionError != curr.submissionError),
       listener: (context, state) {
         if (state is BookingData && state.submissionError != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.submissionError!)),
-          );
+          Alerts.snack(text: state.submissionError!, state: SnackState.failed);
         }
       },
       child: BlocBuilder<BookingCubit, BookingState>(

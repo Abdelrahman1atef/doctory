@@ -10,7 +10,7 @@ class BookingConfigEntity {
 
   const BookingConfigEntity({
     this.consultationFee = 150.0,
-    this.currency = 'SAR',
+    this.currency = 'EGP',
     this.slotDurationMinutes = 30,
     this.maxFutureDays = 30,
     this.reservationTtlMinutes = 10,

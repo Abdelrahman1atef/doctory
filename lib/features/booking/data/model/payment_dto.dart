@@ -54,7 +54,7 @@ class PaymentResponseDto {
         paymentId: json['paymentId']?.toString() ?? '',
         reservationId: json['reservationId']?.toString() ?? '',
         amount: (json['amount'] ?? 0).toDouble(),
-        currency: json['currency'] ?? 'SAR',
+        currency: json['currency'] ?? 'EGP',
         status: json['status'] ?? 'pending',
         transactionId: json['transactionId']?.toString(),
         redirectUrl: json['redirectUrl']?.toString(),

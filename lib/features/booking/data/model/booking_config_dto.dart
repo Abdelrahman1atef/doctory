@@ -10,7 +10,7 @@ class BookingConfigDto {
 
   const BookingConfigDto({
     this.consultationFee = 150.0,
-    this.currency = 'SAR',
+    this.currency = 'EGP',
     this.slotDurationMinutes = 30,
     this.maxFutureDays = 30,
     this.reservationTtlMinutes = 10,
@@ -22,7 +22,7 @@ class BookingConfigDto {
   factory BookingConfigDto.fromJson(Map<String, dynamic> json) =>
       BookingConfigDto(
         consultationFee: (json['consultationFee'] as num?)?.toDouble() ?? 150.0,
-        currency: json['currency'] ?? 'SAR',
+        currency: json['currency'] ?? 'EGP',
         slotDurationMinutes: json['slotDurationMinutes'] as int? ?? 30,
         maxFutureDays: json['maxFutureDays'] as int? ?? 30,
         reservationTtlMinutes: json['reservationTtlMinutes'] as int? ?? 10,

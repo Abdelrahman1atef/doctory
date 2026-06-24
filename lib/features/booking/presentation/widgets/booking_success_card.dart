@@ -140,14 +140,14 @@ class BookingSuccessCard extends StatelessWidget {
               Expanded(
                 child: _DetailChip(
                   icon: Icons.calendar_month_rounded,
-                  value: DateFormat('MMM d, yyyy').format(selectedDate),
+                  value: DateFormat('MMM d, yyyy', context.locale.toLanguageTag()).format(selectedDate),
                 ),
               ),
               12.pw,
               Expanded(
                 child: _DetailChip(
                   icon: Icons.schedule_rounded,
-                  value: DateFormat('hh:mm a').format(selectedTime.startTime),
+                  value: DateFormat('hh:mm a', context.locale.toLanguageTag()).format(selectedTime.startTime),
                 ),
               ),
             ],

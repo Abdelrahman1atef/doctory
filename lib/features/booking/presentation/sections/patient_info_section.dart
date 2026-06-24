@@ -6,6 +6,7 @@ import 'package:doctory/features/booking/presentation/widgets/booking_section_he
 import 'package:doctory/features/booking/presentation/widgets/booking_text_field.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PatientInfoSection extends StatelessWidget {
@@ -45,6 +46,11 @@ class PatientInfoSection extends StatelessWidget {
                       icon: Icons.calendar_today_outlined,
                       keyboardType: TextInputType.number,
                       initialValue: state.patientAge,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(3),
+                        const _MaxAgeInputFormatter(120),
+                      ],
                       onChanged: (val) => cubit.updatePatientInfo(age: val),
                     ),
                   ),
@@ -89,5 +95,20 @@ class PatientInfoSection extends StatelessWidget {
         );
       },
     );
+  }
+}
+
+class _MaxAgeInputFormatter extends TextInputFormatter {
+  final int max;
+  const _MaxAgeInputFormatter(this.max);
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final age = int.tryParse(newValue.text);
+    if (age != null && age > max) return oldValue;
+    return newValue;
   }
 }

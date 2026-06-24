@@ -51,7 +51,7 @@ class BookingTimeSlotChip extends StatelessWidget {
               : null,
         ),
         child: Text(
-          DateFormat('hh:mm a').format(startTime),
+          DateFormat('hh:mm a', context.locale.toLanguageTag()).format(startTime),
           style: AppStyles.s14Medium.withColor(
             isSelected
                 ? Colors.white

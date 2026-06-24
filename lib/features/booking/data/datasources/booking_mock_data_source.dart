@@ -8,7 +8,7 @@ import '../model/booking_config_dto.dart';
 
 class BookingMockDataSource {
   static const double consultationFee = 150.0;
-  static const String currency = 'SAR';
+  static const String currency = 'EGP';
   static const int reservationTtlMinutes = 10;
 
   final Random _random = Random();

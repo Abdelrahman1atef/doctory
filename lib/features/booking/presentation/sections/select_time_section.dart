@@ -44,7 +44,7 @@ class SelectTimeSection extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               BookingDateHeader(
-                formattedDate: DateFormat('EEEE, MMM d').format(state.selectedDate!),
+                formattedDate: DateFormat('EEEE, MMM d', context.locale.toLanguageTag()).format(state.selectedDate!),
               ),
               const SizedBox(height: 24),
               BookingSectionHeader(

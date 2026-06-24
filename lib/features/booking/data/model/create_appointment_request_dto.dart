@@ -28,8 +28,10 @@ class CreateAppointmentRequestDto {
   });
 
   Map<String, dynamic> toJson() => {
-    'doctorId': doctorId,
-    'clinicId': clinicId,
+    'doctorId': "C2235FDE-3D6D-4C60-98DE-58C7A8F6FA5B",
+    // 'clinicId': clinicId,
+    'clinicId': "716CE65D-B063-4787-95F9-3F98BDF8B34B",
+    // 'clinicId': clinicId,
     'appointmentDate': appointmentDate.toIso8601String(),
     'startTime': startTime,
     'endTime': endTime,
@@ -45,14 +47,14 @@ class CreateAppointmentRequestDto {
 
 class CreateReservationResponseDto {
   final String reservationId;
-  final DateTime expiresAt;
+  final DateTime? expiresAt;
   final String status;
   final double amount;
   final String currency;
 
   const CreateReservationResponseDto({
     required this.reservationId,
-    required this.expiresAt,
+    this.expiresAt,
     required this.status,
     required this.amount,
     required this.currency,
@@ -60,10 +62,10 @@ class CreateReservationResponseDto {
 
   factory CreateReservationResponseDto.fromJson(Map<String, dynamic> json) =>
       CreateReservationResponseDto(
-        reservationId: json['reservationId']?.toString() ?? '',
-        expiresAt: DateTime.parse(json['expiresAt']),
-        status: json['status'] ?? 'pending',
+        reservationId: json['reservationId']?.toString() ?? json['id']?.toString() ?? '',
+        expiresAt: json['expiresAt'] != null ? DateTime.parse(json['expiresAt']) : null,
+        status: (json['status'] ?? 'pending').toString(),
         amount: (json['amount'] ?? 0).toDouble(),
-        currency: json['currency'] ?? 'SAR',
+        currency: json['currency']?.toString() ?? 'EGP',
       );
 }

@@ -1,7 +1,7 @@
 enum AppointmentType {
-  inPerson(1, 'in_person'),
-  online(2, 'online'),
-  followUp(3, 'follow_up');
+  inPerson(0, 'in_person'),
+  followUp(1, 'follow_up'),
+  online(2, 'online');
 
   final int value;
   final String translationKey;

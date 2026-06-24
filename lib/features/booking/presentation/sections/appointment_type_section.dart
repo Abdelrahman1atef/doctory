@@ -35,9 +35,19 @@ class AppointmentTypeSection extends StatelessWidget {
                 icon: Icons.person_outline_rounded,
                 title: 'in_person'.tr(),
                 subtitle: 'in_person_desc'.tr(),
-                isSelected: state.appointmentType.value == 1,
+                isSelected: state.appointmentType.value == 0,
                 onTap: () => cubit.selectAppointmentType(
                   AppointmentType.fromValue(1),
+                ),
+              ),
+              const SizedBox(height: 12),
+              BookingTypeCard(
+                icon: Icons.replay_outlined,
+                title: 'follow_up'.tr(),
+                subtitle: 'follow_up_desc'.tr(),
+                isSelected: state.appointmentType.value == 1,
+                onTap: () => cubit.selectAppointmentType(
+                  AppointmentType.fromValue(3),
                 ),
               ),
               // const SizedBox(height: 12),
@@ -50,16 +60,6 @@ class AppointmentTypeSection extends StatelessWidget {
               //     AppointmentType.fromValue(2),
               //   ),
               // ),
-              const SizedBox(height: 12),
-              BookingTypeCard(
-                icon: Icons.replay_outlined,
-                title: 'follow_up'.tr(),
-                subtitle: 'follow_up_desc'.tr(),
-                isSelected: state.appointmentType.value == 3,
-                onTap: () => cubit.selectAppointmentType(
-                  AppointmentType.fromValue(3),
-                ),
-              ),
             ],
           ),
         );
