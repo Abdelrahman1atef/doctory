@@ -28,6 +28,8 @@ class BookingData extends BookingState {
   final CreateReservationResponseDto? reservation;
   final PaymentResponseDto? payment;
   final PaymentResponseDto? verification;
+  final String? paymentUrl;
+  final String? pendingPaymentId;
   final bool isSubmitting;
   final String? submissionError;
 
@@ -48,6 +50,8 @@ class BookingData extends BookingState {
     this.reservation,
     this.payment,
     this.verification,
+    this.paymentUrl,
+    this.pendingPaymentId,
     this.isSlotsLoading = false,
     this.slotsError,
     this.isSubmitting = false,

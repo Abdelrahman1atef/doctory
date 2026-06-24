@@ -91,9 +91,8 @@ class AppointmentDetailCard extends StatelessWidget {
 
   String _typeLabel(int type) {
     switch (type) {
-      case 1: return 'in_person'.tr();
-      case 2: return 'online'.tr();
-      case 3: return 'follow_up'.tr();
+      case 0: return 'in_person'.tr();
+      case 1: return 'follow_up'.tr();
       default: return '';
     }
   }

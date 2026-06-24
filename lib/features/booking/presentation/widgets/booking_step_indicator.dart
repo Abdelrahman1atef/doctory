@@ -34,75 +34,61 @@ class BookingStepIndicator extends StatelessWidget {
     final currentIdx = _currentGroupIndex;
     final totalSteps = _stepGroups.length;
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16).copyWith(top: MediaQuery.paddingOf(context).top+20),
-      decoration: BoxDecoration(
-        color: AppColors.stitchSurface,
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.05),
-            offset: const Offset(0, -4),
-            blurRadius: 10,
-          ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: Text.rich(
-              TextSpan(
-                text: 'booking_step_format'.tr(args: [
-                  (currentIdx + 1).toString(),
-                  totalSteps.toString(),
-                ]),
-                style: AppStyles.s14Medium.withColor(AppColors.grey600),
-                children: [
-                  TextSpan(
-                    text: ': ${_stepGroups[currentIdx].labelKey.tr()}',
-                    style: AppStyles.s14Bold.withColor(AppColors.stitchPrimary),
-                  ),
-                ],
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: Text.rich(
+            TextSpan(
+              text: 'booking_step_format'.tr(args: [
+                (currentIdx + 1).toString(),
+                totalSteps.toString(),
+              ]),
+              style: AppStyles.s14Medium.withColor(AppColors.grey600),
+              children: [
+                TextSpan(
+                  text: ': ${_stepGroups[currentIdx].labelKey.tr()}',
+                  style: AppStyles.s14Bold.withColor(AppColors.stitchPrimary),
+                ),
+              ],
             ),
           ),
-          const SizedBox(height: 12),
-          Row(
-            children: List.generate(totalSteps, (index) {
-              final isActive = index <= currentIdx;
-              return Expanded(
-                child: Container(
-                  height: 6,
-                  margin: EdgeInsetsDirectional.only(
-                    end: index == totalSteps - 1 ? 0 : 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isActive ? AppColors.stitchPrimary : AppColors.grey200,
-                    borderRadius: BorderRadius.circular(10),
-                  ),
+        ),
+        const SizedBox(height: 12),
+        Row(
+          children: List.generate(totalSteps, (index) {
+            final isActive = index <= currentIdx;
+            return Expanded(
+              child: Container(
+                height: 6,
+                margin: EdgeInsetsDirectional.only(
+                  end: index == totalSteps - 1 ? 0 : 8,
                 ),
-              );
-            }),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: List.generate(totalSteps, (index) {
-              final isActive = index == currentIdx;
-              return Expanded(
-                child: Text(
-                  _stepGroups[index].labelKey.tr(),
-                  textAlign: TextAlign.center,
-                  style: AppStyles.s12Medium.withColor(
-                    isActive ? AppColors.stitchPrimary : AppColors.grey400,
-                  ),
+                decoration: BoxDecoration(
+                  color: isActive ? AppColors.stitchPrimary : AppColors.grey200,
+                  borderRadius: BorderRadius.circular(10),
                 ),
-              );
-            }),
-          ),
-        ],
-      ),
+              ),
+            );
+          }),
+        ),
+        const SizedBox(height: 8),
+        Row(
+          children: List.generate(totalSteps, (index) {
+            final isActive = index == currentIdx;
+            return Expanded(
+              child: Text(
+                _stepGroups[index].labelKey.tr(),
+                textAlign: TextAlign.center,
+                style: AppStyles.s12Medium.withColor(
+                  isActive ? AppColors.stitchPrimary : AppColors.grey400,
+                ),
+              ),
+            );
+          }),
+        ),
+      ],
     );
   }
 }

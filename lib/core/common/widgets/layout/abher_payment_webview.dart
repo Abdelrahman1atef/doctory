@@ -9,8 +9,13 @@ import '../../../services/alerts.dart';
 
 class AbherPaymentWebView extends StatefulWidget {
   final String url;
+  final void Function(bool success)? onPaymentResult;
 
-  const AbherPaymentWebView({super.key, required this.url});
+  const AbherPaymentWebView({
+    super.key,
+    required this.url,
+    this.onPaymentResult,
+  });
 
   @override
   State<AbherPaymentWebView> createState() => _AbherPaymentWebViewState();
@@ -76,7 +81,12 @@ class _AbherPaymentWebViewState extends State<AbherPaymentWebView> {
 
                     await Future<void>.delayed(const Duration(seconds: 2));
                     if (!mounted) return;
-                    context.go(AppRoutes.login);
+                    if (widget.onPaymentResult != null) {
+                      widget.onPaymentResult!(true);
+                      if (mounted) context.pop();
+                    } else {
+                      if (mounted) context.go(AppRoutes.login);
+                    }
                   } else if (url.contains("status=failed") ||
                       url.contains("status=error") ||
                       url.contains("FAILED")) {
@@ -88,7 +98,8 @@ class _AbherPaymentWebViewState extends State<AbherPaymentWebView> {
 
                     await Future<void>.delayed(const Duration(seconds: 2));
                     if (!mounted) return;
-                    context.pop();
+                    widget.onPaymentResult?.call(false);
+                    if (mounted) context.pop();
                   }
                 },
               ),

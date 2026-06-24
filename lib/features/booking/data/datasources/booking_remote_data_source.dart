@@ -2,6 +2,7 @@ import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import '../model/available_slots_dto.dart';
 import '../model/create_appointment_request_dto.dart';
+import '../model/initiate_payment_response_dto.dart';
 import '../model/payment_dto.dart';
 import '../model/appointment_response_dto.dart';
 import '../model/booking_config_dto.dart';
@@ -37,6 +38,11 @@ abstract class BookingRemoteDataSource {
 
   Future<ApiResult<BookingConfigDto>> getBookingConfig({
     required String clinicId,
+  });
+
+  Future<ApiResult<InitiatePaymentResponseDto>> initiatePayment({
+    required String appointmentId,
+    required String phoneNumber,
   });
 }
 
@@ -92,6 +98,23 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
         'patientId': patientId,
       },
       parser: (json) => AppointmentResponseDto.fromJson(
+        json['data'] ?? json,
+      ),
+    );
+  }
+
+  @override
+  Future<ApiResult<InitiatePaymentResponseDto>> initiatePayment({
+    required String appointmentId,
+    required String phoneNumber,
+  }) async {
+    return apiConsumer.post<InitiatePaymentResponseDto>(
+      path: 'payments/initiate',
+      body: {
+        'appointmentId': appointmentId,
+        'phoneNumber': phoneNumber,
+      },
+      parser: (json) => InitiatePaymentResponseDto.fromJson(
         json['data'] ?? json,
       ),
     );

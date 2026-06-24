@@ -5,6 +5,7 @@ import '../../domain/repositories/booking_repository.dart';
 import '../datasources/booking_remote_data_source.dart';
 import '../model/available_slots_dto.dart';
 import '../model/create_appointment_request_dto.dart';
+import '../model/initiate_payment_response_dto.dart';
 import '../model/payment_dto.dart';
 import '../model/appointment_response_dto.dart';
 import '../model/booking_config_dto.dart';
@@ -99,6 +100,21 @@ class BookingRepositoryImpl implements BookingRepository {
   Future<ApiResult<BookingConfigDto>> getBookingConfig({required String clinicId}) async {
     try {
       return await remoteDataSource.getBookingConfig(clinicId: clinicId);
+    } catch (e) {
+      return ApiResult.failure(_toFailure(e));
+    }
+  }
+
+  @override
+  Future<ApiResult<InitiatePaymentResponseDto>> initiatePayment({
+    required String appointmentId,
+    required String phoneNumber,
+  }) async {
+    try {
+      return await remoteDataSource.initiatePayment(
+        appointmentId: appointmentId,
+        phoneNumber: phoneNumber,
+      );
     } catch (e) {
       return ApiResult.failure(_toFailure(e));
     }

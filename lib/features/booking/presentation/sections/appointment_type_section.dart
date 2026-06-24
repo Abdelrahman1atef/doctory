@@ -37,7 +37,7 @@ class AppointmentTypeSection extends StatelessWidget {
                 subtitle: 'in_person_desc'.tr(),
                 isSelected: state.appointmentType.value == 0,
                 onTap: () => cubit.selectAppointmentType(
-                  AppointmentType.fromValue(1),
+                  AppointmentType.fromValue(0),
                 ),
               ),
               const SizedBox(height: 12),
@@ -47,7 +47,7 @@ class AppointmentTypeSection extends StatelessWidget {
                 subtitle: 'follow_up_desc'.tr(),
                 isSelected: state.appointmentType.value == 1,
                 onTap: () => cubit.selectAppointmentType(
-                  AppointmentType.fromValue(3),
+                  AppointmentType.fromValue(1),
                 ),
               ),
               // const SizedBox(height: 12),

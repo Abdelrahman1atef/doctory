@@ -435,7 +435,7 @@ class BookingCubit extends Cubit<BookingState> {
       reservationId: data.reservation!.reservationId,
       amount: data.reservation!.amount,
       currency: data.reservation!.currency,
-      paymentMethod: 'credit_card',
+      paymentMethod: 'e_wallet',
     );
 
     final result = await bookingRepo.processPayment(request);
@@ -494,6 +494,97 @@ class BookingCubit extends Cubit<BookingState> {
           ),
         );
         return false;
+      },
+    );
+  }
+
+  Future<String?> initiatePaymentUrl() async {
+    final data = _data;
+    if (data.reservation == null) return null;
+
+    emit(
+      BookingData(
+        doctor: data.doctor,
+        clinicId: data.clinicId,
+        currentStep: data.currentStep,
+        appointmentType: data.appointmentType,
+        selectedDate: data.selectedDate,
+        availableSlots: data.availableSlots,
+        selectedTime: data.selectedTime,
+        patientName: data.patientName,
+        patientPhone: data.patientPhone,
+        patientAge: data.patientAge,
+        patientGender: data.patientGender,
+        complaint: data.complaint,
+        notes: data.notes,
+        reservation: data.reservation,
+        payment: data.payment,
+        verification: data.verification,
+        isSubmitting: true,
+        submissionError: null,
+      ),
+    );
+
+    final result = await bookingRepo.initiatePayment(
+      appointmentId: data.reservation!.reservationId,
+      phoneNumber: data.patientPhone,
+    );
+
+    if (state is! BookingData) return null;
+
+    return result.fold(
+      onSuccess: (paymentData) {
+        final current = _data;
+        emit(
+          BookingData(
+            doctor: current.doctor,
+            clinicId: current.clinicId,
+            currentStep: current.currentStep,
+            appointmentType: current.appointmentType,
+            selectedDate: current.selectedDate,
+            availableSlots: current.availableSlots,
+            selectedTime: current.selectedTime,
+            patientName: current.patientName,
+            patientPhone: current.patientPhone,
+            patientAge: current.patientAge,
+            patientGender: current.patientGender,
+            complaint: current.complaint,
+            notes: current.notes,
+            reservation: current.reservation,
+            payment: current.payment,
+            verification: current.verification,
+            paymentUrl: paymentData.redirectUrl,
+            pendingPaymentId: paymentData.paymentId,
+            isSubmitting: false,
+          ),
+        );
+        return paymentData.redirectUrl;
+      },
+      onFailure: (failure) {
+        final current = _data;
+        emit(
+          BookingData(
+            doctor: current.doctor,
+            clinicId: current.clinicId,
+            currentStep: current.currentStep,
+            appointmentType: current.appointmentType,
+            selectedDate: current.selectedDate,
+            availableSlots: current.availableSlots,
+            selectedTime: current.selectedTime,
+            patientName: current.patientName,
+            patientPhone: current.patientPhone,
+            patientAge: current.patientAge,
+            patientGender: current.patientGender,
+            complaint: current.complaint,
+            notes: current.notes,
+            reservation: current.reservation,
+            payment: current.payment,
+            verification: current.verification,
+            isSubmitting: false,
+            submissionError: failure.userMessage,
+          ),
+        );
+        return null;
       },
     );
   }

@@ -49,16 +49,27 @@ class PaymentSection extends StatelessWidget {
               ),
               const SizedBox(height: 12),
               BookingPaymentMethodCard(
-                icon: Icons.credit_card_rounded,
-                title: 'credit_card'.tr(),
-                subtitle: 'credit_card_desc'.tr(),
+                icon: Icons.account_balance_wallet_rounded,
+                title: 'e_wallet'.tr(),
+                subtitle: 'e_wallet_desc'.tr(),
                 isSelected: true,
               ),
               // const SizedBox(height: 12),
               // BookingPaymentMethodCard(
-              //   icon: Icons.money_rounded,
-              //   title: 'cash'.tr(),
-              //   subtitle: 'cash_desc'.tr(),
+              //   icon: Icons.credit_card_rounded,
+              //   title: 'credit_card'.tr(),
+              //   subtitle: 'credit_card_desc'.tr(),
+              //   isSelected: false,
+              // ),
+              // TODO(dev): Uncomment when ready to use payment URL initiation
+              // When tapping on this option, call cubit.initiatePaymentUrl() which sends:
+              // POST https://doctory-icare.runasp.net/api/v1/payments/initiate
+              // Body: { "appointmentId": "...", "phoneNumber": "..." }
+              // const SizedBox(height: 12),
+              // BookingPaymentMethodCard(
+              //   icon: Icons.language_rounded,
+              //   title: 'pay_by_url'.tr(),
+              //   subtitle: 'pay_by_url_desc'.tr(),
               //   isSelected: false,
               // ),
               if (state.submissionError != null) ...[

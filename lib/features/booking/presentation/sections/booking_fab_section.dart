@@ -1,3 +1,4 @@
+import 'package:doctory/core/common/widgets/layout/abher_payment_webview.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/booking/cubit/booking_cubit.dart';
 import 'package:doctory/features/booking/cubit/booking_state.dart';
@@ -126,7 +127,31 @@ class BookingFabSection extends StatelessWidget {
     }
   }
 
-  void _onAction(BuildContext context, BookingCubit cubit, BookingStep step) {
+  Future<void> _handlePayment(BuildContext context, BookingCubit cubit) async {
+    final url = await cubit.initiatePaymentUrl();
+    if (url == null) return;
+    if (!context.mounted) return;
+
+    var paymentSuccess = false;
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AbherPaymentWebView(
+          url: url,
+          onPaymentResult: (success) {
+            paymentSuccess = success;
+          },
+        ),
+      ),
+    );
+
+    if (paymentSuccess) {
+      cubit.goToStep(BookingStep.success);
+    }
+  }
+
+  Future<void> _onAction(BuildContext context, BookingCubit cubit, BookingStep step) async {
     switch (step) {
       case BookingStep.appointmentType:
       case BookingStep.selectDate:
@@ -138,7 +163,7 @@ class BookingFabSection extends StatelessWidget {
         cubit.submitBooking();
         break;
       case BookingStep.payment:
-        cubit.processPayment();
+        _handlePayment(context, cubit);
         break;
       case BookingStep.verification:
         cubit.verifyPayment();
