@@ -40,16 +40,16 @@ class AppointmentTypeSection extends StatelessWidget {
                   AppointmentType.fromValue(1),
                 ),
               ),
-              const SizedBox(height: 12),
-              BookingTypeCard(
-                icon: Icons.videocam_outlined,
-                title: 'online'.tr(),
-                subtitle: 'online_desc'.tr(),
-                isSelected: state.appointmentType.value == 2,
-                onTap: () => cubit.selectAppointmentType(
-                  AppointmentType.fromValue(2),
-                ),
-              ),
+              // const SizedBox(height: 12),
+              // BookingTypeCard(
+              //   icon: Icons.videocam_outlined,
+              //   title: 'online'.tr(),
+              //   subtitle: 'online_desc'.tr(),
+              //   isSelected: state.appointmentType.value == 2,
+              //   onTap: () => cubit.selectAppointmentType(
+              //     AppointmentType.fromValue(2),
+              //   ),
+              // ),
               const SizedBox(height: 12),
               BookingTypeCard(
                 icon: Icons.replay_outlined,

@@ -1,21 +1,22 @@
 import 'package:get_it/get_it.dart';
 import 'package:doctory/core/common/models/shared_models.dart';
+import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import '../domain/repositories/booking_repository.dart';
-import '../data/datasources/booking_mock_data_source.dart';
+import '../data/datasources/booking_remote_data_source.dart';
 import '../data/repositories/booking_repository_impl.dart';
 import '../cubit/booking_cubit.dart';
 
 void setupBookingDI(GetIt sl) {
-  if (!sl.isRegistered<BookingMockDataSource>()) {
-    sl.registerLazySingleton<BookingMockDataSource>(
-      () => BookingMockDataSource(),
+  if (!sl.isRegistered<BookingRemoteDataSource>()) {
+    sl.registerLazySingleton<BookingRemoteDataSource>(
+      () => BookingRemoteDataSourceImpl(apiConsumer: sl<ApiConsumer>()),
     );
   }
 
   if (!sl.isRegistered<BookingRepository>()) {
     sl.registerLazySingleton<BookingRepository>(
       () => BookingRepositoryImpl(
-        mockDataSource: sl<BookingMockDataSource>(),
+        remoteDataSource: sl<BookingRemoteDataSource>(),
       ),
     );
   }

@@ -59,10 +59,7 @@ class _BookingTextFieldState extends State<BookingTextField> {
       decoration: InputDecoration(
         labelText: widget.label,
         labelStyle: AppStyles.s14Medium.withColor(AppColors.grey500),
-        prefixIcon: Padding(
-          padding: EdgeInsets.only(bottom: widget.maxLines > 1 ? 40 : 0),
-          child: Icon(widget.icon, color: AppColors.stitchSecondary, size: 20),
-        ),
+        prefixIcon: Icon(widget.icon, color: AppColors.stitchSecondary, size: 20),
         filled: true,
         fillColor: AppColors.stitchSurfaceLowest,
         contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

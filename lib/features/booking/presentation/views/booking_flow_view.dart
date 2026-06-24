@@ -8,9 +8,7 @@ class BookingFlowView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: const BookingBodySection(),
-      ),
+      body: const BookingBodySection(),
       bottomNavigationBar: const BookingFabSection(),
     );
   }

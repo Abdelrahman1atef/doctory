@@ -9,12 +9,14 @@ class MapSearchBarWidget extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String> onSubmitted;
   final VoidCallback onFilterTap;
+  final VoidCallback? onSearchTap;
 
   const MapSearchBarWidget({
     super.key,
     required this.controller,
     required this.onSubmitted,
     required this.onFilterTap,
+    this.onSearchTap,
   });
 
   @override
@@ -58,6 +60,15 @@ class MapSearchBarWidget extends StatelessWidget {
               ),
             ),
           ),
+          if (onSearchTap != null)
+            InkWell(
+              onTap: onSearchTap,
+              child: const Icon(
+                Icons.send,
+                color: AppColors.stitchPrimaryContainer,
+              ),
+            ),
+          8.pw,
           InkWell(
             onTap: onFilterTap,
             child: const Icon(

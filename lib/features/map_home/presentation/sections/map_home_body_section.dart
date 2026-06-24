@@ -102,7 +102,12 @@ class _MapHomeBodySectionState extends State<MapHomeBodySection> {
                   sheetController: _sheetController,
                 )
               : null,
-          loadingOverlay: isLoading ? const MapHomeLoadingWidget() : null,
+          loadingOverlay: isLoading
+              ? MapHomeLoadingWidget(
+                  onCancel: () =>
+                      context.read<MapHomeCubit>().cancelSearch(),
+                )
+              : null,
           errorOverlay: errorOverlay,
         );
       },

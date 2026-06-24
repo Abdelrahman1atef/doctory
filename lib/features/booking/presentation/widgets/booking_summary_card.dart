@@ -5,7 +5,14 @@ import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/booking/presentation/widgets/booking_info_row.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-
+import 'package:flutter/widget_previews.dart';
+@Preview(name: 'My Custom Button', textScaleFactor: 1.0)
+Widget previewMyButton() {
+  return ElevatedButton(
+    onPressed: () {},
+    child: const Text('Click Me'),
+  );
+}
 class BookingSummaryCard extends StatelessWidget {
   final DoctorModel doctor;
   final DateTime selectedDate;

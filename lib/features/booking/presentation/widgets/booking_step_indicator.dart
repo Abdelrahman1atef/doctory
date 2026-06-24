@@ -36,7 +36,7 @@ class BookingStepIndicator extends StatelessWidget {
 
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16).copyWith(top: MediaQuery.paddingOf(context).top+20),
       decoration: BoxDecoration(
         color: AppColors.stitchSurface,
         boxShadow: [

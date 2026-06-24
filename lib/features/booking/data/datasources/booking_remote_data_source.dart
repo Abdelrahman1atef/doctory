@@ -52,11 +52,10 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     required DateTime date,
   }) async {
     return apiConsumer.get<AvailableSlotsDto>(
-      path: 'appointments/available-slots',
+      path: 'clinics/B1D24A1A-4705-4F71-B51C-16AB3F0D5221/doctors/600AD7BF-9A73-4127-BDA1-3C69AA3D65C9/slots',
+      // path: 'clinics/$clinicId/doctors/$doctorId/slots',
       queryParameters: {
-        'DoctorId': doctorId,
-        'ClinicId': clinicId,
-        'Date': DateFormat('yyyy-MM-dd').format(date),
+        'date': DateFormat('yyyy-MM-dd').format(date),
       },
       parser: (json) {
         if (json.containsKey('data')) {
@@ -72,7 +71,7 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     CreateAppointmentRequestDto request,
   ) async {
     return apiConsumer.post<CreateReservationResponseDto>(
-      path: 'appointments/reserve',
+      path: 'reservations',
       body: request.toJson(),
       parser: (json) => CreateReservationResponseDto.fromJson(
         json['data'] ?? json,
@@ -102,7 +101,7 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     PaymentRequestDto request,
   ) async {
     return apiConsumer.post<PaymentResponseDto>(
-      path: 'payments/process',
+      path: 'payments',
       body: request.toJson(),
       parser: (json) => PaymentResponseDto.fromJson(
         json['data'] ?? json,

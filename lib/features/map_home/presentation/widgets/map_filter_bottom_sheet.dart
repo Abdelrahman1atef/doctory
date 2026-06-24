@@ -1,8 +1,10 @@
 import 'package:doctory/core/common/models/specialty_model.dart';
+import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/map_home/presentation/widgets/pick_location_screen.dart';
+import 'package:doctory/shared/cubit/specializations_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:doctory/features/map_home/cubit/map_home_cubit.dart';
@@ -26,13 +28,7 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
   double? _customLat;
   double? _customLng;
 
-  // Dummy specialties (should ideally come from HomeCubit or a shared service)
-  final List<SpecialtyModel> _specialties = [
-    SpecialtyModel(id: '1', name: 'Dental', iconAsset: ''),
-    SpecialtyModel(id: '2', name: 'Cardiology', iconAsset: ''),
-    SpecialtyModel(id: '3', name: 'Eye Care', iconAsset: ''),
-    SpecialtyModel(id: '4', name: 'Pediatrics', iconAsset: ''),
-  ];
+  List<SpecialtyModel> _specialties = [];
 
   @override
   void initState() {
@@ -42,6 +38,11 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
     _radiusInKm = widget.initialState.radiusInKm.toDouble();
     _customLat = widget.initialState.customLat;
     _customLng = widget.initialState.customLng;
+
+    final specState = sl<SharedSpecializationsCubit>().state;
+    if (specState is SharedSpecializationsLoaded) {
+      _specialties = specState.specializations;
+    }
   }
 
   bool get _hasCustomLocation => _customLat != null && _customLng != null;

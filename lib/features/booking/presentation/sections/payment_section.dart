@@ -54,13 +54,13 @@ class PaymentSection extends StatelessWidget {
                 subtitle: 'credit_card_desc'.tr(),
                 isSelected: true,
               ),
-              const SizedBox(height: 12),
-              BookingPaymentMethodCard(
-                icon: Icons.money_rounded,
-                title: 'cash'.tr(),
-                subtitle: 'cash_desc'.tr(),
-                isSelected: false,
-              ),
+              // const SizedBox(height: 12),
+              // BookingPaymentMethodCard(
+              //   icon: Icons.money_rounded,
+              //   title: 'cash'.tr(),
+              //   subtitle: 'cash_desc'.tr(),
+              //   isSelected: false,
+              // ),
               if (state.submissionError != null) ...[
                 const SizedBox(height: 20),
                 BookingErrorBanner(message: state.submissionError!),

@@ -18,12 +18,13 @@ class AvailableSlotsDto {
   });
 
   factory AvailableSlotsDto.fromJson(Map<String, dynamic> json) {
+    final date = DateTime.parse(json['date']);
     return AvailableSlotsDto(
       doctorId: json['doctorId']?.toString() ?? '',
       clinicId: json['clinicId']?.toString() ?? '',
-      date: DateTime.parse(json['date']),
+      date: date,
       slots: (json['slots'] as List? ?? [])
-          .map((s) => TimeSlotModel.fromJson(s))
+          .map((s) => TimeSlotModel.fromJson(s, date: date))
           .toList(),
       workingHours: json['workingHours'] != null
           ? WorkingHoursDto.fromJson(json['workingHours'])

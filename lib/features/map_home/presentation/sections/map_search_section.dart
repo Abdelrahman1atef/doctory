@@ -75,6 +75,10 @@ class _MapSearchSectionState extends State<MapSearchSection> {
                 );
               }
             },
+            onSearchTap: () {
+              final text = _searchController.text;
+              context.read<MapHomeCubit>().searchClinics(searchText: text);
+            },
           ),
           filterChips: Row(
             children: [

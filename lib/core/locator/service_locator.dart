@@ -1,5 +1,6 @@
 import 'package:doctory/core/services/media/my_media.dart';
 import 'package:doctory/core/services/media/audio_service.dart';
+import 'package:doctory/shared/cubit/specializations_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:doctory/core/cache/cache_helper.dart';
@@ -78,6 +79,11 @@ class ServiceLocator {
     sl.registerLazySingleton<PusherService>(() => PusherService());
     sl.registerLazySingleton<AudioService>(() => AudioService());
     sl.registerLazySingleton<MediaService>(() => MediaService());
+
+    // Register shared cubits
+    sl.registerLazySingleton<SharedSpecializationsCubit>(
+      () => SharedSpecializationsCubit(sl<ApiConsumer>()),
+    );
 
     // Register feature services
     IntroDI.setup();

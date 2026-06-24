@@ -40,15 +40,6 @@ class DoctorDetailsView extends StatelessWidget {
             ),
           ),
           centerTitle: true,
-          // actions: [
-          //   IconButton(
-          //     icon: const Icon(
-          //       Icons.favorite_border,
-          //       color: AppColors.stitchPrimaryContainer,
-          //     ),
-          //     onPressed: () {},
-          //   ),
-          // ],
         ),
         body: BlocBuilder<DoctorDetailsCubit, DoctorDetailsStates>(
           builder: (context, state) {

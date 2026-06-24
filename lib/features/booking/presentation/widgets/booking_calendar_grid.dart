@@ -95,7 +95,8 @@ class _BookingCalendarGridState extends State<BookingCalendarGrid> {
   }
 
   Widget _buildMonthHeader() {
-    final monthName = DateFormat('MMMM yyyy').format(_currentMonth);
+    final locale = context.locale.toLanguageTag();
+    final monthName = DateFormat('MMMM yyyy', locale).format(_currentMonth);
     final now = DateTime(DateTime.now().year, DateTime.now().month);
     final canGoBack = _currentMonth.isAfter(now);
 
@@ -127,7 +128,11 @@ class _BookingCalendarGridState extends State<BookingCalendarGrid> {
   }
 
   Widget _buildWeekdayHeaders() {
-    const weekdays = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+    final locale = context.locale.toLanguageTag();
+    final weekdays = List.generate(7, (i) {
+      final date = DateTime(2024, 1, 7 + i);
+      return DateFormat('E', locale).format(date);
+    });
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceAround,
       children: weekdays

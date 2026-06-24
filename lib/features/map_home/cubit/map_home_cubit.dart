@@ -2,8 +2,10 @@ import 'dart:async';
 import 'package:doctory/core/common/models/clinic_model.dart';
 import 'package:doctory/core/common/functions/location_helper.dart';
 import 'package:doctory/core/error/failures.dart';
+import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/features/map_home/cubit/map_home_states.dart';
 import 'package:doctory/features/map_home/data/repo/map_home_repo.dart';
+import 'package:doctory/shared/cubit/specializations_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
@@ -16,33 +18,49 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
   final MapHomeRepo _mapHomeRepo;
   bool _isLiveNavigating = false;
   ClinicModel? _navigatingClinic;
-  
+  MapHomeLoadedState? _previousLoadedState;
+
   LatLng? _cachedPosition;
   CancelToken? _searchCancelToken;
   CancelToken? _routeCancelToken;
   Timer? _debounce;
+  StreamSubscription<SharedSpecializationsState>? _specSub;
 
   MapHomeCubit(this._mapHomeRepo) : super(MapHomeInitialState()) {
     LocationHelper.getCurrentLocation().then((pos) => _cachedPosition = pos);
-    getSpecializations();
+    _loadSpecializations();
   }
 
-  Future<void> getSpecializations() async {
-    final result = await _mapHomeRepo.getSpecializations(isFamous: true);
-    result.fold(
-      onSuccess: (data) {
-        if (isClosed) return;
-        final currentState = state;
-        if (currentState is MapHomeLoadedState) {
-          emit(currentState.copyWith(specializations: data.items));
-        } else if (currentState is MapHomeInitialState) {
-           emit(MapHomeLoadedState(specializations: data.items));
-        }
-      },
-      onFailure: (failure) {
-        debugPrint('Failed to fetch specializations: ${failure.message}');
-      },
-    );
+  void _loadSpecializations() {
+    final sharedCubit = sl<SharedSpecializationsCubit>();
+
+    if (sharedCubit.state is SharedSpecializationsLoaded) {
+      _applySpecializations(
+        (sharedCubit.state as SharedSpecializationsLoaded).specializations,
+      );
+      return;
+    }
+
+    _specSub = sharedCubit.stream.listen((specState) {
+      if (specState is SharedSpecializationsLoaded) {
+        _applySpecializations(specState.specializations);
+        _specSub?.cancel();
+      }
+    });
+
+    if (sharedCubit.state is SharedSpecializationsInitial) {
+      sharedCubit.getFamousSpecializations();
+    }
+  }
+
+  void _applySpecializations(List<SpecialtyModel> specs) {
+    if (isClosed) return;
+    final currentState = state;
+    if (currentState is MapHomeLoadedState) {
+      emit(currentState.copyWith(specializations: specs));
+    } else if (currentState is MapHomeInitialState) {
+      emit(MapHomeLoadedState(specializations: specs));
+    }
   }
 
   Future<void> searchClinics({
@@ -84,6 +102,11 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     
     Future<void> performSearch() async {
       if (isClosed) return;
+      if (currentState is MapHomeLoadedState) {
+        _previousLoadedState = currentState;
+      } else {
+        _previousLoadedState = null;
+      }
       emit(MapHomeLoadingState(clinics: currentClinics));
 
       // Use custom location from state > provided params > GPS
@@ -152,6 +175,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
           }
         },
       );
+      _previousLoadedState = null;
     }
 
     if (isInitialLoad) {
@@ -351,6 +375,21 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     }
   }
 
+  void cancelSearch() {
+    _debounce?.cancel();
+    _searchCancelToken?.cancel('user cancelled');
+    _searchCancelToken = null;
+
+    if (isClosed) return;
+
+    if (_previousLoadedState != null) {
+      emit(_previousLoadedState!);
+      _previousLoadedState = null;
+    } else {
+      emit(MapHomeInitialState());
+    }
+  }
+
   void startNavigation() {
     final currentState = state;
     if (currentState is MapHomeLoadedState && currentState.route != null) {
@@ -372,6 +411,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
   @override
   Future<void> close() {
     _isLiveNavigating = false;
+    _specSub?.cancel();
     _debounce?.cancel();
     _searchCancelToken?.cancel();
     _routeCancelToken?.cancel();

@@ -3,6 +3,7 @@ import 'package:doctory/features/booking/cubit/booking_state.dart';
 import 'package:doctory/features/booking/domain/enums/booking_step.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import '../../../../core/utils/extensions.dart';
 import 'booking_app_bar_section.dart';
 import 'appointment_type_section.dart';
 import 'select_date_section.dart';
@@ -46,6 +47,7 @@ class BookingBodySection extends StatelessWidget {
                 child: IndexedStack(
                   index: step.index,
                   children: const [
+
                     AppointmentTypeSection(),
                     SelectDateSection(),
                     SelectTimeSection(),
