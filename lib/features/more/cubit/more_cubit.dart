@@ -14,7 +14,6 @@ class MoreCubit extends Cubit<MoreStates> {
   Future<void> logout() async {
     emit(LogoutLoadingState());
 
-    // Call backend logout if we have a refresh token
     if (UserSession.refreshToken.isNotEmpty) {
       await _authRepo.logout(UserSession.refreshToken);
     }
@@ -22,5 +21,27 @@ class MoreCubit extends Cubit<MoreStates> {
     await UserSession.logout();
     await _socialAuthService.signOut();
     emit(LogoutSuccessState());
+  }
+
+  Future<void> deleteAccount() async {
+    emit(DeleteAccountLoadingState());
+
+    final userId = UserSession.userId;
+    if (userId == null) {
+      emit(const DeleteAccountErrorState('User not found'));
+      return;
+    }
+
+    final result = await _authRepo.deleteAccount(userId);
+    result.fold(
+      onSuccess: (_) async {
+        await UserSession.logout();
+        await _socialAuthService.signOut();
+        emit(DeleteAccountSuccessState());
+      },
+      onFailure: (failure) {
+        emit(DeleteAccountErrorState(failure.message));
+      },
+    );
   }
 }

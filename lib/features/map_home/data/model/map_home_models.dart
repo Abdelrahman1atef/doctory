@@ -20,11 +20,26 @@ class ClinicSearchResponse {
   });
 
   factory ClinicSearchResponse.fromJson(Map<String, dynamic> json) {
-    final data = json['data'] ?? json;
+    final rawData = json['data'] ?? json;
+    if (rawData is List) {
+      final clinics = rawData
+          .map((e) => ClinicModel.fromJson(e as Map<String, dynamic>))
+          .toList();
+      return ClinicSearchResponse(
+        items: clinics,
+        pageNumber: 1,
+        pageSize: clinics.length,
+        totalPages: 1,
+        totalCount: clinics.length,
+        hasPreviousPage: false,
+        hasNextPage: false,
+      );
+    }
+    final data = rawData as Map<String, dynamic>;
     return ClinicSearchResponse(
       items:
           (data['items'] as List?)
-              ?.map((e) => ClinicModel.fromJson(e))
+              ?.map((e) => ClinicModel.fromJson(e as Map<String, dynamic>))
               .toList() ??
           [],
       pageNumber: data['pageNumber'] ?? 1,

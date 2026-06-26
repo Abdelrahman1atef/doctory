@@ -58,11 +58,12 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     required DateTime date,
   }) async {
     return apiConsumer.get<AvailableSlotsDto>(
-      path: 'clinics/B1D24A1A-4705-4F71-B51C-16AB3F0D5221/doctors/600AD7BF-9A73-4127-BDA1-3C69AA3D65C9/slots',
+      //todo change to real one
+      path: 'clinics/716CE65D-B063-4787-95F9-3F98BDF8B34B/doctors/C2235FDE-3D6D-4C60-98DE-58C7A8F6FA5B/slots',
       showLoading: true,
       // path: 'clinics/$clinicId/doctors/$doctorId/slots',
       queryParameters: {
-        'date': DateFormat('yyyy-MM-dd').format(date),
+        // 'date': DateFormat('yyyy-MM-dd').format(date),
       },
       parser: (json) {
         if (json.containsKey('data')) {

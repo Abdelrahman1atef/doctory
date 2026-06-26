@@ -29,6 +29,7 @@ abstract class AuthRemoteDataSource {
   });
   Future<ApiResult<AuthResponse>> loginGoogle(String idToken);
   Future<ApiResult<void>> logout(String refreshToken);
+  Future<ApiResult<void>> deleteAccount(String userId);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -168,6 +169,13 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     return await _apiConsumer.post(
       path: AuthEndpoints.logout,
       body: {'refreshToken': refreshToken},
+    );
+  }
+
+  @override
+  Future<ApiResult<void>> deleteAccount(String userId) async {
+    return await _apiConsumer.delete(
+      path: '${AuthEndpoints.users}/$userId',
     );
   }
 }

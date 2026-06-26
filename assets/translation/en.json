@@ -446,6 +446,8 @@
   "refund_title": "Refund Request",
   "refund_description": "Please state the reason for the refund request",
   "send_refund_request": "Send Refund Request",
+  "e_wallet": "E-Wallet",
+  "e_wallet_desc": "Manage your e-wallet balance easily",
   "currency_sar": "SAR",
   "confirm_data": "Confirm Data",
   "available_anchors_title": "Available Anchors",

@@ -72,7 +72,8 @@ class _AbherPaymentWebViewState extends State<AbherPaymentWebView> {
                   final url = change.url ?? '';
                   if (url.contains('message=APPROVED') ||
                       url.contains('status=success') ||
-                      url.contains('SUCCESS')) {
+                      url.contains('SUCCESS') ||
+                      url.contains('success=True')) {
                     if (!mounted) return;
                     Alerts.snack(
                       text: 'payment_success'.tr(),
@@ -89,7 +90,8 @@ class _AbherPaymentWebViewState extends State<AbherPaymentWebView> {
                     }
                   } else if (url.contains("status=failed") ||
                       url.contains("status=error") ||
-                      url.contains("FAILED")) {
+                      url.contains("FAILED") ||
+                      url.contains("success=False")) {
                     if (!mounted) return;
                     Alerts.snack(
                       text: 'payment_failed'.tr(),

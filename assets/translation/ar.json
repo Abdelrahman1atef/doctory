@@ -481,6 +481,8 @@
   "offerPricePrefix": "سعر العرض:",
   "estimated_total_price": "إجمالي السعر التقديري",
   "auto_cancel_description": "سيتم إلغاء الطلب تلقائياً في حال عدم الرد",
+  "e_wallet": "المحفظة الإلكترونية",
+  "e_wallet_desc": "قم بإدارة رصيد محفظتك الإلكترونية بسهولة",
   "wallet_charge": "شحن المحفظة",
   "order_details_title": "تفاصيل الطلب",
   "trip_details_title": "تفاصيل الرحلة",
