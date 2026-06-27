@@ -31,40 +31,42 @@ class ClinicReviewsSummarySection extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: Colors.amber.withValues(alpha: 0.1),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(
-                      Icons.star_rounded,
-                      color: Colors.amber,
-                      size: 28,
-                    ),
-                  ),
-                  16.pw,
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        '${clinic.rating} / 5.0',
-                        style: AppStyles.s18Bold.withColor(
-                          AppColors.stitchPrimaryContainer,
-                        ),
+              Expanded(
+                child: Row(
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.amber.withValues(alpha: 0.1),
+                        shape: BoxShape.circle,
                       ),
-                      4.ph,
-                      Text(
-                        'Based on ${clinic.reviewsCount} reviews', // Can localize
-                        style: AppStyles.s12Medium.withColor(
-                          AppColors.stitchSecondary,
-                        ),
+                      child: const Icon(
+                        Icons.star_rounded,
+                        color: Colors.amber,
+                        size: 28,
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                    16.pw,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${clinic.rating.roundTo2numberString} / 5.0',
+                          style: AppStyles.s18Bold.withColor(
+                            AppColors.stitchPrimaryContainer,
+                          ),
+                        ),
+                        4.ph,
+                        Text(
+                          'Based on ${clinic.reviewsCount} reviews', // Can localize
+                          style: AppStyles.s12Medium.withColor(
+                            AppColors.stitchSecondary,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
               TextButton(
                 onPressed: onSeeAll,

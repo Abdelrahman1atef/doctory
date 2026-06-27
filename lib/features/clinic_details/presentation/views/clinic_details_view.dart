@@ -1,4 +1,3 @@
-import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/utils/extensions.dart';
@@ -14,48 +13,43 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class ClinicDetailsView extends StatelessWidget {
-  final ClinicModel clinic;
-
-  const ClinicDetailsView({super.key, required this.clinic});
+  const ClinicDetailsView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => ClinicDetailsCubit()..loadClinicDetails(clinic.id),
-      child: Scaffold(
-        backgroundColor: AppColors.stitchSurface,
-        extendBodyBehindAppBar: true,
-        appBar: AppBar(
-          backgroundColor: Colors.transparent,
-          surfaceTintColor: Colors.transparent,
-          scrolledUnderElevation: 0,
-          elevation: 0,
-          leading: IconButton(
-            icon: const Icon(
-              Icons.arrow_back_ios_new,
-              color: AppColors.stitchPrimaryContainer,
-            ),
-            onPressed: () => context.pop(),
-            style: IconButton.styleFrom(
-              backgroundColor: AppColors.stitchSurfaceLowest.withValues(
-                alpha: 0.8,
-              ),
+    return Scaffold(
+      backgroundColor: AppColors.stitchSurface,
+      extendBodyBehindAppBar: true,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        scrolledUnderElevation: 0,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(
+            Icons.arrow_back_ios_new,
+            color: AppColors.stitchPrimaryContainer,
+          ),
+          onPressed: () => context.pop(),
+          style: IconButton.styleFrom(
+            backgroundColor: AppColors.stitchSurfaceLowest.withValues(
+              alpha: 0.8,
             ),
           ),
         ),
-        body: BlocBuilder<ClinicDetailsCubit, ClinicDetailsStates>(
-          builder: (context, state) {
-            if (state is ClinicDetailsLoading) {
-              return const Center(
-                child: CircularProgressIndicator(
-                  color: AppColors.stitchPrimaryContainer,
-                ),
-              );
-            }
+      ),
+      body: BlocBuilder<ClinicDetailsCubit, ClinicDetailsStates>(
+        builder: (context, state) {
+          if (state is ClinicDetailsInitial || state is ClinicDetailsLoading) {
+            return const Center(
+              child: CircularProgressIndicator(
+                color: AppColors.stitchPrimaryContainer,
+              ),
+            );
+          }
 
-            final currentClinic = state is ClinicDetailsLoaded
-                ? state.clinic
-                : clinic;
+          if (state is ClinicDetailsLoaded) {
+            final currentClinic = state.clinic;
 
             return SingleChildScrollView(
               child: Column(
@@ -86,8 +80,19 @@ class ClinicDetailsView extends StatelessWidget {
                 ],
               ),
             );
-          },
-        ),
+          }
+
+          if (state is ClinicDetailsError) {
+            return Center(
+              child: Text(
+                state.message,
+                style:  TextStyle(color: AppColors.error),
+              ),
+            );
+          }
+
+          return const SizedBox.shrink();
+        },
       ),
     );
   }

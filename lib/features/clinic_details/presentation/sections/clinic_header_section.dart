@@ -34,7 +34,7 @@ class ClinicHeaderSection extends StatelessWidget {
                   const Icon(Icons.star_rounded, color: Colors.amber, size: 20),
                   4.pw,
                   Text(
-                    clinic.rating.toString(),
+                    clinic.rating.roundTo2numberString,
                     style: AppStyles.s14Bold.withColor(
                       AppColors.stitchSecondary,
                     ),
