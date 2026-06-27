@@ -140,8 +140,8 @@ class BookingMockDataSource {
       appointmentType: 1,
       patientFullName: 'Patient',
       patientPhoneNumber: '0550000000',
-      status: 'confirmed',
-      bookingRef: 'BOK$_idCounter',
+      status: 1,
+      bookingReference: 'BOK$_idCounter',
       createdAt: DateTime.now(),
     );
   }
@@ -234,8 +234,8 @@ class BookingMockDataSource {
       appointmentType: 1,
       patientFullName: 'Patient',
       patientPhoneNumber: '0550000000',
-      status: 'confirmed',
-      bookingRef: appointmentId,
+      status: 1,
+      bookingReference: appointmentId,
       createdAt: DateTime.now(),
     );
   }

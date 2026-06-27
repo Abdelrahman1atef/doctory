@@ -58,8 +58,8 @@ class AppointmentDetailCard extends StatelessWidget {
           _row(Icons.category_outlined, 'appointment_type'.tr(),
             _typeLabel(appointment.appointmentType)),
           12.ph,
-          if (appointment.bookingRef != null)
-            _row(Icons.receipt_long_rounded, 'booking_ref'.tr(), appointment.bookingRef!),
+          if (appointment.bookingReference != null)
+            _row(Icons.receipt_long_rounded, 'booking_ref'.tr(), appointment.bookingReference!),
           12.ph,
           if (appointment.amount != null)
             _row(Icons.payments_rounded, 'consultation_fee'.tr(),

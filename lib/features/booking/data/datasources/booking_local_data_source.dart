@@ -21,7 +21,7 @@ class BookingLocalDataSource {
       'patientFullName': a.patientFullName,
       'patientPhoneNumber': a.patientPhoneNumber,
       'status': a.status,
-      'bookingRef': a.bookingRef,
+      'bookingReference': a.bookingReference,
       'createdAt': a.createdAt.toIso8601String(),
     })).toList();
     await prefs.setString(_appointmentsKey, jsonEncode(jsonList));

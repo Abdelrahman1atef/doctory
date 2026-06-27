@@ -1,10 +1,11 @@
-import 'package:doctory/core/theme/app_colors.dart';
+﻿import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
+import 'package:doctory/features/booking/domain/enums/appointment_status.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class AppointmentStatusBadge extends StatelessWidget {
-  final String status;
+  final int status;
 
   const AppointmentStatusBadge({super.key, required this.status});
 
@@ -24,19 +25,20 @@ class AppointmentStatusBadge extends StatelessWidget {
     );
   }
 
-  _StatusConfig _statusConfig(String status) {
-    switch (status) {
-      case 'confirmed':
+  _StatusConfig _statusConfig(int status) {
+    switch (AppointmentStatus.fromValue(status)) {
+      case AppointmentStatus.confirmed:
         return _StatusConfig(AppColors.success, 'confirmed'.tr());
-      case 'pending':
-      case 'reserved':
+      case AppointmentStatus.pending:
+        return _StatusConfig(AppColors.warning, 'pending_payment'.tr());
+      case AppointmentStatus.reserved:
         return _StatusConfig(AppColors.warning, 'pending'.tr());
-      case 'completed':
+      case AppointmentStatus.completed:
         return _StatusConfig(AppColors.info, 'completed'.tr());
-      case 'cancelled':
+      case AppointmentStatus.cancelled:
         return _StatusConfig(AppColors.error, 'cancelled'.tr());
-      default:
-        return _StatusConfig(AppColors.grey500, status);
+      case AppointmentStatus.noShow:
+        return _StatusConfig(AppColors.grey500, 'no_show'.tr());
     }
   }
 }

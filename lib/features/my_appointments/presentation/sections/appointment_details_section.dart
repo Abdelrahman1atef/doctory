@@ -1,3 +1,4 @@
+﻿import 'package:doctory/core/common/widgets/layout/abher_payment_webview.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
@@ -10,14 +11,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class AppointmentDetailsSection extends StatelessWidget {
+class AppointmentDetailsSection extends StatefulWidget {
   final AppointmentResponseDto appointment;
 
   const AppointmentDetailsSection({super.key, required this.appointment});
 
   @override
+  State<AppointmentDetailsSection> createState() => _AppointmentDetailsSectionState();
+}
+
+class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
+  bool _paymentHandled = false;
+
+  @override
   Widget build(BuildContext context) {
-    final canCancel = appointment.status != 'completed' && appointment.status != 'cancelled';
+    final canCancel = widget.appointment.status != 3 && widget.appointment.status != 2;
+    final isPending = widget.appointment.status == 0;
 
     return BlocConsumer<MyAppointmentsCubit, MyAppointmentsState>(
       listener: (context, state) {
@@ -28,10 +37,10 @@ class AppointmentDetailsSection extends StatelessWidget {
         }
         if (state is MyAppointmentsLoaded) {
           final updated = state.appointments.firstWhere(
-            (a) => a.id == appointment.id,
-            orElse: () => appointment,
+            (a) => a.id == widget.appointment.id,
+            orElse: () => widget.appointment,
           );
-          if (updated.status == 'cancelled' && appointment.status != 'cancelled') {
+          if (updated.status == 2 && widget.appointment.status != 2) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('appointment_cancelled'.tr()),
@@ -40,9 +49,24 @@ class AppointmentDetailsSection extends StatelessWidget {
             );
             context.pop();
           }
+          if (state.paymentUrl != null && !_paymentHandled) {
+            _paymentHandled = true;
+            _openPaymentWebView(context, state.paymentUrl!);
+          }
+          if (updated.status == 1 && widget.appointment.status == 0 && _paymentHandled) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('payment_successful'.tr()),
+                backgroundColor: AppColors.success,
+              ),
+            );
+            context.pop();
+          }
         }
       },
       builder: (context, state) {
+        final isProcessing = state is MyAppointmentsLoaded && state.isProcessingPayment;
+
         return Column(
           children: [
             Padding(
@@ -68,13 +92,49 @@ class AppointmentDetailsSection extends StatelessWidget {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
-                    AppointmentDetailCard(appointment: appointment),
-                    if (canCancel) ...[
+                    AppointmentDetailCard(appointment: widget.appointment),
+                    if (isPending) ...[
                       32.ph,
                       SizedBox(
                         width: double.infinity,
+                        child: ElevatedButton.icon(
+                          onPressed: isProcessing
+                              ? null
+                              : () {
+                                  _paymentHandled = false;
+                                  context
+                                      .read<MyAppointmentsCubit>()
+                                      .initiatePayment(widget.appointment);
+                                },
+                          icon: isProcessing
+                              ? const SizedBox(
+                                  width: 18,
+                                  height: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    color: AppColors.stitchSurfaceLowest,
+                                  ),
+                                )
+                              : const Icon(Icons.payment),
+                          label: Text(isProcessing ? 'processing'.tr() : 'pay_now'.tr()),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.stitchPrimaryContainer,
+                            foregroundColor: AppColors.stitchSurfaceLowest,
+                            padding: const EdgeInsets.symmetric(vertical: 14),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            textStyle: AppStyles.s16Bold,
+                          ),
+                        ),
+                      ),
+                    ],
+                    if (canCancel) ...[
+                      16.ph,
+                      SizedBox(
+                        width: double.infinity,
                         child: OutlinedButton.icon(
-                          onPressed: () => _confirmCancel(context),
+                          onPressed: isProcessing ? null : () => _confirmCancel(context),
                           icon: const Icon(Icons.cancel_outlined),
                           label: Text('cancel_appointment'.tr()),
                           style: OutlinedButton.styleFrom(
@@ -99,6 +159,28 @@ class AppointmentDetailsSection extends StatelessWidget {
     );
   }
 
+  Future<void> _openPaymentWebView(BuildContext context, String url) async {
+    var paymentSuccess = false;
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => AbherPaymentWebView(
+          url: url,
+          onPaymentResult: (success) {
+            paymentSuccess = success;
+          },
+        ),
+      ),
+    );
+
+    if (!context.mounted) return;
+
+    context
+        .read<MyAppointmentsCubit>()
+        .onPaymentResult(paymentSuccess, widget.appointment);
+  }
+
   void _confirmCancel(BuildContext context) {
     showDialog(
       context: context,
@@ -113,7 +195,7 @@ class AppointmentDetailsSection extends StatelessWidget {
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
-              context.read<MyAppointmentsCubit>().cancelAppointment(appointment.id);
+              context.read<MyAppointmentsCubit>().cancelAppointment(widget.appointment.id);
             },
             child: Text('yes'.tr(), style: TextStyle(color: AppColors.error)),
           ),

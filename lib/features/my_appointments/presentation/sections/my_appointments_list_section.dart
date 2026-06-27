@@ -1,4 +1,4 @@
-import 'package:doctory/core/theme/app_colors.dart';
+﻿import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
@@ -10,42 +10,65 @@ import 'package:doctory/core/router/router_names.dart';
 
 class MyAppointmentsListSection extends StatefulWidget {
   final List<AppointmentResponseDto> appointments;
+  final bool hasMore;
+  final bool isLoadingMore;
+  final int? statusFilter;
+  final VoidCallback onLoadMore;
+  final void Function(int status) onLoadByStatus;
+  final void Function(AppointmentResponseDto appointment) onPayTap;
 
-  const MyAppointmentsListSection({super.key, required this.appointments});
+  const MyAppointmentsListSection({
+    super.key,
+    required this.appointments,
+    this.hasMore = false,
+    this.isLoadingMore = false,
+    this.statusFilter,
+    required this.onLoadMore,
+    required this.onLoadByStatus,
+    required this.onPayTap,
+  });
 
   @override
   State<MyAppointmentsListSection> createState() => _MyAppointmentsListSectionState();
 }
 
 class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
-  int _selectedTab = 0;
+  final ScrollController _scrollController = ScrollController();
 
-  List<AppointmentResponseDto> get _filtered {
-    switch (_selectedTab) {
-      case 0:
-        return widget.appointments
-            .where((a) => a.status == 'pending' || a.status == 'reserved' || a.status == 'confirmed')
-            .toList()
-          ..sort((a, b) => a.appointmentDate.compareTo(b.appointmentDate));
-      case 1:
-        return widget.appointments
-            .where((a) => a.status == 'completed')
-            .toList()
-          ..sort((a, b) => b.appointmentDate.compareTo(a.appointmentDate));
-      case 2:
-        return widget.appointments
-            .where((a) => a.status == 'cancelled')
-            .toList()
-          ..sort((a, b) => b.appointmentDate.compareTo(a.appointmentDate));
-      default:
-        return widget.appointments;
+  static const List<_TabConfig> _tabs = [
+    _TabConfig('pending_payment', 0),
+    _TabConfig('confirmed', 1),
+    _TabConfig('completed', 3),
+    _TabConfig('cancelled', 2),
+  ];
+
+  int get _selectedTabIndex {
+    final idx = _tabs.indexWhere((t) => t.status == widget.statusFilter);
+    return idx >= 0 ? idx : 0;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
+      widget.onLoadMore();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final filtered = _filtered;
-
     return Column(
       children: [
         Padding(
@@ -57,15 +80,14 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
             ),
             child: Row(
               children: [
-                _tab(0, 'current'.tr()),
-                _tab(1, 'last'.tr()),
-                _tab(2, 'canceled'.tr()),
+                for (int i = 0; i < _tabs.length; i++)
+                  _tab(i, _tabs[i].label.tr()),
               ],
             ),
           ),
         ),
         16.ph,
-        if (filtered.isEmpty)
+        if (widget.appointments.isEmpty && !widget.isLoadingMore)
           Expanded(
             child: Center(
               child: Column(
@@ -82,13 +104,27 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
         else
           Expanded(
             child: ListView.builder(
+              controller: _scrollController,
               padding: const EdgeInsets.only(top: 8, bottom: 24),
-              itemCount: filtered.length,
+              itemCount: widget.appointments.length + (widget.isLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
-                final apt = filtered[index];
+                if (index == widget.appointments.length) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                  );
+                }
+                final apt = widget.appointments[index];
                 return AppointmentCardWidget(
                   appointment: apt,
                   onTap: () => context.push(AppRoutes.appointmentDetails, extra: apt),
+                  onPayTap: apt.status == 0 ? () => widget.onPayTap(apt) : null,
                 );
               },
             ),
@@ -98,10 +134,14 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
   }
 
   Widget _tab(int index, String label) {
-    final isSelected = _selectedTab == index;
+    final isSelected = _selectedTabIndex == index;
     return Expanded(
       child: GestureDetector(
-        onTap: () => setState(() => _selectedTab = index),
+        onTap: () {
+          if (_selectedTabIndex != index) {
+            widget.onLoadByStatus(_tabs[index].status);
+          }
+        },
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 10),
@@ -120,4 +160,10 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
       ),
     );
   }
+}
+
+class _TabConfig {
+  final String label;
+  final int status;
+  const _TabConfig(this.label, this.status);
 }

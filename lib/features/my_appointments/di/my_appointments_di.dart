@@ -1,18 +1,21 @@
+import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import 'package:get_it/get_it.dart';
 import '../cubit/my_appointments_cubit.dart';
-import '../data/datasources/my_appointments_mock_data_source.dart';
+import '../data/data_source/my_appointments_remote_data_source.dart';
 
 void setupMyAppointmentsDI(GetIt sl) {
-  if (!sl.isRegistered<MyAppointmentsMockDataSource>()) {
-    sl.registerLazySingleton<MyAppointmentsMockDataSource>(
-      () => MyAppointmentsMockDataSource(),
+  if (!sl.isRegistered<MyAppointmentsRemoteDataSource>()) {
+    sl.registerLazySingleton<MyAppointmentsRemoteDataSource>(
+      () => MyAppointmentsRemoteDataSourceImpl(
+        apiConsumer: sl<ApiConsumer>(),
+      ),
     );
   }
 
   if (!sl.isRegistered<MyAppointmentsCubit>()) {
     sl.registerFactory<MyAppointmentsCubit>(
       () => MyAppointmentsCubit(
-        mockDataSource: sl<MyAppointmentsMockDataSource>(),
+        remoteDataSource: sl<MyAppointmentsRemoteDataSource>(),
       ),
     );
   }

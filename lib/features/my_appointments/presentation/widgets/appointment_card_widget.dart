@@ -1,4 +1,4 @@
-import 'package:doctory/core/theme/app_colors.dart';
+﻿import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/features/my_appointments/presentation/widgets/appointment_status_badge.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -9,11 +9,13 @@ import 'package:doctory/features/booking/data/model/appointment_response_dto.dar
 class AppointmentCardWidget extends StatelessWidget {
   final AppointmentResponseDto appointment;
   final VoidCallback onTap;
+  final VoidCallback? onPayTap;
 
   const AppointmentCardWidget({
     super.key,
     required this.appointment,
     required this.onTap,
+    this.onPayTap,
   });
 
   @override
@@ -77,6 +79,25 @@ class AppointmentCardWidget extends StatelessWidget {
                         ),
                       ],
                     ),
+                    if (appointment.status == 0 && onPayTap != null) ...[
+                      8.ph,
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: onPayTap,
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.stitchPrimaryContainer,
+                            foregroundColor: AppColors.stitchSurfaceLowest,
+                            padding: const EdgeInsets.symmetric(vertical: 6),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            textStyle: AppStyles.s12Medium,
+                          ),
+                          child: Text('pay_now'.tr()),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               ),

@@ -68,8 +68,8 @@ class _NearbyClinicsSheetState extends State<NearbyClinicsSheet> {
                 scrollController: scrollController,
                 onClinicTap: (clinic) {
                   if (clinic.id == selectedClinicId) {
-                    if (true) {
-                    // if (clinic.isRegistered) {
+                    // if (true) {
+                    if (clinic.isRegistered) {
                       context.push(AppRoutes.clinicDetails, extra: clinic);
                     }
                     // For non-registered, clicking again does nothing (as per requirement "make the card no clickable")
