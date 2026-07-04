@@ -1,8 +1,7 @@
 import 'package:doctory/core/cache/cache_helper.dart';
-import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/core/locator/service_locator.dart';
-import 'package:doctory/features/home/cubit/home_cubit.dart';
-
+import 'package:doctory/core/session/user_session.dart';
+import 'package:doctory/features/auth/data/repo/auth_repo.dart';
 import 'package:doctory/features/intro/data/model/intro_model.dart';
 import 'package:doctory/features/intro/cubit/intro_states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -33,8 +32,25 @@ class IntroCubit extends Cubit<IntroStates> {
     // Populate UserSession from cache
     await UserSession.getUser();
 
-    // Start prefetching home data in the background
-    sl<HomeCubit>().getHomeData();
+    final bool isLoggedIn = UserSession.token.isNotEmpty;
+
+    // Refresh profile from server to get fresh role/permissions
+    if (isLoggedIn) {
+      final authRepo = sl<AuthRepo>();
+      final result = await authRepo.getProfile();
+      result.fold(
+        onSuccess: (user) {
+          if (user.userRole != null) {
+            UserSession.currentRole = user.userRole;
+          }
+          if (user.permissions != null) {
+            UserSession.currentPermissions = user.permissions!.toSet();
+          }
+          UserSession.currentDoctorType = user.doctorType;
+        },
+        onFailure: (_) {},
+      );
+    }
 
     // Compatibility logic for old flags
     bool isLanguageSelected =
@@ -49,8 +65,6 @@ class IntroCubit extends Cubit<IntroStates> {
       await CacheHelper.saveBool('isLanguageSelected', true);
       await CacheHelper.saveBool('isIntroSeen', true);
     }
-
-    final bool isLoggedIn = UserSession.token.isNotEmpty;
 
     if (!isLanguageSelected) {
       // 1. Language Selection (First time ever)

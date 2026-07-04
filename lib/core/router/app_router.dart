@@ -1,3 +1,4 @@
+import 'package:doctory/core/common/models/role.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
@@ -19,6 +20,7 @@ import 'package:doctory/features/chat/router/chat_router.dart';
 import 'package:doctory/features/specializations/router/specializations_router.dart';
 import 'package:doctory/features/my_appointments/router/my_appointments_router.dart';
 import 'package:doctory/features/clinic_dashboard/router/clinic_dashboard_router.dart';
+import 'package:doctory/features/clinic_requests/router/clinic_requests_router.dart';
 import 'package:doctory/features/layout/presentation/views/layout_view.dart';
 import 'package:doctory/features/more/router/more_router.dart';
 
@@ -27,7 +29,8 @@ import 'package:doctory/core/session/user_session.dart';
 /// GoRouter configuration
 class AppRouter {
   // Changed temporarily for testing the new clinic locator feature
-  static String initialRoute = AppRoutes.splash;
+  // static String initialRoute = AppRoutes.clinicRequests;
+  static String initialRoute = AppRoutes.clinicDashboard;
 
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
@@ -39,7 +42,26 @@ class AppRouter {
     debugLogDiagnostics: true,
     observers: [BotToastNavigatorObserver(), FlutterSmartDialog.observer],
     redirect: (context, state) async {
-      // Minimal redirect logic for now
+      final mobileRole = UserSession.mobileRole;
+      if (mobileRole == null) return null;
+
+      final location = state.matchedLocation;
+
+      if (mobileRole == MobileRole.clinic &&
+          !location.startsWith('/clinic')) {
+        return '/clinic/requests';
+      }
+
+      if (mobileRole == MobileRole.patient &&
+          location.startsWith('/clinic')) {
+        return '/';
+      }
+
+      if (mobileRole == MobileRole.freelanceDoctor &&
+          location.startsWith('/clinic')) {
+        return '/';
+      }
+
       return null;
     },
 
@@ -67,6 +89,7 @@ class AppRouter {
       ...SpecializationsRouter.routes,
       ...MyAppointmentsRouter.routes,
       ...ClinicDashboardRouter.routes,
+      ClinicRequestsRouter.route,
     ],
 
     // Error page

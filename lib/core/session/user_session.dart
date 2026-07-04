@@ -1,3 +1,4 @@
+import 'package:doctory/core/common/models/role.dart';
 import 'package:flutter/material.dart';
 import '../cache/cache_helper.dart';
 import '../cache/hive_service.dart';
@@ -26,6 +27,23 @@ class UserSession {
   /// Current user model (Using dynamic as feature models are missing)
   static dynamic userModel;
   static ValueNotifier<dynamic> userNotifier = ValueNotifier(null);
+
+  /// Parsed role and permissions from the current user session
+  static UserRole? currentRole;
+  static Set<Permission>? currentPermissions;
+  static DoctorEmploymentType? currentDoctorType;
+
+  static MobileRole? get mobileRole {
+    if (currentRole == null) return null;
+    return MobileRole.from(
+      role: currentRole!,
+      doctorType: currentDoctorType,
+    );
+  }
+
+  static bool can(Permission permission) {
+    return currentPermissions?.contains(permission) ?? false;
+  }
 
   /// Current user ID extracted from model
   static String? get userId {
@@ -76,6 +94,17 @@ class UserSession {
 
       if (userData.isNotEmpty) {
         userModel = userData;
+        currentRole = UserRole.fromJson(userData['role']?.toString());
+        currentDoctorType = DoctorEmploymentType.fromJson(
+          userData['doctorType']?.toString(),
+        );
+        final rawPermissions = userData['permissions'] as List<dynamic>?;
+        if (rawPermissions != null) {
+          currentPermissions = rawPermissions
+              .map((e) => Permission.fromJson(e?.toString()))
+              .whereType<Permission>()
+              .toSet();
+        }
       }
 
       // Determine the token (accessToken, token, or access_token)
@@ -139,6 +168,9 @@ class UserSession {
     token = '';
     refreshToken = '';
     userModel = null;
+    currentRole = null;
+    currentPermissions = null;
+    currentDoctorType = null;
     userNotifier.value = null;
     await HiveService().delete(
       GeneralConstants.hiveUserBox,
@@ -184,6 +216,17 @@ class UserSession {
 
       if (userData.isNotEmpty) {
         userModel = userData;
+        currentRole = UserRole.fromJson(userData['role']?.toString());
+        currentDoctorType = DoctorEmploymentType.fromJson(
+          userData['doctorType']?.toString(),
+        );
+        final rawPermissions = userData['permissions'] as List<dynamic>?;
+        if (rawPermissions != null) {
+          currentPermissions = rawPermissions
+              .map((e) => Permission.fromJson(e?.toString()))
+              .whereType<Permission>()
+              .toSet();
+        }
         userNotifier.value = userModel;
       }
 

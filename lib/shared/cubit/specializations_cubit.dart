@@ -21,15 +21,21 @@ class SharedSpecializationsError extends SharedSpecializationsState {
 
 class SharedSpecializationsCubit extends Cubit<SharedSpecializationsState> {
   final ApiConsumer _apiConsumer;
+  Future<ApiResult<PaginatedData<SpecialtyModel>>>? _pendingRequest;
 
   SharedSpecializationsCubit(this._apiConsumer)
       : super(SharedSpecializationsInitial());
 
   Future<void> getFamousSpecializations() async {
     if (state is SharedSpecializationsLoaded) return;
+    if (_pendingRequest != null) {
+      await _pendingRequest;
+      return;
+    }
+
     emit(SharedSpecializationsLoading());
 
-    final result = await _apiConsumer.get<PaginatedData<SpecialtyModel>>(
+    final future = _apiConsumer.get<PaginatedData<SpecialtyModel>>(
       path: 'specializations',
       queryParameters: {'IsFamous': true},
       parser: (json) => PaginatedData.fromJson(
@@ -37,6 +43,11 @@ class SharedSpecializationsCubit extends Cubit<SharedSpecializationsState> {
         (item) => SpecialtyModel.fromJson(item),
       ),
     );
+
+    _pendingRequest = future;
+
+    final result = await future;
+    _pendingRequest = null;
 
     if (isClosed) return;
 
@@ -46,5 +57,10 @@ class SharedSpecializationsCubit extends Cubit<SharedSpecializationsState> {
       onFailure: (failure) =>
           emit(SharedSpecializationsError(failure.message)),
     );
+  }
+
+  void setSpecializations(List<SpecialtyModel> specializations) {
+    if (state is SharedSpecializationsLoaded) return;
+    emit(SharedSpecializationsLoaded(specializations));
   }
 }

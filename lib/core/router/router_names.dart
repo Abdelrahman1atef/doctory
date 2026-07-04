@@ -39,4 +39,7 @@ abstract class AppRoutes {
 
   // Clinic Dashboard
   static const String clinicDashboard = '/clinic-dashboard';
+
+  // Clinic Requests (mobile)
+  static const String clinicRequests = '/clinic/requests';
 }

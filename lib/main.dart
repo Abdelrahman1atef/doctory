@@ -18,23 +18,23 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Parallelize independent initializations
-  Future<void> initGoogleMaps() async {
-    final GoogleMapsFlutterPlatform mapsImplementation =
-        GoogleMapsFlutterPlatform.instance;
-    if (mapsImplementation is GoogleMapsFlutterAndroid) {
-      // Use Texture Layer Hybrid Composition for better scroll/gesture perf.
-      // This avoids the old Hybrid Composition (useAndroidViewSurface)
-      // which causes constant compositing overhead and map jank.
-      mapsImplementation.useAndroidViewSurface = false;
-      try {
-        await mapsImplementation.initializeWithRenderer(
-          AndroidMapRenderer.latest,
-        );
-      } catch (e) {
-        debugPrint("Google Maps initialization: $e");
-      }
-    }
-  }
+  // Future<void> initGoogleMaps() async {
+  //   final GoogleMapsFlutterPlatform mapsImplementation =
+  //       GoogleMapsFlutterPlatform.instance;
+  //   if (mapsImplementation is GoogleMapsFlutterAndroid) {
+  //     // Use Texture Layer Hybrid Composition for better scroll/gesture perf.
+  //     // This avoids the old Hybrid Composition (useAndroidViewSurface)
+  //     // which causes constant compositing overhead and map jank.
+  //     mapsImplementation.useAndroidViewSurface = false;
+  //     try {
+  //       await mapsImplementation.initializeWithRenderer(
+  //         AndroidMapRenderer.latest,
+  //       );
+  //     } catch (e) {
+  //       debugPrint("Google Maps initialization: $e");
+  //     }
+  //   }
+  // }
 
   Future<void> initFirebase() async {
     try {
@@ -63,7 +63,7 @@ void main() async {
   }
 
   await Future.wait([
-    initGoogleMaps(),
+    // initGoogleMaps(),
     initFirebase(),
     EasyLocalization.ensureInitialized(),
     AppThemeManager.instance.initialize(),

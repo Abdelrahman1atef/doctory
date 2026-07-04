@@ -2,8 +2,10 @@ import 'package:doctory/features/auth/cubit/auth_states.dart';
 import 'package:doctory/features/auth/data/model/login_request.dart';
 import 'package:doctory/features/auth/data/model/signup_request.dart';
 import 'package:doctory/features/auth/data/model/update_profile_request.dart';
+import 'package:doctory/features/auth/data/model/user_model.dart';
 import 'package:doctory/features/auth/data/repo/auth_repo.dart';
 import 'package:doctory/core/error/failures.dart';
+import 'package:doctory/core/session/user_session.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctory/core/services/social_auth_service.dart';
 
@@ -150,9 +152,22 @@ class AuthCubit extends Cubit<AuthStates> {
     emit(AuthLoadingState());
     final result = await _authRepo.getProfile();
     result.fold(
-      onSuccess: (user) => emit(ProfileLoadedState(user)),
+      onSuccess: (user) {
+        _populateSession(user);
+        emit(ProfileLoadedState(user));
+      },
       onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
     );
+  }
+
+  void _populateSession(UserModel user) {
+    if (user.userRole != null) {
+      UserSession.currentRole = user.userRole;
+    }
+    if (user.permissions != null) {
+      UserSession.currentPermissions = user.permissions!.toSet();
+    }
+    UserSession.currentDoctorType = user.doctorType;
   }
 
   Future<void> updateProfile(UpdateProfileRequest request) async {
