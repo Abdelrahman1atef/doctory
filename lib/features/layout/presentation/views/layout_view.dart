@@ -1,4 +1,7 @@
+import 'package:doctory/core/common/models/role.dart';
+import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/services/alerts.dart';
+import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:doctory/core/app_strings/locale_keys.dart';
@@ -60,6 +63,15 @@ class _LayoutViewState extends State<LayoutView> {
       },
       child: Scaffold(
         body: widget.navigationShell,
+        floatingActionButton: UserSession.currentRole == UserRole.clinicOwner
+            ? FloatingActionButton(
+                onPressed: () => context.push(AppRoutes.clinicDashboard),
+                backgroundColor: AppColors.stitchPrimary,
+                foregroundColor: AppColors.white,
+                child: const Icon(Icons.dashboard_rounded),
+              )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: widget.navigationShell.currentIndex,
           onTap: _onItemTapped,
@@ -80,9 +92,9 @@ class _LayoutViewState extends State<LayoutView> {
               label: context.tr('map.title'),
             ),
             BottomNavigationBarItem(
-              icon: const Icon(Icons.people_outline),
-              activeIcon: const Icon(Icons.people_rounded),
-              label: context.tr('community'),
+              icon: const Icon(Icons.calendar_month_outlined),
+              activeIcon: const Icon(Icons.calendar_month_rounded),
+              label: context.tr('my_appointments'),
             ),
             BottomNavigationBarItem(
               icon: const Icon(Icons.more_horiz_outlined),

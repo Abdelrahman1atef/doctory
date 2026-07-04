@@ -69,7 +69,7 @@ class AppRouter {
         branches: [
           StatefulShellBranch(routes: HomeRouter.routes),
           StatefulShellBranch(routes: MapHomeRouter.routes, preload: true),
-          StatefulShellBranch(routes: CommunityRouter.routes),
+          StatefulShellBranch(routes: MyAppointmentsRouter.routes),
           StatefulShellBranch(routes: MoreRouter.routes),
         ],
       ),
@@ -81,7 +81,6 @@ class AppRouter {
       CreatePostRouter.route,
       ...ChatRouter.routes,
       ...SpecializationsRouter.routes,
-      ...MyAppointmentsRouter.routes,
       ...ClinicRouter.routes,
     ],
 

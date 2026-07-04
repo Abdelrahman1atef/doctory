@@ -1,8 +1,6 @@
-import 'package:doctory/core/common/models/role.dart';
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/services/alerts.dart';
-import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/features/chat/router/chat_router_names.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/more/cubit/more_cubit.dart';
@@ -65,16 +63,14 @@ class MoreOptionsSection extends StatelessWidget {
                       context.push(AppRoutes.myAppointments);
                     },
                   ),
-                  if (UserSession.currentRole == UserRole.clinicOwner) ...[
-                    12.ph,
-                    MoreOptionItem(
-                      title: context.l10n('clinic_dashboard'),
-                      icon: Icons.dashboard_rounded,
-                      onTap: () {
-                        context.push(AppRoutes.clinicDashboard);
-                      },
-                    ),
-                  ],
+                  12.ph,
+                  MoreOptionItem(
+                    title: context.tr('community'),
+                    icon: Icons.people_outline,
+                    onTap: () {
+                      context.push(AppRoutes.community);
+                    },
+                  ),
                   12.ph,
                   MoreOptionItem(
                     title: 'الرسائل',
