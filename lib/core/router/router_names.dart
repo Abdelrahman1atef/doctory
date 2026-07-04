@@ -42,4 +42,7 @@ abstract class AppRoutes {
 
   // Clinic Requests (mobile)
   static const String clinicRequests = '/clinic/requests';
+
+  // Notifications
+  static const String notifications = '/notifications';
 }

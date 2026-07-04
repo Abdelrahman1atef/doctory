@@ -20,6 +20,7 @@ import 'package:doctory/features/chat/router/chat_router.dart';
 import 'package:doctory/features/specializations/router/specializations_router.dart';
 import 'package:doctory/features/my_appointments/router/my_appointments_router.dart';
 import 'package:doctory/features/clinic/router/clinic_router.dart';
+import 'package:doctory/features/notifications/router/notifications_router.dart';
 import 'package:doctory/features/layout/presentation/views/layout_view.dart';
 import 'package:doctory/features/more/router/more_router.dart';
 
@@ -81,6 +82,7 @@ class AppRouter {
       CreatePostRouter.route,
       ...ChatRouter.routes,
       ...SpecializationsRouter.routes,
+      ...NotificationsRouter.routes,
       ...ClinicRouter.routes,
     ],
 

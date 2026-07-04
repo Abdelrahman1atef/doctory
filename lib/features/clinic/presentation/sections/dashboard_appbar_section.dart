@@ -43,7 +43,7 @@ class DashboardAppbarSection extends StatelessWidget {
           Stack(
             children: [
               IconButton(
-                onPressed: () {},
+                onPressed: () => context.push(AppRoutes.notifications),
                 icon: const Icon(Icons.notifications_outlined,
                     color: AppColors.textPrimary),
               ),

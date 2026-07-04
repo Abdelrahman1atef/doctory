@@ -27,6 +27,7 @@ import 'package:doctory/features/specializations/di/specializations_di.dart';
 import 'package:doctory/features/clinic_details/di/clinic_details_di.dart';
 import 'package:doctory/features/my_appointments/di/my_appointments_di.dart';
 import 'package:doctory/features/clinic/di/clinic_di.dart';
+import 'package:doctory/features/notifications/di/notifications_di.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
@@ -101,5 +102,6 @@ class ServiceLocator {
     setupMyAppointmentsDI(sl);
     setupClinicDetailsDI(sl);
     setupClinicDI(sl);
+    setupNotificationsDI();
   }
 }

@@ -77,11 +77,14 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16),
           child: Container(
+            height: 40,
             decoration: BoxDecoration(
               color: AppColors.stitchSurfaceLow,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Row(
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.all(4),
               children: [
                 for (int i = 0; i < _tabs.length; i++)
                   _tab(i, _tabs[i].label.tr()),
@@ -148,31 +151,29 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
 
   Widget _tab(int index, String label) {
     final isSelected = _selectedTabIndex == index;
-    return Expanded(
-      child: GestureDetector(
-        onTap: () {
-          if (_selectedTabIndex != index) {
-            widget.onLoadByStatus(_tabs[index].status);
-          }
-        },
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? AppColors.stitchPrimaryContainer
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-          ),
-          child: Center(
-            child: Text(
-              label,
-              style: AppStyles.s14Medium.copyWith(
-                color: isSelected
-                    ? AppColors.stitchSurfaceLowest
-                    : AppColors.stitchSecondary,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-              ),
+    return GestureDetector(
+      onTap: () {
+        if (_selectedTabIndex != index) {
+          widget.onLoadByStatus(_tabs[index].status);
+        }
+      },
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.stitchPrimaryContainer
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Center(
+          child: Text(
+            label,
+            style: AppStyles.s14Medium.copyWith(
+              color: isSelected
+                  ? AppColors.stitchSurfaceLowest
+                  : AppColors.stitchSecondary,
+              fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
             ),
           ),
         ),
