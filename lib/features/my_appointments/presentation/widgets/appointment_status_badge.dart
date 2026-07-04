@@ -39,6 +39,10 @@ class AppointmentStatusBadge extends StatelessWidget {
         return _StatusConfig(AppColors.error, 'cancelled'.tr());
       case AppointmentStatus.noShow:
         return _StatusConfig(AppColors.grey500, 'no_show'.tr());
+      case AppointmentStatus.accepted:
+        return _StatusConfig(AppColors.success, 'accepted'.tr());
+      case AppointmentStatus.rejected:
+        return _StatusConfig(AppColors.error, 'rejected'.tr());
     }
   }
 }

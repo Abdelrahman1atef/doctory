@@ -1,7 +1,6 @@
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/services/notifications/fcm_service.dart';
 import 'package:doctory/core/theme/theme_manager.dart';
-import 'package:doctory/core/utils/app_assets.dart';
 import 'package:doctory/src/app.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -72,9 +71,6 @@ void main() async {
 
   await ServiceLocator.init();
   setupAuthListener();
-
-  // Precache critical SVG icons in the background without blocking startup
-  AppAssets.precacheIcons();
 
   runApp(
     EasyLocalization(

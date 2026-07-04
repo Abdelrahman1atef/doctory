@@ -30,23 +30,20 @@ class HomeRemoteDataSourceImpl implements HomeRemoteDataSource {
         'PageSize': ?pageSize,
         'IsFamous': ?isFamous,
       },
-      parser:
-          (json) => PaginatedData.fromJson(
-            json['data'],
-            (item) => SpecialtyModel.fromJson(item),
-          ),
+      parser: (json) => PaginatedData.fromJson(
+        json['data'],
+        (item) => SpecialtyModel.fromJson(item),
+      ),
     );
   }
 
   @override
   Future<ApiResult<List<DoctorModel>>> getRecommendedDoctors() async {
-    await Future.delayed(const Duration(seconds: 1));
     return ApiResult.success([]);
   }
 
   @override
   Future<ApiResult<List<ClinicModel>>> getFeaturedClinics() async {
-    await Future.delayed(const Duration(seconds: 1));
     return ApiResult.success([]);
   }
 }

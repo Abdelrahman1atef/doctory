@@ -711,6 +711,8 @@
   "cancelled": "ملغي",
   "reserved": "محجوز",
   "no_show": "لم يحضر",
+  "accepted": "مقبول",
+  "rejected": "مرفوض",
   "appointment_details": "تفاصيل الموعد",
   "cancel_appointment": "إلغاء الموعد",
   "cancel_confirm_message": "هل أنت متأكد من إلغاء هذا الموعد؟",

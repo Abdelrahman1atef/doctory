@@ -716,6 +716,8 @@
   "cancelled": "Cancelled",
   "reserved": "Reserved",
   "no_show": "No Show",
+  "accepted": "Accepted",
+  "rejected": "Rejected",
   "appointment_details": "Appointment Details",
   "cancel_appointment": "Cancel Appointment",
   "cancel_confirm_message": "Are you sure you want to cancel this appointment?",

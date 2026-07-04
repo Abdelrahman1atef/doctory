@@ -143,53 +143,58 @@ class Alerts {
     required String message,
     SnackState state = SnackState.success,
   }) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Row(
-          children: [
-            Icon(
-              state == SnackState.success
-                  ? Icons.check_circle_outline
-                  : (state == SnackState.failed
-                      ? Icons.error_outline
-                      : Icons.info_outline),
-              color: Colors.white,
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    state == SnackState.success
-                        ? context.tr('success')
-                        : (state == SnackState.failed
-                            ? context.tr('error')
-                            : context.tr('info')),
-                    style: AppStyles.s16Bold.copyWith(color: Colors.white),
-                  ),
-                  5.ph,
-                  Text(
-                    message,
-                    style: AppStyles.s14Bold.copyWith(color: Colors.white),
-                  ),
-                ],
+    if (!context.mounted) return;
+    ScaffoldMessenger.of(context)
+      ..hideCurrentSnackBar()
+      ..showSnackBar(
+        SnackBar(
+          content: Row(
+            children: [
+              Icon(
+                state == SnackState.success
+                    ? Icons.check_circle_outline
+                    : (state == SnackState.failed
+                          ? Icons.error_outline
+                          : Icons.info_outline),
+                color: Colors.white,
               ),
-            ),
-          ],
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      state == SnackState.success
+                          ? context.tr('success')
+                          : (state == SnackState.failed
+                                ? context.tr('error')
+                                : context.tr('info')),
+                      style: AppStyles.s16Bold.copyWith(color: Colors.white),
+                    ),
+                    5.ph,
+                    Text(
+                      message,
+                      style: AppStyles.s14Bold.copyWith(color: Colors.white),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          backgroundColor: state == SnackState.success
+              ? AppColors.stitchPrimary
+              : (state == SnackState.failed
+                    ? AppColors.errorColor
+                    : AppColors.stitchPrimaryContainer),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          duration: const Duration(seconds: 4),
+          elevation: 6,
         ),
-        backgroundColor: state == SnackState.success
-            ? AppColors.stitchPrimary
-            : (state == SnackState.failed
-                ? AppColors.errorColor
-                : AppColors.stitchPrimaryContainer),
-        behavior: SnackBarBehavior.floating,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        duration: const Duration(seconds: 4),
-        elevation: 6,
-      ),
-    );
+      );
   }
 
   /// Show a toast message using SmartDialog
@@ -203,27 +208,26 @@ class Alerts {
       displayTime: displayTime,
       alignment: Alignment.bottomCenter,
       maskColor: Colors.transparent,
-      builder:
-          (context) => Container(
-            margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            decoration: BoxDecoration(
-              color: backgroundColor ?? AppColors.stitchPrimaryContainer,
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black,
-                  blurRadius: 10,
-                  offset: const Offset(0, 4),
-                ),
-              ],
+      builder: (context) => Container(
+        margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 50),
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+        decoration: BoxDecoration(
+          color: backgroundColor ?? AppColors.stitchPrimaryContainer,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black,
+              blurRadius: 10,
+              offset: const Offset(0, 4),
             ),
-            child: Text(
-              message,
-              style: AppStyles.s14Bold.copyWith(color: Colors.white),
-              textAlign: TextAlign.center,
-            ),
-          ),
+          ],
+        ),
+        child: Text(
+          message,
+          style: AppStyles.s14Bold.copyWith(color: Colors.white),
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 }

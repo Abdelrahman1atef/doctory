@@ -36,9 +36,6 @@ class IntroCubit extends Cubit<IntroStates> {
     // Start prefetching home data in the background
     sl<HomeCubit>().getHomeData();
 
-    // محاكاة تأخير الشاشة لمدة ثانيتين كما في المشروع الأصلي
-    await Future<void>.delayed(const Duration(seconds: 2));
-
     // Compatibility logic for old flags
     bool isLanguageSelected =
         CacheHelper.getBool('isLanguageSelected') ?? false;

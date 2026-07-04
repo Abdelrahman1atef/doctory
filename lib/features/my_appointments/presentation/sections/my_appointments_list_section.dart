@@ -1,4 +1,4 @@
-﻿import 'package:doctory/core/theme/app_colors.dart';
+import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
@@ -29,7 +29,8 @@ class MyAppointmentsListSection extends StatefulWidget {
   });
 
   @override
-  State<MyAppointmentsListSection> createState() => _MyAppointmentsListSectionState();
+  State<MyAppointmentsListSection> createState() =>
+      _MyAppointmentsListSectionState();
 }
 
 class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
@@ -38,8 +39,10 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
   static const List<_TabConfig> _tabs = [
     _TabConfig('pending_payment', 0),
     _TabConfig('confirmed', 1),
+    _TabConfig('accepted', 6),
     _TabConfig('completed', 3),
     _TabConfig('cancelled', 2),
+    _TabConfig('rejected', 7),
   ];
 
   int get _selectedTabIndex {
@@ -93,10 +96,18 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(Icons.event_busy_rounded, size: 64, color: AppColors.grey400),
+                  const Icon(
+                    Icons.event_busy_rounded,
+                    size: 64,
+                    color: AppColors.grey400,
+                  ),
                   16.ph,
-                  Text('no_appointments'.tr(),
-                    style: AppStyles.s16Medium.withColor(AppColors.stitchSecondary)),
+                  Text(
+                    'no_appointments'.tr(),
+                    style: AppStyles.s16Medium.withColor(
+                      AppColors.stitchSecondary,
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -106,7 +117,8 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
             child: ListView.builder(
               controller: _scrollController,
               padding: const EdgeInsets.only(top: 8, bottom: 24),
-              itemCount: widget.appointments.length + (widget.isLoadingMore ? 1 : 0),
+              itemCount:
+                  widget.appointments.length + (widget.isLoadingMore ? 1 : 0),
               itemBuilder: (context, index) {
                 if (index == widget.appointments.length) {
                   return const Padding(
@@ -123,7 +135,8 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
                 final apt = widget.appointments[index];
                 return AppointmentCardWidget(
                   appointment: apt,
-                  onTap: () => context.push(AppRoutes.appointmentDetails, extra: apt),
+                  onTap: () =>
+                      context.push(AppRoutes.appointmentDetails, extra: apt),
                   onPayTap: apt.status == 0 ? () => widget.onPayTap(apt) : null,
                 );
               },
@@ -146,15 +159,21 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
           duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            color: isSelected ? AppColors.stitchPrimaryContainer : Colors.transparent,
+            color: isSelected
+                ? AppColors.stitchPrimaryContainer
+                : Colors.transparent,
             borderRadius: BorderRadius.circular(12),
           ),
           child: Center(
-            child: Text(label,
+            child: Text(
+              label,
               style: AppStyles.s14Medium.copyWith(
-                color: isSelected ? AppColors.stitchSurfaceLowest : AppColors.stitchSecondary,
+                color: isSelected
+                    ? AppColors.stitchSurfaceLowest
+                    : AppColors.stitchSecondary,
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
-              )),
+              ),
+            ),
           ),
         ),
       ),

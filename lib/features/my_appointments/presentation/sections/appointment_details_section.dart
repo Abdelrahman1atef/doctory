@@ -1,4 +1,4 @@
-﻿import 'package:doctory/core/common/widgets/layout/abher_payment_webview.dart';
+import 'package:doctory/core/common/widgets/layout/abher_payment_webview.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
@@ -17,7 +17,8 @@ class AppointmentDetailsSection extends StatefulWidget {
   const AppointmentDetailsSection({super.key, required this.appointment});
 
   @override
-  State<AppointmentDetailsSection> createState() => _AppointmentDetailsSectionState();
+  State<AppointmentDetailsSection> createState() =>
+      _AppointmentDetailsSectionState();
 }
 
 class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
@@ -25,14 +26,21 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
 
   @override
   Widget build(BuildContext context) {
-    final canCancel = widget.appointment.status != 3 && widget.appointment.status != 2;
+    final canCancel =
+        widget.appointment.status != 3 &&
+        widget.appointment.status != 2 &&
+        widget.appointment.status != 6 &&
+        widget.appointment.status != 7;
     final isPending = widget.appointment.status == 0;
 
     return BlocConsumer<MyAppointmentsCubit, MyAppointmentsState>(
       listener: (context, state) {
         if (state is MyAppointmentsError) {
           ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(state.message), backgroundColor: AppColors.error),
+            SnackBar(
+              content: Text(state.message),
+              backgroundColor: AppColors.error,
+            ),
           );
         }
         if (state is MyAppointmentsLoaded) {
@@ -53,7 +61,9 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
             _paymentHandled = true;
             _openPaymentWebView(context, state.paymentUrl!);
           }
-          if (updated.status == 1 && widget.appointment.status == 0 && _paymentHandled) {
+          if (updated.status == 1 &&
+              widget.appointment.status == 0 &&
+              _paymentHandled) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 content: Text('payment_successful'.tr()),
@@ -65,7 +75,8 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
         }
       },
       builder: (context, state) {
-        final isProcessing = state is MyAppointmentsLoaded && state.isProcessingPayment;
+        final isProcessing =
+            state is MyAppointmentsLoaded && state.isProcessingPayment;
 
         return Column(
           children: [
@@ -74,13 +85,19 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
               child: Row(
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.arrow_back_ios_new,
-                      color: AppColors.stitchPrimaryContainer),
+                    icon: const Icon(
+                      Icons.arrow_back_ios_new,
+                      color: AppColors.stitchPrimaryContainer,
+                    ),
                     onPressed: () => context.pop(),
                   ),
                   const Spacer(),
-                  Text('appointment_details'.tr(),
-                    style: AppStyles.s20Bold.withColor(AppColors.stitchPrimaryContainer)),
+                  Text(
+                    'appointment_details'.tr(),
+                    style: AppStyles.s20Bold.withColor(
+                      AppColors.stitchPrimaryContainer,
+                    ),
+                  ),
                   const Spacer(),
                   const SizedBox(width: 48),
                 ],
@@ -116,7 +133,9 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
                                   ),
                                 )
                               : const Icon(Icons.payment),
-                          label: Text(isProcessing ? 'processing'.tr() : 'pay_now'.tr()),
+                          label: Text(
+                            isProcessing ? 'processing'.tr() : 'pay_now'.tr(),
+                          ),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.stitchPrimaryContainer,
                             foregroundColor: AppColors.stitchSurfaceLowest,
@@ -134,7 +153,9 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton.icon(
-                          onPressed: isProcessing ? null : () => _confirmCancel(context),
+                          onPressed: isProcessing
+                              ? null
+                              : () => _confirmCancel(context),
                           icon: const Icon(Icons.cancel_outlined),
                           label: Text('cancel_appointment'.tr()),
                           style: OutlinedButton.styleFrom(
@@ -176,9 +197,10 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
 
     if (!context.mounted) return;
 
-    context
-        .read<MyAppointmentsCubit>()
-        .onPaymentResult(paymentSuccess, widget.appointment);
+    context.read<MyAppointmentsCubit>().onPaymentResult(
+      paymentSuccess,
+      widget.appointment,
+    );
   }
 
   void _confirmCancel(BuildContext context) {
@@ -195,7 +217,9 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
           TextButton(
             onPressed: () {
               Navigator.of(ctx).pop();
-              context.read<MyAppointmentsCubit>().cancelAppointment(widget.appointment.id);
+              context.read<MyAppointmentsCubit>().cancelAppointment(
+                widget.appointment.id,
+              );
             },
             child: Text('yes'.tr(), style: TextStyle(color: AppColors.error)),
           ),
