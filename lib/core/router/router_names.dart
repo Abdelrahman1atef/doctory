@@ -36,4 +36,7 @@ abstract class AppRoutes {
   // My Appointments
   static const String myAppointments = '/my-appointments';
   static const String appointmentDetails = '/my-appointments/details';
+
+  // Clinic Dashboard
+  static const String clinicDashboard = '/clinic-dashboard';
 }

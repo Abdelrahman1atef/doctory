@@ -28,6 +28,14 @@ class FBMessaging {
     playSound: true,
   );
 
+  static const _clinicChannel = AndroidNotificationChannel(
+    'clinic_channel',
+    'Clinic Notifications',
+    description: 'receive clinic dashboard notifications',
+    importance: Importance.high,
+    playSound: true,
+  );
+
   // ==================== BACKGROUND HANDLERS ====================
 
   /// معالج الإشعارات في الخلفية
@@ -98,6 +106,12 @@ class FBMessaging {
           AndroidFlutterLocalNotificationsPlugin
         >()
         ?.createNotificationChannel(_androidChannel);
+
+    await _notificationsPlugin
+        ?.resolvePlatformSpecificImplementation<
+          AndroidFlutterLocalNotificationsPlugin
+        >()
+        ?.createNotificationChannel(_clinicChannel);
 
     const androidSettings = AndroidInitializationSettings(
       '@mipmap/ic_launcher',
@@ -322,8 +336,11 @@ class FBMessaging {
       case "bank_transfer":
       case "ad":
       case "offer":
+      case "booking_request":
+      case "low_stock":
+      case "attendance_reminder":
+        AppRouter.router.push(AppRoutes.clinicDashboard);
       default:
-        // All redirect to splash for now as other features are removed
         AppRouter.router.push(AppRoutes.splash);
     }
   }

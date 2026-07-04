@@ -18,6 +18,7 @@ import 'package:doctory/features/create_post/router/create_post_router.dart';
 import 'package:doctory/features/chat/router/chat_router.dart';
 import 'package:doctory/features/specializations/router/specializations_router.dart';
 import 'package:doctory/features/my_appointments/router/my_appointments_router.dart';
+import 'package:doctory/features/clinic_dashboard/router/clinic_dashboard_router.dart';
 import 'package:doctory/features/layout/presentation/views/layout_view.dart';
 import 'package:doctory/features/more/router/more_router.dart';
 
@@ -65,6 +66,7 @@ class AppRouter {
       ...ChatRouter.routes,
       ...SpecializationsRouter.routes,
       ...MyAppointmentsRouter.routes,
+      ...ClinicDashboardRouter.routes,
     ],
 
     // Error page
