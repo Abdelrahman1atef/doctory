@@ -7,6 +7,9 @@ class UserModel {
   final int? gender;
   final String? profilePictureUrl;
   final int? language;
+  final String? role;
+  final String? certificateImage;
+  final String? syndicateIdImage;
 
   UserModel({
     this.id,
@@ -17,6 +20,9 @@ class UserModel {
     this.gender,
     this.profilePictureUrl,
     this.language,
+    this.role,
+    this.certificateImage,
+    this.syndicateIdImage,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -33,6 +39,9 @@ class UserModel {
       language: json['language'] is int
           ? json['language']
           : int.tryParse(json['language']?.toString() ?? ''),
+      role: json['role']?.toString(),
+      certificateImage: json['certificate_image']?.toString(),
+      syndicateIdImage: json['syndicate_id_image']?.toString(),
     );
   }
 
@@ -46,6 +55,9 @@ class UserModel {
       'gender': gender,
       'profilePictureUrl': profilePictureUrl,
       'language': language,
+      'role': role,
+      'certificate_image': certificateImage,
+      'syndicate_id_image': syndicateIdImage,
     };
   }
 }

@@ -8,7 +8,11 @@ import 'package:doctory/features/auth/data/model/user_model.dart';
 import 'package:doctory/features/auth/data/model/update_profile_request.dart';
 
 abstract class AuthRepo {
-  Future<ApiResult<AuthResponse>> signup(SignupRequest request);
+  Future<ApiResult<AuthResponse>> signup(
+    SignupRequest request, {
+    String? certificateImagePath,
+    String? syndicateIdImagePath,
+  });
   Future<ApiResult<AuthResponse>> login(LoginRequest request);
   Future<ApiResult<AuthResponse>> verify(String email, String code);
   Future<ApiResult<void>> forgotPassword(String email);
@@ -39,8 +43,16 @@ class AuthRepoImpl implements AuthRepo {
   AuthRepoImpl(this._dataSource);
 
   @override
-  Future<ApiResult<AuthResponse>> signup(SignupRequest request) async {
-    final result = await _dataSource.signup(request);
+  Future<ApiResult<AuthResponse>> signup(
+    SignupRequest request, {
+    String? certificateImagePath,
+    String? syndicateIdImagePath,
+  }) async {
+    final result = await _dataSource.signup(
+      request,
+      certificateImagePath: certificateImagePath,
+      syndicateIdImagePath: syndicateIdImagePath,
+    );
     return result.fold(
       onSuccess: (response) async {
         await _saveAuthSession(response);

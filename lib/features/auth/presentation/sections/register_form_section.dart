@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -10,7 +13,9 @@ import '../../data/model/signup_request.dart';
 import '../widgets/register_form_widget.dart';
 
 class RegisterFormSection extends StatefulWidget {
-  const RegisterFormSection({super.key});
+  final String role;
+
+  const RegisterFormSection({super.key, required this.role});
 
   @override
   State<RegisterFormSection> createState() => _RegisterFormSectionState();
@@ -31,6 +36,8 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
   String? _selectedGender;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
+  File? _certificateImage;
+  File? _syndicateIdImage;
 
   @override
   void dispose() {
@@ -43,6 +50,21 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
     _monthController.dispose();
     _yearController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickFile({required bool isCertificate}) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+    );
+    if (result != null && result.files.single.path != null) {
+      setState(() {
+        if (isCertificate) {
+          _certificateImage = File(result.files.single.path!);
+        } else {
+          _syndicateIdImage = File(result.files.single.path!);
+        }
+      });
+    }
   }
 
   String _getFormattedPhone() {
@@ -83,7 +105,10 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
           phoneNumber: _getFormattedPhone(),
           birthDate: birthDate,
           gender: _getGenderValue(),
+          role: widget.role,
         ),
+        certificateImagePath: widget.role == 'doctor' ? _certificateImage?.path : null,
+        syndicateIdImagePath: widget.role == 'doctor' ? _syndicateIdImage?.path : null,
       );
     }
   }
@@ -129,6 +154,18 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
         onToggleConfirmPassword: () =>
             setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
         onSubmit: _onSubmit,
+        certificateFileName: widget.role == 'doctor'
+            ? _certificateImage?.path.split('/').last ?? _certificateImage?.path.split('\\').last
+            : null,
+        syndicateFileName: widget.role == 'doctor'
+            ? _syndicateIdImage?.path.split('/').last ?? _syndicateIdImage?.path.split('\\').last
+            : null,
+        onPickCertificate: widget.role == 'doctor'
+            ? () => _pickFile(isCertificate: true)
+            : null,
+        onPickSyndicate: widget.role == 'doctor'
+            ? () => _pickFile(isCertificate: false)
+            : null,
         onGoogleSignIn: () => context.read<AuthCubit>().signInWithGoogle(),
         onFacebookSignIn: () => context.read<AuthCubit>().signInWithFacebook(),
         onLogin: () => context.pop(),

@@ -714,5 +714,14 @@
   "appointment_details": "تفاصيل الموعد",
   "cancel_appointment": "إلغاء الموعد",
   "cancel_confirm_message": "هل أنت متأكد من إلغاء هذا الموعد؟",
-  "appointment_cancelled": "تم إلغاء الموعد بنجاح"
+  "appointment_cancelled": "تم إلغاء الموعد بنجاح",
+  "certificate_label": "صورة الشهادة",
+  "syndicate_label": "صورة النقابة",
+  "upload_file_hint": "اضغط لرفع ملف",
+  "select_role_title": "اختر دورك",
+  "select_role_subtitle": "اختر نوع الحساب للمتابعة",
+  "doctor_role": "طبيب",
+  "doctor_role_desc": "التسجيل كطبيب",
+  "patient_role": "مريض",
+  "patient_role_desc": "التسجيل كمريض"
 }

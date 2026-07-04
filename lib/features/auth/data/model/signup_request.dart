@@ -6,6 +6,9 @@ class SignupRequest {
   final String phoneNumber;
   final String? birthDate;
   final int? gender;
+  final String? role;
+  final String? certificateImagePath;
+  final String? syndicateIdImagePath;
 
   SignupRequest({
     required this.fullName,
@@ -15,6 +18,9 @@ class SignupRequest {
     required this.phoneNumber,
     this.birthDate,
     this.gender,
+    this.role,
+    this.certificateImagePath,
+    this.syndicateIdImagePath,
   });
 
   Map<String, dynamic> toJson() {
@@ -26,6 +32,7 @@ class SignupRequest {
       'phoneNumber': phoneNumber,
       if (birthDate != null) 'birthDate': birthDate,
       if (gender != null) 'gender': gender,
+      if (role != null) 'role': role,
     };
   }
 }

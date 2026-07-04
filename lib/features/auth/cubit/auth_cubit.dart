@@ -27,10 +27,18 @@ class AuthCubit extends Cubit<AuthStates> {
     );
   }
 
-  void signup(SignupRequest request) async {
+  void signup(
+    SignupRequest request, {
+    String? certificateImagePath,
+    String? syndicateIdImagePath,
+  }) async {
     emit(AuthLoadingState());
 
-    final result = await _authRepo.signup(request);
+    final result = await _authRepo.signup(
+      request,
+      certificateImagePath: certificateImagePath,
+      syndicateIdImagePath: syndicateIdImagePath,
+    );
 
     result.fold(
       onSuccess: (data) => emit(SignupSuccessState(request.email)),

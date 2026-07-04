@@ -24,6 +24,7 @@ class PostModel {
   final String authorId;
   final String? authorName;
   final String? authorImage;
+  final String? authorRole;
   final String createdAt;
   final int reactionCount;
   final int commentCount;
@@ -36,6 +37,7 @@ class PostModel {
     required this.authorId,
     this.authorName,
     this.authorImage,
+    this.authorRole,
     required this.createdAt,
     required this.reactionCount,
     required this.commentCount,
@@ -50,6 +52,7 @@ class PostModel {
       authorId: json['authorId'] ?? '',
       authorName: json['authorName'],
       authorImage: json['authorProfileImageUrl'] ?? json['authorImage'],
+      authorRole: json['authorRole'],
       createdAt: json['createdAt'] ?? '',
       reactionCount: json['reactionCount'] ?? 0,
       commentCount: json['commentCount'] ?? 0,
@@ -70,6 +73,7 @@ class PostModel {
     String? authorId,
     String? authorName,
     String? authorImage,
+    String? authorRole,
     String? createdAt,
     int? reactionCount,
     int? commentCount,
@@ -82,6 +86,7 @@ class PostModel {
       authorId: authorId ?? this.authorId,
       authorName: authorName ?? this.authorName,
       authorImage: authorImage ?? this.authorImage,
+      authorRole: authorRole ?? this.authorRole,
       createdAt: createdAt ?? this.createdAt,
       reactionCount: reactionCount ?? this.reactionCount,
       commentCount: commentCount ?? this.commentCount,

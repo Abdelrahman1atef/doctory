@@ -719,5 +719,14 @@
   "appointment_details": "Appointment Details",
   "cancel_appointment": "Cancel Appointment",
   "cancel_confirm_message": "Are you sure you want to cancel this appointment?",
-  "appointment_cancelled": "Appointment cancelled successfully"
+  "appointment_cancelled": "Appointment cancelled successfully",
+  "certificate_label": "Certificate Image",
+  "syndicate_label": "Syndicate ID Image",
+  "upload_file_hint": "Tap to upload a file",
+  "select_role_title": "Choose Your Role",
+  "select_role_subtitle": "Select your account type to continue",
+  "doctor_role": "Doctor",
+  "doctor_role_desc": "Register as a medical professional",
+  "patient_role": "Patient",
+  "patient_role_desc": "Register as a patient"
 }

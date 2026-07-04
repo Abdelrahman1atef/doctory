@@ -28,6 +28,10 @@ class RegisterFormWidget extends StatelessWidget {
   final VoidCallback onGoogleSignIn;
   final VoidCallback onFacebookSignIn;
   final VoidCallback onLogin;
+  final String? certificateFileName;
+  final String? syndicateFileName;
+  final VoidCallback? onPickCertificate;
+  final VoidCallback? onPickSyndicate;
 
   const RegisterFormWidget({
     super.key,
@@ -50,6 +54,10 @@ class RegisterFormWidget extends StatelessWidget {
     required this.onGoogleSignIn,
     required this.onFacebookSignIn,
     required this.onLogin,
+    this.certificateFileName,
+    this.syndicateFileName,
+    this.onPickCertificate,
+    this.onPickSyndicate,
   });
 
   @override
@@ -246,6 +254,30 @@ class RegisterFormWidget extends StatelessWidget {
 
           20.ph,
 
+          /// Certificate Upload (Doctor)
+          if (onPickCertificate != null) ...[
+            _UploadField(
+              label: context.l10n('certificate_label'),
+              fileName: certificateFileName,
+              hint: context.l10n('upload_file_hint'),
+              onPick: onPickCertificate!,
+            ),
+            16.ph,
+          ],
+
+          /// Syndicate ID Upload (Doctor)
+          if (onPickSyndicate != null) ...[
+            _UploadField(
+              label: context.l10n('syndicate_label'),
+              fileName: syndicateFileName,
+              hint: context.l10n('upload_file_hint'),
+              onPick: onPickSyndicate!,
+            ),
+            16.ph,
+          ],
+
+          20.ph,
+
           /// Confirm Password
           StitchTextField(
             controller: confirmPasswordController,
@@ -373,6 +405,73 @@ class RegisterFormWidget extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _UploadField extends StatelessWidget {
+  final String label;
+  final String? fileName;
+  final String hint;
+  final VoidCallback onPick;
+
+  const _UploadField({
+    required this.label,
+    required this.fileName,
+    required this.hint,
+    required this.onPick,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          label,
+          style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
+        ),
+        8.ph,
+        InkWell(
+          onTap: onPick,
+          borderRadius: BorderRadius.circular(12),
+          child: Container(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 16,
+              vertical: 14,
+            ),
+            decoration: BoxDecoration(
+              color: AppColors.stitchSurface,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: AppColors.cardBorder),
+            ),
+            child: Row(
+              children: [
+                Icon(
+                  fileName != null
+                      ? Icons.check_circle_outline
+                      : Icons.upload_file_outlined,
+                  color: fileName != null
+                      ? AppColors.stitchPrimary
+                      : AppColors.textSecondary,
+                  size: 22,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                    child: Text(
+                      fileName ?? hint,
+                      style: AppTextSizes.s14.regular.copyWith(
+                      color: fileName != null
+                          ? AppColors.textPrimary
+                          : AppColors.textSecondary,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

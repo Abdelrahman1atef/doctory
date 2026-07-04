@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import 'package:doctory/features/auth/data/data_source/auth_endpoints.dart';
 import 'package:doctory/features/auth/data/model/auth_response.dart';
@@ -7,7 +8,11 @@ import 'package:doctory/features/auth/data/model/user_model.dart';
 import 'package:doctory/features/auth/data/model/update_profile_request.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<ApiResult<AuthResponse>> signup(SignupRequest request);
+  Future<ApiResult<AuthResponse>> signup(
+    SignupRequest request, {
+    String? certificateImagePath,
+    String? syndicateIdImagePath,
+  });
   Future<ApiResult<AuthResponse>> login(LoginRequest request);
   Future<ApiResult<AuthResponse>> verify(String email, String code);
   Future<ApiResult<void>> forgotPassword(String email);
@@ -38,7 +43,30 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl(this._apiConsumer);
 
   @override
-  Future<ApiResult<AuthResponse>> signup(SignupRequest request) async {
+  Future<ApiResult<AuthResponse>> signup(
+    SignupRequest request, {
+    String? certificateImagePath,
+    String? syndicateIdImagePath,
+  }) async {
+    final hasFiles =
+        certificateImagePath != null || syndicateIdImagePath != null;
+    if (hasFiles) {
+      final body = Map<String, dynamic>.from(request.toJson());
+      if (certificateImagePath != null) {
+        body['certificate_image'] =
+            await MultipartFile.fromFile(certificateImagePath);
+      }
+      if (syndicateIdImagePath != null) {
+        body['syndicate_id_image'] =
+            await MultipartFile.fromFile(syndicateIdImagePath);
+      }
+      return await _apiConsumer.post(
+        path: AuthEndpoints.signup,
+        body: body,
+        isFormData: true,
+        parser: (json) => AuthResponse.fromJson(json),
+      );
+    }
     return await _apiConsumer.post(
       path: AuthEndpoints.signup,
       body: request.toJson(),

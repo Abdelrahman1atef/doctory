@@ -16,8 +16,15 @@ class HomeHeaderSection extends StatelessWidget {
         final String? imageUrl = (user is Map)
             ? (user['image'] ?? user['avatar'])?.toString()
             : null;
+        final String? role = (user is Map)
+            ? (user['role']?.toString())
+            : null;
 
-        return HomeHeaderWidget(userName: userName, imageUrl: imageUrl);
+        return HomeHeaderWidget(
+          userName: userName,
+          imageUrl: imageUrl,
+          userRole: role,
+        );
       },
     );
   }

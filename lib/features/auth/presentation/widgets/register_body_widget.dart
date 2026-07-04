@@ -8,11 +8,15 @@ import 'package:flutter/material.dart';
 class RegisterBodyWidget extends StatelessWidget {
   final Widget header;
   final Widget form;
+  final bool showBackButton;
+  final VoidCallback? onBack;
 
   const RegisterBodyWidget({
     super.key,
     required this.header,
     required this.form,
+    this.showBackButton = false,
+    this.onBack,
   });
 
   @override
@@ -25,7 +29,12 @@ class RegisterBodyWidget extends StatelessWidget {
           AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            leading: const BackButton(color: AppColors.stitchPrimary),
+            leading: showBackButton && onBack != null
+                ? IconButton(
+                    icon: const Icon(Icons.arrow_back, color: AppColors.stitchPrimary),
+                    onPressed: onBack,
+                  )
+                : const BackButton(color: AppColors.stitchPrimary),
             forceMaterialTransparency: true,
           ),
           const SizedBox(height: 10),

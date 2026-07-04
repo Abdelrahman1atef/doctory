@@ -1,3 +1,4 @@
+import 'package:doctory/core/common/widgets/images/doctor_avatar_badge.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/community/data/model/community_models.dart';
@@ -12,19 +13,26 @@ class PostCardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDoctor = post.authorRole == 'doctor';
+
     return Row(
       children: [
-        CircleAvatar(
-          radius: 20,
-          backgroundImage:
-              post.authorImage != null && post.authorImage!.isNotEmpty
-              ? NetworkImage(post.authorImage!.toImageUrl)
-              : null,
-          backgroundColor: AppColors.grey100,
-          child: post.authorImage == null || post.authorImage!.isEmpty
-              ? const Icon(Icons.person, color: Colors.grey)
-              : null,
-        ),
+        isDoctor
+            ? DoctorAvatarBadge(
+                imageUrl: post.authorImage?.toImageUrl,
+                size: 40,
+              )
+            : CircleAvatar(
+                radius: 20,
+                backgroundImage:
+                    post.authorImage != null && post.authorImage!.isNotEmpty
+                    ? NetworkImage(post.authorImage!.toImageUrl)
+                    : null,
+                backgroundColor: AppColors.grey100,
+                child: post.authorImage == null || post.authorImage!.isEmpty
+                    ? const Icon(Icons.person, color: Colors.grey)
+                    : null,
+              ),
         12.pw,
         Expanded(
           child: Column(
