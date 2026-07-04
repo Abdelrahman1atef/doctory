@@ -1,3 +1,5 @@
+import 'package:doctory/core/common/models/role.dart';
+import 'package:doctory/core/session/user_session.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
@@ -64,8 +66,11 @@ class _OtpInputSectionState extends State<OtpInputSection> {
 
         if (state is AuthSuccessState) {
           LocationHelper.isPermissionGranted().then((isGranted) {
+            final destination = UserSession.currentRole == UserRole.clinicOwner
+                ? AppRoutes.clinicDashboard
+                : AppRoutes.home;
             if (isGranted && context.mounted) {
-              context.go(AppRoutes.home);
+              context.go(destination);
             } else if (context.mounted) {
               context.go(AppRoutes.locationPermission);
             }

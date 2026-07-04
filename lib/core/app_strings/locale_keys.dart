@@ -511,4 +511,29 @@ abstract class LocaleKeys {
   static const enter_patient_details = 'enter_patient_details';
   static const payment_processed = 'payment_processed';
   static const confirm_payment_to_finish = 'confirm_payment_to_finish';
+
+  static const clinic_dashboard = 'clinic_dashboard';
+  static const clinic_dashboard_subtitle = 'clinic_dashboard_subtitle';
+  static const todays_visits = 'todays_visits';
+  static const todays_income = 'todays_income';
+  static const pending_actions = 'pending_actions';
+  static const pending_bookings = 'pending_bookings';
+  static const search_patient = 'search_patient';
+  static const search_patients_hint = 'search_patients_hint';
+  static const no_pending_bookings = 'no_pending_bookings';
+  static const no_patients_found = 'no_patients_found';
+  static const accept = 'accept';
+  static const booking_details = 'booking_details';
+  static const clinic_name = 'clinic_name';
+  static const doctor_name = 'doctor_name';
+  static const appointment_date = 'appointment_date';
+  static const appointment_time = 'appointment_time';
+  static const reason = 'reason';
+  static const last_visit = 'last_visit';
+  static const notifications = 'notifications';
+  static const pending = 'pending';
+  static const accepted = 'accepted';
+  static const rejected = 'rejected';
+  static const requests_inbox = 'requests_inbox';
+  static const no_requests = 'no_requests';
 }

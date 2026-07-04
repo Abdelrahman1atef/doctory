@@ -1,5 +1,7 @@
+import 'package:doctory/core/common/models/role.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/cache/cache_helper.dart';
+import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/features/intro/cubit/intro_cubit.dart';
 import 'package:doctory/features/intro/cubit/intro_states.dart';
 import 'package:doctory/features/intro/presentation/sections/splash_body_section.dart';
@@ -38,7 +40,11 @@ class SplashView extends StatelessWidget {
         } else if (state is NavigateToLoginState) {
           context.go(AppRoutes.welcome);
         } else if (state is NavigateToMainState) {
-          context.go(AppRoutes.home);
+          if (UserSession.currentRole == UserRole.clinicOwner) {
+            context.go(AppRoutes.clinicDashboard);
+          } else {
+            context.go(AppRoutes.home);
+          }
         }
       },
       child: const Scaffold(body: SplashBodySection()),

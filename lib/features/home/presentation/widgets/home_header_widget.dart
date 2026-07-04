@@ -25,32 +25,34 @@ class HomeHeaderWidget extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              context.l10n('good_morning'),
-              style: AppStyles.s16Medium.copyWith(
-                color: AppColors.textSecondary,
+        Flexible(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                context.l10n('good_morning'),
+                style: AppStyles.s16Medium.copyWith(
+                  color: AppColors.textSecondary,
+                ),
               ),
-            ),
-            10.ph,
-            Text(
-              context.l10n('hello_user', args: [userName]),
-              style: AppStyles.s16Bold.copyWith(
-                fontSize: 24,
-                color: AppColors.stitchPrimary,
+              10.ph,
+              Text(
+                context.l10n('hello_user', args: [userName]),
+                style: AppStyles.s16Bold.copyWith(
+                  fontSize: 24,
+                  color: AppColors.stitchPrimary,
+                ),
               ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              context.l10n('how_can_we_help'),
-              style: AppStyles.s16Bold.copyWith(
-                fontSize: 18,
-                color: AppColors.textPrimary,
+              const SizedBox(height: 8),
+              Text(
+                context.l10n('how_can_we_help'),
+                style: AppStyles.s16Bold.copyWith(
+                  fontSize: 18,
+                  color: AppColors.textPrimary,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
         isDoctor
             ? DoctorAvatarBadge(

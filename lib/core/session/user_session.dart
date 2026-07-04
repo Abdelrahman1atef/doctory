@@ -94,7 +94,9 @@ class UserSession {
 
       if (userData.isNotEmpty) {
         userModel = userData;
-        currentRole = UserRole.fromJson(userData['role']?.toString());
+        currentRole = UserRole.fromJson(
+          (userData['role'] ?? userData['roles'])?.toString(),
+        );
         currentDoctorType = DoctorEmploymentType.fromJson(
           userData['doctorType']?.toString(),
         );
@@ -216,7 +218,9 @@ class UserSession {
 
       if (userData.isNotEmpty) {
         userModel = userData;
-        currentRole = UserRole.fromJson(userData['role']?.toString());
+        currentRole = UserRole.fromJson(
+          (userData['role'] ?? userData['roles'])?.toString(),
+        );
         currentDoctorType = DoctorEmploymentType.fromJson(
           userData['doctorType']?.toString(),
         );

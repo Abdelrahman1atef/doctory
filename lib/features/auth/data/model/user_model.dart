@@ -34,7 +34,7 @@ class UserModel {
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
-    final rawRole = json['role']?.toString();
+    final rawRole = (json['role'] ?? json['roles'])?.toString();
     final rawPermissions = json['permissions'] as List<dynamic>? ?? [];
     final permissions = rawPermissions
         .map((e) => Permission.fromJson(e?.toString()))

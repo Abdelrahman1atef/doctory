@@ -26,8 +26,7 @@ import 'package:doctory/features/booking/di/booking_di.dart';
 import 'package:doctory/features/specializations/di/specializations_di.dart';
 import 'package:doctory/features/clinic_details/di/clinic_details_di.dart';
 import 'package:doctory/features/my_appointments/di/my_appointments_di.dart';
-import 'package:doctory/features/clinic_dashboard/di/clinic_dashboard_di.dart';
-import 'package:doctory/features/clinic_requests/di/clinic_requests_di.dart';
+import 'package:doctory/features/clinic/di/clinic_di.dart';
 import 'package:get_it/get_it.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
@@ -101,7 +100,6 @@ class ServiceLocator {
     setupSpecializationsLocator();
     setupMyAppointmentsDI(sl);
     setupClinicDetailsDI(sl);
-    setupClinicDashboardDI(sl);
-    setupClinicRequestsDI(sl);
+    setupClinicDI(sl);
   }
 }

@@ -725,5 +725,27 @@
   "doctor_role": "طبيب",
   "doctor_role_desc": "التسجيل كطبيب",
   "patient_role": "مريض",
-  "patient_role_desc": "التسجيل كمريض"
+  "patient_role_desc": "التسجيل كمريض",
+
+  "clinic_dashboard": "لوحة التحكم",
+  "clinic_dashboard_subtitle": "نظرة عامة وإجراءات سريعة",
+  "todays_visits": "زيارات اليوم",
+  "todays_income": "دخل اليوم",
+  "pending_actions": "إجراءات معلقة",
+  "pending_bookings": "حجوزات معلقة",
+  "search_patient": "بحث عن مريض",
+  "search_patients_hint": "بحث بالاسم أو الهاتف...",
+  "no_pending_bookings": "لا توجد حجوزات معلقة",
+  "no_patients_found": "لا يوجد مرضى",
+  "accept": "قبول",
+  "booking_details": "تفاصيل الحجز",
+  "clinic_name": "العيادة",
+  "doctor_name": "الطبيب",
+  "appointment_date": "تاريخ الموعد",
+  "appointment_time": "وقت الموعد",
+  "reason": "السبب",
+  "last_visit": "آخر زيارة",
+  "notifications": "الإشعارات",
+  "requests_inbox": "طلبات الحجز",
+  "no_requests": "لا توجد طلبات حجز"
 }

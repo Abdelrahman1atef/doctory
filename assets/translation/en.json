@@ -730,5 +730,27 @@
   "doctor_role": "Doctor",
   "doctor_role_desc": "Register as a medical professional",
   "patient_role": "Patient",
-  "patient_role_desc": "Register as a patient"
+  "patient_role_desc": "Register as a patient",
+
+  "clinic_dashboard": "Clinic Dashboard",
+  "clinic_dashboard_subtitle": "Overview & Quick Actions",
+  "todays_visits": "Today's Visits",
+  "todays_income": "Today's Income",
+  "pending_actions": "Pending Actions",
+  "pending_bookings": "Pending Bookings",
+  "search_patient": "Search Patient",
+  "search_patients_hint": "Search by name or phone...",
+  "no_pending_bookings": "No pending booking requests",
+  "no_patients_found": "No patients found",
+  "accept": "Accept",
+  "booking_details": "Booking Details",
+  "clinic_name": "Clinic",
+  "doctor_name": "Doctor",
+  "appointment_date": "Appointment Date",
+  "appointment_time": "Appointment Time",
+  "reason": "Reason",
+  "last_visit": "Last Visit",
+  "notifications": "Notifications",
+  "requests_inbox": "Booking Requests",
+  "no_requests": "No booking requests"
 }

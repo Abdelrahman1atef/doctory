@@ -19,8 +19,7 @@ import 'package:doctory/features/create_post/router/create_post_router.dart';
 import 'package:doctory/features/chat/router/chat_router.dart';
 import 'package:doctory/features/specializations/router/specializations_router.dart';
 import 'package:doctory/features/my_appointments/router/my_appointments_router.dart';
-import 'package:doctory/features/clinic_dashboard/router/clinic_dashboard_router.dart';
-import 'package:doctory/features/clinic_requests/router/clinic_requests_router.dart';
+import 'package:doctory/features/clinic/router/clinic_router.dart';
 import 'package:doctory/features/layout/presentation/views/layout_view.dart';
 import 'package:doctory/features/more/router/more_router.dart';
 
@@ -30,7 +29,7 @@ import 'package:doctory/core/session/user_session.dart';
 class AppRouter {
   // Changed temporarily for testing the new clinic locator feature
   // static String initialRoute = AppRoutes.clinicRequests;
-  static String initialRoute = AppRoutes.clinicDashboard;
+  static String initialRoute = AppRoutes.splash;
 
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
@@ -46,11 +45,6 @@ class AppRouter {
       if (mobileRole == null) return null;
 
       final location = state.matchedLocation;
-
-      if (mobileRole == MobileRole.clinic &&
-          !location.startsWith('/clinic')) {
-        return '/clinic/requests';
-      }
 
       if (mobileRole == MobileRole.patient &&
           location.startsWith('/clinic')) {
@@ -88,8 +82,7 @@ class AppRouter {
       ...ChatRouter.routes,
       ...SpecializationsRouter.routes,
       ...MyAppointmentsRouter.routes,
-      ...ClinicDashboardRouter.routes,
-      ClinicRequestsRouter.route,
+      ...ClinicRouter.routes,
     ],
 
     // Error page
