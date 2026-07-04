@@ -20,11 +20,15 @@ class ConversationsListCubit extends Cubit<ConversationsListState> {
   bool _hasMore = true;
   Timer? _refreshDebounce;
 
-  ConversationsListCubit(this.chatRepo, this.realtimeService) : super(ConversationsListInitial()) {
-    _listenToRealtimeEvents();
-  }
+  ConversationsListCubit(this.chatRepo, this.realtimeService) : super(ConversationsListInitial());
 
   void _listenToRealtimeEvents() {
+    _newMessageSub?.cancel();
+    _conversationUpdatedSub?.cancel();
+    _unreadCountSub?.cancel();
+    _onlineUsersSub?.cancel();
+    _typingSub?.cancel();
+
     _newMessageSub = realtimeService.onNewMessage.listen((data) {
       final senderId = data['senderId'] ?? data['SenderId'];
       if (senderId != UserSession.userId) {
@@ -99,6 +103,9 @@ class ConversationsListCubit extends Cubit<ConversationsListState> {
   }
 
   Future<void> loadConversations({bool refresh = false}) async {
+    await realtimeService.initialize();
+    _listenToRealtimeEvents();
+
     if (refresh) {
       _currentPage = 1;
       _hasMore = true;

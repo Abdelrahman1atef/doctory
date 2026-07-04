@@ -41,20 +41,22 @@ class ChatRealtimeService {
   Timer? _typingDebounceTimer;
   bool _isCurrentlyTyping = false;
   String? _activeConversationId;
+  bool _initialized = false;
+
   Future<void> initialize() async {
+    if (_initialized) return;
+    _initialized = true;
+
     final userId = UserSession.userId;
     if (userId == null) return;
 
-    // Initialize Pusher and subscribe to Global Presence Channel
     await _pusherService.initialize(PusherConfig.presenceGlobalChannel);
 
-    // Subscribe to Private User Channel
     final privateChannel = PusherConfig.getUserPrivateChannel(userId);
     await _pusherService.subscribeToChannel(privateChannel);
 
     _registerEventHandlers(privateChannel);
 
-    // Call REST endpoint to register connection
     await _registerConnection();
   }
 

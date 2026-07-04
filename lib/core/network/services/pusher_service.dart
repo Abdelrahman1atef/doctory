@@ -69,6 +69,13 @@ class PusherService {
   // Event Handling
   // ------------------------
   void _onGlobalEvent(PusherEvent event) {
+    // Skip system events handled by dedicated callbacks to avoid duplicate processing
+    if (event.eventName == subscriptionSucceededEvent ||
+        event.eventName == 'pusher:member_added' ||
+        event.eventName == 'pusher:member_removed') {
+      return;
+    }
+
     log('Global Event received: ${event.channelName}/${event.eventName}');
 
     final channelHandlers = _eventHandlers[event.channelName];

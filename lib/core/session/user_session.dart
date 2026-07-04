@@ -122,11 +122,6 @@ class UserSession {
           await SecureStorage.saveRefreshToken(refreshToken);
         }
         await CacheHelper.saveBool('isLoggedIn', true);
-
-        // Initialize Chat Realtime Service
-        if (sl.isRegistered<ChatRealtimeService>()) {
-          sl<ChatRealtimeService>().initialize();
-        }
       }
 
       userNotifier.value = userModel;
@@ -223,10 +218,7 @@ class UserSession {
       }
       
       if (token.isNotEmpty) {
-        // Initialize Chat Realtime Service
-        if (sl.isRegistered<ChatRealtimeService>()) {
-          sl<ChatRealtimeService>().initialize();
-        }
+        // Intentionally empty — realtime init moved to chat cubits
       }
 
       return userModel;
