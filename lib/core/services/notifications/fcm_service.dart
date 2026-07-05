@@ -110,7 +110,7 @@ class FBMessaging {
         ?.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(_clinicChannel);
 
-    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const androidSettings = AndroidInitializationSettings('ic_stat_splash');
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -232,6 +232,7 @@ class FBMessaging {
             'cart_channel',
             'Cart Channel',
             channelDescription: 'receive all cart related notifications',
+            icon: 'ic_stat_splash',
             importance: Importance.max,
             priority: Priority.high,
           ),

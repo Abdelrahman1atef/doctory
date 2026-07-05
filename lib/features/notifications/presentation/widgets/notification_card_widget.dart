@@ -5,6 +5,8 @@ import 'package:doctory/features/notifications/data/model/notification_model.dar
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/utils/extensions.dart';
+
 class NotificationCardWidget extends StatelessWidget {
   final NotificationModel notification;
   final VoidCallback onTap;
@@ -55,18 +57,37 @@ class NotificationCardWidget extends StatelessWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  width: 40,
-                  height: 40,
-                  decoration: BoxDecoration(
-                    color: AppColors.stitchPrimaryContainer.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(
-                    _icon,
-                    color: AppColors.stitchPrimary,
-                    size: 20,
-                  ),
+                Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: AppColors.stitchPrimaryContainer.withValues(alpha: 0.15),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(
+                        _icon,
+                        color: AppColors.stitchPrimary,
+                        size: 20,
+                      ),
+                    ),
+                    if (!notification.isRead)...[
+                      PositionedDirectional(
+                        top: -2,
+                        start: -2,
+                        child: Container(
+                          width: 8,
+                          height: 8,
+                          decoration: BoxDecoration(
+                            color: AppColors.error,
+                            shape: BoxShape.circle,
+                          ),
+                        ),
+                      ),
+                    ]
+                  ],
                 ),
                 const SizedBox(width: 12),
                 Expanded(
@@ -107,16 +128,7 @@ class NotificationCardWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                if (!notification.isRead)
-                  Container(
-                    width: 8,
-                    height: 8,
-                    margin: const EdgeInsets.only(top: 6, left: 4),
-                    decoration: BoxDecoration(
-                      color: AppColors.error,
-                      shape: BoxShape.circle,
-                    ),
-                  ),
+
               ],
             ),
           ),
