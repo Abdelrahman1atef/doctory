@@ -5,17 +5,11 @@ import 'package:doctory/features/notifications/data/model/notification_model.dar
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/utils/extensions.dart';
-
 class NotificationCardWidget extends StatelessWidget {
   final NotificationModel notification;
   final VoidCallback onTap;
 
-  const NotificationCardWidget({
-    super.key,
-    required this.notification,
-    required this.onTap,
-  });
+  const NotificationCardWidget({super.key, required this.notification, required this.onTap});
 
   static final _typeIcons = <NotificationType, IconData>{
     NotificationType.appointmentReminder: Icons.alarm_rounded,
@@ -67,26 +61,19 @@ class NotificationCardWidget extends StatelessWidget {
                         color: AppColors.stitchPrimaryContainer.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(10),
                       ),
-                      child: Icon(
-                        _icon,
-                        color: AppColors.stitchPrimary,
-                        size: 20,
-                      ),
+                      child: Icon(_icon, color: AppColors.stitchPrimary, size: 20),
                     ),
-                    if (!notification.isRead)...[
+                    if (!notification.isRead) ...[
                       PositionedDirectional(
                         top: -2,
                         start: -2,
                         child: Container(
                           width: 8,
                           height: 8,
-                          decoration: BoxDecoration(
-                            color: AppColors.error,
-                            shape: BoxShape.circle,
-                          ),
+                          decoration: BoxDecoration(color: AppColors.error, shape: BoxShape.circle),
                         ),
                       ),
-                    ]
+                    ],
                   ],
                 ),
                 const SizedBox(width: 12),
@@ -110,25 +97,20 @@ class NotificationCardWidget extends StatelessWidget {
                           const SizedBox(width: 8),
                           Text(
                             _timeAgo,
-                            style: AppStyles.s12Medium.copyWith(
-                              color: AppColors.textSecondary,
-                            ),
+                            style: AppStyles.s12Medium.copyWith(color: AppColors.textSecondary),
                           ),
                         ],
                       ),
                       const SizedBox(height: 4),
                       Text(
                         body,
-                        style: AppStyles.s12Medium.copyWith(
-                          color: AppColors.textSecondary,
-                        ),
+                        style: AppStyles.s12Medium.copyWith(color: AppColors.textSecondary),
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
                     ],
                   ),
                 ),
-
               ],
             ),
           ),

@@ -11,6 +11,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../chat/router/chat_router_names.dart';
+
 class NotificationsBodySection extends StatelessWidget {
   const NotificationsBodySection({super.key});
 
@@ -61,14 +63,33 @@ class NotificationsBodySection extends StatelessWidget {
       );
     }
     if (state is NotificationsError) {
-      return Center(
-        child: Text(state.message, style: AppStyles.s14Medium.withColor(AppColors.error)),
+      return RefreshIndicator(
+        onRefresh: () => context.read<NotificationsCubit>().loadNotifications(),
+        color: AppColors.stitchPrimaryContainer,
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: SizedBox(
+            height: 300,
+            child: Center(
+              child: Text(state.message, style: AppStyles.s14Medium.withColor(AppColors.error)),
+            ),
+          ),
+        ),
       );
     }
     if (state is NotificationsLoaded) {
-      return NotificationsListSection(
-        notifications: state.notifications,
-        onTap: (id) {},
+      return RefreshIndicator(
+        onRefresh: () => context.read<NotificationsCubit>().loadNotifications(),
+        color: AppColors.stitchPrimaryContainer,
+        child: NotificationsListSection(
+          notifications: state.notifications,
+          onTap: (userId) {
+            context.pushNamed(
+              ChatRouterNames.chatRoom,
+              pathParameters: {'id': userId},
+            );
+          },
+        ),
       );
     }
     return const SizedBox.shrink();

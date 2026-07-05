@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 
 class NotificationsListSection extends StatelessWidget {
   final List<NotificationModel> notifications;
-  final void Function(String id) onTap;
+  final void Function(String userId) onTap;
 
   const NotificationsListSection({
     super.key,
@@ -48,7 +48,7 @@ class NotificationsListSection extends StatelessWidget {
         final notification = notifications[index];
         return NotificationCardWidget(
           notification: notification,
-          onTap: () => onTap(notification.id),
+          onTap: () => onTap(notification.userId),
         );
       },
     );

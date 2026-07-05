@@ -2,6 +2,7 @@ import 'package:doctory/core/enums/notification_type.dart';
 
 class NotificationModel {
   final String id;
+  final String userId;
   final String titleEn;
   final String titleAr;
   final String bodyEn;
@@ -12,6 +13,7 @@ class NotificationModel {
 
   NotificationModel({
     required this.id,
+    required this.userId,
     required this.titleEn,
     required this.titleAr,
     required this.bodyEn,
@@ -24,6 +26,7 @@ class NotificationModel {
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
       id: json['id'] as String,
+      userId: json['userId'] as String,
       titleEn: json['titleEn'] as String? ?? '',
       titleAr: json['titleAr'] as String? ?? '',
       bodyEn: json['bodyEn'] as String? ?? '',
@@ -39,6 +42,7 @@ class NotificationModel {
   Map<String, dynamic> toJson() {
     return {
       'id': id,
+      'userId': userId,
       'titleEn': titleEn,
       'titleAr': titleAr,
       'bodyEn': bodyEn,
