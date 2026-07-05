@@ -35,21 +35,28 @@ class IntroCubit extends Cubit<IntroStates> {
     final bool isLoggedIn = UserSession.token.isNotEmpty;
 
     // Refresh profile from server to get fresh role/permissions
+    // with a 5-second timeout so splash never hangs indefinitely
     if (isLoggedIn) {
       final authRepo = sl<AuthRepo>();
-      final result = await authRepo.getProfile();
-      result.fold(
-        onSuccess: (user) {
-          if (user.userRole != null) {
-            UserSession.currentRole = user.userRole;
-          }
-          if (user.permissions != null) {
-            UserSession.currentPermissions = user.permissions!.toSet();
-          }
-          UserSession.currentDoctorType = user.doctorType;
-        },
-        onFailure: (_) {},
-      );
+      try {
+        final result = await authRepo.getProfile().timeout(
+          const Duration(seconds: 5),
+        );
+        result.fold(
+          onSuccess: (user) {
+            if (user.userRole != null) {
+              UserSession.currentRole = user.userRole;
+            }
+            if (user.permissions != null) {
+              UserSession.currentPermissions = user.permissions!.toSet();
+            }
+            UserSession.currentDoctorType = user.doctorType;
+          },
+          onFailure: (_) {},
+        );
+      } catch (_) {
+        // Timeout or network error — proceed with cached session
+      }
     }
 
     // Compatibility logic for old flags

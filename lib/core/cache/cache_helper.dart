@@ -5,6 +5,9 @@ import '../error/exceptions.dart';
 class CacheHelper {
   static SharedPreferences? _prefs;
 
+  /// The initialized SharedPreferences instance
+  static SharedPreferences? get prefs => _prefs;
+
   /// Initialize SharedPreferences
   static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();

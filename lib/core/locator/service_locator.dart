@@ -13,7 +13,6 @@ import 'package:doctory/core/network/interceptors/auth_interceptor.dart';
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import 'package:doctory/core/network/interfaces/network_info.dart';
 import 'package:doctory/core/network/services/pusher_service.dart';
-import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/features/intro/di/intro_di.dart';
 import 'package:doctory/features/auth/di/auth_di.dart';
 import 'package:doctory/features/home/di/home_di.dart';
@@ -41,15 +40,12 @@ class ServiceLocator {
     // Initialize Hive and Cache first
     await HiveInit.init();
     await CacheHelper.init();
-    await UserSession.getUser(); // Ensure token is loaded
 
     // Register core services
     sl.registerLazySingleton<HiveService>(() => HiveService());
 
-    // Initialize Firebase Analytics
-    final analytics = FirebaseAnalytics.instance;
-    await analytics.logAppOpen();
-    sl.registerLazySingleton<FirebaseAnalytics>(() => analytics);
+    // Register Firebase Analytics (logAppOpen deferred to post-first-frame)
+    sl.registerLazySingleton<FirebaseAnalytics>(() => FirebaseAnalytics.instance);
 
     // Register network services
     sl.registerLazySingleton<NetworkConfig>(() {

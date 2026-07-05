@@ -18,13 +18,26 @@ class PickLocationScreen extends StatefulWidget {
 class _PickLocationScreenState extends State<PickLocationScreen> {
   LatLng? _pickedLocation;
   late CameraPosition _initialCamera;
+  GoogleMapController? _mapController;
 
   @override
   void initState() {
     super.initState();
-    final initial = widget.initialLocation ?? LocationHelper.defaultLocation;
-    _pickedLocation = initial;
-    _initialCamera = CameraPosition(target: initial, zoom: 14);
+    if (widget.initialLocation != null) {
+      _pickedLocation = widget.initialLocation;
+      _initialCamera = CameraPosition(target: widget.initialLocation!, zoom: 14);
+    } else {
+      _initialCamera = CameraPosition(target: LocationHelper.defaultLocation, zoom: 14);
+      _initFromGps();
+    }
+  }
+
+  Future<void> _initFromGps() async {
+    final pos = await LocationHelper.getCurrentLocation();
+    if (!mounted) return;
+    _pickedLocation = pos;
+    _mapController?.animateCamera(CameraUpdate.newLatLngZoom(pos, 14));
+    setState(() {});
   }
 
   @override
@@ -52,6 +65,7 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
             zoomControlsEnabled: false,
+            onMapCreated: (controller) => _mapController = controller,
             onTap: (latLng) {
               setState(() {
                 _pickedLocation = latLng;

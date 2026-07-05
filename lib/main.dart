@@ -1,19 +1,16 @@
-import 'dart:io' show Platform;
-
-import 'package:doctory/core/enums/device_platform.dart';
+import 'package:doctory/core/cache/cache_helper.dart';
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/services/notifications/fcm_service.dart';
 import 'package:doctory/core/theme/theme_manager.dart';
 import 'package:doctory/src/app.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
-import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 
 import 'package:doctory/core/network/util/auth_listener.dart';
-import 'package:doctory/core/services/remote_config_service.dart'; // Add this import
+import 'package:doctory/core/services/remote_config_service.dart';
 import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/features/auth/data/repo/auth_repo.dart';
 
@@ -22,54 +19,11 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Parallelize independent initializations
-  // Future<void> initGoogleMaps() async {
-  //   final GoogleMapsFlutterPlatform mapsImplementation =
-  //       GoogleMapsFlutterPlatform.instance;
-  //   if (mapsImplementation is GoogleMapsFlutterAndroid) {
-  //     // Use Texture Layer Hybrid Composition for better scroll/gesture perf.
-  //     // This avoids the old Hybrid Composition (useAndroidViewSurface)
-  //     // which causes constant compositing overhead and map jank.
-  //     mapsImplementation.useAndroidViewSurface = false;
-  //     try {
-  //       await mapsImplementation.initializeWithRenderer(
-  //         AndroidMapRenderer.latest,
-  //       );
-  //     } catch (e) {
-  //       debugPrint("Google Maps initialization: $e");
-  //     }
-  //   }
-  // }
-
-  Future<void> initFirebase() async {
-    try {
-      if (Firebase.apps.isEmpty) {
-        try {
-          await Firebase.initializeApp(
-            options: DefaultFirebaseOptions.currentPlatform,
-          );
-        } catch (e) {
-          if (e.toString().contains('duplicate-app')) {
-            await Firebase.initializeApp();
-          } else {
-            rethrow;
-          }
-        }
-      }
-
-      FirebaseMessaging.onBackgroundMessage(
-        FBMessaging.firebaseMessagingBackgroundHandler,
-      );
-      // Initialize the rest of FCM (permissions, token, foreground listeners)
-      // Moved to background after runApp FBMessaging.initialize();
-    } catch (e) {
-      debugPrint("Firebase initialization failed: $e");
-    }
-  }
+  // Initialize SharedPreferences early so AppThemeManager & others reuse it
+  await CacheHelper.init();
 
   await Future.wait([
-    // initGoogleMaps(),
-    initFirebase(),
+    _initFirebase(),
     EasyLocalization.ensureInitialized(),
     AppThemeManager.instance.initialize(),
   ]);
@@ -77,21 +31,10 @@ void main() async {
   await ServiceLocator.init();
   setupAuthListener();
 
-  // Register FCM token refresh callback to send token to backend
-  DevicePlatform getDevicePlatform() {
-    if (Platform.isAndroid) return DevicePlatform.android;
-    if (Platform.isIOS) return DevicePlatform.iOS;
-    return DevicePlatform.web;
-  }
-
   FBMessaging.onTokenUpdated = (token) async {
     if (UserSession.token.isNotEmpty) {
       try {
-        final authRepo = sl<AuthRepo>();
-        // await authRepo.updateDeviceToken(
-        //   fcmToken: token,
-        //   devicePlatform: getDevicePlatform(),
-        // );
+        sl<AuthRepo>();
       } catch (_) {}
     }
   };
@@ -106,9 +49,34 @@ void main() async {
     ),
   );
 
-  // Initialize Remote Config in the background after runApp
-  RemoteConfigService.init(); // No await here to avoid blocking
+  // Defer non-essential startup work to after the first frame
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    FirebaseAnalytics.instance.logAppOpen();
+    RemoteConfigService.init();
+    FBMessaging.initialize();
+  });
+}
 
-  // Initialize FCM in the background after runApp
-  FBMessaging.initialize();
+Future<void> _initFirebase() async {
+  try {
+    if (Firebase.apps.isEmpty) {
+      try {
+        await Firebase.initializeApp(
+          options: DefaultFirebaseOptions.currentPlatform,
+        );
+      } catch (e) {
+        if (e.toString().contains('duplicate-app')) {
+          await Firebase.initializeApp();
+        } else {
+          rethrow;
+        }
+      }
+    }
+
+    FirebaseMessaging.onBackgroundMessage(
+      FBMessaging.firebaseMessagingBackgroundHandler,
+    );
+  } catch (e) {
+    debugPrint("Firebase initialization failed: $e");
+  }
 }

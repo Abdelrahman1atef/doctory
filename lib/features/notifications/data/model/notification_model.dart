@@ -11,6 +11,8 @@ class NotificationModel {
   final DateTime createdAt;
   final bool isRead;
 
+  final String? senderUserId;
+
   NotificationModel({
     required this.id,
     required this.userId,
@@ -21,12 +23,14 @@ class NotificationModel {
     this.type,
     required this.createdAt,
     this.isRead = false,
+    this.senderUserId ,
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
     return NotificationModel(
       id: json['id'] as String,
       userId: json['userId'] as String,
+      senderUserId: json['senderUserId'] as String?,
       titleEn: json['titleEn'] as String? ?? '',
       titleAr: json['titleAr'] as String? ?? '',
       bodyEn: json['bodyEn'] as String? ?? '',

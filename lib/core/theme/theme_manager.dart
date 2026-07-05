@@ -1,6 +1,7 @@
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:flutter/material.dart';
 import 'package:doctory/core/theme/app_colors.dart';
+import 'package:doctory/core/cache/cache_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 /// مدير الثيمات البسيط
@@ -59,7 +60,7 @@ class AppThemeManager {
 
   /// تهيئة مدير الثيمات
   Future<void> initialize() async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = CacheHelper.prefs ?? await SharedPreferences.getInstance();
     final String? savedTheme = prefs.getString('theme_mode');
 
     if (savedTheme != null) {
@@ -99,7 +100,7 @@ class AppThemeManager {
 
   /// حفظ تفضيل الثيم
   Future<void> _saveThemePreference(ThemeMode mode) async {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = CacheHelper.prefs ?? await SharedPreferences.getInstance();
     await prefs.setString('theme_mode', mode.toString());
   }
 

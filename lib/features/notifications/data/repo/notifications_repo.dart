@@ -1,6 +1,6 @@
 import 'package:doctory/core/error/error_handler.dart';
 import 'package:doctory/core/network/interfaces/api_result.dart';
-import 'package:doctory/features/notifications/data/data_source/notifications_mock_data_source.dart';
+import 'package:doctory/features/notifications/data/data_source/notifications_data_source.dart';
 import 'package:doctory/features/notifications/data/model/notification_model.dart';
 
 abstract class NotificationsRepo {

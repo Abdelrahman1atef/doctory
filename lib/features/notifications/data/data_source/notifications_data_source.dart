@@ -27,7 +27,6 @@ class NotificationsDataSource {
   Future<ApiResult<int>> getUnreadCount() async {
     return await _apiConsumer.get(
       path: NotificationsEndpoints.count,
-      queryParameters: const {'IsRead': true},
       parser: (json) {
         return json['data'] as int;
       },
