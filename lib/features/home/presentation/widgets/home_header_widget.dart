@@ -12,6 +12,7 @@ class HomeHeaderWidget extends StatelessWidget {
   final String? imageUrl;
   final String? userRole;
   final VoidCallback? onNotificationTap;
+  final int unreadCount;
 
   const HomeHeaderWidget({
     super.key,
@@ -19,6 +20,7 @@ class HomeHeaderWidget extends StatelessWidget {
     this.imageUrl,
     this.userRole,
     this.onNotificationTap,
+    this.unreadCount = 0,
   });
 
   @override
@@ -62,24 +64,35 @@ class HomeHeaderWidget extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Stack(
+              clipBehavior: Clip.none,
               children: [
                 IconButton(
                   onPressed: onNotificationTap ?? () => context.push(AppRoutes.notifications),
                   icon: const Icon(Icons.notifications_outlined,
                       color: AppColors.textPrimary),
                 ),
-                Positioned(
-                  right: 8,
-                  top: 8,
-                  child: Container(
-                    width: 8,
-                    height: 8,
-                    decoration: BoxDecoration(
-                      color: AppColors.error,
-                      shape: BoxShape.circle,
+                if (unreadCount > 0)
+                  Positioned(
+                    right: 6,
+                    top: 6,
+                    child: Container(
+                      constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                      padding: const EdgeInsets.symmetric(horizontal: 4),
+                      decoration: BoxDecoration(
+                        color: AppColors.error,
+                        borderRadius: BorderRadius.circular(9),
+                      ),
+                      child: Text(
+                        unreadCount > 99 ? '99+' : '$unreadCount',
+                        style: const TextStyle(
+                          color: AppColors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
                     ),
                   ),
-                ),
               ],
             ),
             const SizedBox(width: 4),

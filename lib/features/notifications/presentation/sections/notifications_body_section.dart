@@ -1,4 +1,5 @@
 import 'package:doctory/core/app_strings/locale_keys.dart';
+import 'package:doctory/core/services/alerts.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
@@ -18,12 +19,7 @@ class NotificationsBodySection extends StatelessWidget {
     return BlocConsumer<NotificationsCubit, NotificationsState>(
       listener: (context, state) {
         if (state is NotificationsError) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.message),
-              backgroundColor: AppColors.error,
-            ),
-          );
+          Alerts.snack(text: state.message, state: SnackState.failed);
         }
       },
       builder: (context, state) {
@@ -44,14 +40,7 @@ class NotificationsBodySection extends StatelessWidget {
                     style: AppStyles.s20Bold.withColor(AppColors.stitchPrimaryContainer),
                   ),
                   const Spacer(),
-                  if (state is NotificationsLoaded && state.notifications.isNotEmpty)
-                    IconButton(
-                      icon: const Icon(Icons.delete_sweep_rounded,
-                          color: AppColors.stitchPrimaryContainer),
-                      onPressed: () => _confirmDeleteAll(context),
-                    )
-                  else
-                    const SizedBox(width: 48),
+                  const SizedBox(width: 48),
                 ],
               ),
             ),
@@ -79,45 +68,9 @@ class NotificationsBodySection extends StatelessWidget {
     if (state is NotificationsLoaded) {
       return NotificationsListSection(
         notifications: state.notifications,
-        onMarkAsRead: (id) => context.read<NotificationsCubit>().markAsRead(id),
-        onDelete: (id) => context.read<NotificationsCubit>().deleteNotification(id),
-        onTap: (id) {
-          context.read<NotificationsCubit>().markAsRead(id);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(state.notifications.firstWhere((n) => n.id == id).title.tr()),
-              duration: const Duration(seconds: 2),
-            ),
-          );
-        },
+        onTap: (id) {},
       );
     }
     return const SizedBox.shrink();
-  }
-
-  void _confirmDeleteAll(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text(LocaleKeys.notification_delete_all_title.tr()),
-        content: Text(LocaleKeys.notification_delete_all_description.tr()),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text('cancel'.tr()),
-          ),
-          TextButton(
-            onPressed: () {
-              Navigator.pop(ctx);
-              context.read<NotificationsCubit>().deleteAll();
-            },
-            child: Text(
-              LocaleKeys.notification_delete_all_confirm.tr(),
-              style: TextStyle(color: AppColors.error),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }

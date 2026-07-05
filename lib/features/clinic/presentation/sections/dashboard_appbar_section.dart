@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class DashboardAppbarSection extends StatelessWidget {
-  const DashboardAppbarSection({super.key});
+  final int unreadCount;
+
+  const DashboardAppbarSection({super.key, this.unreadCount = 0});
 
   @override
   Widget build(BuildContext context) {
@@ -41,24 +43,35 @@ class DashboardAppbarSection extends StatelessWidget {
           ),
           const Spacer(),
           Stack(
+            clipBehavior: Clip.none,
             children: [
               IconButton(
                 onPressed: () => context.push(AppRoutes.notifications),
                 icon: const Icon(Icons.notifications_outlined,
                     color: AppColors.textPrimary),
               ),
-              Positioned(
-                right: 8,
-                top: 8,
-                child: Container(
-                  width: 8,
-                  height: 8,
-                  decoration: BoxDecoration(
-                    color: AppColors.error,
-                    shape: BoxShape.circle,
+              if (unreadCount > 0)
+                Positioned(
+                  right: 6,
+                  top: 6,
+                  child: Container(
+                    constraints: const BoxConstraints(minWidth: 18, minHeight: 18),
+                    padding: const EdgeInsets.symmetric(horizontal: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.error,
+                      borderRadius: BorderRadius.circular(9),
+                    ),
+                    child: Text(
+                      unreadCount > 99 ? '99+' : '$unreadCount',
+                      style: const TextStyle(
+                        color: AppColors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
                   ),
                 ),
-              ),
             ],
           ),
         ],

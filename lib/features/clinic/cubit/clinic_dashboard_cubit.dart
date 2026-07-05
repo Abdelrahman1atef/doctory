@@ -1,9 +1,13 @@
 import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctory/core/error/failures.dart';
+import 'package:doctory/core/locator/service_locator.dart';
+import 'package:doctory/core/network/interfaces/api_result.dart';
 import 'package:doctory/features/clinic/cubit/clinic_dashboard_state.dart';
 import 'package:doctory/features/clinic/data/model/dashboard_stats_model.dart';
+import 'package:doctory/features/clinic/data/model/booking_request_model.dart';
 import 'package:doctory/features/clinic/data/repo/clinic_dashboard_repo.dart';
+import 'package:doctory/features/notifications/data/repo/notifications_repo.dart';
 
 class ClinicDashboardCubit extends Cubit<ClinicDashboardState> {
   final ClinicDashboardRepo _repo;
@@ -14,8 +18,16 @@ class ClinicDashboardCubit extends Cubit<ClinicDashboardState> {
   Future<void> loadDashboard() async {
     emit(ClinicDashboardLoading());
 
-    final statsResult = await _repo.getStats();
-    final bookingsResult = await _repo.getPendingBookings();
+    final results = await Future.wait([
+      _repo.getStats(),
+      _repo.getPendingBookings(),
+      sl<NotificationsRepo>().getUnreadCount(),
+    ]);
+
+    final statsResult = results[0] as ApiResult<DashboardStatsModel>;
+    final bookingsResult = results[1] as ApiResult<List<BookingRequestModel>>;
+    final countResult = results[2] as ApiResult<int>;
+    final unreadCount = countResult.fold(onSuccess: (c) => c, onFailure: (_) => 0);
 
     statsResult.fold(
       onSuccess: (stats) {
@@ -26,6 +38,7 @@ class ClinicDashboardCubit extends Cubit<ClinicDashboardState> {
                 stats: stats,
                 bookings: bookings,
                 searchResults: [],
+                unreadCount: unreadCount,
               ),
             );
           },

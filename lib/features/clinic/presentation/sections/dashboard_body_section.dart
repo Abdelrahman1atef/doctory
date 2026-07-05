@@ -14,11 +14,13 @@ class DashboardBodySection extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocBuilder<ClinicDashboardCubit, ClinicDashboardState>(
       builder: (context, state) {
+        final unreadCount = state is ClinicDashboardLoaded ? state.unreadCount : 0;
+
         if (state is ClinicDashboardLoading) {
-          return const Column(
+          return Column(
             children: [
-              DashboardAppbarSection(),
-              Expanded(
+              DashboardAppbarSection(unreadCount: unreadCount),
+              const Expanded(
                 child: Center(
                   child: CircularProgressIndicator(),
                 ),
@@ -30,7 +32,7 @@ class DashboardBodySection extends StatelessWidget {
         if (state is ClinicDashboardError) {
           return Column(
             children: [
-              const DashboardAppbarSection(),
+              DashboardAppbarSection(unreadCount: unreadCount),
               Expanded(
                 child: AppErrorWidget(message: state.message),
               ),
@@ -42,9 +44,9 @@ class DashboardBodySection extends StatelessWidget {
           return const SizedBox.shrink();
         }
 
-        return const Column(
+        return Column(
           children: [
-            DashboardAppbarSection(),
+            DashboardAppbarSection(unreadCount: unreadCount),
             DashboardStatsSection(),
             Expanded(
               child: DashboardQuickActionsSection(),

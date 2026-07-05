@@ -8,15 +8,11 @@ import 'package:flutter/material.dart';
 
 class NotificationsListSection extends StatelessWidget {
   final List<NotificationModel> notifications;
-  final void Function(int id) onMarkAsRead;
-  final void Function(int id) onDelete;
-  final void Function(int id) onTap;
+  final void Function(String id) onTap;
 
   const NotificationsListSection({
     super.key,
     required this.notifications,
-    required this.onMarkAsRead,
-    required this.onDelete,
     required this.onTap,
   });
 
@@ -50,24 +46,9 @@ class NotificationsListSection extends StatelessWidget {
       itemCount: notifications.length,
       itemBuilder: (context, index) {
         final notification = notifications[index];
-        return Dismissible(
-          key: ValueKey(notification.id),
-          direction: DismissDirection.endToStart,
-          background: Container(
-            alignment: Alignment.centerRight,
-            padding: const EdgeInsets.only(right: 24),
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-            decoration: BoxDecoration(
-              color: AppColors.error,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Icon(Icons.delete_outline, color: AppColors.white),
-          ),
-          onDismissed: (_) => onDelete(notification.id),
-          child: NotificationCardWidget(
-            notification: notification,
-            onTap: () => onTap(notification.id),
-          ),
+        return NotificationCardWidget(
+          notification: notification,
+          onTap: () => onTap(notification.id),
         );
       },
     );

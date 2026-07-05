@@ -10,11 +10,13 @@ class HomeSuccessState extends HomeStates {
   final List<SpecialtyModel> specialties;
   final List<DoctorModel> recommendedDoctors;
   final List<ClinicModel> featuredClinics;
+  final int unreadCount;
 
   HomeSuccessState({
     required this.specialties,
     required this.recommendedDoctors,
     required this.featuredClinics,
+    this.unreadCount = 0,
   });
 }
 

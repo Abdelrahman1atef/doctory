@@ -24,7 +24,9 @@ class NotificationCardWidget extends StatelessWidget {
     NotificationType.systemAnnouncement: Icons.campaign_rounded,
   };
 
-  IconData get _icon => _typeIcons[notification.type] ?? Icons.notifications_rounded;
+  IconData get _icon =>
+      _typeIcons[notification.type ?? NotificationType.systemAnnouncement] ??
+      Icons.notifications_rounded;
 
   String get _timeAgo {
     final diff = DateTime.now().difference(notification.createdAt);
@@ -36,6 +38,10 @@ class NotificationCardWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final locale = context.locale.languageCode;
+    final title = locale == 'ar' ? notification.titleAr : notification.titleEn;
+    final body = locale == 'ar' ? notification.bodyAr : notification.bodyEn;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Material(
@@ -71,7 +77,7 @@ class NotificationCardWidget extends StatelessWidget {
                         children: [
                           Expanded(
                             child: Text(
-                              notification.title.tr(),
+                              title,
                               style: AppStyles.s14SemiBold.copyWith(
                                 color: AppColors.textPrimary,
                                 fontWeight: notification.isRead ? FontWeight.w500 : FontWeight.w700,
@@ -91,7 +97,7 @@ class NotificationCardWidget extends StatelessWidget {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        notification.message.tr(),
+                        body,
                         style: AppStyles.s12Medium.copyWith(
                           color: AppColors.textSecondary,
                         ),

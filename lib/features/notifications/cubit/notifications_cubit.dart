@@ -1,16 +1,16 @@
 import 'package:doctory/core/error/failures.dart';
+import 'package:doctory/features/notifications/data/repo/notifications_repo.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctory/features/notifications/cubit/notifications_state.dart';
-import 'package:doctory/features/notifications/data/data_source/notifications_mock_data_source.dart';
 
 class NotificationsCubit extends Cubit<NotificationsState> {
-  final NotificationsDataSource _dataSource;
+  final NotificationsRepo _repo;
 
-  NotificationsCubit(this._dataSource) : super(NotificationsInitial());
+  NotificationsCubit(this._repo) : super(NotificationsInitial());
 
   Future<void> loadNotifications() async {
     emit(NotificationsLoading());
-    final result = await _dataSource.getNotifications();
+    final result = await _repo.getNotifications();
     result.fold(
       onSuccess: (notifications) => emit(
         NotificationsLoaded(notifications),
@@ -21,35 +21,11 @@ class NotificationsCubit extends Cubit<NotificationsState> {
     );
   }
 
-  Future<void> markAsRead(int id) async {
-    final result = await _dataSource.markAsRead(id);
-    result.fold(
-      onSuccess: (_) => loadNotifications(),
-      onFailure: (_) => loadNotifications(),
-    );
-  }
-
-  Future<void> markAllAsRead() async {
-    final result = await _dataSource.markAllAsRead();
-    result.fold(
-      onSuccess: (_) => loadNotifications(),
-      onFailure: (_) => loadNotifications(),
-    );
-  }
-
-  Future<void> deleteNotification(int id) async {
-    final result = await _dataSource.deleteNotification(id);
-    result.fold(
-      onSuccess: (_) => loadNotifications(),
-      onFailure: (_) => loadNotifications(),
-    );
-  }
-
-  Future<void> deleteAll() async {
-    final result = await _dataSource.deleteAll();
-    result.fold(
-      onSuccess: (_) => loadNotifications(),
-      onFailure: (_) => loadNotifications(),
+  Future<int> getUnreadCount() async {
+    final result = await _repo.getUnreadCount();
+    return result.fold(
+      onSuccess: (count) => count,
+      onFailure: (_) => 0,
     );
   }
 }

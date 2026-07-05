@@ -9,11 +9,13 @@ class NotificationsDataSource {
 
   Future<ApiResult<List<NotificationModel>>> getNotifications() async {
     return await _apiConsumer.get(
-      path: NotificationsEndpoints.list,
+      path: NotificationsEndpoints.pagginated,
+      queryParameters: const {'PageNumber': 1, 'PageSize': 50},
       parser: (json) {
-        final data = json['data'] ?? json;
-        if (data is List) {
-          return data
+        final data = json['data'] as Map<String, dynamic>?;
+        final items = data?['items'] as List<dynamic>?;
+        if (items != null) {
+          return items
               .map((e) => NotificationModel.fromJson(e as Map<String, dynamic>))
               .toList();
         }
@@ -22,27 +24,13 @@ class NotificationsDataSource {
     );
   }
 
-  Future<ApiResult<void>> markAsRead(int id) async {
-    return await _apiConsumer.patch(
-      path: NotificationsEndpoints.markReadById(id),
-    );
-  }
-
-  Future<ApiResult<void>> markAllAsRead() async {
-    return await _apiConsumer.patch(
-      path: NotificationsEndpoints.markAllRead,
-    );
-  }
-
-  Future<ApiResult<void>> deleteNotification(int id) async {
-    return await _apiConsumer.delete(
-      path: NotificationsEndpoints.deleteById(id),
-    );
-  }
-
-  Future<ApiResult<void>> deleteAll() async {
-    return await _apiConsumer.delete(
-      path: NotificationsEndpoints.deleteAll,
+  Future<ApiResult<int>> getUnreadCount() async {
+    return await _apiConsumer.get(
+      path: NotificationsEndpoints.count,
+      queryParameters: const {'IsRead': true},
+      parser: (json) {
+        return json['data'] as int;
+      },
     );
   }
 }
