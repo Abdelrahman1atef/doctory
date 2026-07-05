@@ -1,3 +1,4 @@
+import 'package:doctory/core/enums/notification_type.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/features/notifications/data/model/notification_model.dart';
@@ -14,13 +15,13 @@ class NotificationCardWidget extends StatelessWidget {
     required this.onTap,
   });
 
-  static final _typeIcons = <String, IconData>{
-    'offer': Icons.local_offer_rounded,
-    'reminder': Icons.alarm_rounded,
-    'booking': Icons.event_available_rounded,
-    'payment': Icons.credit_card_rounded,
-    'announcement': Icons.campaign_rounded,
-    'prescription': Icons.medical_services_rounded,
+  static final _typeIcons = <NotificationType, IconData>{
+    NotificationType.appointmentReminder: Icons.alarm_rounded,
+    NotificationType.newMessage: Icons.message_rounded,
+    NotificationType.paymentConfirmation: Icons.credit_card_rounded,
+    NotificationType.appointmentConfirmation: Icons.event_available_rounded,
+    NotificationType.appointmentCancellation: Icons.cancel_rounded,
+    NotificationType.systemAnnouncement: Icons.campaign_rounded,
   };
 
   IconData get _icon => _typeIcons[notification.type] ?? Icons.notifications_rounded;

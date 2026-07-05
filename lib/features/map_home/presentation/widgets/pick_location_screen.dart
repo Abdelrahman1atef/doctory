@@ -51,6 +51,7 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
             initialCameraPosition: _initialCamera,
             myLocationEnabled: true,
             myLocationButtonEnabled: true,
+            zoomControlsEnabled: false,
             onTap: (latLng) {
               setState(() {
                 _pickedLocation = latLng;

@@ -1,8 +1,10 @@
+import 'package:doctory/core/enums/notification_type.dart';
+
 class NotificationModel {
   final int id;
   final String title;
   final String message;
-  final String type;
+  final NotificationType type;
   final DateTime createdAt;
   final bool isRead;
 
@@ -31,7 +33,7 @@ class NotificationModel {
       id: json['id'] as int,
       title: json['title'] as String,
       message: json['message'] as String,
-      type: json['type'] as String,
+      type: NotificationType.fromJson(json['type']),
       createdAt: DateTime.parse(json['createdAt'] as String),
       isRead: json['isRead'] as bool? ?? false,
     );
@@ -42,7 +44,7 @@ class NotificationModel {
       'id': id,
       'title': title,
       'message': message,
-      'type': type,
+      'type': type.toJson(),
       'createdAt': createdAt.toIso8601String(),
       'isRead': isRead,
     };

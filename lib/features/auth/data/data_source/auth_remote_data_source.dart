@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:doctory/core/enums/device_platform.dart';
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import 'package:doctory/features/auth/data/data_source/auth_endpoints.dart';
 import 'package:doctory/features/auth/data/model/auth_response.dart';
@@ -35,6 +36,10 @@ abstract class AuthRemoteDataSource {
   Future<ApiResult<AuthResponse>> loginGoogle(String idToken);
   Future<ApiResult<void>> logout(String refreshToken);
   Future<ApiResult<void>> deleteAccount(String userId);
+  Future<ApiResult<void>> updateDeviceToken({
+    required String fcmToken,
+    required DevicePlatform devicePlatform,
+  });
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -204,6 +209,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<ApiResult<void>> deleteAccount(String userId) async {
     return await _apiConsumer.delete(
       path: '${AuthEndpoints.users}/$userId',
+    );
+  }
+
+  @override
+  Future<ApiResult<void>> updateDeviceToken({
+    required String fcmToken,
+    required DevicePlatform devicePlatform,
+  }) async {
+    return await _apiConsumer.post(
+      path: AuthEndpoints.updateDeviceToken,
+      body: {
+        'fcmToken': fcmToken,
+        'devicePlatform': devicePlatform.toJson(),
+      },
     );
   }
 }

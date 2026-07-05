@@ -1,3 +1,6 @@
+import 'dart:io' show Platform;
+
+import 'package:doctory/core/enums/device_platform.dart';
 import 'package:doctory/features/auth/cubit/auth_states.dart';
 import 'package:doctory/features/auth/data/model/login_request.dart';
 import 'package:doctory/features/auth/data/model/signup_request.dart';
@@ -16,11 +19,22 @@ class AuthCubit extends Cubit<AuthStates> {
   AuthCubit(this._authRepo, this._socialAuthService)
     : super(AuthInitialState());
 
+  DevicePlatform get _currentPlatform {
+    if (Platform.isAndroid) return DevicePlatform.android;
+    if (Platform.isIOS) return DevicePlatform.iOS;
+    return DevicePlatform.web;
+  }
+
   void login({required String email, required String password}) async {
     emit(AuthLoadingState());
 
     final result = await _authRepo.login(
-      LoginRequest(email: email, password: password),
+      LoginRequest(
+        email: email,
+        password: password,
+        fcmToken: UserSession.fcmToken.isNotEmpty ? UserSession.fcmToken : null,
+        devicePlatform: _currentPlatform,
+      ),
     );
 
     result.fold(
@@ -36,8 +50,23 @@ class AuthCubit extends Cubit<AuthStates> {
   }) async {
     emit(AuthLoadingState());
 
+    final updatedRequest = SignupRequest(
+      fullName: request.fullName,
+      email: request.email,
+      password: request.password,
+      confirmPassword: request.confirmPassword,
+      phoneNumber: request.phoneNumber,
+      birthDate: request.birthDate,
+      gender: request.gender,
+      role: request.role,
+      fcmToken: UserSession.fcmToken.isNotEmpty ? UserSession.fcmToken : null,
+      devicePlatform: _currentPlatform,
+      certificateImagePath: request.certificateImagePath,
+      syndicateIdImagePath: request.syndicateIdImagePath,
+    );
+
     final result = await _authRepo.signup(
-      request,
+      updatedRequest,
       certificateImagePath: certificateImagePath,
       syndicateIdImagePath: syndicateIdImagePath,
     );
@@ -185,6 +214,20 @@ class AuthCubit extends Cubit<AuthStates> {
     result.fold(
       onSuccess: (_) => emit(LanguageUpdateSuccessState()),
       onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+    );
+  }
+
+  Future<void> updateDeviceToken() async {
+    final fcmToken = UserSession.fcmToken;
+    if (fcmToken.isEmpty) return;
+
+    final result = await _authRepo.updateDeviceToken(
+      fcmToken: fcmToken,
+      devicePlatform: _currentPlatform,
+    );
+    result.fold(
+      onSuccess: (_) {},
+      onFailure: (failure) {},
     );
   }
 }

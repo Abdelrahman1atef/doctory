@@ -1,46 +1,55 @@
+import 'package:doctory/core/error/failures.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctory/features/notifications/cubit/notifications_state.dart';
-import 'package:doctory/features/notifications/data/model/notification_model.dart';
 import 'package:doctory/features/notifications/data/data_source/notifications_mock_data_source.dart';
 
 class NotificationsCubit extends Cubit<NotificationsState> {
-  final NotificationsMockDataSource _dataSource;
+  final NotificationsDataSource _dataSource;
 
   NotificationsCubit(this._dataSource) : super(NotificationsInitial());
 
-  void loadNotifications() {
+  Future<void> loadNotifications() async {
     emit(NotificationsLoading());
-    try {
-      final notifications = _dataSource.getNotifications();
-      emit(NotificationsLoaded(notifications));
-    } catch (e) {
-      emit(NotificationsError(e.toString()));
-    }
+    final result = await _dataSource.getNotifications();
+    result.fold(
+      onSuccess: (notifications) => emit(
+        NotificationsLoaded(notifications),
+      ),
+      onFailure: (failure) => emit(
+        NotificationsError(failure.userMessage),
+      ),
+    );
   }
 
-  void markAsRead(int id) {
-    _dataSource.markAsRead(id);
-    final notifications = _dataSource.getNotifications();
-    emit(NotificationsLoaded(notifications));
+  Future<void> markAsRead(int id) async {
+    final result = await _dataSource.markAsRead(id);
+    result.fold(
+      onSuccess: (_) => loadNotifications(),
+      onFailure: (_) => loadNotifications(),
+    );
   }
 
-  void deleteNotification(int id) {
-    _dataSource.deleteNotification(id);
-    final notifications = _dataSource.getNotifications();
-    if (notifications.isEmpty) {
-      emit(NotificationsLoaded(notifications));
-    } else {
-      emit(NotificationsLoaded(notifications));
-    }
+  Future<void> markAllAsRead() async {
+    final result = await _dataSource.markAllAsRead();
+    result.fold(
+      onSuccess: (_) => loadNotifications(),
+      onFailure: (_) => loadNotifications(),
+    );
   }
 
-  void deleteAll() {
-    _dataSource.deleteAll();
-    emit(NotificationsLoaded([]));
+  Future<void> deleteNotification(int id) async {
+    final result = await _dataSource.deleteNotification(id);
+    result.fold(
+      onSuccess: (_) => loadNotifications(),
+      onFailure: (_) => loadNotifications(),
+    );
   }
 
-  void addNotification(NotificationModel notification) {
-    _dataSource.getNotifications();
-    loadNotifications();
+  Future<void> deleteAll() async {
+    final result = await _dataSource.deleteAll();
+    result.fold(
+      onSuccess: (_) => loadNotifications(),
+      onFailure: (_) => loadNotifications(),
+    );
   }
 }

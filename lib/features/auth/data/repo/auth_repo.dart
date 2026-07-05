@@ -1,3 +1,4 @@
+import 'package:doctory/core/enums/device_platform.dart';
 import 'package:doctory/core/network/interfaces/api_result.dart';
 import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/features/auth/data/data_source/auth_remote_data_source.dart';
@@ -35,6 +36,10 @@ abstract class AuthRepo {
   Future<ApiResult<AuthResponse>> loginGoogle(String idToken);
   Future<ApiResult<void>> logout(String refreshToken);
   Future<ApiResult<void>> deleteAccount(String userId);
+  Future<ApiResult<void>> updateDeviceToken({
+    required String fcmToken,
+    required DevicePlatform devicePlatform,
+  });
 }
 
 class AuthRepoImpl implements AuthRepo {
@@ -186,6 +191,17 @@ class AuthRepoImpl implements AuthRepo {
   @override
   Future<ApiResult<void>> deleteAccount(String userId) async {
     return await _dataSource.deleteAccount(userId);
+  }
+
+  @override
+  Future<ApiResult<void>> updateDeviceToken({
+    required String fcmToken,
+    required DevicePlatform devicePlatform,
+  }) async {
+    return await _dataSource.updateDeviceToken(
+      fcmToken: fcmToken,
+      devicePlatform: devicePlatform,
+    );
   }
 
   Future<void> _saveAuthSession(AuthResponse response) async {

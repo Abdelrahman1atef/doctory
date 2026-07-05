@@ -1,3 +1,6 @@
+import 'dart:io' show Platform;
+
+import 'package:doctory/core/enums/device_platform.dart';
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/services/notifications/fcm_service.dart';
 import 'package:doctory/core/theme/theme_manager.dart';
@@ -11,6 +14,8 @@ import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platf
 
 import 'package:doctory/core/network/util/auth_listener.dart';
 import 'package:doctory/core/services/remote_config_service.dart'; // Add this import
+import 'package:doctory/core/session/user_session.dart';
+import 'package:doctory/features/auth/data/repo/auth_repo.dart';
 
 import 'firebase_options.dart';
 
@@ -71,6 +76,25 @@ void main() async {
 
   await ServiceLocator.init();
   setupAuthListener();
+
+  // Register FCM token refresh callback to send token to backend
+  DevicePlatform getDevicePlatform() {
+    if (Platform.isAndroid) return DevicePlatform.android;
+    if (Platform.isIOS) return DevicePlatform.iOS;
+    return DevicePlatform.web;
+  }
+
+  FBMessaging.onTokenUpdated = (token) async {
+    if (UserSession.token.isNotEmpty) {
+      try {
+        final authRepo = sl<AuthRepo>();
+        // await authRepo.updateDeviceToken(
+        //   fcmToken: token,
+        //   devicePlatform: getDevicePlatform(),
+        // );
+      } catch (_) {}
+    }
+  };
 
   runApp(
     EasyLocalization(

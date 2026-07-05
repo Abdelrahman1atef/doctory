@@ -17,6 +17,10 @@ class FBMessaging {
   static FlutterLocalNotificationsPlugin? _notificationsPlugin;
   static bool _isInitialized = false;
 
+  /// Callback invoked when the FCM token is obtained or refreshed.
+  /// Set from the app layer to send the token to the backend.
+  static void Function(String token)? onTokenUpdated;
+
   // ==================== NOTIFICATION CHANNELS ====================
 
   /// تم تعديل القناة لتطابق المشروع النيتف
@@ -196,6 +200,13 @@ class FBMessaging {
         log('Error handling message opened app: $e');
       }
     });
+
+    // الاستماع لتحديث رمز FCM وإرساله للخادم
+    FirebaseMessaging.instance.onTokenRefresh.listen((token) {
+      log('FCM Token refreshed: $token');
+      UserSession.fcmToken = token;
+      onTokenUpdated?.call(token);
+    });
   }
 
   /// معالجة الرسائل في المقدمة
@@ -272,6 +283,9 @@ class FBMessaging {
       final token = await _messaging.getToken();
       log('FCM Token: $token');
       UserSession.fcmToken = token ?? '';
+      if (token != null && token.isNotEmpty) {
+        onTokenUpdated?.call(token);
+      }
     } catch (e) {
       log('Error getting FCM token: $e');
     }

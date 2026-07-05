@@ -15,5 +15,6 @@ class AuthEndpoints {
   static const String updateLanguage = '/Auth/language/update';
   static const String loginGoogle = '/Auth/login-google';
   static const String logout = '/Auth/logout';
+  static const String updateDeviceToken = '/Auth/update-device-token';
   static const String users = '/users';
 }
