@@ -95,7 +95,7 @@ class _MapSearchSectionState extends State<MapSearchSection> {
               ),
               ...specializations.map((spec) {
                 return MapFilterChipWidget(
-                  label: spec.name,
+                  label: spec.displayName,
                   isSelected: selectedSpecId == spec.id,
                   onTap: () {
                     context.read<MapHomeCubit>().searchClinics(

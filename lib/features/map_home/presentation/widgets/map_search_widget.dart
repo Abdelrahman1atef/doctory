@@ -22,9 +22,12 @@ class MapSearchWidget extends StatelessWidget {
         children: [
           searchBar,
           16.ph,
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: filterChips,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: filterChips,
+            ),
           ),
         ],
       ),

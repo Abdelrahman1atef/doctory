@@ -24,67 +24,45 @@ class NearbyClinicsSheet extends StatefulWidget {
 class _NearbyClinicsSheetState extends State<NearbyClinicsSheet> {
   @override
   Widget build(BuildContext context) {
-    return BlocListener<MapHomeCubit, MapHomeStates>(
-      listenWhen: (previous, current) {
-        if (previous is MapHomeLoadedState && current is MapHomeLoadedState) {
-          return previous.selectedClinic?.id != current.selectedClinic?.id;
-        }
-        return current is MapHomeLoadedState;
-      },
-      listener: (context, state) {
-        if (state is MapHomeLoadedState && state.selectedClinic != null) {
-          // If sheet is expanded, collapse it to initial size to show map
-          if (widget.sheetController.isAttached &&
-              widget.sheetController.size > 0.35) {
-            widget.sheetController.animateTo(
-              0.35,
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
-          }
-        }
-      },
-      child: DraggableScrollableSheet(
-        controller: widget.sheetController,
-        initialChildSize: 0.35,
-        minChildSize: 0.15,
-        maxChildSize: 0.85,
-        builder: (context, scrollController) {
-          return BlocBuilder<MapHomeCubit, MapHomeStates>(
-            buildWhen: (prev, curr) {
-              if (prev is MapHomeLoadedState && curr is MapHomeLoadedState) {
-                return prev.selectedClinic?.id != curr.selectedClinic?.id;
-              }
-              return prev.runtimeType != curr.runtimeType;
-            },
-            builder: (context, state) {
-              final selectedClinicId = (state is MapHomeLoadedState)
-                  ? state.selectedClinic?.id
-                  : null;
+    return DraggableScrollableSheet(
+      controller: widget.sheetController,
+      initialChildSize: 0.35,
+      minChildSize: 0.15,
+      maxChildSize: 0.85,
+      builder: (context, scrollController) {
+        return BlocBuilder<MapHomeCubit, MapHomeStates>(
+          buildWhen: (prev, curr) {
+            if (prev is MapHomeLoadedState && curr is MapHomeLoadedState) {
+              return prev.selectedClinic?.id != curr.selectedClinic?.id;
+            }
+            return prev.runtimeType != curr.runtimeType;
+          },
+          builder: (context, state) {
+            final selectedClinicId = (state is MapHomeLoadedState)
+                ? state.selectedClinic?.id
+                : null;
 
-              return NearbyClinicsSheetWidget(
-                clinics: widget.clinics,
-                selectedClinicId: selectedClinicId,
-                scrollController: scrollController,
-                onClinicTap: (clinic) {
-                  if (clinic.id == selectedClinicId) {
-                    // if (true) {
-                    if (clinic.isRegistered) {
-                      context.push(AppRoutes.clinicDetails, extra: clinic);
-                    }
-                    // For non-registered, clicking again does nothing (as per requirement "make the card no clickable")
-                  } else {
-                    context.read<MapHomeCubit>().selectClinic(clinic);
+            return NearbyClinicsSheetWidget(
+              clinics: widget.clinics,
+              selectedClinicId: selectedClinicId,
+              scrollController: scrollController,
+              onClinicTap: (clinic) {
+                if (clinic.id == selectedClinicId) {
+                  if (clinic.isRegistered) {
+                    context.push(AppRoutes.clinicDetails, extra: clinic);
                   }
-                },
-                onNavPressed: (clinic) {
-                  context.read<MapHomeCubit>().startNavigation();
-                },
-              );
-            },
-          );
-        },
-      ),
+                } else {
+                  context.read<MapHomeCubit>().selectClinic(clinic);
+                }
+              },
+              onNavPressed: (clinic) {
+                context.read<MapHomeCubit>().selectClinic(clinic);
+                context.read<MapHomeCubit>().startNavigation();
+              },
+            );
+          },
+        );
+      },
     );
   }
 }

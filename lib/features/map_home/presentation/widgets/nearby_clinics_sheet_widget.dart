@@ -6,7 +6,7 @@ import 'package:doctory/features/map_home/presentation/widgets/map_clinic_card_w
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-class NearbyClinicsSheetWidget extends StatelessWidget {
+class NearbyClinicsSheetWidget extends StatefulWidget {
   final List<ClinicModel> clinics;
   final String? selectedClinicId;
   final ScrollController scrollController;
@@ -23,7 +23,43 @@ class NearbyClinicsSheetWidget extends StatelessWidget {
   });
 
   @override
+  State<NearbyClinicsSheetWidget> createState() =>
+      _NearbyClinicsSheetWidgetState();
+}
+
+class _NearbyClinicsSheetWidgetState extends State<NearbyClinicsSheetWidget> {
+  List<ClinicModel> get _sortedClinics {
+    if (widget.selectedClinicId == null) return widget.clinics;
+    final selected = widget.clinics.where(
+      (c) => c.id == widget.selectedClinicId,
+    );
+    final rest = widget.clinics.where(
+      (c) => c.id != widget.selectedClinicId,
+    );
+    return [...selected, ...rest];
+  }
+
+  @override
+  void didUpdateWidget(NearbyClinicsSheetWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.selectedClinicId != null &&
+        widget.selectedClinicId != oldWidget.selectedClinicId) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (widget.scrollController.hasClients) {
+          widget.scrollController.animateTo(
+            0,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final clinics = _sortedClinics;
+
     return Container(
       decoration: const BoxDecoration(
         color: AppColors.stitchSurface,
@@ -38,7 +74,6 @@ class NearbyClinicsSheetWidget extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Handle
           Center(
             child: Container(
               margin: const EdgeInsets.only(top: 12, bottom: 16),
@@ -50,7 +85,6 @@ class NearbyClinicsSheetWidget extends StatelessWidget {
               ),
             ),
           ),
-          // Title
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
@@ -72,22 +106,21 @@ class NearbyClinicsSheetWidget extends StatelessWidget {
             ),
           ),
           16.ph,
-          // List
           Expanded(
             child: ListView.builder(
-              controller: scrollController,
+              controller: widget.scrollController,
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               itemCount: clinics.length,
               itemBuilder: (context, index) {
                 final clinic = clinics[index];
-                final isSelected = clinic.id == selectedClinicId;
+                final isSelected = clinic.id == widget.selectedClinicId;
 
                 return MapClinicCardWidget(
                   clinic: clinic,
                   isSelected: isSelected,
-                  onTap: () => onClinicTap(clinic),
-                  onNavPressed: onNavPressed != null
-                      ? () => onNavPressed!(clinic)
+                  onTap: () => widget.onClinicTap(clinic),
+                  onNavPressed: widget.onNavPressed != null
+                      ? () => widget.onNavPressed!(clinic)
                       : null,
                 );
               },

@@ -21,6 +21,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
   MapHomeLoadedState? _previousLoadedState;
 
   LatLng? _cachedPosition;
+  List<SpecialtyModel>? _pendingSpecializations;
   CancelToken? _searchCancelToken;
   CancelToken? _routeCancelToken;
   Timer? _debounce;
@@ -60,6 +61,8 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
       emit(currentState.copyWith(specializations: specs));
     } else if (currentState is MapHomeInitialState) {
       emit(MapHomeLoadedState(specializations: specs));
+    } else if (currentState is MapHomeLoadingState) {
+      _pendingSpecializations = specs;
     }
   }
 
@@ -96,6 +99,10 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
       currentSpec = specializationId;
       currentNearest = isNearest ?? true;
       currentRadius = radiusInKm ?? 5;
+      final sharedState = sl<SharedSpecializationsCubit>().state;
+      if (sharedState is SharedSpecializationsLoaded) {
+        currentSpecializations = sharedState.specializations;
+      }
     }
 
     _debounce?.cancel();
@@ -140,6 +147,11 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
       );
 
       if (isClosed) return;
+
+      if (_pendingSpecializations != null) {
+        currentSpecializations = _pendingSpecializations!;
+        _pendingSpecializations = null;
+      }
 
       result.fold(
         onSuccess: (data) {
@@ -363,6 +375,15 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     if (currentState is MapHomeLoadedState) {
       if (isClosed) return;
       emit(currentState.copyWith(customLat: lat, customLng: lng));
+    }
+  }
+
+  /// Deselect the current clinic and return to list view
+  void deselectClinic() {
+    final currentState = state;
+    if (currentState is MapHomeLoadedState) {
+      if (isClosed) return;
+      emit(currentState.copyWith(clearSelectedClinic: true, route: null));
     }
   }
 

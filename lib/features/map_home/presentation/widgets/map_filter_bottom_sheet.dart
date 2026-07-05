@@ -1,10 +1,8 @@
 import 'package:doctory/core/common/models/specialty_model.dart';
-import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/map_home/presentation/widgets/pick_location_screen.dart';
-import 'package:doctory/shared/cubit/specializations_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:doctory/features/map_home/cubit/map_home_cubit.dart';
@@ -38,11 +36,7 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
     _radiusInKm = widget.initialState.radiusInKm.toDouble();
     _customLat = widget.initialState.customLat;
     _customLng = widget.initialState.customLng;
-
-    final specState = sl<SharedSpecializationsCubit>().state;
-    if (specState is SharedSpecializationsLoaded) {
-      _specialties = specState.specializations;
-    }
+    _specialties = widget.initialState.specializations;
   }
 
   bool get _hasCustomLocation => _customLat != null && _customLng != null;
@@ -65,14 +59,9 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
             children: [
               Text(
                 'filter'.tr(),
-                style: AppStyles.s20Bold.withColor(
-                  AppColors.stitchPrimaryContainer,
-                ),
+                style: AppStyles.s20Bold.withColor(AppColors.stitchPrimaryContainer),
               ),
-              IconButton(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.close),
-              ),
+              IconButton(onPressed: () => Navigator.pop(context), icon: const Icon(Icons.close)),
             ],
           ),
           24.ph,
@@ -88,21 +77,17 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
             children: _specialties.map((spec) {
               final isSelected = _selectedSpecializationId == spec.id;
               return FilterChip(
-                label: Text(spec.name),
+                label: Text(spec.displayName),
                 selected: isSelected,
                 onSelected: (selected) {
                   setState(() {
                     _selectedSpecializationId = selected ? spec.id : null;
                   });
                 },
-                selectedColor: AppColors.stitchPrimaryContainer.withValues(
-                  alpha: 0.2,
-                ),
+                selectedColor: AppColors.stitchPrimaryContainer.withValues(alpha: 0.2),
                 checkmarkColor: AppColors.stitchPrimaryContainer,
                 labelStyle: AppStyles.s14Medium.withColor(
-                  isSelected
-                      ? AppColors.stitchPrimaryContainer
-                      : AppColors.stitchSecondary,
+                  isSelected ? AppColors.stitchPrimaryContainer : AppColors.stitchSecondary,
                 ),
               );
             }).toList(),
@@ -162,9 +147,7 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
                 context,
                 MaterialPageRoute(
                   builder: (_) => PickLocationScreen(
-                    initialLocation: _hasCustomLocation
-                        ? LatLng(_customLat!, _customLng!)
-                        : null,
+                    initialLocation: _hasCustomLocation ? LatLng(_customLat!, _customLng!) : null,
                   ),
                 ),
               );
@@ -216,11 +199,7 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
                           _customLng = null;
                         });
                       },
-                      child: const Icon(
-                        Icons.close,
-                        size: 20,
-                        color: AppColors.stitchSecondary,
-                      ),
+                      child: const Icon(Icons.close, size: 20, color: AppColors.stitchSecondary),
                     ),
                 ],
               ),
@@ -255,14 +234,9 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.stitchPrimaryContainer,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
               ),
-              child: Text(
-                'apply_filters'.tr(),
-                style: AppStyles.s16Bold.withColor(Colors.white),
-              ),
+              child: Text('apply_filters'.tr(), style: AppStyles.s16Bold.withColor(Colors.white)),
             ),
           ),
         ],

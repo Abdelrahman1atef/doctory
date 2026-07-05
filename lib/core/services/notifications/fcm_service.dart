@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:developer';
 import 'package:doctory/core/router/app_router.dart';
 import 'package:doctory/core/router/router_names.dart';
+import 'package:doctory/features/chat/router/chat_router_names.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -44,9 +45,7 @@ class FBMessaging {
 
   /// معالج الإشعارات في الخلفية
   @pragma('vm:entry-point')
-  static Future<void> firebaseMessagingBackgroundHandler(
-    RemoteMessage message,
-  ) async {
+  static Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
     // Background handlers run in a separate isolate, so Firebase
     // must be re-initialized here using explicit options.
     // await Firebase.initializeApp(
@@ -58,9 +57,7 @@ class FBMessaging {
 
   /// معالج النقر على الإشعارات
   @pragma('vm:entry-point')
-  static Future<void> onBackgroundNotificationHandler(
-    NotificationResponse response,
-  ) async {
+  static Future<void> onBackgroundNotificationHandler(NotificationResponse response) async {
     if (response.payload != null) {
       try {
         final data = json.decode(response.payload!);
@@ -106,20 +103,14 @@ class FBMessaging {
     _notificationsPlugin = FlutterLocalNotificationsPlugin();
 
     await _notificationsPlugin
-        ?.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
+        ?.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(_androidChannel);
 
     await _notificationsPlugin
-        ?.resolvePlatformSpecificImplementation<
-          AndroidFlutterLocalNotificationsPlugin
-        >()
+        ?.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
         ?.createNotificationChannel(_clinicChannel);
 
-    const androidSettings = AndroidInitializationSettings(
-      '@mipmap/ic_launcher',
-    );
+    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
     const iosSettings = DarwinInitializationSettings(
       requestAlertPermission: true,
       requestBadgePermission: true,
@@ -128,10 +119,7 @@ class FBMessaging {
     );
 
     await _notificationsPlugin?.initialize(
-      settings: const InitializationSettings(
-        android: androidSettings,
-        iOS: iosSettings,
-      ),
+      settings: const InitializationSettings(android: androidSettings, iOS: iosSettings),
       onDidReceiveNotificationResponse: (response) {
         if (response.payload != null) {
           try {
@@ -177,9 +165,7 @@ class FBMessaging {
     final initialMessage = await _messaging.getInitialMessage();
     if (initialMessage != null) {
       try {
-        FCMNotification notification = FCMNotification.fromMap(
-          initialMessage.data,
-        );
+        FCMNotification notification = FCMNotification.fromMap(initialMessage.data);
         _handleNotificationOnClick(notification, appIsOpened: false);
       } catch (e) {
         log('Error handling initial message: $e');
@@ -329,10 +315,7 @@ class FBMessaging {
   // ==================== NOTIFICATION HANDLING ====================
 
   /// معالجة النقر على الإشعار
-  static void _handleNotificationOnClick(
-    FCMNotification notification, {
-    bool appIsOpened = false,
-  }) {
+  static void _handleNotificationOnClick(FCMNotification notification, {bool appIsOpened = false}) {
     log('Notification clicked: ${notification.type}');
     log('Notification related data: ${notification.relatedData}');
 
@@ -341,19 +324,11 @@ class FBMessaging {
 
     // التنقل بناءً على النوع المسجل في المشروع النيتف
     switch (notification.type) {
-      case "chat":
-      case "cart":
-      case "order":
-      case "global":
-      case "notification":
-      case "wallet":
-      case "bank_transfer":
-      case "ad":
-      case "offer":
-      case "booking_request":
-      case "low_stock":
-      case "attendance_reminder":
-        AppRouter.router.push(AppRoutes.clinicDashboard);
+      case "NewMessage":
+        AppRouter.router.pushNamed(
+          ChatRouterNames.chatRoom,
+          pathParameters: {'id': ?notification.conversationId},
+        );
       default:
         AppRouter.router.push(AppRoutes.splash);
     }
@@ -369,8 +344,9 @@ class FCMNotification {
   final String? message;
   final String? type;
   final String? relatedData;
+  final String? conversationId;
 
-  FCMNotification({this.title, this.message, this.type, this.relatedData});
+  FCMNotification({this.title, this.message, this.type, this.relatedData, this.conversationId});
 
   /// إنشاء من Map مطابق للنيتف (related_data - title - message)
   factory FCMNotification.fromMap(Map<String, dynamic> map) {
@@ -378,6 +354,7 @@ class FCMNotification {
       title: map["title"]?.toString(),
       message: map["message"]?.toString() ?? map["body"]?.toString(),
       type: map["type"]?.toString(),
+      conversationId: map["conversationId"]?.toString(),
       relatedData: map["related_data"]?.toString(),
     );
   }
@@ -388,6 +365,7 @@ class FCMNotification {
       "title": title,
       "message": message,
       "type": type,
+      "conversationId": conversationId,
       "related_data": relatedData,
     };
   }

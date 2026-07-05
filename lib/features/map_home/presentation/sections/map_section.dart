@@ -98,13 +98,13 @@ class _MapSectionState extends State<MapSection> {
     final isNavigating =
         currentState is MapHomeLoadedState && currentState.isNavigating;
 
-    if (widget.clinics != oldWidget.clinics ||
-        widget.selectedClinicId != oldWidget.selectedClinicId) {
-      if (widget.clinics != oldWidget.clinics &&
-          widget.clinics.isNotEmpty &&
-          !isNavigating) {
+    if (widget.clinics != oldWidget.clinics) {
+      if (widget.clinics.isNotEmpty && !isNavigating) {
         _fitResults();
       }
+    }
+    if (widget.clinics != oldWidget.clinics ||
+        widget.selectedClinicId != oldWidget.selectedClinicId) {
       _generateCustomMarkers();
     }
   }
@@ -210,8 +210,6 @@ class _MapSectionState extends State<MapSection> {
     return BlocListener<MapHomeCubit, MapHomeStates>(
       listenWhen: (previous, current) {
         if (previous is MapHomeLoadedState && current is MapHomeLoadedState) {
-          final clinicChanged =
-              previous.selectedClinic?.id != current.selectedClinic?.id;
           final navToggled = previous.isNavigating != current.isNavigating;
           final userMovedWhileNav =
               current.isNavigating &&
@@ -219,7 +217,7 @@ class _MapSectionState extends State<MapSection> {
                   previous.currentUserLng != current.currentUserLng ||
                   previous.currentUserHeading != current.currentUserHeading);
 
-          return clinicChanged || navToggled || userMovedWhileNav;
+          return navToggled || userMovedWhileNav;
         }
         return current is MapHomeLoadedState;
       },
@@ -239,17 +237,6 @@ class _MapSectionState extends State<MapSection> {
                   tilt: 0, // Enforce 2D view (no tilt)
                   bearing: state.currentUserHeading ?? 0,
                 ),
-              ),
-            );
-          } else if (state.selectedClinic != null) {
-            // Clinic selected but not navigating: center on clinic
-            controller.animateCamera(
-              CameraUpdate.newLatLngZoom(
-                LatLng(
-                  state.selectedClinic!.lat ?? 0.0,
-                  state.selectedClinic!.lng ?? 0.0,
-                ),
-                15,
               ),
             );
           }
