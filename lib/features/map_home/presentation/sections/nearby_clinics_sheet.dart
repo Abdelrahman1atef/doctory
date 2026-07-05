@@ -59,6 +59,9 @@ class _NearbyClinicsSheetState extends State<NearbyClinicsSheet> {
                 context.read<MapHomeCubit>().selectClinic(clinic);
                 context.read<MapHomeCubit>().startNavigation();
               },
+              onDeselect: () {
+                context.read<MapHomeCubit>().deselectClinic();
+              },
             );
           },
         );

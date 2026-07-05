@@ -12,6 +12,7 @@ class NearbyClinicsSheetWidget extends StatefulWidget {
   final ScrollController scrollController;
   final Function(ClinicModel) onClinicTap;
   final Function(ClinicModel)? onNavPressed;
+  final VoidCallback? onDeselect;
 
   const NearbyClinicsSheetWidget({
     super.key,
@@ -20,6 +21,7 @@ class NearbyClinicsSheetWidget extends StatefulWidget {
     required this.scrollController,
     required this.onClinicTap,
     this.onNavPressed,
+    this.onDeselect,
   });
 
   @override
@@ -96,6 +98,23 @@ class _NearbyClinicsSheetWidgetState extends State<NearbyClinicsSheetWidget> {
                   ),
                 ),
                 const Spacer(),
+                if (widget.selectedClinicId != null)
+                  GestureDetector(
+                    onTap: widget.onDeselect,
+                    child: Container(
+                      margin: const EdgeInsets.only(right: 8),
+                      padding: const EdgeInsets.all(4),
+                      decoration: BoxDecoration(
+                        color: AppColors.stitchSurfaceLow,
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                      child: Icon(
+                        Icons.close_rounded,
+                        size: 16,
+                        color: AppColors.stitchSecondary,
+                      ),
+                    ),
+                  ),
                 Text(
                   '${clinics.length} ${'results'.tr()}',
                   style: AppStyles.s14Medium.withColor(

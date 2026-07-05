@@ -83,10 +83,10 @@ class NotificationsBodySection extends StatelessWidget {
         color: AppColors.stitchPrimaryContainer,
         child: NotificationsListSection(
           notifications: state.notifications,
-          onTap: (userId) {
+          onTap: (id) {
             context.pushNamed(
               ChatRouterNames.chatRoom,
-              pathParameters: {'id': userId},
+              pathParameters: {'id': id},
             );
           },
         ),

@@ -42,18 +42,4 @@ class NotificationModel {
       isRead: json['isRead'] as bool? ?? false,
     );
   }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'userId': userId,
-      'titleEn': titleEn,
-      'titleAr': titleAr,
-      'bodyEn': bodyEn,
-      'bodyAr': bodyAr,
-      'type': type?.toJson(),
-      'createdAt': createdAt.toIso8601String(),
-      'isRead': isRead,
-    };
-  }
 }
