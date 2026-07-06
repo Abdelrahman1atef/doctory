@@ -10,7 +10,7 @@ abstract class ChatRemoteDataSource {
   Future<ApiResult<ConversationModel>> getConversationDetail(String id);
   Future<ApiResult<String>> deleteConversation(String id);
   Future<ApiResult<List<MessageModel>>> getMessages(String conversationId, {int pageNumber = 1, int pageSize = 50});
-  Future<ApiResult<String>> uploadChatMedia(File file, {required String path, required int place});
+  Future<ApiResult<String>> uploadChatMedia(File file, {required String path, required int place, required int fileType});
   Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId, List<Map<String, dynamic>>? mediaPayload});
   Future<ApiResult<String>> deleteMessage(String messageId);
   Future<ApiResult<bool>> setActiveConversation(String? conversationId);
@@ -100,10 +100,14 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   }
 
   @override
-  Future<ApiResult<String>> uploadChatMedia(File file, {required String path, required int place}) async {
+  Future<ApiResult<String>> uploadChatMedia(File file, {required String path, required int place, required int fileType}) async {
     return await apiConsumer.uploadFile<String>(
       path: path,
-      data: {'file': await MultipartFile.fromFile(file.path), 'place': place},
+      data: {
+        'File': await MultipartFile.fromFile(file.path),
+        'Place': place.toString(),
+        'FileType': fileType,
+      },
       parser: (json) {
         if (json.containsKey('message')) {
           return json['message'].toString();

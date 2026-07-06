@@ -6,11 +6,9 @@ import 'package:doctory/features/notifications/presentation/widgets/notification
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-import '../../../../core/enums/notification_type.dart';
-
 class NotificationsListSection extends StatelessWidget {
   final List<NotificationModel> notifications;
-  final void Function(String id) onTap;
+  final void Function(NotificationModel notification) onTap;
 
   const NotificationsListSection({
     super.key,
@@ -50,14 +48,7 @@ class NotificationsListSection extends StatelessWidget {
         final notification = notifications[index];
         return NotificationCardWidget(
           notification: notification,
-          onTap: () {
-            switch (notification.type) {
-              case NotificationType.newMessage:
-                onTap(notification.senderUserId ?? notification.userId);
-              default:
-                onTap(notification.userId);
-            }
-          },
+          onTap: () => onTap(notification),
         );
       },
     );

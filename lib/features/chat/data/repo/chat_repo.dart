@@ -54,26 +54,11 @@ class ChatRepoImpl implements ChatRepo {
 
   @override
   Future<ApiResult<String>> uploadChatMedia(ChatMediaAttachment attachment) async {
-    String path = 'attachments/upload-file';
-    switch (attachment.mediaType) {
-      case 0:
-        path = 'attachments/upload-image';
-        break;
-      case 1:
-        path = 'attachments/upload-video';
-        break;
-      case 2:
-        path = 'attachments/upload-audio';
-        break;
-      case 3:
-        path = 'attachments/upload-file';
-        break;
-    }
-
     return await remoteDataSource.uploadChatMedia(
       attachment.file,
-      path: path,
+      path: 'attachments/upload',
       place: attachment.place,
+      fileType: attachment.mediaType,
     );
   }
 

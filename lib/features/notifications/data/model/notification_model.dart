@@ -12,6 +12,7 @@ class NotificationModel {
   final bool isRead;
 
   final String? senderUserId;
+  final String? appointmentId;
 
   NotificationModel({
     required this.id,
@@ -23,7 +24,8 @@ class NotificationModel {
     this.type,
     required this.createdAt,
     this.isRead = false,
-    this.senderUserId ,
+    this.senderUserId,
+    this.appointmentId,
   });
 
   factory NotificationModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +33,7 @@ class NotificationModel {
       id: json['id'] as String,
       userId: json['userId'] as String,
       senderUserId: json['senderUserId'] as String?,
+      appointmentId: json['appointmentId'] as String?,
       titleEn: json['titleEn'] as String? ?? '',
       titleAr: json['titleAr'] as String? ?? '',
       bodyEn: json['bodyEn'] as String? ?? '',
