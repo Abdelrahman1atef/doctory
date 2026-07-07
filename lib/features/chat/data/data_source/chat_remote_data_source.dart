@@ -110,11 +110,7 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
       },
       onProgress: onProgress,
       parser: (json) {
-        final data = json['data'] ?? json['Data'];
-        if (data != null) {
-          return data.toString();
-        }
-        return '';
+        return (json['message'] ?? '').toString();
       },
     );
   }

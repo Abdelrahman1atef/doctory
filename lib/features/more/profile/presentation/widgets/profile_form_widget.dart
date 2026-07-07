@@ -15,6 +15,7 @@ class ProfileFormWidget extends StatelessWidget {
   final String selectedGender;
   final Function(String) onGenderChanged;
   final VoidCallback onSubmit;
+  final bool isSaveEnabled;
 
   const ProfileFormWidget({
     super.key,
@@ -27,6 +28,7 @@ class ProfileFormWidget extends StatelessWidget {
     required this.selectedGender,
     required this.onGenderChanged,
     required this.onSubmit,
+    this.isSaveEnabled = true,
   });
 
   @override
@@ -200,18 +202,21 @@ class ProfileFormWidget extends StatelessWidget {
             height: 56,
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: onSubmit,
+              onPressed: isSaveEnabled ? onSubmit : null,
               style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.stitchPrimaryContainer,
-                foregroundColor: Colors.white,
+                backgroundColor: isSaveEnabled ? AppColors.stitchPrimaryContainer : Colors.transparent,
+                foregroundColor: isSaveEnabled ? Colors.white : AppColors.textSecondary,
                 elevation: 0,
+                side: isSaveEnabled ? null : BorderSide(color: AppColors.cardBorder),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               child: Text(
                 context.l10n('save'),
-                style: AppStyles.s16SemiBold,
+                style: AppStyles.s16SemiBold.copyWith(
+                  color: isSaveEnabled ? Colors.white : AppColors.textSecondary,
+                ),
               ),
             ),
           ),

@@ -22,8 +22,8 @@ class DoctorAvatarBadge extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: size / 2,
-            backgroundImage: imageUrl != null ? NetworkImage(imageUrl!) : null,
-            child: imageUrl == null
+            backgroundImage: imageUrl != null && imageUrl!.isNotEmpty ? NetworkImage(imageUrl!) : null,
+            child: imageUrl == null || imageUrl!.isEmpty
                 ? const Icon(Icons.person, size: 28)
                 : null,
           ),

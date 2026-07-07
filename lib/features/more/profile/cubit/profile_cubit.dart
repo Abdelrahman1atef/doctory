@@ -1,5 +1,7 @@
 import 'dart:io';
+import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/features/auth/data/model/update_profile_request.dart';
+import 'package:doctory/features/auth/data/model/user_model.dart';
 import 'package:doctory/features/auth/data/repo/auth_repo.dart';
 import 'package:doctory/features/create_post/data/data_source/create_post_remote_data_source.dart';
 import 'package:doctory/features/more/profile/cubit/profile_states.dart';
@@ -11,11 +13,27 @@ class ProfileCubit extends Cubit<ProfileStates> {
 
   ProfileCubit(this._authRepo, this._mediaDataSource) : super(ProfileInitial());
 
+  void _syncSession(UserModel user) {
+    UserSession.updateProfileData({
+      'fullName': user.fullName,
+      'phoneNumber': user.phoneNumber,
+      'birthDate': user.birthDate,
+      'gender': user.gender,
+      'profilePictureUrl': user.profilePictureUrl,
+      'profileImage': user.profilePictureUrl,
+      'image': user.profilePictureUrl,
+      'avatar': user.profilePictureUrl,
+    });
+  }
+
   Future<void> getProfile() async {
     emit(ProfileLoading());
     final result = await _authRepo.getProfile();
     result.fold(
-      onSuccess: (user) => emit(ProfileLoadSuccess(user)),
+      onSuccess: (user) {
+        emit(ProfileLoadSuccess(user));
+        _syncSession(user);
+      },
       onFailure: (failure) => emit(ProfileLoadError(failure.message)),
     );
   }

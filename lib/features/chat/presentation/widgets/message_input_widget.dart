@@ -113,7 +113,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0).copyWith(bottom: kBottomNavigationBarHeight),
       decoration: BoxDecoration(
         color: Colors.white,
         boxShadow: [
@@ -124,67 +124,65 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
           ),
         ],
       ),
-      child: SafeArea(
-        child: Row(
-          children: [
-            if (!_isRecording)
-              IconButton(
-                onPressed: () => _showMediaOptions(context),
-                icon: Icon(Icons.add_circle_outline, color: AppColors.primary),
-              ),
-            Expanded(
-              child: _isRecording
-                  ? AudioWaveforms(
-                      enableGesture: true,
-                      size: Size(MediaQuery.of(context).size.width, 50),
-                      recorderController: _recorderController,
-                      waveStyle: const WaveStyle(
-                        waveColor: Colors.red,
-                        extendWaveform: true,
-                        showMiddleLine: false,
-                      ),
-                    )
-                  : Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.grey200.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(24),
-                      ),
-                      child: TextField(
-                        controller: _controller,
-                        decoration: const InputDecoration(
-                          hintText: 'اكتب رسالة...',
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                        ),
-                        onChanged: (text) {
-                          setState(() {});
-                          if (text.isNotEmpty) widget.onTyping();
-                        },
-                      ),
+      child: Row(
+        children: [
+          if (!_isRecording)
+            IconButton(
+              onPressed: () => _showMediaOptions(context),
+              icon: Icon(Icons.add_circle_outline, color: AppColors.primary),
+            ),
+          Expanded(
+            child: _isRecording
+                ? AudioWaveforms(
+                    enableGesture: true,
+                    size: Size(MediaQuery.of(context).size.width, 50),
+                    recorderController: _recorderController,
+                    waveStyle: const WaveStyle(
+                      waveColor: Colors.red,
+                      extendWaveform: true,
+                      showMiddleLine: false,
                     ),
-            ),
-            const SizedBox(width: 8),
-            GestureDetector(
-              onTap: (_controller.text.trim().isNotEmpty || widget.showSend)
-                  ? _handleSend
-                  : _toggleRecording,
-              child: Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: _isRecording ? Colors.red : AppColors.primary,
-                  shape: BoxShape.circle,
-                ),
-                child: Icon(
-                  _isRecording
-                      ? Icons.stop
-                      : ((_controller.text.trim().isNotEmpty || widget.showSend) ? Icons.send : Icons.mic),
-                  color: Colors.white,
-                  size: 20,
-                ),
+                  )
+                : Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.grey200.withValues(alpha: 0.1),
+                      borderRadius: BorderRadius.circular(24),
+                    ),
+                    child: TextField(
+                      controller: _controller,
+                      decoration: const InputDecoration(
+                        hintText: 'اكتب رسالة...',
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                      ),
+                      onChanged: (text) {
+                        setState(() {});
+                        if (text.isNotEmpty) widget.onTyping();
+                      },
+                    ),
+                  ),
+          ),
+          const SizedBox(width: 8),
+          GestureDetector(
+            onTap: (_controller.text.trim().isNotEmpty || widget.showSend)
+                ? _handleSend
+                : _toggleRecording,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: _isRecording ? Colors.red : AppColors.primary,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                _isRecording
+                    ? Icons.stop
+                    : ((_controller.text.trim().isNotEmpty || widget.showSend) ? Icons.send : Icons.mic),
+                color: Colors.white,
+                size: 20,
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

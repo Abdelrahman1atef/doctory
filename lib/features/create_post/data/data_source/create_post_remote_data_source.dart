@@ -37,7 +37,7 @@ class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
         'Place': place,
         'FileType': 0,
       },
-      parser: (json) => (json['data'] ?? json['Data'] ?? '').toString(),
+      parser: (json) => (json['message'] ?? '').toString(),
     );
   }
 
@@ -50,7 +50,7 @@ class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
         'Place': place,
         'FileType': 1,
       },
-      parser: (json) => (json['data'] ?? json['Data'] ?? '').toString(),
+      parser: (json) => (json['message'] ?? '').toString(),
     );
   }
 
@@ -63,7 +63,7 @@ class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
         'Place': place,
         'FileType': 2,
       },
-      parser: (json) => (json['data'] ?? json['Data'] ?? '').toString(),
+      parser: (json) => (json['message'] ?? '').toString(),
     );
   }
 
@@ -76,7 +76,7 @@ class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
         'Place': place,
         'FileType': 3,
       },
-      parser: (json) => (json['data'] ?? json['Data'] ?? '').toString(),
+      parser: (json) => (json['message'] ?? '').toString(),
     );
   }
 

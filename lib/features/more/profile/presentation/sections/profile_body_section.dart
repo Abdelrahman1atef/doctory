@@ -3,6 +3,7 @@ import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/services/alerts.dart';
 import 'package:doctory/core/services/media/my_media.dart';
 import 'package:doctory/core/utils/extensions.dart';
+import 'package:doctory/features/auth/data/model/user_model.dart';
 import 'package:doctory/features/more/profile/cubit/profile_cubit.dart';
 import 'package:doctory/features/more/profile/cubit/profile_states.dart';
 import 'package:doctory/features/more/profile/presentation/widgets/profile_form_widget.dart';
@@ -27,9 +28,52 @@ class _ProfileBodySectionState extends State<ProfileBodySection> {
   final _yearController = TextEditingController();
   String _selectedGender = 'male';
   File? _pickedImage;
+  UserModel? _loadedUser;
+  bool _isSaveEnabled = true;
+
+  void _onFieldChanged() {
+    final hasChanges = _computeHasChanges();
+    if (hasChanges != _isSaveEnabled) {
+      setState(() => _isSaveEnabled = hasChanges);
+    }
+  }
+
+  bool _computeHasChanges() {
+    final user = _loadedUser;
+    if (user == null) return true;
+    if (_pickedImage != null) return true;
+
+    final day = _dayController.text.padLeft(2, '0');
+    final month = _monthController.text.padLeft(2, '0');
+    final year = _yearController.text;
+    String? birthDate;
+    if (day.isNotEmpty && month.isNotEmpty && year.isNotEmpty) {
+      birthDate = '$year-$month-$day';
+    }
+
+    return _nameController.text.trim() != user.fullName ||
+        _phoneController.text.trim() != (user.phoneNumber ?? '') ||
+        birthDate != user.birthDate ||
+        _getGenderValue() != user.gender;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _nameController.addListener(_onFieldChanged);
+    _phoneController.addListener(_onFieldChanged);
+    _dayController.addListener(_onFieldChanged);
+    _monthController.addListener(_onFieldChanged);
+    _yearController.addListener(_onFieldChanged);
+  }
 
   @override
   void dispose() {
+    _nameController.removeListener(_onFieldChanged);
+    _phoneController.removeListener(_onFieldChanged);
+    _dayController.removeListener(_onFieldChanged);
+    _monthController.removeListener(_onFieldChanged);
+    _yearController.removeListener(_onFieldChanged);
     _nameController.dispose();
     _phoneController.dispose();
     _dayController.dispose();
@@ -43,10 +87,12 @@ class _ProfileBodySectionState extends State<ProfileBodySection> {
     final image = await mediaService.pickImageFromGallery();
     if (image != null) {
       setState(() => _pickedImage = image);
+      _onFieldChanged();
     }
   }
 
   void _onSubmit() {
+    if (!_isSaveEnabled) return;
     if (_formKey.currentState!.validate()) {
       final day = _dayController.text.padLeft(2, '0');
       final month = _monthController.text.padLeft(2, '0');
@@ -89,6 +135,11 @@ class _ProfileBodySectionState extends State<ProfileBodySection> {
     }
   }
 
+  void _onGenderChanged(String gender) {
+    setState(() => _selectedGender = gender);
+    _onFieldChanged();
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ProfileCubit, ProfileStates>(
@@ -106,19 +157,20 @@ class _ProfileBodySectionState extends State<ProfileBodySection> {
         }
 
         if (state is ProfileLoadSuccess) {
-          final user = state.user;
-          _nameController.text = user.fullName;
-          _phoneController.text = user.phoneNumber ?? '';
-          _selectedGender = _getGenderString(user.gender);
+          _loadedUser = state.user;
+          _nameController.text = state.user.fullName;
+          _phoneController.text = state.user.phoneNumber ?? '';
+          _selectedGender = _getGenderString(state.user.gender);
 
-          if (user.birthDate != null && user.birthDate!.contains('-')) {
-            final parts = user.birthDate!.split('-');
+          if (state.user.birthDate != null && state.user.birthDate!.contains('-')) {
+            final parts = state.user.birthDate!.split('-');
             if (parts.length == 3) {
               _yearController.text = parts[0];
               _monthController.text = parts[1];
               _dayController.text = parts[2];
             }
           }
+          _isSaveEnabled = false;
         }
       },
       builder: (context, state) {
@@ -150,8 +202,9 @@ class _ProfileBodySectionState extends State<ProfileBodySection> {
                 monthController: _monthController,
                 yearController: _yearController,
                 selectedGender: _selectedGender,
-                onGenderChanged: (gender) => setState(() => _selectedGender = gender),
+                onGenderChanged: _onGenderChanged,
                 onSubmit: _onSubmit,
+                isSaveEnabled: _isSaveEnabled,
               ),
             ],
           ),

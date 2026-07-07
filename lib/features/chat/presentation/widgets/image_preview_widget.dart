@@ -8,6 +8,10 @@ class ImagePreviewWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (imageUrl.isEmpty) {
+      return const SizedBox.shrink();
+    }
+
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(MaterialPageRoute(

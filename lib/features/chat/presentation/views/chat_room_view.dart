@@ -19,7 +19,7 @@ class ChatRoomView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(body: SafeArea(child: ChatRoomBodySection()));
+    return const Scaffold(body: ChatRoomBodySection());
   }
 }
 
@@ -54,7 +54,7 @@ class ChatRoomAppBarSection extends StatelessWidget {
               : state.conversation.initiatorProfilePictureUrl;
 
           return Container(
-            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8).copyWith(top: kToolbarHeight),
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border(bottom: BorderSide(color: AppColors.grey200, width: 0.5)),

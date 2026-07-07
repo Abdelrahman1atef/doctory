@@ -75,8 +75,8 @@ Controller → UploadFileCommand → Validator (file not empty, Place 0–12, Fi
 ```json
 {
   "success": true,
-  "data": "5_3a1f2b4c-...jpg",
-  "message": "...",
+  "data": null,
+  "message": "5_3a1f2b4c-...jpg",
   "statusCode": 200
 }
 ```
@@ -297,7 +297,7 @@ Section → CreatePostCubit.createPost(content, media)
 - `uploadMultipleImages(files)` → `POST attachments/upload-multiple-attachments` (field: `Images`, `ImagesPlace`)
 - `uploadMultipleVideos(files)` → `POST attachments/upload-multiple-attachments` (field: `Videos`, `VideosPlace`)
 
-**Response format** — all upload endpoints return the filename(s) in `json['data']`.
+**Response format** — single upload endpoints return the filename in `json['message']` (`data` is `null`). Batch upload endpoints return the filename list in `json['data']`.
 
 **Key files:**
 - `lib/features/create_post/data/data_source/create_post_remote_data_source.dart`

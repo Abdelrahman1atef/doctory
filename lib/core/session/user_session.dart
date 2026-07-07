@@ -161,6 +161,14 @@ class UserSession {
     }
   }
 
+  /// Update profile fields in the session and notify listeners
+  static void updateProfileData(Map<String, dynamic> fields) {
+    if (userModel is Map) {
+      (userModel as Map).addAll(fields);
+      userNotifier.value = userModel;
+    }
+  }
+
   /// Logout and clear session
   static Future<void> logout() async {
     // Disconnect Chat Realtime Service
