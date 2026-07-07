@@ -24,84 +24,59 @@ class ChatMessageWidget extends StatelessWidget {
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: GestureDetector(
         onLongPress: () => _showMessageOptions(context),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
-          child: Row(
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 500),
+          margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 4.0),
+          padding: const EdgeInsets.all(8.0),
+          decoration: BoxDecoration(
+            color: isHighlighted
+                ? (isMe
+                      ? AppColors.primary.withValues(alpha: 0.8)
+                      : Colors.yellow.withValues(alpha: 0.3))
+                : (isMe ? AppColors.primary : Colors.white),
+            borderRadius: BorderRadius.only(
+              topLeft: const Radius.circular(16),
+              topRight: const Radius.circular(16),
+              bottomLeft: isMe ? const Radius.circular(16) : const Radius.circular(4),
+              bottomRight: isMe ? const Radius.circular(4) : const Radius.circular(16),
+            ),
+            border: isHighlighted ? Border.all(color: AppColors.primary, width: 1) : null,
+          ),
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ClipPath(
+              if (message.media != null && message.media!.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 4.0),
+                  child: _buildMediaContent(message.media!.first, isMe),
+                ),
 
-                child: Container(
-                  width: 10,
-                  height: 10,
-                  decoration: BoxDecoration(
-                    color: isHighlighted
-                        ? (isMe
-                        ? AppColors.primary.withValues(alpha: 0.8)
-                        : Colors.yellow.withValues(alpha: 0.3))
-                        : (isMe ? AppColors.primary : Colors.white),
-                    borderRadius: BorderRadiusDirectional.only(
-                      topStart: Radius.circular(16),
-                      bottomStart: Radius.circular(50),
-                    ),
-                    border: isHighlighted ? Border.all(color: AppColors.primary, width: 1) : null,
+              if (message.content.trim().isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
+                  child: Text(
+                    message.content,
+                    style: TextStyle(color: isMe ? Colors.white : Colors.black87, fontSize: 14),
                   ),
                 ),
-              ),
-              AnimatedContainer(
-                duration: const Duration(milliseconds: 500),
-                padding: const EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  color: isHighlighted
-                      ? (isMe
-                            ? AppColors.primary.withValues(alpha: 0.8)
-                            : Colors.yellow.withValues(alpha: 0.3))
-                      : (isMe ? AppColors.primary : Colors.white),
-                  borderRadius: BorderRadiusDirectional.only(
-                    topEnd: const Radius.circular(16),
-                    bottomEnd: isMe ? const Radius.circular(16) : const Radius.circular(4),
-                    bottomStart: isMe ? const Radius.circular(4) : const Radius.circular(16),
-                  ),
-                  border: isHighlighted ? Border.all(color: AppColors.primary, width: 1) : null,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (message.media != null && message.media!.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(bottom: 4.0),
-                        child: _buildMediaContent(message.media!.first, isMe),
-                      ),
-
-                    if (message.content.trim().isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
-                        child: Text(
-                          message.content,
-                          style: TextStyle(color: isMe ? Colors.white : Colors.black87, fontSize: 14),
-                        ),
-                      ),
-
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(
-                            _formatTime(message.createdAt),
-                            style: TextStyle(color: isMe ? Colors.white70 : Colors.black54, fontSize: 10),
-                          ),
-                          if (isMe) ...[
-                            const SizedBox(width: 4),
-                            Icon(
-                              _getStatusIcon(message.status, message.isRead),
-                              size: 12,
-                              color: message.isRead ? Colors.blue : Colors.white70,
-                            ),
-                          ],
-                        ],
-                      ),
+                    Text(
+                      _formatTime(message.createdAt),
+                      style: TextStyle(color: isMe ? Colors.white70 : Colors.black54, fontSize: 10),
                     ),
+                    if (isMe) ...[
+                      const SizedBox(width: 4),
+                      Icon(
+                        _getStatusIcon(message.status, message.isRead),
+                        size: 12,
+                        color: message.isRead ? Colors.blue : Colors.white70,
+                      ),
+                    ],
                   ],
                 ),
               ),
@@ -123,13 +98,19 @@ class ChatMessageWidget extends StatelessWidget {
     final isVideo = media.type == 'video' || media.mediaType == 1;
     final isAudio = media.type == 'audio' || media.mediaType == 2;
 
-    final imageUrl = media.url ?? _toImageUrl(media.fileName ?? '');
     if (isImage) {
-      return ImagePreviewWidget(imageUrl: imageUrl);
+      return ImagePreviewWidget(
+        imageUrl: media.url ?? (media.fileName != null ? _toImageUrl(media.fileName) : ''),
+      );
     } else if (isVideo) {
-      return VideoPlayerWidget(videoUrl: imageUrl);
+      return VideoPlayerWidget(
+        videoUrl: media.url ?? (media.fileName != null ? _toImageUrl(media.fileName) : ''),
+      );
     } else if (isAudio) {
-      return AudioMessageWidget(audioUrl: imageUrl, isMe: isMe);
+      return AudioMessageWidget(
+        audioUrl: media.url ?? (media.fileName != null ? _toImageUrl(media.fileName) : ''),
+        isMe: isMe,
+      );
     } else {
       final fileName = media.fileName ?? '';
       final isPdf = fileName.toLowerCase().endsWith('.pdf') || media.mediaType == 3;
@@ -138,8 +119,9 @@ class ChatMessageWidget extends StatelessWidget {
 
       return GestureDetector(
         onTap: () async {
-          if (imageUrl.isNotEmpty) {
-            await FileOpenerService.openFile(imageUrl);
+          final url = media.url ?? (media.fileName != null ? _toImageUrl(media.fileName) : '');
+          if (url.isNotEmpty) {
+            await FileOpenerService.openFile(url);
           }
         },
         child: Container(
