@@ -82,7 +82,7 @@ class ProfileFormWidget extends StatelessWidget {
             validator: (value) {
               if (value == null || value.isEmpty)
                 return context.l10n('field_required');
-              if (value.length != 10) return context.l10n('invalid_phone');
+              if (value.length != 11) return context.l10n('invalid_phone');
               return null;
             },
           ),

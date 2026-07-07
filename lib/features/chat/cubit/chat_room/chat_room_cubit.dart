@@ -356,11 +356,21 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       currentState.copyWith(
         selectedFilePath: attachment.file.path,
         isUploadingMedia: true,
+        uploadProgress: 0.0,
         clearMedia: false,
       ),
     );
 
-    final result = await chatRepo.uploadChatMedia(attachment);
+    final result = await chatRepo.uploadChatMedia(
+      attachment,
+      onProgress: (sent, total) {
+        if (state is ChatRoomLoaded) {
+          emit((state as ChatRoomLoaded).copyWith(
+            uploadProgress: total > 0 ? sent / total : 0.0,
+          ));
+        }
+      },
+    );
     result.fold(
       onSuccess: (fileName) {
         if (state is ChatRoomLoaded) {
@@ -368,6 +378,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
           emit(
             s.copyWith(
               isUploadingMedia: false,
+              uploadProgress: 1.0,
               uploadedFileName: fileName,
               uploadedMediaType: attachment.mediaType,
             ),
@@ -377,7 +388,7 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
       onFailure: (failure) {
         if (state is ChatRoomLoaded) {
           final s = state as ChatRoomLoaded;
-          emit(s.copyWith(isUploadingMedia: false, clearMedia: true));
+          emit(s.copyWith(isUploadingMedia: false, uploadProgress: 0.0, clearMedia: true));
         }
       },
     );
@@ -417,18 +428,44 @@ class ChatRoomCubit extends Cubit<ChatRoomState> {
   Future<void> sendVoiceMessage(String path) async {
     final attachment = ChatMediaAttachment.audio(File(path));
     
+    if (state is ChatRoomLoaded) {
+      emit((state as ChatRoomLoaded).copyWith(
+        isUploadingMedia: true,
+        uploadProgress: 0.0,
+      ));
+    }
+    
     // Upload audio
-    final uploadResult = await chatRepo.uploadChatMedia(attachment);
+    final uploadResult = await chatRepo.uploadChatMedia(
+      attachment,
+      onProgress: (sent, total) {
+        if (state is ChatRoomLoaded) {
+          emit((state as ChatRoomLoaded).copyWith(
+            uploadProgress: total > 0 ? sent / total : 0.0,
+          ));
+        }
+      },
+    );
     uploadResult.fold(
       onSuccess: (fileName) async {
-        // Send as message
+        if (state is ChatRoomLoaded) {
+          emit((state as ChatRoomLoaded).copyWith(
+            isUploadingMedia: false,
+            uploadProgress: 1.0,
+          ));
+        }
         final mediaPayload = [
           {'mediaType': attachment.mediaType, 'fileName': fileName},
         ];
         await sendMessage("", mediaPayload: mediaPayload);
       },
       onFailure: (failure) {
-        // Handle upload failure
+        if (state is ChatRoomLoaded) {
+          emit((state as ChatRoomLoaded).copyWith(
+            isUploadingMedia: false,
+            uploadProgress: 0.0,
+          ));
+        }
       },
     );
   }

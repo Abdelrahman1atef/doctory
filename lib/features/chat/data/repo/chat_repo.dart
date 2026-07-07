@@ -10,7 +10,7 @@ abstract class ChatRepo {
   Future<ApiResult<ConversationModel>> getConversationDetail(String id);
   Future<ApiResult<String>> deleteConversation(String id);
   Future<ApiResult<List<MessageModel>>> getMessages(String conversationId, {int pageNumber = 1, int pageSize = 50});
-  Future<ApiResult<String>> uploadChatMedia(ChatMediaAttachment attachment);
+  Future<ApiResult<String>> uploadChatMedia(ChatMediaAttachment attachment, {void Function(int, int)? onProgress});
   Future<ApiResult<MessageModel>> sendMessage(String conversationId, String content, {String? replyToMessageId, List<Map<String, dynamic>>? mediaPayload});
   Future<ApiResult<String>> deleteMessage(String messageId);
   Future<ApiResult<bool>> setActiveConversation(String? conversationId);
@@ -53,12 +53,13 @@ class ChatRepoImpl implements ChatRepo {
   }
 
   @override
-  Future<ApiResult<String>> uploadChatMedia(ChatMediaAttachment attachment) async {
+  Future<ApiResult<String>> uploadChatMedia(ChatMediaAttachment attachment, {void Function(int, int)? onProgress}) async {
     return await remoteDataSource.uploadChatMedia(
       attachment.file,
       path: 'attachments/upload',
       place: attachment.place,
       fileType: attachment.mediaType,
+      onProgress: onProgress,
     );
   }
 

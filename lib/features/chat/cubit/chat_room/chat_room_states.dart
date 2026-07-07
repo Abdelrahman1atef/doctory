@@ -20,6 +20,7 @@ class ChatRoomLoaded extends ChatRoomState {
   final String? uploadedFileName;
   final int? uploadedMediaType;
   final bool isUploadingMedia;
+  final double uploadProgress;
 
   ChatRoomLoaded({
     required this.conversation,
@@ -32,6 +33,7 @@ class ChatRoomLoaded extends ChatRoomState {
     this.uploadedFileName,
     this.uploadedMediaType,
     this.isUploadingMedia = false,
+    this.uploadProgress = 0.0,
   });
 
   ChatRoomLoaded copyWith({
@@ -45,6 +47,7 @@ class ChatRoomLoaded extends ChatRoomState {
     String? uploadedFileName,
     int? uploadedMediaType,
     bool? isUploadingMedia,
+    double? uploadProgress,
     bool clearReply = false,
     bool clearMedia = false,
     bool clearHighlight = false,
@@ -60,6 +63,7 @@ class ChatRoomLoaded extends ChatRoomState {
       uploadedFileName: clearMedia ? null : (uploadedFileName ?? this.uploadedFileName),
       uploadedMediaType: clearMedia ? null : (uploadedMediaType ?? this.uploadedMediaType),
       isUploadingMedia: clearMedia ? false : (isUploadingMedia ?? this.isUploadingMedia),
+      uploadProgress: uploadProgress ?? this.uploadProgress,
     );
   }
 }

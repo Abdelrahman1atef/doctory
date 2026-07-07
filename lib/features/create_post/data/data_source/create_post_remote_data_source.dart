@@ -31,36 +31,52 @@ class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
   @override
   Future<ApiResult<String>> uploadImage(File file, {int place = 2}) async {
     return await apiConsumer.uploadFile<String>(
-      path: 'attachments/upload-image',
-      data: {'File': await MultipartFile.fromFile(file.path), 'Place': place},
-      parser: (json) => (json['message'] ?? json['Message'] ?? '').toString(),
+      path: 'attachments/upload',
+      data: {
+        'File': await MultipartFile.fromFile(file.path),
+        'Place': place,
+        'FileType': 0,
+      },
+      parser: (json) => (json['data'] ?? json['Data'] ?? '').toString(),
     );
   }
 
   @override
   Future<ApiResult<String>> uploadVideo(File file, {int place = 3}) async {
     return await apiConsumer.uploadFile<String>(
-      path: 'attachments/upload-video',
-      data: {'File': await MultipartFile.fromFile(file.path), 'Place': place},
-      parser: (json) => (json['message'] ?? json['Message'] ?? '').toString(),
+      path: 'attachments/upload',
+      data: {
+        'File': await MultipartFile.fromFile(file.path),
+        'Place': place,
+        'FileType': 1,
+      },
+      parser: (json) => (json['data'] ?? json['Data'] ?? '').toString(),
     );
   }
 
   @override
   Future<ApiResult<String>> uploadAudio(File file, {int place = 4}) async {
     return await apiConsumer.uploadFile<String>(
-      path: 'attachments/upload-audio',
-      data: {'File': await MultipartFile.fromFile(file.path), 'Place': place},
-      parser: (json) => (json['message'] ?? json['Message'] ?? '').toString(),
+      path: 'attachments/upload',
+      data: {
+        'File': await MultipartFile.fromFile(file.path),
+        'Place': place,
+        'FileType': 2,
+      },
+      parser: (json) => (json['data'] ?? json['Data'] ?? '').toString(),
     );
   }
 
   @override
   Future<ApiResult<String>> uploadFile(File file, {int place = 4}) async {
     return await apiConsumer.uploadFile<String>(
-      path: 'attachments/upload-file',
-      data: {'File': await MultipartFile.fromFile(file.path), 'Place': place},
-      parser: (json) => (json['message'] ?? json['Message'] ?? '').toString(),
+      path: 'attachments/upload',
+      data: {
+        'File': await MultipartFile.fromFile(file.path),
+        'Place': place,
+        'FileType': 3,
+      },
+      parser: (json) => (json['data'] ?? json['Data'] ?? '').toString(),
     );
   }
 
@@ -73,8 +89,8 @@ class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
       files.map((f) => MultipartFile.fromFile(f.path)).toList(),
     );
     return await apiConsumer.uploadFile<List<String>>(
-      path: 'attachments/upload-multiple-images',
-      data: {'Files': multipartFiles, 'Place': place},
+      path: 'attachments/upload-multiple-attachments',
+      data: {'Images': multipartFiles, 'ImagesPlace': place},
       parser: (json) {
         final data = json['data'] ?? json['Data'] ?? [];
         return (data as List).map((e) => e.toString()).toList();
@@ -91,8 +107,8 @@ class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
       files.map((f) => MultipartFile.fromFile(f.path)).toList(),
     );
     return await apiConsumer.uploadFile<List<String>>(
-      path: 'attachments/upload-multiple-videos',
-      data: {'Files': multipartFiles, 'Place': place},
+      path: 'attachments/upload-multiple-attachments',
+      data: {'Videos': multipartFiles, 'VideosPlace': place},
       parser: (json) {
         final data = json['data'] ?? json['Data'] ?? [];
         return (data as List).map((e) => e.toString()).toList();
