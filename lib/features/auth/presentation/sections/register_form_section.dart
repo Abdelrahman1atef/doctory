@@ -153,12 +153,12 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
       );
 
       context.read<AuthCubit>().signup(
-        signupRequest,
-        doctorImagePath: _isDoctor ? _profileImage?.path : null,
-        professionalPracticeCardImagePath: _isDoctor ? _professionalPracticeCard?.path : null,
-        unionIdImagePath: _isDoctor ? _unionIdImage?.path : null,
-        taxCardImagePath: _isDoctor && widget.doctorType == 'ownClinic' ? _taxCardImage?.path : null,
-        commercialRegisterImagePath: _isDoctor && widget.doctorType == 'ownClinic' ? _commercialRegister?.path : null,
+        request: signupRequest,
+        doctorImageFile: _isDoctor ? _profileImage : null,
+        professionalPracticeCardFile: _isDoctor ? _professionalPracticeCard : null,
+        unionIdFile: _isDoctor ? _unionIdImage : null,
+        taxCardFile: _isDoctor && widget.doctorType == 'ownClinic' ? _taxCardImage : null,
+        commercialRegisterFile: _isDoctor && widget.doctorType == 'ownClinic' ? _commercialRegister : null,
       );
     }
   }

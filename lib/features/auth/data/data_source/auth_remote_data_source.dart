@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:doctory/core/enums/device_platform.dart';
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import 'package:doctory/features/auth/data/data_source/auth_endpoints.dart';
@@ -10,14 +9,7 @@ import 'package:doctory/features/auth/data/model/user_model.dart';
 import 'package:doctory/features/auth/data/model/update_profile_request.dart';
 
 abstract class AuthRemoteDataSource {
-  Future<ApiResult<AuthResponse>> signup(
-    SignupRequest request, {
-    String? doctorImagePath,
-    String? professionalPracticeCardImagePath,
-    String? unionIdImagePath,
-    String? taxCardImagePath,
-    String? commercialRegisterImagePath,
-  });
+  Future<ApiResult<AuthResponse>> signup(SignupRequest request);
   Future<ApiResult<AuthResponse>> login(LoginRequest request);
   Future<ApiResult<bool>> registerClinic(ClinicSetupRequest request);
   Future<ApiResult<AuthResponse>> verify(String email, String code);
@@ -53,48 +45,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl(this._apiConsumer);
 
   @override
-  Future<ApiResult<AuthResponse>> signup(
-    SignupRequest request, {
-    String? doctorImagePath,
-    String? professionalPracticeCardImagePath,
-    String? unionIdImagePath,
-    String? taxCardImagePath,
-    String? commercialRegisterImagePath,
-  }) async {
-    final hasFiles = doctorImagePath != null ||
-        professionalPracticeCardImagePath != null ||
-        unionIdImagePath != null ||
-        taxCardImagePath != null ||
-        commercialRegisterImagePath != null;
-    if (hasFiles) {
-      final body = Map<String, dynamic>.from(request.toJson());
-      if (doctorImagePath != null) {
-        body['doctor_image'] =
-            await MultipartFile.fromFile(doctorImagePath);
-      }
-      if (professionalPracticeCardImagePath != null) {
-        body['professional_practice_card_image'] =
-            await MultipartFile.fromFile(professionalPracticeCardImagePath);
-      }
-      if (unionIdImagePath != null) {
-        body['union_id_image'] =
-            await MultipartFile.fromFile(unionIdImagePath);
-      }
-      if (taxCardImagePath != null) {
-        body['tax_card_image'] =
-            await MultipartFile.fromFile(taxCardImagePath);
-      }
-      if (commercialRegisterImagePath != null) {
-        body['commercial_register_image'] =
-            await MultipartFile.fromFile(commercialRegisterImagePath);
-      }
-      return await _apiConsumer.post(
-        path: AuthEndpoints.signup,
-        body: body,
-        isFormData: true,
-        parser: (json) => AuthResponse.fromJson(json),
-      );
-    }
+  Future<ApiResult<AuthResponse>> signup(SignupRequest request) async {
     return await _apiConsumer.post(
       path: AuthEndpoints.signup,
       body: request.toJson(),

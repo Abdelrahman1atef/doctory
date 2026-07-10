@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'package:dio/dio.dart';
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
+import 'package:doctory/core/services/file_upload_service.dart';
 
 abstract class CreatePostRemoteDataSource {
   Future<ApiResult<String>> uploadImage(File file, {int place = 2});
@@ -25,59 +25,29 @@ abstract class CreatePostRemoteDataSource {
 
 class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
   final ApiConsumer apiConsumer;
+  final FileUploadService _fileUploadService;
 
-  CreatePostRemoteDataSourceImpl({required this.apiConsumer});
+  CreatePostRemoteDataSourceImpl({required this.apiConsumer, required FileUploadService fileUploadService})
+    : _fileUploadService = fileUploadService;
 
   @override
   Future<ApiResult<String>> uploadImage(File file, {int place = 2}) async {
-    return await apiConsumer.uploadFile<String>(
-      path: 'attachments/upload',
-      data: {
-        'File': await MultipartFile.fromFile(file.path),
-        'Place': place,
-        'FileType': 0,
-      },
-      parser: (json) => (json['message'] ?? '').toString(),
-    );
+    return _fileUploadService.uploadAttachment(file: file, fileType: 0, place: place);
   }
 
   @override
   Future<ApiResult<String>> uploadVideo(File file, {int place = 3}) async {
-    return await apiConsumer.uploadFile<String>(
-      path: 'attachments/upload',
-      data: {
-        'File': await MultipartFile.fromFile(file.path),
-        'Place': place,
-        'FileType': 1,
-      },
-      parser: (json) => (json['message'] ?? '').toString(),
-    );
+    return _fileUploadService.uploadAttachment(file: file, fileType: 1, place: place);
   }
 
   @override
   Future<ApiResult<String>> uploadAudio(File file, {int place = 4}) async {
-    return await apiConsumer.uploadFile<String>(
-      path: 'attachments/upload',
-      data: {
-        'File': await MultipartFile.fromFile(file.path),
-        'Place': place,
-        'FileType': 2,
-      },
-      parser: (json) => (json['message'] ?? '').toString(),
-    );
+    return _fileUploadService.uploadAttachment(file: file, fileType: 2, place: place);
   }
 
   @override
   Future<ApiResult<String>> uploadFile(File file, {int place = 4}) async {
-    return await apiConsumer.uploadFile<String>(
-      path: 'attachments/upload',
-      data: {
-        'File': await MultipartFile.fromFile(file.path),
-        'Place': place,
-        'FileType': 3,
-      },
-      parser: (json) => (json['message'] ?? '').toString(),
-    );
+    return _fileUploadService.uploadAttachment(file: file, fileType: 3, place: place);
   }
 
   @override
@@ -85,17 +55,7 @@ class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
     List<File> files, {
     int place = 2,
   }) async {
-    final multipartFiles = await Future.wait(
-      files.map((f) => MultipartFile.fromFile(f.path)).toList(),
-    );
-    return await apiConsumer.uploadFile<List<String>>(
-      path: 'attachments/upload-multiple-attachments',
-      data: {'Images': multipartFiles, 'ImagesPlace': place},
-      parser: (json) {
-        final data = json['data'] ?? json['Data'] ?? [];
-        return (data as List).map((e) => e.toString()).toList();
-      },
-    );
+    return _fileUploadService.uploadMultipleAttachments(files: files, fieldName: 'Images', place: place);
   }
 
   @override
@@ -103,17 +63,7 @@ class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
     List<File> files, {
     int place = 3,
   }) async {
-    final multipartFiles = await Future.wait(
-      files.map((f) => MultipartFile.fromFile(f.path)).toList(),
-    );
-    return await apiConsumer.uploadFile<List<String>>(
-      path: 'attachments/upload-multiple-attachments',
-      data: {'Videos': multipartFiles, 'VideosPlace': place},
-      parser: (json) {
-        final data = json['data'] ?? json['Data'] ?? [];
-        return (data as List).map((e) => e.toString()).toList();
-      },
-    );
+    return _fileUploadService.uploadMultipleAttachments(files: files, fieldName: 'Videos', place: place);
   }
 
   @override

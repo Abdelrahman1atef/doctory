@@ -1,4 +1,4 @@
-import 'package:dio/dio.dart';
+import 'package:doctory/core/services/file_upload_service.dart';
 import '../../../../../core/network/interfaces/api_consumer.dart';
 import '../model/conversation_model.dart';
 import '../model/message_model.dart';
@@ -24,8 +24,10 @@ abstract class ChatRemoteDataSource {
 
 class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
   final ApiConsumer apiConsumer;
+  final FileUploadService _fileUploadService;
 
-  ChatRemoteDataSourceImpl({required this.apiConsumer});
+  ChatRemoteDataSourceImpl({required this.apiConsumer, required FileUploadService fileUploadService})
+    : _fileUploadService = fileUploadService;
 
   @override
   Future<ApiResult<List<ConversationModel>>> getConversations({int pageNumber = 1, int pageSize = 10}) async {
@@ -101,17 +103,15 @@ class ChatRemoteDataSourceImpl implements ChatRemoteDataSource {
 
   @override
   Future<ApiResult<String>> uploadChatMedia(File file, {required String path, required int place, required int fileType, void Function(int, int)? onProgress}) async {
-    return await apiConsumer.uploadFile<String>(
+    return await _fileUploadService.upload<String>(
       path: path,
       data: {
-        'File': await MultipartFile.fromFile(file.path),
+        'File': file,
         'Place': place.toString(),
         'FileType': fileType,
       },
       onProgress: onProgress,
-      parser: (json) {
-        return (json['message'] ?? '').toString();
-      },
+      parser: (json) => (json['message'] ?? '').toString(),
     );
   }
 

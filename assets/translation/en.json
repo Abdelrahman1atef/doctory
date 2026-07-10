@@ -642,6 +642,7 @@
   "voice": "Voice",
   "uploading_media": "Uploading media...",
   "compressing_media": "Compressing media...",
+  "camera": "Camera",
   "gallery": "Gallery",
   "done": "Done",
   "gallery_permission_denied": "The app needs photo library access. Please enable it in settings.",

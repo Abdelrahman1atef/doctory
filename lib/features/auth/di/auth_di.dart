@@ -1,5 +1,6 @@
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
+import 'package:doctory/core/services/file_upload_service.dart';
 import 'package:doctory/core/services/social_auth_service.dart';
 import 'package:doctory/features/auth/cubit/auth_cubit.dart';
 import 'package:doctory/features/auth/data/data_source/auth_remote_data_source.dart';
@@ -22,7 +23,7 @@ class AuthDI {
 
     // Cubits
     sl.registerFactory<AuthCubit>(
-      () => AuthCubit(sl<AuthRepo>(), sl<SocialAuthService>()),
+      () => AuthCubit(sl<AuthRepo>(), sl<SocialAuthService>(), sl<FileUploadService>()),
     );
   }
 }

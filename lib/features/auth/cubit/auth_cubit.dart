@@ -1,6 +1,7 @@
-import 'dart:io' show Platform;
+import 'dart:io';
 
 import 'package:doctory/core/enums/device_platform.dart';
+import 'package:doctory/core/services/file_upload_service.dart';
 import 'package:doctory/features/auth/cubit/auth_states.dart';
 import 'package:doctory/features/auth/data/model/clinic_setup_request.dart';
 import 'package:doctory/features/auth/data/model/login_request.dart';
@@ -16,8 +17,9 @@ import 'package:doctory/core/services/social_auth_service.dart';
 class AuthCubit extends Cubit<AuthStates> {
   final AuthRepo _authRepo;
   final SocialAuthService _socialAuthService;
+  final FileUploadService _fileUploadService;
 
-  AuthCubit(this._authRepo, this._socialAuthService)
+  AuthCubit(this._authRepo, this._socialAuthService, this._fileUploadService)
     : super(AuthInitialState());
 
   DevicePlatform get _currentPlatform {
@@ -44,15 +46,57 @@ class AuthCubit extends Cubit<AuthStates> {
     );
   }
 
-  void signup(
-    SignupRequest request, {
-    String? doctorImagePath,
-    String? professionalPracticeCardImagePath,
-    String? unionIdImagePath,
-    String? taxCardImagePath,
-    String? commercialRegisterImagePath,
+  Future<String?> _uploadFile(File file, int fileType, int place) async {
+    final result = await _fileUploadService.uploadAttachment(
+      file: file,
+      fileType: fileType,
+      place: place,
+    );
+    return result.fold(
+      onSuccess: (name) => name,
+      onFailure: (failure) {
+        emit(AuthErrorState(failure.userMessage));
+        return null;
+      },
+    );
+  }
+
+  void signup({
+    required SignupRequest request,
+    File? doctorImageFile,
+    File? professionalPracticeCardFile,
+    File? unionIdFile,
+    File? taxCardFile,
+    File? commercialRegisterFile,
   }) async {
     emit(AuthLoadingState());
+
+    String? doctorImage;
+    String? professionalPracticeCardImage;
+    String? unionIdImage;
+    String? taxCardImage;
+    String? commercialRegisterImage;
+
+    if (doctorImageFile != null) {
+      doctorImage = await _uploadFile(doctorImageFile, 0, 1);
+      if (state is AuthErrorState) return;
+    }
+    if (professionalPracticeCardFile != null) {
+      professionalPracticeCardImage = await _uploadFile(professionalPracticeCardFile, 0, 5);
+      if (state is AuthErrorState) return;
+    }
+    if (unionIdFile != null) {
+      unionIdImage = await _uploadFile(unionIdFile, 0, 6);
+      if (state is AuthErrorState) return;
+    }
+    if (taxCardFile != null) {
+      taxCardImage = await _uploadFile(taxCardFile, 0, 7);
+      if (state is AuthErrorState) return;
+    }
+    if (commercialRegisterFile != null) {
+      commercialRegisterImage = await _uploadFile(commercialRegisterFile, 0, 8);
+      if (state is AuthErrorState) return;
+    }
 
     final updatedRequest = SignupRequest(
       fullName: request.fullName,
@@ -65,21 +109,14 @@ class AuthCubit extends Cubit<AuthStates> {
       gender: request.gender,
       fcmToken: UserSession.fcmToken.isNotEmpty ? UserSession.fcmToken : null,
       devicePlatform: _currentPlatform,
-      doctorImagePath: request.doctorImagePath,
-      professionalPracticeCardImagePath: request.professionalPracticeCardImagePath,
-      unionIdImagePath: request.unionIdImagePath,
-      taxCardImagePath: request.taxCardImagePath,
-      commercialRegisterImagePath: request.commercialRegisterImagePath,
+      doctorImage: doctorImage,
+      professionalPracticeCardImage: professionalPracticeCardImage,
+      unionIdImage: unionIdImage,
+      taxCardImage: taxCardImage,
+      commercialRegisterImage: commercialRegisterImage,
     );
 
-    final result = await _authRepo.signup(
-      updatedRequest,
-      doctorImagePath: doctorImagePath,
-      professionalPracticeCardImagePath: professionalPracticeCardImagePath,
-      unionIdImagePath: unionIdImagePath,
-      taxCardImagePath: taxCardImagePath,
-      commercialRegisterImagePath: commercialRegisterImagePath,
-    );
+    final result = await _authRepo.signup(updatedRequest);
 
     result.fold(
       onSuccess: (data) {
@@ -237,68 +274,6 @@ class AuthCubit extends Cubit<AuthStates> {
     emit(AuthLoadingState());
     final result = await _authRepo.registerClinic(request);
     result.fold(
-      onSuccess: (_) => emit(ClinicRegisteredState()),
-      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
-    );
-  }
-
-  Future<void> signupWithClinic(
-    SignupRequest request, {
-    String? doctorImagePath,
-    String? professionalPracticeCardImagePath,
-    String? unionIdImagePath,
-    String? taxCardImagePath,
-    String? commercialRegisterImagePath,
-    required ClinicSetupRequest clinicRequest,
-  }) async {
-    emit(AuthLoadingState());
-
-    final updatedRequest = SignupRequest(
-      fullName: request.fullName,
-      email: request.email,
-      password: request.password,
-      confirmPassword: request.confirmPassword,
-      phoneNumber: request.phoneNumber,
-      typeOfUser: request.typeOfUser,
-      birthDate: request.birthDate,
-      gender: request.gender,
-      fcmToken: UserSession.fcmToken.isNotEmpty ? UserSession.fcmToken : null,
-      devicePlatform: _currentPlatform,
-      doctorImagePath: request.doctorImagePath,
-      professionalPracticeCardImagePath: request.professionalPracticeCardImagePath,
-      unionIdImagePath: request.unionIdImagePath,
-      taxCardImagePath: request.taxCardImagePath,
-      commercialRegisterImagePath: request.commercialRegisterImagePath,
-    );
-
-    final signupResult = await _authRepo.signup(
-      updatedRequest,
-      doctorImagePath: doctorImagePath,
-      professionalPracticeCardImagePath: professionalPracticeCardImagePath,
-      unionIdImagePath: unionIdImagePath,
-      taxCardImagePath: taxCardImagePath,
-      commercialRegisterImagePath: commercialRegisterImagePath,
-    );
-
-    final signupEmail = signupResult.fold(
-      onSuccess: (data) {
-        if (data.accessToken.isEmpty && data.user == null) {
-          emit(SignupPendingState());
-        } else {
-          emit(SignupSuccessState(request.email));
-        }
-        return request.email;
-      },
-      onFailure: (failure) {
-        emit(AuthErrorState(failure.userMessage));
-        return null;
-      },
-    );
-
-    if (signupEmail == null) return;
-
-    final clinicResult = await _authRepo.registerClinic(clinicRequest);
-    clinicResult.fold(
       onSuccess: (_) => emit(ClinicRegisteredState()),
       onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
     );

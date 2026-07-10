@@ -12,11 +12,11 @@ class SignupRequest {
   final TypeOfUserForRegisterFlow typeOfUser;
   final String? fcmToken;
   final DevicePlatform? devicePlatform;
-  final String? doctorImagePath;
-  final String? professionalPracticeCardImagePath;
-  final String? unionIdImagePath;
-  final String? taxCardImagePath;
-  final String? commercialRegisterImagePath;
+  final String? doctorImage;
+  final String? professionalPracticeCardImage;
+  final String? unionIdImage;
+  final String? taxCardImage;
+  final String? commercialRegisterImage;
 
   SignupRequest({
     required this.fullName,
@@ -29,11 +29,11 @@ class SignupRequest {
     this.gender,
     this.fcmToken,
     this.devicePlatform,
-    this.doctorImagePath,
-    this.professionalPracticeCardImagePath,
-    this.unionIdImagePath,
-    this.taxCardImagePath,
-    this.commercialRegisterImagePath,
+    this.doctorImage,
+    this.professionalPracticeCardImage,
+    this.unionIdImage,
+    this.taxCardImage,
+    this.commercialRegisterImage,
   });
 
   Map<String, dynamic> toJson() {
@@ -48,6 +48,11 @@ class SignupRequest {
       if (gender != null) 'gender': gender,
       if (fcmToken != null) 'fcmToken': fcmToken,
       if (devicePlatform != null) 'devicePlatform': devicePlatform!.toJson(),
+      if (doctorImage != null) 'doctor_image': doctorImage,
+      if (professionalPracticeCardImage != null) 'professional_practice_card_image': professionalPracticeCardImage,
+      if (unionIdImage != null) 'union_id_image': unionIdImage,
+      if (taxCardImage != null) 'tax_card_image': taxCardImage,
+      if (commercialRegisterImage != null) 'commercial_register_image': commercialRegisterImage,
     };
   }
 }

@@ -1,5 +1,6 @@
 import 'package:doctory/core/services/media/my_media.dart';
 import 'package:doctory/core/services/media/audio_service.dart';
+import 'package:doctory/core/services/file_upload_service.dart';
 import 'package:doctory/shared/cubit/specializations_cubit.dart';
 import 'package:flutter/foundation.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
@@ -74,6 +75,9 @@ class ServiceLocator {
     );
 
     sl.registerLazySingleton<ApiConsumer>(() => sl<DioConsumer>());
+    sl.registerLazySingleton<FileUploadService>(
+      () => FileUploadService(sl<ApiConsumer>()),
+    );
 
     // Register shared services
     sl.registerLazySingleton<PusherService>(() => PusherService());

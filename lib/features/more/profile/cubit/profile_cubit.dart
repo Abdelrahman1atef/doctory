@@ -1,17 +1,17 @@
 import 'dart:io';
+import 'package:doctory/core/services/file_upload_service.dart';
 import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/features/auth/data/model/update_profile_request.dart';
 import 'package:doctory/features/auth/data/model/user_model.dart';
 import 'package:doctory/features/auth/data/repo/auth_repo.dart';
-import 'package:doctory/features/create_post/data/data_source/create_post_remote_data_source.dart';
 import 'package:doctory/features/more/profile/cubit/profile_states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ProfileCubit extends Cubit<ProfileStates> {
   final AuthRepo _authRepo;
-  final CreatePostRemoteDataSource _mediaDataSource;
+  final FileUploadService _fileUploadService;
 
-  ProfileCubit(this._authRepo, this._mediaDataSource) : super(ProfileInitial());
+  ProfileCubit(this._authRepo, this._fileUploadService) : super(ProfileInitial());
 
   void _syncSession(UserModel user) {
     UserSession.updateProfileData({
@@ -51,7 +51,7 @@ class ProfileCubit extends Cubit<ProfileStates> {
 
     // 1. Upload image if provided
     if (profileImage != null) {
-      final uploadResult = await _mediaDataSource.uploadImage(profileImage, place: 1); // Place 1 for profiles maybe?
+      final uploadResult = await _fileUploadService.uploadAttachment(file: profileImage, fileType: 0, place: 1);
       uploadResult.fold(
         onSuccess: (imageUrl) => profileImageUrl = imageUrl,
         onFailure: (failure) {

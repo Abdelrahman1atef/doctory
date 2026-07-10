@@ -1,6 +1,7 @@
 import 'package:get_it/get_it.dart';
 import '../../../../core/network/interfaces/api_consumer.dart';
 import '../../../../core/services/chat/chat_realtime_service.dart';
+import '../../../../core/services/file_upload_service.dart';
 import '../data/data_source/chat_remote_data_source.dart';
 import '../data/repo/chat_repo.dart';
 import '../cubit/conversations_list/conversations_list_cubit.dart';
@@ -16,7 +17,10 @@ void setupChatDI(GetIt sl) {
   // Data Sources
   if (!sl.isRegistered<ChatRemoteDataSource>()) {
     sl.registerLazySingleton<ChatRemoteDataSource>(
-      () => ChatRemoteDataSourceImpl(apiConsumer: sl<ApiConsumer>()),
+      () => ChatRemoteDataSourceImpl(
+        apiConsumer: sl<ApiConsumer>(),
+        fileUploadService: sl<FileUploadService>(),
+      ),
     );
   }
 
