@@ -12,8 +12,10 @@ import 'package:doctory/features/auth/data/model/update_profile_request.dart';
 abstract class AuthRemoteDataSource {
   Future<ApiResult<AuthResponse>> signup(
     SignupRequest request, {
+    String? doctorImagePath,
     String? professionalPracticeCardImagePath,
-    String? syndicateIdImagePath,
+    String? unionIdImagePath,
+    String? taxCardImagePath,
     String? commercialRegisterImagePath,
   });
   Future<ApiResult<AuthResponse>> login(LoginRequest request);
@@ -53,22 +55,34 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<ApiResult<AuthResponse>> signup(
     SignupRequest request, {
+    String? doctorImagePath,
     String? professionalPracticeCardImagePath,
-    String? syndicateIdImagePath,
+    String? unionIdImagePath,
+    String? taxCardImagePath,
     String? commercialRegisterImagePath,
   }) async {
-    final hasFiles = professionalPracticeCardImagePath != null ||
-        syndicateIdImagePath != null ||
+    final hasFiles = doctorImagePath != null ||
+        professionalPracticeCardImagePath != null ||
+        unionIdImagePath != null ||
+        taxCardImagePath != null ||
         commercialRegisterImagePath != null;
     if (hasFiles) {
       final body = Map<String, dynamic>.from(request.toJson());
+      if (doctorImagePath != null) {
+        body['doctor_image'] =
+            await MultipartFile.fromFile(doctorImagePath);
+      }
       if (professionalPracticeCardImagePath != null) {
         body['professional_practice_card_image'] =
             await MultipartFile.fromFile(professionalPracticeCardImagePath);
       }
-      if (syndicateIdImagePath != null) {
-        body['syndicate_id_image'] =
-            await MultipartFile.fromFile(syndicateIdImagePath);
+      if (unionIdImagePath != null) {
+        body['union_id_image'] =
+            await MultipartFile.fromFile(unionIdImagePath);
+      }
+      if (taxCardImagePath != null) {
+        body['tax_card_image'] =
+            await MultipartFile.fromFile(taxCardImagePath);
       }
       if (commercialRegisterImagePath != null) {
         body['commercial_register_image'] =

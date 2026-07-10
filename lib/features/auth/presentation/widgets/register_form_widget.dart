@@ -32,14 +32,16 @@ class RegisterFormWidget extends StatelessWidget {
   final VoidCallback onGoogleSignIn;
   final VoidCallback onFacebookSignIn;
   final VoidCallback onLogin;
-  final String? doctorType;
+  final bool isDoctor;
   final bool requireBioFields;
   final String? practiceCardFileName;
-  final String? syndicateFileName;
+  final String? unionFileName;
+  final String? taxCardFileName;
   final String? commercialRegisterFileName;
   final File? profileImage;
   final VoidCallback? onPickPracticeCard;
-  final VoidCallback? onPickSyndicate;
+  final VoidCallback? onPickUnion;
+  final VoidCallback? onPickTaxCard;
   final VoidCallback? onPickCommercialRegister;
   final ValueChanged<File?>? onPickProfileImage;
 
@@ -64,22 +66,22 @@ class RegisterFormWidget extends StatelessWidget {
     required this.onGoogleSignIn,
     required this.onFacebookSignIn,
     required this.onLogin,
-    this.doctorType,
+    this.isDoctor = false,
     this.requireBioFields = false,
     this.practiceCardFileName,
-    this.syndicateFileName,
+    this.unionFileName,
+    this.taxCardFileName,
     this.commercialRegisterFileName,
     this.profileImage,
     this.onPickPracticeCard,
-    this.onPickSyndicate,
+    this.onPickUnion,
+    this.onPickTaxCard,
     this.onPickCommercialRegister,
     this.onPickProfileImage,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isDoctor = doctorType != null;
-
     return Form(
       key: formKey,
       child: Column(
@@ -289,13 +291,24 @@ class RegisterFormWidget extends StatelessWidget {
             12.ph,
           ],
 
-          if (onPickSyndicate != null) ...[
+          if (onPickUnion != null) ...[
             StitchUploadField(
-              label: context.l10n('syndicate_label'),
-              fileName: syndicateFileName,
+              label: context.l10n('union_id_card_label'),
+              fileName: unionFileName,
               hint: context.l10n('upload_file_hint'),
               isRequired: true,
-              onPick: onPickSyndicate!,
+              onPick: onPickUnion!,
+            ),
+            12.ph,
+          ],
+
+          if (onPickTaxCard != null) ...[
+            StitchUploadField(
+              label: context.l10n('tax_card_label'),
+              fileName: taxCardFileName,
+              hint: context.l10n('upload_file_hint'),
+              isRequired: true,
+              onPick: onPickTaxCard!,
             ),
             12.ph,
           ],

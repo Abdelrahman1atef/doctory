@@ -46,8 +46,10 @@ class AuthCubit extends Cubit<AuthStates> {
 
   void signup(
     SignupRequest request, {
+    String? doctorImagePath,
     String? professionalPracticeCardImagePath,
-    String? syndicateIdImagePath,
+    String? unionIdImagePath,
+    String? taxCardImagePath,
     String? commercialRegisterImagePath,
   }) async {
     emit(AuthLoadingState());
@@ -58,26 +60,35 @@ class AuthCubit extends Cubit<AuthStates> {
       password: request.password,
       confirmPassword: request.confirmPassword,
       phoneNumber: request.phoneNumber,
+      typeOfUser: request.typeOfUser,
       birthDate: request.birthDate,
       gender: request.gender,
-      role: request.role,
-      doctorType: request.doctorType,
       fcmToken: UserSession.fcmToken.isNotEmpty ? UserSession.fcmToken : null,
       devicePlatform: _currentPlatform,
+      doctorImagePath: request.doctorImagePath,
       professionalPracticeCardImagePath: request.professionalPracticeCardImagePath,
-      syndicateIdImagePath: request.syndicateIdImagePath,
+      unionIdImagePath: request.unionIdImagePath,
+      taxCardImagePath: request.taxCardImagePath,
       commercialRegisterImagePath: request.commercialRegisterImagePath,
     );
 
     final result = await _authRepo.signup(
       updatedRequest,
+      doctorImagePath: doctorImagePath,
       professionalPracticeCardImagePath: professionalPracticeCardImagePath,
-      syndicateIdImagePath: syndicateIdImagePath,
+      unionIdImagePath: unionIdImagePath,
+      taxCardImagePath: taxCardImagePath,
       commercialRegisterImagePath: commercialRegisterImagePath,
     );
 
     result.fold(
-      onSuccess: (data) => emit(SignupSuccessState(request.email)),
+      onSuccess: (data) {
+        if (data.accessToken.isEmpty && data.user == null) {
+          emit(SignupPendingState());
+        } else {
+          emit(SignupSuccessState(request.email));
+        }
+      },
       onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
     );
   }
@@ -233,8 +244,10 @@ class AuthCubit extends Cubit<AuthStates> {
 
   Future<void> signupWithClinic(
     SignupRequest request, {
+    String? doctorImagePath,
     String? professionalPracticeCardImagePath,
-    String? syndicateIdImagePath,
+    String? unionIdImagePath,
+    String? taxCardImagePath,
     String? commercialRegisterImagePath,
     required ClinicSetupRequest clinicRequest,
   }) async {
@@ -246,27 +259,34 @@ class AuthCubit extends Cubit<AuthStates> {
       password: request.password,
       confirmPassword: request.confirmPassword,
       phoneNumber: request.phoneNumber,
+      typeOfUser: request.typeOfUser,
       birthDate: request.birthDate,
       gender: request.gender,
-      role: request.role,
-      doctorType: request.doctorType,
       fcmToken: UserSession.fcmToken.isNotEmpty ? UserSession.fcmToken : null,
       devicePlatform: _currentPlatform,
+      doctorImagePath: request.doctorImagePath,
       professionalPracticeCardImagePath: request.professionalPracticeCardImagePath,
-      syndicateIdImagePath: request.syndicateIdImagePath,
+      unionIdImagePath: request.unionIdImagePath,
+      taxCardImagePath: request.taxCardImagePath,
       commercialRegisterImagePath: request.commercialRegisterImagePath,
     );
 
     final signupResult = await _authRepo.signup(
       updatedRequest,
+      doctorImagePath: doctorImagePath,
       professionalPracticeCardImagePath: professionalPracticeCardImagePath,
-      syndicateIdImagePath: syndicateIdImagePath,
+      unionIdImagePath: unionIdImagePath,
+      taxCardImagePath: taxCardImagePath,
       commercialRegisterImagePath: commercialRegisterImagePath,
     );
 
     final signupEmail = signupResult.fold(
       onSuccess: (data) {
-        emit(SignupSuccessState(request.email));
+        if (data.accessToken.isEmpty && data.user == null) {
+          emit(SignupPendingState());
+        } else {
+          emit(SignupSuccessState(request.email));
+        }
         return request.email;
       },
       onFailure: (failure) {

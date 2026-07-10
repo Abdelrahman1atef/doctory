@@ -12,8 +12,10 @@ import 'package:doctory/features/auth/data/model/update_profile_request.dart';
 abstract class AuthRepo {
   Future<ApiResult<AuthResponse>> signup(
     SignupRequest request, {
+    String? doctorImagePath,
     String? professionalPracticeCardImagePath,
-    String? syndicateIdImagePath,
+    String? unionIdImagePath,
+    String? taxCardImagePath,
     String? commercialRegisterImagePath,
   });
   Future<ApiResult<AuthResponse>> login(LoginRequest request);
@@ -53,14 +55,18 @@ class AuthRepoImpl implements AuthRepo {
   @override
   Future<ApiResult<AuthResponse>> signup(
     SignupRequest request, {
+    String? doctorImagePath,
     String? professionalPracticeCardImagePath,
-    String? syndicateIdImagePath,
+    String? unionIdImagePath,
+    String? taxCardImagePath,
     String? commercialRegisterImagePath,
   }) async {
     final result = await _dataSource.signup(
       request,
+      doctorImagePath: doctorImagePath,
       professionalPracticeCardImagePath: professionalPracticeCardImagePath,
-      syndicateIdImagePath: syndicateIdImagePath,
+      unionIdImagePath: unionIdImagePath,
+      taxCardImagePath: taxCardImagePath,
       commercialRegisterImagePath: commercialRegisterImagePath,
     );
     return result.fold(

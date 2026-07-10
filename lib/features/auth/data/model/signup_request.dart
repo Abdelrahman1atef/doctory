@@ -1,3 +1,4 @@
+import 'package:doctory/core/common/models/type_of_user_for_register_flow.dart';
 import 'package:doctory/core/enums/device_platform.dart';
 
 class SignupRequest {
@@ -8,12 +9,13 @@ class SignupRequest {
   final String phoneNumber;
   final String? birthDate;
   final int? gender;
-  final String? role;
-  final String? doctorType;
+  final TypeOfUserForRegisterFlow typeOfUser;
   final String? fcmToken;
   final DevicePlatform? devicePlatform;
+  final String? doctorImagePath;
   final String? professionalPracticeCardImagePath;
-  final String? syndicateIdImagePath;
+  final String? unionIdImagePath;
+  final String? taxCardImagePath;
   final String? commercialRegisterImagePath;
 
   SignupRequest({
@@ -22,14 +24,15 @@ class SignupRequest {
     required this.password,
     required this.confirmPassword,
     required this.phoneNumber,
+    required this.typeOfUser,
     this.birthDate,
     this.gender,
-    this.role,
-    this.doctorType,
     this.fcmToken,
     this.devicePlatform,
+    this.doctorImagePath,
     this.professionalPracticeCardImagePath,
-    this.syndicateIdImagePath,
+    this.unionIdImagePath,
+    this.taxCardImagePath,
     this.commercialRegisterImagePath,
   });
 
@@ -40,10 +43,9 @@ class SignupRequest {
       'password': password,
       'confirmPassword': confirmPassword,
       'phoneNumber': phoneNumber,
+      'typeOfUser': typeOfUser.value,
       if (birthDate != null) 'birthDate': birthDate,
       if (gender != null) 'gender': gender,
-      if (role != null) 'role': role,
-      if (doctorType != null) 'doctorType': doctorType,
       if (fcmToken != null) 'fcmToken': fcmToken,
       if (devicePlatform != null) 'devicePlatform': devicePlatform!.toJson(),
     };
