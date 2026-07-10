@@ -3,6 +3,7 @@ import 'package:doctory/core/enums/device_platform.dart';
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import 'package:doctory/features/auth/data/data_source/auth_endpoints.dart';
 import 'package:doctory/features/auth/data/model/auth_response.dart';
+import 'package:doctory/features/auth/data/model/clinic_setup_request.dart';
 import 'package:doctory/features/auth/data/model/login_request.dart';
 import 'package:doctory/features/auth/data/model/signup_request.dart';
 import 'package:doctory/features/auth/data/model/user_model.dart';
@@ -11,10 +12,12 @@ import 'package:doctory/features/auth/data/model/update_profile_request.dart';
 abstract class AuthRemoteDataSource {
   Future<ApiResult<AuthResponse>> signup(
     SignupRequest request, {
-    String? certificateImagePath,
+    String? professionalPracticeCardImagePath,
     String? syndicateIdImagePath,
+    String? commercialRegisterImagePath,
   });
   Future<ApiResult<AuthResponse>> login(LoginRequest request);
+  Future<ApiResult<bool>> registerClinic(ClinicSetupRequest request);
   Future<ApiResult<AuthResponse>> verify(String email, String code);
   Future<ApiResult<void>> forgotPassword(String email);
   Future<ApiResult<bool>> verifyResetToken(String email, String token);
@@ -50,20 +53,26 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   @override
   Future<ApiResult<AuthResponse>> signup(
     SignupRequest request, {
-    String? certificateImagePath,
+    String? professionalPracticeCardImagePath,
     String? syndicateIdImagePath,
+    String? commercialRegisterImagePath,
   }) async {
-    final hasFiles =
-        certificateImagePath != null || syndicateIdImagePath != null;
+    final hasFiles = professionalPracticeCardImagePath != null ||
+        syndicateIdImagePath != null ||
+        commercialRegisterImagePath != null;
     if (hasFiles) {
       final body = Map<String, dynamic>.from(request.toJson());
-      if (certificateImagePath != null) {
-        body['certificate_image'] =
-            await MultipartFile.fromFile(certificateImagePath);
+      if (professionalPracticeCardImagePath != null) {
+        body['professional_practice_card_image'] =
+            await MultipartFile.fromFile(professionalPracticeCardImagePath);
       }
       if (syndicateIdImagePath != null) {
         body['syndicate_id_image'] =
             await MultipartFile.fromFile(syndicateIdImagePath);
+      }
+      if (commercialRegisterImagePath != null) {
+        body['commercial_register_image'] =
+            await MultipartFile.fromFile(commercialRegisterImagePath);
       }
       return await _apiConsumer.post(
         path: AuthEndpoints.signup,
@@ -85,6 +94,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       path: AuthEndpoints.login,
       body: request.toJson(),
       parser: (json) => AuthResponse.fromJson(json),
+    );
+  }
+
+  @override
+  Future<ApiResult<bool>> registerClinic(ClinicSetupRequest request) async {
+    return await _apiConsumer.post(
+      path: AuthEndpoints.clinicRegister,
+      body: request.toJson(),
+      parser: (json) => json['success'] ?? true,
     );
   }
 

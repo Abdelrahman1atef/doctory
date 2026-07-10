@@ -36,6 +36,8 @@ class ProfileUpdateSuccessState extends AuthStates {}
 
 class LanguageUpdateSuccessState extends AuthStates {}
 
+class ClinicRegisteredState extends AuthStates {}
+
 class AuthErrorState extends AuthStates {
   final String message;
   AuthErrorState(this.message);

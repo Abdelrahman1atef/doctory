@@ -17,4 +17,5 @@ class AuthEndpoints {
   static const String logout = '/Auth/logout';
   static const String updateDeviceToken = '/Auth/update-device-token';
   static const String users = '/users';
+  static const String clinicRegister = '/Clinics';
 }

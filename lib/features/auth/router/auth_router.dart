@@ -4,6 +4,7 @@ import 'package:doctory/features/auth/cubit/auth_cubit.dart';
 import 'package:doctory/features/auth/presentation/views/login_view.dart';
 import 'package:doctory/features/auth/presentation/views/otp_verification_view.dart';
 import 'package:doctory/features/auth/presentation/views/complete_profile_view.dart';
+import 'package:doctory/features/auth/presentation/views/clinic_complete_profile_view.dart';
 import 'package:doctory/features/auth/presentation/views/forgot_password_view.dart';
 import 'package:doctory/features/auth/presentation/views/register_view.dart';
 import 'package:doctory/features/auth/presentation/views/reset_password_view.dart';
@@ -54,6 +55,13 @@ class AuthRouter {
       builder: (context, state) => BlocProvider(
         create: (context) => sl<AuthCubit>(),
         child: const CompleteProfileView(),
+      ),
+    ),
+    GoRoute(
+      path: AppRoutes.clinicCompleteProfile,
+      builder: (context, state) => BlocProvider(
+        create: (context) => sl<AuthCubit>(),
+        child: const ClinicCompleteProfileView(),
       ),
     ),
     GoRoute(

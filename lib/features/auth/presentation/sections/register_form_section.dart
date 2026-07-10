@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import '../../../../core/router/router_names.dart';
 import '../../../../core/services/alerts.dart';
+import '../../../../core/utils/extensions.dart';
 import '../../cubit/auth_cubit.dart';
 import '../../cubit/auth_states.dart';
 import '../../data/model/signup_request.dart';
@@ -14,8 +15,9 @@ import '../widgets/register_form_widget.dart';
 
 class RegisterFormSection extends StatefulWidget {
   final String role;
+  final String? doctorType;
 
-  const RegisterFormSection({super.key, required this.role});
+  const RegisterFormSection({super.key, required this.role, this.doctorType});
 
   @override
   State<RegisterFormSection> createState() => _RegisterFormSectionState();
@@ -36,8 +38,10 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
   String? _selectedGender;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
-  File? _certificateImage;
+  File? _professionalPracticeCard;
   File? _syndicateIdImage;
+  File? _commercialRegister;
+  File? _profileImage;
 
   @override
   void dispose() {
@@ -50,21 +54,6 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
     _monthController.dispose();
     _yearController.dispose();
     super.dispose();
-  }
-
-  Future<void> _pickFile({required bool isCertificate}) async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-    );
-    if (result != null && result.files.single.path != null) {
-      setState(() {
-        if (isCertificate) {
-          _certificateImage = File(result.files.single.path!);
-        } else {
-          _syndicateIdImage = File(result.files.single.path!);
-        }
-      });
-    }
   }
 
   String _getFormattedPhone() {
@@ -80,35 +69,79 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
       case 'female':
         return 2;
       default:
-        return 3;
+        return null;
+    }
+  }
+
+  String? _buildBirthDate() {
+    if (_dayController.text.isNotEmpty &&
+        _monthController.text.isNotEmpty &&
+        _yearController.text.isNotEmpty) {
+      final day = _dayController.text.padLeft(2, '0');
+      final month = _monthController.text.padLeft(2, '0');
+      final year = _yearController.text;
+      return '$year-$month-$day';
+    }
+    return null;
+  }
+
+  Future<void> _pickFile({bool isSyndicate = false, bool isPracticeCard = false, bool isCommercialRegister = false, bool isProfile = false}) async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+    );
+    if (result != null && result.files.single.path != null) {
+      setState(() {
+        if (isSyndicate) {
+          _syndicateIdImage = File(result.files.single.path!);
+        } else if (isPracticeCard) {
+          _professionalPracticeCard = File(result.files.single.path!);
+        } else if (isCommercialRegister) {
+          _commercialRegister = File(result.files.single.path!);
+        } else if (isProfile) {
+          _profileImage = File(result.files.single.path!);
+        }
+      });
     }
   }
 
   void _onSubmit() {
     if (_formKey.currentState!.validate()) {
-      String? birthDate;
-      if (_dayController.text.isNotEmpty &&
-          _monthController.text.isNotEmpty &&
-          _yearController.text.isNotEmpty) {
-        final day = _dayController.text.padLeft(2, '0');
-        final month = _monthController.text.padLeft(2, '0');
-        final year = _yearController.text;
-        birthDate = '$year-$month-$day';
+      final isDoctor = widget.role == 'doctor';
+
+      if (isDoctor && _selectedGender == null) {
+        Alerts.showSnackBar(
+          context,
+          message: context.l10n('field_required'),
+          state: SnackState.failed,
+        );
+        return;
+      }
+      if (isDoctor && _profileImage == null) {
+        Alerts.showSnackBar(
+          context,
+          message: context.l10n('profile_image_required'),
+          state: SnackState.failed,
+        );
+        return;
       }
 
+      final signupRequest = SignupRequest(
+        fullName: _nameController.text.trim(),
+        email: _emailController.text.trim(),
+        password: _passwordController.text,
+        confirmPassword: _confirmPasswordController.text,
+        phoneNumber: _getFormattedPhone(),
+        birthDate: _buildBirthDate(),
+        gender: _getGenderValue(),
+        role: widget.role,
+        doctorType: widget.doctorType,
+      );
+
       context.read<AuthCubit>().signup(
-        SignupRequest(
-          fullName: _nameController.text.trim(),
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-          confirmPassword: _confirmPasswordController.text,
-          phoneNumber: _getFormattedPhone(),
-          birthDate: birthDate,
-          gender: _getGenderValue(),
-          role: widget.role,
-        ),
-        certificateImagePath: widget.role == 'doctor' ? _certificateImage?.path : null,
-        syndicateIdImagePath: widget.role == 'doctor' ? _syndicateIdImage?.path : null,
+        signupRequest,
+        professionalPracticeCardImagePath: isDoctor ? _professionalPracticeCard?.path : null,
+        syndicateIdImagePath: isDoctor ? _syndicateIdImage?.path : null,
+        commercialRegisterImagePath: isDoctor ? _commercialRegister?.path : null,
       );
     }
   }
@@ -124,7 +157,11 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
         }
 
         if (state is SignupSuccessState) {
-          context.push(AppRoutes.home);
+          if (widget.doctorType == 'ownClinic') {
+            context.push(AppRoutes.clinicCompleteProfile);
+          } else {
+            context.push(AppRoutes.home);
+          }
         } else if (state is AuthSuccessState) {
           context.go(AppRoutes.completeProfile);
         } else if (state is AuthErrorState) {
@@ -154,17 +191,33 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
         onToggleConfirmPassword: () =>
             setState(() => _obscureConfirmPassword = !_obscureConfirmPassword),
         onSubmit: _onSubmit,
-        certificateFileName: widget.role == 'doctor'
-            ? _certificateImage?.path.split('/').last ?? _certificateImage?.path.split('\\').last
+        doctorType: widget.doctorType,
+        requireBioFields: widget.role == 'doctor',
+        practiceCardFileName: widget.role == 'doctor'
+            ? _professionalPracticeCard?.path.split('/').last ?? _professionalPracticeCard?.path.split('\\').last
             : null,
         syndicateFileName: widget.role == 'doctor'
             ? _syndicateIdImage?.path.split('/').last ?? _syndicateIdImage?.path.split('\\').last
             : null,
-        onPickCertificate: widget.role == 'doctor'
-            ? () => _pickFile(isCertificate: true)
+        commercialRegisterFileName: widget.role == 'doctor' && widget.doctorType == 'ownClinic'
+            ? _commercialRegister?.path.split('/').last ?? _commercialRegister?.path.split('\\').last
+            : null,
+        profileImage: widget.role == 'doctor' ? _profileImage : null,
+        onPickPracticeCard: widget.role == 'doctor'
+            ? () => _pickFile(isPracticeCard: true)
             : null,
         onPickSyndicate: widget.role == 'doctor'
-            ? () => _pickFile(isCertificate: false)
+            ? () => _pickFile(isSyndicate: true)
+            : null,
+        onPickCommercialRegister: widget.role == 'doctor' && widget.doctorType == 'ownClinic'
+            ? () => _pickFile(isCommercialRegister: true)
+            : null,
+        onPickProfileImage: widget.role == 'doctor'
+            ? (File? file) {
+                setState(() {
+                  if (file != null) _profileImage = file;
+                });
+              }
             : null,
         onGoogleSignIn: () => context.read<AuthCubit>().signInWithGoogle(),
         onFacebookSignIn: () => context.read<AuthCubit>().signInWithFacebook(),

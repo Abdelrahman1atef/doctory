@@ -3,6 +3,7 @@ import 'package:doctory/core/network/interfaces/api_result.dart';
 import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/features/auth/data/data_source/auth_remote_data_source.dart';
 import 'package:doctory/features/auth/data/model/auth_response.dart';
+import 'package:doctory/features/auth/data/model/clinic_setup_request.dart';
 import 'package:doctory/features/auth/data/model/login_request.dart';
 import 'package:doctory/features/auth/data/model/signup_request.dart';
 import 'package:doctory/features/auth/data/model/user_model.dart';
@@ -11,10 +12,12 @@ import 'package:doctory/features/auth/data/model/update_profile_request.dart';
 abstract class AuthRepo {
   Future<ApiResult<AuthResponse>> signup(
     SignupRequest request, {
-    String? certificateImagePath,
+    String? professionalPracticeCardImagePath,
     String? syndicateIdImagePath,
+    String? commercialRegisterImagePath,
   });
   Future<ApiResult<AuthResponse>> login(LoginRequest request);
+  Future<ApiResult<bool>> registerClinic(ClinicSetupRequest request);
   Future<ApiResult<AuthResponse>> verify(String email, String code);
   Future<ApiResult<void>> forgotPassword(String email);
   Future<ApiResult<bool>> verifyResetToken(String email, String token);
@@ -50,13 +53,15 @@ class AuthRepoImpl implements AuthRepo {
   @override
   Future<ApiResult<AuthResponse>> signup(
     SignupRequest request, {
-    String? certificateImagePath,
+    String? professionalPracticeCardImagePath,
     String? syndicateIdImagePath,
+    String? commercialRegisterImagePath,
   }) async {
     final result = await _dataSource.signup(
       request,
-      certificateImagePath: certificateImagePath,
+      professionalPracticeCardImagePath: professionalPracticeCardImagePath,
       syndicateIdImagePath: syndicateIdImagePath,
+      commercialRegisterImagePath: commercialRegisterImagePath,
     );
     return result.fold(
       onSuccess: (response) async {
@@ -77,6 +82,11 @@ class AuthRepoImpl implements AuthRepo {
       },
       onFailure: (failure) => ApiResult.failure(failure),
     );
+  }
+
+  @override
+  Future<ApiResult<bool>> registerClinic(ClinicSetupRequest request) async {
+    return await _dataSource.registerClinic(request);
   }
 
   @override

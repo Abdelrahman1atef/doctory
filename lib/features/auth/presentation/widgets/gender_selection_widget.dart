@@ -6,11 +6,13 @@ import 'package:flutter/material.dart';
 class GenderSelectionWidget extends StatelessWidget {
   final String? selectedGender;
   final Function(String) onGenderChanged;
+  final bool isRequired;
 
   const GenderSelectionWidget({
     super.key,
     this.selectedGender,
     required this.onGenderChanged,
+    this.isRequired = false,
   });
 
   @override
@@ -25,10 +27,16 @@ class GenderSelectionWidget extends StatelessWidget {
                 text: context.l10n('gender'),
                 style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
               ),
-              TextSpan(
-                text: ' ${context.l10n('optional')}',
-                style: AppStyles.s14Bold.copyWith(color: AppColors.textSecondary),
-              ),
+              if (isRequired)
+                TextSpan(
+                  text: ' *',
+                  style: AppStyles.s14Bold.copyWith(color: Colors.red),
+                )
+              else
+                TextSpan(
+                  text: ' ${context.l10n('optional')}',
+                  style: AppStyles.s14Bold.copyWith(color: AppColors.textSecondary),
+                ),
             ],
           ),
         ),
@@ -48,14 +56,6 @@ class GenderSelectionWidget extends StatelessWidget {
                 label: context.l10n('female'),
                 isSelected: selectedGender == 'female',
                 onTap: () => onGenderChanged('female'),
-              ),
-            ),
-            const SizedBox(width: 8),
-            Expanded(
-              child: _GenderChip(
-                label: context.l10n('other'),
-                isSelected: selectedGender == 'other',
-                onTap: () => onGenderChanged('other'),
               ),
             ),
           ],

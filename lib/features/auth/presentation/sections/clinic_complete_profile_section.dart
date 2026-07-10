@@ -6,7 +6,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import '../../../../core/common/functions/location_helper.dart';
-import '../../../../core/common/models/role.dart';
 import '../../../../core/common/widgets/inputs/day_hours_widget.dart';
 import '../../../../core/common/widgets/map/location_picker_bottom_sheet.dart';
 import '../../../../core/router/router_names.dart';
@@ -15,24 +14,22 @@ import '../../../../core/session/user_session.dart';
 import '../../cubit/auth_cubit.dart';
 import '../../cubit/auth_states.dart';
 import '../../data/model/clinic_setup_request.dart';
-import '../widgets/profile_form_widget.dart';
+import '../widgets/clinic_complete_profile_widget.dart';
 
-class ProfileFormSection extends StatefulWidget {
-  const ProfileFormSection({super.key});
+class ClinicCompleteProfileSection extends StatefulWidget {
+  const ClinicCompleteProfileSection({super.key});
 
   @override
-  State<ProfileFormSection> createState() => _ProfileFormSectionState();
+  State<ClinicCompleteProfileSection> createState() => _ClinicCompleteProfileSectionState();
 }
 
-class _ProfileFormSectionState extends State<ProfileFormSection> {
+class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSection> {
   final _formKey = GlobalKey<FormState>();
-  late String _selectedGender;
   final _clinicNameController = TextEditingController();
-
+  File? _clinicImage;
   double? _clinicLat;
   double? _clinicLng;
   String _clinicAddress = '';
-  File? _clinicImage;
 
   static const _dayNames = [
     'Sunday', 'Monday', 'Tuesday', 'Wednesday',
@@ -44,7 +41,6 @@ class _ProfileFormSectionState extends State<ProfileFormSection> {
   @override
   void initState() {
     super.initState();
-    _selectedGender = 'male';
     _dayHours = List.generate(7, (i) {
       return DayHours(
         dayIndex: i,
@@ -62,8 +58,20 @@ class _ProfileFormSectionState extends State<ProfileFormSection> {
     super.dispose();
   }
 
-  bool get _isOwnClinic =>
-      UserSession.currentDoctorType == DoctorEmploymentType.ownClinic;
+  String _getPhone() {
+    return UserSession.userModel?['phoneNumber'] ?? '';
+  }
+
+  Future<void> _pickClinicImage() async {
+    final result = await FilePicker.platform.pickFiles(
+      type: FileType.image,
+    );
+    if (result != null && result.files.single.path != null) {
+      setState(() {
+        _clinicImage = File(result.files.single.path!);
+      });
+    }
+  }
 
   Future<void> _pickLocation() async {
     await LocationPickerBottomSheet.show(
@@ -100,17 +108,6 @@ class _ProfileFormSectionState extends State<ProfileFormSection> {
     });
   }
 
-  Future<void> _pickClinicImage() async {
-    final result = await FilePicker.platform.pickFiles(
-      type: FileType.image,
-    );
-    if (result != null && result.files.single.path != null) {
-      setState(() {
-        _clinicImage = File(result.files.single.path!);
-      });
-    }
-  }
-
   Map<String, String> _buildOperatingHours() {
     final map = <String, String>{};
     for (final d in _dayHours) {
@@ -126,20 +123,18 @@ class _ProfileFormSectionState extends State<ProfileFormSection> {
   }
 
   void _onSubmit() {
-    if (_isOwnClinic) {
+    if (_formKey.currentState!.validate()) {
       final cubit = context.read<AuthCubit>();
       cubit.registerClinic(
         ClinicSetupRequest(
           name: _clinicNameController.text.trim(),
-          phone: UserSession.userModel?['phoneNumber'] ?? '',
+          phone: _getPhone(),
           lat: _clinicLat ?? 0.0,
           lng: _clinicLng ?? 0.0,
           address: _clinicAddress,
           operatingHours: _buildOperatingHours(),
         ),
       );
-    } else {
-      _goHome();
     }
   }
 
@@ -173,24 +168,19 @@ class _ProfileFormSectionState extends State<ProfileFormSection> {
           );
         }
       },
-      child: ProfileFormWidget(
+      child: ClinicCompleteProfileWidget(
         formKey: _formKey,
-        selectedGender: _selectedGender,
-        onGenderChanged: (gender) => setState(() => _selectedGender = gender),
-        onSubmit: _onSubmit,
-        isOwnClinic: _isOwnClinic,
         clinicNameController: _clinicNameController,
         clinicAddress: _clinicAddress,
         clinicLat: _clinicLat,
-        onPickLocation: _pickLocation,
         clinicImageFileName: _clinicImage?.path.split('\\').last ?? _clinicImage?.path.split('/').last,
         onPickClinicImage: _pickClinicImage,
+        onPickLocation: _pickLocation,
         dayHours: _dayHours,
         onPickTime: _pickTime,
         onToggleClosed: _toggleClosed,
+        onSubmit: _onSubmit,
       ),
     );
   }
 }
-
-

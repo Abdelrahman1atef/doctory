@@ -15,6 +15,8 @@ class UserModel {
   final DoctorEmploymentType? doctorType;
   final String? certificateImage;
   final String? syndicateIdImage;
+  final String? professionalPracticeCardImage;
+  final String? commercialRegisterImage;
 
   UserModel({
     this.id,
@@ -31,6 +33,8 @@ class UserModel {
     this.doctorType,
     this.certificateImage,
     this.syndicateIdImage,
+    this.professionalPracticeCardImage,
+    this.commercialRegisterImage,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -60,6 +64,8 @@ class UserModel {
       doctorType: DoctorEmploymentType.fromJson(json['doctorType']?.toString()),
       certificateImage: json['certificate_image']?.toString(),
       syndicateIdImage: json['syndicate_id_image']?.toString(),
+      professionalPracticeCardImage: json['professional_practice_card_image']?.toString(),
+      commercialRegisterImage: json['commercial_register_image']?.toString(),
     );
   }
 
@@ -78,6 +84,8 @@ class UserModel {
       'permissions': permissions?.map((p) => p.name).toList(),
       'certificate_image': certificateImage,
       'syndicate_id_image': syndicateIdImage,
+      'professional_practice_card_image': professionalPracticeCardImage,
+      'commercial_register_image': commercialRegisterImage,
     };
   }
 }

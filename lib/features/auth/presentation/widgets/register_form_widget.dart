@@ -1,7 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/common/widgets/buttons/social_auth_button.dart';
+import '../../../../core/common/widgets/images/profile_image_picker.dart';
 import '../../../../core/common/widgets/inputs/stitch_text_field.dart';
+import '../../../../core/common/widgets/inputs/stitch_upload_field.dart';
 import '../../../../core/services/remote_config_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
@@ -28,10 +32,16 @@ class RegisterFormWidget extends StatelessWidget {
   final VoidCallback onGoogleSignIn;
   final VoidCallback onFacebookSignIn;
   final VoidCallback onLogin;
-  final String? certificateFileName;
+  final String? doctorType;
+  final bool requireBioFields;
+  final String? practiceCardFileName;
   final String? syndicateFileName;
-  final VoidCallback? onPickCertificate;
+  final String? commercialRegisterFileName;
+  final File? profileImage;
+  final VoidCallback? onPickPracticeCard;
   final VoidCallback? onPickSyndicate;
+  final VoidCallback? onPickCommercialRegister;
+  final ValueChanged<File?>? onPickProfileImage;
 
   const RegisterFormWidget({
     super.key,
@@ -54,19 +64,38 @@ class RegisterFormWidget extends StatelessWidget {
     required this.onGoogleSignIn,
     required this.onFacebookSignIn,
     required this.onLogin,
-    this.certificateFileName,
+    this.doctorType,
+    this.requireBioFields = false,
+    this.practiceCardFileName,
     this.syndicateFileName,
-    this.onPickCertificate,
+    this.commercialRegisterFileName,
+    this.profileImage,
+    this.onPickPracticeCard,
     this.onPickSyndicate,
+    this.onPickCommercialRegister,
+    this.onPickProfileImage,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDoctor = doctorType != null;
+
     return Form(
       key: formKey,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          /// Profile Image (doctors only)
+          if (onPickProfileImage != null) ...[
+            Center(
+              child: ProfileImagePicker(
+                imageFile: profileImage,
+                onImagePicked: onPickProfileImage!,
+              ),
+            ),
+            24.ph,
+          ],
+
           /// Full Name
           StitchTextField(
             controller: nameController,
@@ -76,9 +105,12 @@ class RegisterFormWidget extends StatelessWidget {
               Icons.person_outline_rounded,
               color: AppColors.stitchPrimary,
             ),
-            validator: (value) => value == null || value.isEmpty
-                ? context.l10n('field_required')
-                : null,
+            validator: (value) {
+              if (requireBioFields && (value == null || value.trim().isEmpty)) {
+                return context.l10n('field_required');
+              }
+              return null;
+            },
           ),
 
           20.ph,
@@ -94,17 +126,16 @@ class RegisterFormWidget extends StatelessWidget {
               color: AppColors.stitchPrimary,
             ),
             validator: (value) {
-              if (value == null || value.isEmpty)
+              if (requireBioFields && (value == null || value.trim().isEmpty)) {
                 return context.l10n('field_required');
-              if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value))
-                return context.l10n('invalid_email');
+              }
               return null;
             },
           ),
 
           20.ph,
 
-          /// Phone Number (Egyptian Format)
+          /// Phone Number
           StitchTextField(
             controller: phoneController,
             label: context.l10n('phone_number'),
@@ -132,9 +163,12 @@ class RegisterFormWidget extends StatelessWidget {
               ),
             ),
             validator: (value) {
-              if (value == null || value.isEmpty)
+              if (requireBioFields && (value == null || value.trim().isEmpty)) {
                 return context.l10n('field_required');
-              if (value.length != 11) return context.l10n('invalid_phone');
+              }
+              if (requireBioFields && value != null && value.trim().length != 11) {
+                return context.l10n('invalid_phone');
+              }
               return null;
             },
           ),
@@ -149,10 +183,16 @@ class RegisterFormWidget extends StatelessWidget {
                   text: context.l10n('birth_date'),
                   style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
                 ),
-                TextSpan(
-                  text: ' ${context.l10n('optional')}',
-                  style: AppStyles.s14Bold.copyWith(color: AppColors.textSecondary),
-                ),
+                if (requireBioFields)
+                  TextSpan(
+                    text: ' *',
+                    style: AppStyles.s14Bold.copyWith(color: Colors.red),
+                  )
+                else
+                  TextSpan(
+                    text: ' ${context.l10n('optional')}',
+                    style: AppStyles.s14Bold.copyWith(color: AppColors.textSecondary),
+                  ),
               ],
             ),
           ),
@@ -168,8 +208,11 @@ class RegisterFormWidget extends StatelessWidget {
                   keyboardType: TextInputType.number,
                   maxLength: 2,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  isRequired: false,
+                  isRequired: requireBioFields,
                   validator: (value) {
+                    if (requireBioFields && (value == null || value.isEmpty)) {
+                      return context.l10n('field_required');
+                    }
                     if (value == null || value.isEmpty) return null;
                     final day = int.tryParse(value);
                     if (day == null || day < 1 || day > 31) return '';
@@ -186,8 +229,11 @@ class RegisterFormWidget extends StatelessWidget {
                   keyboardType: TextInputType.number,
                   maxLength: 2,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  isRequired: false,
+                  isRequired: requireBioFields,
                   validator: (value) {
+                    if (requireBioFields && (value == null || value.isEmpty)) {
+                      return context.l10n('field_required');
+                    }
                     if (value == null || value.isEmpty) return null;
                     final month = int.tryParse(value);
                     if (month == null || month < 1 || month > 12) return '';
@@ -204,8 +250,11 @@ class RegisterFormWidget extends StatelessWidget {
                   keyboardType: TextInputType.number,
                   maxLength: 4,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  isRequired: false,
+                  isRequired: requireBioFields,
                   validator: (value) {
+                    if (requireBioFields && (value == null || value.isEmpty)) {
+                      return context.l10n('field_required');
+                    }
                     if (value == null || value.isEmpty) return null;
                     final year = int.tryParse(value);
                     if (year == null || year < 1900 || year > DateTime.now().year)
@@ -223,87 +272,159 @@ class RegisterFormWidget extends StatelessWidget {
           GenderSelectionWidget(
             selectedGender: selectedGender,
             onGenderChanged: onGenderChanged,
+            isRequired: requireBioFields,
           ),
 
           20.ph,
 
-          /// Password
-          StitchTextField(
-            controller: passwordController,
-            label: context.l10n('password'),
-            hintText: '••••••••',
-            obscureText: obscurePassword,
-            prefixIcon: const Icon(
-              Icons.lock_outline_rounded,
-              color: AppColors.stitchPrimary,
-            ),
-            suffixIcon: IconButton(
-              icon: Icon(
-                obscurePassword
-                    ? Icons.visibility_outlined
-                    : Icons.visibility_off_outlined,
-                color: AppColors.textSecondary,
-                size: 20,
-              ),
-              onPressed: onTogglePassword,
-            ),
-            validator: (value) => value == null || value.length < 6
-                ? context.l10n('password_too_short')
-                : null,
-          ),
-
-          20.ph,
-
-          /// Certificate Upload (Doctor)
-          if (onPickCertificate != null) ...[
-            _UploadField(
-              label: context.l10n('certificate_label'),
-              fileName: certificateFileName,
+          /// Doctor Upload Fields
+          if (onPickPracticeCard != null) ...[
+            StitchUploadField(
+              label: context.l10n('professional_practice_card_label'),
+              fileName: practiceCardFileName,
               hint: context.l10n('upload_file_hint'),
-              onPick: onPickCertificate!,
+              isRequired: true,
+              onPick: onPickPracticeCard!,
             ),
-            16.ph,
+            12.ph,
           ],
 
-          /// Syndicate ID Upload (Doctor)
           if (onPickSyndicate != null) ...[
-            _UploadField(
+            StitchUploadField(
               label: context.l10n('syndicate_label'),
               fileName: syndicateFileName,
               hint: context.l10n('upload_file_hint'),
+              isRequired: true,
               onPick: onPickSyndicate!,
             ),
-            16.ph,
+            12.ph,
           ],
 
-          20.ph,
+          if (onPickCommercialRegister != null) ...[
+            StitchUploadField(
+              label: context.l10n('commercial_register_label'),
+              fileName: commercialRegisterFileName,
+              hint: context.l10n('upload_file_hint'),
+              isRequired: true,
+              onPick: onPickCommercialRegister!,
+            ),
+            12.ph,
+          ],
 
-          /// Confirm Password
-          StitchTextField(
-            controller: confirmPasswordController,
-            label: context.l10n('confirm_password'),
-            hintText: '••••••••',
-            obscureText: obscureConfirmPassword,
-            prefixIcon: const Icon(
-              Icons.lock_outline_rounded,
-              color: AppColors.stitchPrimary,
-            ),
-            suffixIcon: IconButton(
-              icon: Icon(
-                obscureConfirmPassword
-                    ? Icons.visibility_outlined
-                    : Icons.visibility_off_outlined,
-                color: AppColors.textSecondary,
-                size: 20,
+          if (isDoctor) ...[
+            /// Password + Confirm Password side by side for doctors
+                 StitchTextField(
+                    controller: passwordController,
+                    label: context.l10n('password'),
+                    hintText: '••••••••',
+                    obscureText: obscurePassword,
+                    prefixIcon: const Icon(
+                      Icons.lock_outline_rounded,
+                      color: AppColors.stitchPrimary,
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        obscurePassword
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                        color: AppColors.textSecondary,
+                        size: 20,
+                      ),
+                      onPressed: onTogglePassword,
+                    ),
+                    validator: (value) {
+                      if (requireBioFields && (value == null || value.length < 6)) {
+                        return context.l10n('password_too_short');
+                      }
+                      return null;
+                    },
+                  ),
+                12.ph,
+                 StitchTextField(
+                    controller: confirmPasswordController,
+                    label: context.l10n('confirm_password'),
+                    hintText: '••••••••',
+                    obscureText: obscureConfirmPassword,
+                    prefixIcon: const Icon(
+                      Icons.lock_outline_rounded,
+                      color: AppColors.stitchPrimary,
+                    ),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        obscureConfirmPassword
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined,
+                        color: AppColors.textSecondary,
+                        size: 20,
+                      ),
+                      onPressed: onToggleConfirmPassword,
+                    ),
+                    validator: (value) {
+                      if (requireBioFields && value != passwordController.text) {
+                        return context.l10n('passwords_dont_match');
+                      }
+                      return null;
+                    },
+                  ),
+          ] else ...[
+            /// Password (stacked for patients)
+            StitchTextField(
+              controller: passwordController,
+              label: context.l10n('password'),
+              hintText: '••••••••',
+              obscureText: obscurePassword,
+              prefixIcon: const Icon(
+                Icons.lock_outline_rounded,
+                color: AppColors.stitchPrimary,
               ),
-              onPressed: onToggleConfirmPassword,
+              suffixIcon: IconButton(
+                icon: Icon(
+                  obscurePassword
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  color: AppColors.textSecondary,
+                  size: 20,
+                ),
+                onPressed: onTogglePassword,
+              ),
+              validator: (value) {
+                if (requireBioFields && (value == null || value.length < 6)) {
+                  return context.l10n('password_too_short');
+                }
+                return null;
+              },
             ),
-            validator: (value) {
-              if (value != passwordController.text)
-                return context.l10n('passwords_dont_match');
-              return null;
-            },
-          ),
+
+            20.ph,
+
+            /// Confirm Password
+            StitchTextField(
+              controller: confirmPasswordController,
+              label: context.l10n('confirm_password'),
+              hintText: '••••••••',
+              obscureText: obscureConfirmPassword,
+              prefixIcon: const Icon(
+                Icons.lock_outline_rounded,
+                color: AppColors.stitchPrimary,
+              ),
+              suffixIcon: IconButton(
+                icon: Icon(
+                  obscureConfirmPassword
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
+                  color: AppColors.textSecondary,
+                  size: 20,
+                ),
+                onPressed: onToggleConfirmPassword,
+              ),
+              validator: (value) {
+                if (requireBioFields && value != passwordController.text) {
+                  return context.l10n('passwords_dont_match');
+                }
+                return null;
+              },
+            ),
+          ],
 
           32.ph,
 
@@ -328,56 +449,57 @@ class RegisterFormWidget extends StatelessWidget {
             ),
           ),
 
-          24.ph,
+          /// Social Registration — user only
+          if (!isDoctor) ...[
+            24.ph,
 
-          /// Social Registration
-          if (RemoteConfigService.showGoogleAuth ||
-              RemoteConfigService.showFacebookAuth)
-            Row(
-              children: [
-                const Expanded(
-                  child: Divider(color: AppColors.cardBorder, thickness: 1),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text(
-                    context.l10n('or_register_with'),
-                    style: AppStyles.s14Medium.copyWith(
-                      color: AppColors.textSecondary,
+            if (RemoteConfigService.showGoogleAuth ||
+                RemoteConfigService.showFacebookAuth)
+              Row(
+                children: [
+                  const Expanded(
+                    child: Divider(color: AppColors.cardBorder, thickness: 1),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Text(
+                      context.l10n('or_register_with'),
+                      style: AppStyles.s14Medium.copyWith(
+                        color: AppColors.textSecondary,
+                      ),
                     ),
                   ),
-                ),
-                const Expanded(
-                  child: Divider(color: AppColors.cardBorder, thickness: 1),
-                ),
-              ],
-            ),
-
-          /// Social Auth Buttons
-          if (RemoteConfigService.showGoogleAuth) ...[
-            24.ph,
-            SocialAuthButton(
-              title: context.l10n('continue_with_google'),
-              icon: const Icon(
-                Icons.g_mobiledata_rounded,
-                color: Colors.red,
-                size: 36,
+                  const Expanded(
+                    child: Divider(color: AppColors.cardBorder, thickness: 1),
+                  ),
+                ],
               ),
-              onTap: onGoogleSignIn,
-            ),
-          ],
 
-          if (RemoteConfigService.showFacebookAuth) ...[
-            if (!RemoteConfigService.showGoogleAuth) 24.ph else 16.ph,
-            SocialAuthButton(
-              title: context.l10n('continue_with_facebook'),
-              icon: const Icon(
-                Icons.facebook_rounded,
-                color: Colors.blue,
-                size: 28,
+            if (RemoteConfigService.showGoogleAuth) ...[
+              24.ph,
+              SocialAuthButton(
+                title: context.l10n('continue_with_google'),
+                icon: const Icon(
+                  Icons.g_mobiledata_rounded,
+                  color: Colors.red,
+                  size: 36,
+                ),
+                onTap: onGoogleSignIn,
               ),
-              onTap: onFacebookSignIn,
-            ),
+            ],
+
+            if (RemoteConfigService.showFacebookAuth) ...[
+              if (!RemoteConfigService.showGoogleAuth) 24.ph else 16.ph,
+              SocialAuthButton(
+                title: context.l10n('continue_with_facebook'),
+                icon: const Icon(
+                  Icons.facebook_rounded,
+                  color: Colors.blue,
+                  size: 28,
+                ),
+                onTap: onFacebookSignIn,
+              ),
+            ],
           ],
 
           24.ph,
@@ -405,73 +527,6 @@ class RegisterFormWidget extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class _UploadField extends StatelessWidget {
-  final String label;
-  final String? fileName;
-  final String hint;
-  final VoidCallback onPick;
-
-  const _UploadField({
-    required this.label,
-    required this.fileName,
-    required this.hint,
-    required this.onPick,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        Text(
-          label,
-          style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
-        ),
-        8.ph,
-        InkWell(
-          onTap: onPick,
-          borderRadius: BorderRadius.circular(12),
-          child: Container(
-            padding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 14,
-            ),
-            decoration: BoxDecoration(
-              color: AppColors.stitchSurface,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.cardBorder),
-            ),
-            child: Row(
-              children: [
-                Icon(
-                  fileName != null
-                      ? Icons.check_circle_outline
-                      : Icons.upload_file_outlined,
-                  color: fileName != null
-                      ? AppColors.stitchPrimary
-                      : AppColors.textSecondary,
-                  size: 22,
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                    child: Text(
-                      fileName ?? hint,
-                      style: AppTextSizes.s14.regular.copyWith(
-                      color: fileName != null
-                          ? AppColors.textPrimary
-                          : AppColors.textSecondary,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 }

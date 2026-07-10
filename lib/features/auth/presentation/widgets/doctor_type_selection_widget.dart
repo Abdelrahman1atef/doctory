@@ -3,48 +3,48 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/extensions.dart';
 
-class RoleSelectionWidget extends StatelessWidget {
-  final String? selectedRole;
-  final ValueChanged<String> onRoleSelected;
+class DoctorTypeSelectionWidget extends StatelessWidget {
+  final String? selectedType;
+  final ValueChanged<String> onTypeSelected;
 
-  const RoleSelectionWidget({
+  const DoctorTypeSelectionWidget({
     super.key,
-    required this.selectedRole,
-    required this.onRoleSelected,
+    required this.selectedType,
+    required this.onTypeSelected,
   });
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        _RoleCard(
-          icon: Icons.person_outline,
-          title: context.l10n('user_role'),
-          description: context.l10n('user_role_desc'),
-          isSelected: selectedRole == 'patient',
-          onTap: () => onRoleSelected('patient'),
+        _TypeCard(
+          icon: Icons.person_pin_outlined,
+          title: context.l10n('freelance_doctor'),
+          description: context.l10n('freelance_doctor_desc'),
+          isSelected: selectedType == 'freelance',
+          onTap: () => onTypeSelected('freelance'),
         ),
         const SizedBox(height: 16),
-        _RoleCard(
-          icon: Icons.medical_services_outlined,
-          title: context.l10n('doctor_role'),
-          description: context.l10n('doctor_role_desc'),
-          isSelected: selectedRole == 'doctor',
-          onTap: () => onRoleSelected('doctor'),
+        _TypeCard(
+          icon: Icons.local_hospital_outlined,
+          title: context.l10n('clinic_owner'),
+          description: context.l10n('clinic_owner_desc'),
+          isSelected: selectedType == 'ownClinic',
+          onTap: () => onTypeSelected('ownClinic'),
         ),
       ],
     );
   }
 }
 
-class _RoleCard extends StatelessWidget {
+class _TypeCard extends StatelessWidget {
   final IconData icon;
   final String title;
   final String description;
   final bool isSelected;
   final VoidCallback onTap;
 
-  const _RoleCard({
+  const _TypeCard({
     required this.icon,
     required this.title,
     required this.description,

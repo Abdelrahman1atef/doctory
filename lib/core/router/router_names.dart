@@ -8,6 +8,7 @@ abstract class AppRoutes {
   static const String register = '/register';
   static const String otpVerification = '/otp-verification';
   static const String completeProfile = '/complete-profile';
+  static const String clinicCompleteProfile = '/clinic-complete-profile';
   static const String forgotPassword = '/forgot-password';
   static const String resetPassword = '/reset-password';
   static const String locationPermission = '/location-permission';

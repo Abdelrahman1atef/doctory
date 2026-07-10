@@ -2,6 +2,7 @@ import 'dart:io' show Platform;
 
 import 'package:doctory/core/enums/device_platform.dart';
 import 'package:doctory/features/auth/cubit/auth_states.dart';
+import 'package:doctory/features/auth/data/model/clinic_setup_request.dart';
 import 'package:doctory/features/auth/data/model/login_request.dart';
 import 'package:doctory/features/auth/data/model/signup_request.dart';
 import 'package:doctory/features/auth/data/model/update_profile_request.dart';
@@ -45,8 +46,9 @@ class AuthCubit extends Cubit<AuthStates> {
 
   void signup(
     SignupRequest request, {
-    String? certificateImagePath,
+    String? professionalPracticeCardImagePath,
     String? syndicateIdImagePath,
+    String? commercialRegisterImagePath,
   }) async {
     emit(AuthLoadingState());
 
@@ -59,16 +61,19 @@ class AuthCubit extends Cubit<AuthStates> {
       birthDate: request.birthDate,
       gender: request.gender,
       role: request.role,
+      doctorType: request.doctorType,
       fcmToken: UserSession.fcmToken.isNotEmpty ? UserSession.fcmToken : null,
       devicePlatform: _currentPlatform,
-      certificateImagePath: request.certificateImagePath,
+      professionalPracticeCardImagePath: request.professionalPracticeCardImagePath,
       syndicateIdImagePath: request.syndicateIdImagePath,
+      commercialRegisterImagePath: request.commercialRegisterImagePath,
     );
 
     final result = await _authRepo.signup(
       updatedRequest,
-      certificateImagePath: certificateImagePath,
+      professionalPracticeCardImagePath: professionalPracticeCardImagePath,
       syndicateIdImagePath: syndicateIdImagePath,
+      commercialRegisterImagePath: commercialRegisterImagePath,
     );
 
     result.fold(
@@ -213,6 +218,68 @@ class AuthCubit extends Cubit<AuthStates> {
     final result = await _authRepo.updateLanguage(language);
     result.fold(
       onSuccess: (_) => emit(LanguageUpdateSuccessState()),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+    );
+  }
+
+  Future<void> registerClinic(ClinicSetupRequest request) async {
+    emit(AuthLoadingState());
+    final result = await _authRepo.registerClinic(request);
+    result.fold(
+      onSuccess: (_) => emit(ClinicRegisteredState()),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+    );
+  }
+
+  Future<void> signupWithClinic(
+    SignupRequest request, {
+    String? professionalPracticeCardImagePath,
+    String? syndicateIdImagePath,
+    String? commercialRegisterImagePath,
+    required ClinicSetupRequest clinicRequest,
+  }) async {
+    emit(AuthLoadingState());
+
+    final updatedRequest = SignupRequest(
+      fullName: request.fullName,
+      email: request.email,
+      password: request.password,
+      confirmPassword: request.confirmPassword,
+      phoneNumber: request.phoneNumber,
+      birthDate: request.birthDate,
+      gender: request.gender,
+      role: request.role,
+      doctorType: request.doctorType,
+      fcmToken: UserSession.fcmToken.isNotEmpty ? UserSession.fcmToken : null,
+      devicePlatform: _currentPlatform,
+      professionalPracticeCardImagePath: request.professionalPracticeCardImagePath,
+      syndicateIdImagePath: request.syndicateIdImagePath,
+      commercialRegisterImagePath: request.commercialRegisterImagePath,
+    );
+
+    final signupResult = await _authRepo.signup(
+      updatedRequest,
+      professionalPracticeCardImagePath: professionalPracticeCardImagePath,
+      syndicateIdImagePath: syndicateIdImagePath,
+      commercialRegisterImagePath: commercialRegisterImagePath,
+    );
+
+    final signupEmail = signupResult.fold(
+      onSuccess: (data) {
+        emit(SignupSuccessState(request.email));
+        return request.email;
+      },
+      onFailure: (failure) {
+        emit(AuthErrorState(failure.userMessage));
+        return null;
+      },
+    );
+
+    if (signupEmail == null) return;
+
+    final clinicResult = await _authRepo.registerClinic(clinicRequest);
+    clinicResult.fold(
+      onSuccess: (_) => emit(ClinicRegisteredState()),
       onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
     );
   }

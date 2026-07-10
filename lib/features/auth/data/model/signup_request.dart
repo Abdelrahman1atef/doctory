@@ -9,10 +9,12 @@ class SignupRequest {
   final String? birthDate;
   final int? gender;
   final String? role;
+  final String? doctorType;
   final String? fcmToken;
   final DevicePlatform? devicePlatform;
-  final String? certificateImagePath;
+  final String? professionalPracticeCardImagePath;
   final String? syndicateIdImagePath;
+  final String? commercialRegisterImagePath;
 
   SignupRequest({
     required this.fullName,
@@ -23,10 +25,12 @@ class SignupRequest {
     this.birthDate,
     this.gender,
     this.role,
+    this.doctorType,
     this.fcmToken,
     this.devicePlatform,
-    this.certificateImagePath,
+    this.professionalPracticeCardImagePath,
     this.syndicateIdImagePath,
+    this.commercialRegisterImagePath,
   });
 
   Map<String, dynamic> toJson() {
@@ -39,6 +43,7 @@ class SignupRequest {
       if (birthDate != null) 'birthDate': birthDate,
       if (gender != null) 'gender': gender,
       if (role != null) 'role': role,
+      if (doctorType != null) 'doctorType': doctorType,
       if (fcmToken != null) 'fcmToken': fcmToken,
       if (devicePlatform != null) 'devicePlatform': devicePlatform!.toJson(),
     };
