@@ -3,6 +3,7 @@ import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/services/alerts.dart';
 import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/core/theme/app_colors.dart';
+import 'package:doctory/features/admin/router/admin_router_names.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:doctory/core/app_strings/locale_keys.dart';
 import 'package:flutter/material.dart';
@@ -63,12 +64,21 @@ class _LayoutViewState extends State<LayoutView> {
       },
       child: Scaffold(
         body: widget.navigationShell,
-        floatingActionButton: UserSession.currentRole == UserRole.clinicOwner
+        floatingActionButton: UserSession.currentRole == UserRole.clinicOwner ||
+                UserSession.currentRole == UserRole.superAdmin
             ? FloatingActionButton(
-                onPressed: () => context.push(AppRoutes.clinicDashboard),
+                onPressed: () => context.push(
+                  UserSession.currentRole == UserRole.superAdmin
+                      ? AdminRoutes.admin
+                      : AppRoutes.clinicDashboard,
+                ),
                 backgroundColor: AppColors.stitchPrimary,
                 foregroundColor: AppColors.white,
-                child: const Icon(Icons.dashboard_rounded),
+                child: Icon(
+                  UserSession.currentRole == UserRole.superAdmin
+                      ? Icons.admin_panel_settings_rounded
+                      : Icons.dashboard_rounded,
+                ),
               )
             : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,

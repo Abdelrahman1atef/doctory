@@ -23,6 +23,7 @@ import 'package:doctory/features/clinic/router/clinic_router.dart';
 import 'package:doctory/features/notifications/router/notifications_router.dart';
 import 'package:doctory/features/layout/presentation/views/layout_view.dart';
 import 'package:doctory/features/more/router/more_router.dart';
+import 'package:doctory/features/admin/router/admin_router.dart';
 
 import 'package:doctory/core/session/user_session.dart';
 
@@ -57,6 +58,11 @@ class AppRouter {
         return '/';
       }
 
+      if (location.startsWith('/admin') &&
+          UserSession.currentRole != UserRole.superAdmin) {
+        return '/';
+      }
+
       return null;
     },
 
@@ -84,6 +90,7 @@ class AppRouter {
       ...SpecializationsRouter.routes,
       ...NotificationsRouter.routes,
       ...ClinicRouter.routes,
+      ...AdminRouter.routes,
     ],
 
     // Error page

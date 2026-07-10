@@ -1,5 +1,5 @@
 enum UserRole {
-  systemAdmin,
+  superAdmin,
   clinicOwner,
   clinicManager,
   doctor,

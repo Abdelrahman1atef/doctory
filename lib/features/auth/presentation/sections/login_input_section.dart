@@ -7,6 +7,7 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import '../../../../core/common/functions/location_helper.dart';
 import '../../../../core/router/router_names.dart';
 import '../../../../core/services/alerts.dart';
+import '../../../../features/admin/router/admin_router_names.dart';
 import '../../cubit/auth_cubit.dart';
 import '../../cubit/auth_states.dart';
 import '../widgets/login_form_widget.dart';
@@ -52,9 +53,11 @@ class _LoginInputSectionState extends State<LoginInputSection> {
 
         if (state is AuthSuccessState) {
           LocationHelper.isPermissionGranted().then((isGranted) {
-            final destination = UserSession.currentRole == UserRole.clinicOwner
-                ? AppRoutes.clinicDashboard
-                : AppRoutes.home;
+            final destination = UserSession.currentRole == UserRole.superAdmin
+                ? AdminRoutes.admin
+                : UserSession.currentRole == UserRole.clinicOwner
+                    ? AppRoutes.clinicDashboard
+                    : AppRoutes.home;
             if (isGranted && context.mounted) {
               context.go(destination);
             } else if (context.mounted) {

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../features/admin/router/admin_router_names.dart';
 import '../../../../../core/common/widgets/sheets/language_bottom_sheet_section.dart';
 
 class SplashView extends StatelessWidget {
@@ -40,7 +41,9 @@ class SplashView extends StatelessWidget {
         } else if (state is NavigateToLoginState) {
           context.go(AppRoutes.welcome);
         } else if (state is NavigateToMainState) {
-          if (UserSession.currentRole == UserRole.clinicOwner) {
+          if (UserSession.currentRole == UserRole.superAdmin) {
+            context.go(AdminRoutes.admin);
+          } else if (UserSession.currentRole == UserRole.clinicOwner) {
             context.go(AppRoutes.clinicDashboard);
           } else {
             context.go(AppRoutes.home);
