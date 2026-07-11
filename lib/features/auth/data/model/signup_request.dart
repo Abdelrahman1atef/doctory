@@ -48,11 +48,11 @@ class SignupRequest {
       if (gender != null) 'gender': gender,
       if (fcmToken != null) 'fcmToken': fcmToken,
       if (devicePlatform != null) 'devicePlatform': devicePlatform!.toJson(),
-      if (doctorImage != null) 'doctor_image': doctorImage,
-      if (professionalPracticeCardImage != null) 'professional_practice_card_image': professionalPracticeCardImage,
-      if (unionIdImage != null) 'union_id_image': unionIdImage,
-      if (taxCardImage != null) 'tax_card_image': taxCardImage,
-      if (commercialRegisterImage != null) 'commercial_register_image': commercialRegisterImage,
+      if (doctorImage != null) 'doctorImage': doctorImage,
+      if (professionalPracticeCardImage != null) 'professionalPracticeCardImage': professionalPracticeCardImage,
+      if (unionIdImage != null) 'unionIdImage': unionIdImage,
+      if (taxCardImage != null) 'taxCardImage': taxCardImage,
+      if (commercialRegisterImage != null) 'commercialRegisterImage': commercialRegisterImage,
     };
   }
 }

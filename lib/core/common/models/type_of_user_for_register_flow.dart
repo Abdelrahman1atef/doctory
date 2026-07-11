@@ -1,7 +1,7 @@
 enum TypeOfUserForRegisterFlow {
-  user(1),
-  freelanceDoctor(2),
-  clinic(3);
+  user(0),
+  freelanceDoctor(1),
+  clinic(2);
 
   final int value;
   const TypeOfUserForRegisterFlow(this.value);

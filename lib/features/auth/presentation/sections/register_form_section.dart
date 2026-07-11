@@ -185,6 +185,7 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
             message: context.l10n('signup_pending_approval'),
             state: SnackState.info,
           );
+          context.go(AppRoutes.login);
         } else if (state is AuthSuccessState) {
           context.go(AppRoutes.completeProfile);
         } else if (state is AuthErrorState) {
