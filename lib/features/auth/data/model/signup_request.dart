@@ -50,7 +50,7 @@ class SignupRequest {
       if (devicePlatform != null) 'devicePlatform': devicePlatform!.toJson(),
       if (doctorImage != null) 'doctorImage': doctorImage,
       if (professionalPracticeCardImage != null) 'professionalPracticeCardImage': professionalPracticeCardImage,
-      if (unionIdImage != null) 'unionIdImage': unionIdImage,
+      if (unionIdImage != null) 'unionIdCardImage': unionIdImage,
       if (taxCardImage != null) 'taxCardImage': taxCardImage,
       if (commercialRegisterImage != null) 'commercialRegisterImage': commercialRegisterImage,
     };
