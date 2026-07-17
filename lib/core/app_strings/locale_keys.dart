@@ -211,6 +211,7 @@ abstract class LocaleKeys {
   static const pay = 'pay';
   static const favorites = 'favorites';
   static const search = 'search';
+  static const ok = 'ok';
   static const offers = 'offers';
   static const categories = 'categories';
   static const Most_requested_products = 'Most_requested_products';

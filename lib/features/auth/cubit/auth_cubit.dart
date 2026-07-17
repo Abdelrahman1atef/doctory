@@ -42,7 +42,7 @@ class AuthCubit extends Cubit<AuthStates> {
 
     result.fold(
       onSuccess: (data) => emit(AuthSuccessState(data)),
-      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
     );
   }
 
@@ -55,7 +55,7 @@ class AuthCubit extends Cubit<AuthStates> {
     return result.fold(
       onSuccess: (name) => name,
       onFailure: (failure) {
-        emit(AuthErrorState(failure.userMessage));
+        emit(AuthErrorState(failure.userMessage, failure.code ?? ''));
         return null;
       },
     );
@@ -126,7 +126,7 @@ class AuthCubit extends Cubit<AuthStates> {
           emit(SignupSuccessState(request.email));
         }
       },
-      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
     );
   }
 
@@ -137,7 +137,7 @@ class AuthCubit extends Cubit<AuthStates> {
 
     result.fold(
       onSuccess: (data) => emit(AuthSuccessState(data)),
-      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
     );
   }
 
@@ -148,7 +148,7 @@ class AuthCubit extends Cubit<AuthStates> {
 
     result.fold(
       onSuccess: (_) => emit(ForgotPasswordSuccessState()),
-      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
     );
   }
 
@@ -157,7 +157,7 @@ class AuthCubit extends Cubit<AuthStates> {
     final result = await _authRepo.loginFacebook(accessToken);
     result.fold(
       onSuccess: (data) => emit(AuthSuccessState(data)),
-      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
     );
   }
 
@@ -169,7 +169,7 @@ class AuthCubit extends Cubit<AuthStates> {
     );
     result.fold(
       onSuccess: (data) => emit(AuthSuccessState(data)),
-      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
     );
   }
 
@@ -178,7 +178,7 @@ class AuthCubit extends Cubit<AuthStates> {
     final result = await _authRepo.loginGoogle(idToken);
     result.fold(
       onSuccess: (data) => emit(AuthSuccessState(data)),
-      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
     );
   }
 
@@ -207,7 +207,7 @@ class AuthCubit extends Cubit<AuthStates> {
     final result = await _authRepo.verifyResetToken(email, token);
     result.fold(
       onSuccess: (isValid) => emit(ResetTokenVerifiedState(isValid)),
-      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
     );
   }
 
@@ -226,7 +226,7 @@ class AuthCubit extends Cubit<AuthStates> {
     );
     result.fold(
       onSuccess: (_) => emit(ResetPasswordSuccessState()),
-      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
     );
   }
 
@@ -238,7 +238,7 @@ class AuthCubit extends Cubit<AuthStates> {
         _populateSession(user);
         emit(ProfileLoadedState(user));
       },
-      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
     );
   }
 
@@ -257,7 +257,7 @@ class AuthCubit extends Cubit<AuthStates> {
     final result = await _authRepo.updateProfile(request);
     result.fold(
       onSuccess: (_) => emit(ProfileUpdateSuccessState()),
-      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
     );
   }
 
@@ -266,7 +266,7 @@ class AuthCubit extends Cubit<AuthStates> {
     final result = await _authRepo.updateLanguage(language);
     result.fold(
       onSuccess: (_) => emit(LanguageUpdateSuccessState()),
-      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
     );
   }
 
@@ -275,7 +275,7 @@ class AuthCubit extends Cubit<AuthStates> {
     final result = await _authRepo.registerClinic(request);
     result.fold(
       onSuccess: (_) => emit(ClinicRegisteredState()),
-      onFailure: (failure) => emit(AuthErrorState(failure.userMessage)),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
     );
   }
 
@@ -287,9 +287,6 @@ class AuthCubit extends Cubit<AuthStates> {
       fcmToken: fcmToken,
       devicePlatform: _currentPlatform,
     );
-    result.fold(
-      onSuccess: (_) {},
-      onFailure: (failure) {},
-    );
+    result.fold(onSuccess: (_) {}, onFailure: (failure) {});
   }
 }

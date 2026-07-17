@@ -36,13 +36,14 @@ class ItemOfContact extends StatelessWidget {
                 Text(
                   title ?? '',
                   style: AppStyles.s16Medium.copyWith(
+                   color:  choose? AppColors.white:AppColors.primary,
                     fontSize: 17,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
                 const Spacer(),
                 choose
-                    ? Icon(Icons.camera_alt_outlined, color: AppColors.primary)
+                    ? const Icon(Icons.camera_alt_outlined, color: AppColors.white)
                     : Icon(Icons.image_outlined, color: AppColors.primary),
               ],
             ),

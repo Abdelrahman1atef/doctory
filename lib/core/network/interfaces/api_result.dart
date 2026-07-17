@@ -6,14 +6,14 @@ class ApiResult<T> {
   final Failure? failure;
   final bool _isSuccess;
 
-  const ApiResult._({this.data, this.failure, required bool isSuccess})
-    : _isSuccess = isSuccess;
+  const ApiResult._({this.data, this.failure, required bool isSuccess}) : _isSuccess = isSuccess;
 
   factory ApiResult.success(T data) => ApiResult._(data: data, isSuccess: true);
-  factory ApiResult.failure(Failure failure) =>
-      ApiResult._(failure: failure, isSuccess: false);
+
+  factory ApiResult.failure(Failure failure) => ApiResult._(failure: failure, isSuccess: false);
 
   bool get isSuccess => _isSuccess;
+
   bool get isFailure => !isSuccess;
 
   /// Fold pattern for handling results

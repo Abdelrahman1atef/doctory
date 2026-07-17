@@ -217,7 +217,21 @@ class RegisterFormWidget extends StatelessWidget {
                     }
                     if (value == null || value.isEmpty) return null;
                     final day = int.tryParse(value);
-                    if (day == null || day < 1 || day > 31) return '';
+                    if (day == null || day < 1 || day > 31) {
+                      return '';
+                    }
+                    final month = int.tryParse(monthController.text);
+                    final year = int.tryParse(yearController.text);
+                    if (month != null && year != null) {
+                      final daysInMonth = DateTime(year, month + 1, 0).day;
+                      if (day > daysInMonth) return '';
+                      final date = DateTime(year, month, day);
+                      final now = DateTime.now();
+                      final today = DateTime(now.year, now.month, now.day);
+                      if (!date.isBefore(today)) return '';
+                      final minAge = DateTime(now.year - 18, now.month, now.day);
+                      if (date.isAfter(minAge)) return '';
+                    }
                     return null;
                   },
                 ),
@@ -238,7 +252,21 @@ class RegisterFormWidget extends StatelessWidget {
                     }
                     if (value == null || value.isEmpty) return null;
                     final month = int.tryParse(value);
-                    if (month == null || month < 1 || month > 12) return '';
+                    if (month == null || month < 1 || month > 12) {
+                      return '';
+                    }
+                    final day = int.tryParse(dayController.text);
+                    final year = int.tryParse(yearController.text);
+                    if (day != null && year != null) {
+                      final daysInMonth = DateTime(year, month + 1, 0).day;
+                      if (day > daysInMonth) return '';
+                      final date = DateTime(year, month, day);
+                      final now = DateTime.now();
+                      final today = DateTime(now.year, now.month, now.day);
+                      if (!date.isBefore(today)) return '';
+                      final minAge = DateTime(now.year - 18, now.month, now.day);
+                      if (date.isAfter(minAge)) return '';
+                    }
                     return null;
                   },
                 ),
@@ -258,9 +286,23 @@ class RegisterFormWidget extends StatelessWidget {
                       return context.l10n('field_required');
                     }
                     if (value == null || value.isEmpty) return null;
+                    if (value.length != 4) return '';
                     final year = int.tryParse(value);
-                    if (year == null || year < 1900 || year > DateTime.now().year)
+                    if (year == null || year < 1900 || year > DateTime.now().year) {
                       return '';
+                    }
+                    final day = int.tryParse(dayController.text);
+                    final month = int.tryParse(monthController.text);
+                    if (day != null && month != null) {
+                      final daysInMonth = DateTime(year, month + 1, 0).day;
+                      if (day > daysInMonth) return '';
+                      final date = DateTime(year, month, day);
+                      final now = DateTime.now();
+                      final today = DateTime(now.year, now.month, now.day);
+                      if (!date.isBefore(today)) return '';
+                      final minAge = DateTime(now.year - 18, now.month, now.day);
+                      if (date.isAfter(minAge)) return '';
+                    }
                     return null;
                   },
                 ),

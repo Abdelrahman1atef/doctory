@@ -196,6 +196,7 @@ extension FailureExtensions on Failure {
     } else if (isServerError) {
       return 'server_error_try_later'.tr();
     } else if (isAuthError) {
+      if (this is PermissionFailure) return message;
       return 'please_login_again'.tr();
     } else if (isValidationError) {
       final errorsMap = validationErrors;

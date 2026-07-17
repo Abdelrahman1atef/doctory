@@ -41,6 +41,7 @@ class ClinicRegisteredState extends AuthStates {}
 class SignupPendingState extends AuthStates {}
 
 class AuthErrorState extends AuthStates {
+  final String? code;
   final String message;
-  AuthErrorState(this.message);
+  AuthErrorState(this.message,this.code);
 }
