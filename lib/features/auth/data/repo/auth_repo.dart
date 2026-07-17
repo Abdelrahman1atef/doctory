@@ -1,6 +1,7 @@
 import 'package:doctory/core/enums/device_platform.dart';
 import 'package:doctory/core/network/interfaces/api_result.dart';
 import 'package:doctory/core/session/user_session.dart';
+import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/auth/data/data_source/auth_remote_data_source.dart';
 import 'package:doctory/features/auth/data/model/auth_response.dart';
 import 'package:doctory/features/auth/data/model/clinic_setup_request.dart';
@@ -200,10 +201,27 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   Future<void> _saveAuthSession(AuthResponse response) async {
+    final userJson = response.user?.toJson();
+    if (userJson != null) {
+      final imageFields = [
+        'profilePictureUrl',
+        'certificate_image',
+        'syndicate_id_image',
+        'professional_practice_card_image',
+        'commercial_register_image',
+      ];
+      for (final field in imageFields) {
+        final value = userJson[field];
+        if (value is String && value.isNotEmpty) {
+          userJson[field] = value.toImageUrl;
+        }
+      }
+    }
+
     await UserSession.saveUser({
       'accessToken': response.accessToken,
       'refreshToken': response.refreshToken,
-      'user': response.user?.toJson(),
+      'user': userJson,
     });
   }
 }

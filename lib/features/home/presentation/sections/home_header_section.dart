@@ -23,7 +23,7 @@ class HomeHeaderSection extends StatelessWidget {
             ? (user['fullName'] ?? user['name'] ?? 'User').toString()
             : 'User';
         final String? imageUrl = (user is Map)
-            ? (user['image'] ?? user['avatar'])?.toString()
+            ? (user['profilePictureUrl'] ?? user['avatar'])?.toString()
             : null;
         final String? role = (user is Map)
             ? (user['role']?.toString())
