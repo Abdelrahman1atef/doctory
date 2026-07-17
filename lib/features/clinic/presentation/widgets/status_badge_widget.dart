@@ -1,6 +1,7 @@
 import 'package:doctory/core/app_strings/locale_keys.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
+import 'package:doctory/features/clinic/data/model/booking_request_model.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -33,6 +34,17 @@ class StatusBadgeWidget extends StatelessWidget {
       color: AppColors.error,
       text: LocaleKeys.rejected.tr(),
     );
+  }
+
+  factory StatusBadgeWidget.fromStatus(BookingStatus status) {
+    switch (status) {
+      case BookingStatus.pending:
+        return StatusBadgeWidget.pending();
+      case BookingStatus.accepted:
+        return StatusBadgeWidget.accepted();
+      case BookingStatus.rejected:
+        return StatusBadgeWidget.rejected();
+    }
   }
 
   @override

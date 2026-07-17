@@ -10,7 +10,7 @@ class ReservationRequestsCubit extends Cubit<ReservationRequestsState> {
 
   Future<void> load() async {
     emit(RequestsLoading());
-    final result = await _repository.getPending();
+    final result = await _repository.getPending(1, 50);
     result.fold(
       onSuccess: (requests) => emit(RequestsLoaded(requests)),
       onFailure: (failure) => emit(RequestsError(failure.userMessage)),

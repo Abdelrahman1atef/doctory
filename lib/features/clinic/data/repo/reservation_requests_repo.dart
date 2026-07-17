@@ -4,7 +4,7 @@ import 'package:doctory/features/clinic/data/data_source/clinic_dashboard_mock_d
 import 'package:doctory/features/clinic/data/model/booking_request_model.dart';
 
 abstract class ReservationRequestsRepo {
-  Future<ApiResult<List<BookingRequestModel>>> getPending();
+  Future<ApiResult<List<BookingRequestModel>>> getPending(int page, int perPage);
   Future<ApiResult<bool>> accept(int requestId);
   Future<ApiResult<bool>> reject(int requestId);
 }
@@ -15,9 +15,9 @@ class ReservationRequestsRepoImpl implements ReservationRequestsRepo {
   ReservationRequestsRepoImpl(this._dataSource);
 
   @override
-  Future<ApiResult<List<BookingRequestModel>>> getPending() async {
+  Future<ApiResult<List<BookingRequestModel>>> getPending(int page, int perPage) async {
     try {
-      return _dataSource.getPendingBookings();
+      return _dataSource.getBookingsByStatus('pending', page, perPage);
     } on Exception catch (e) {
       return ApiResult.failure(ErrorHandler.handleException(e));
     }

@@ -27,7 +27,7 @@ class _BookingDetailsContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
+      padding: const EdgeInsets.fromLTRB(24, 12, 24, kBottomNavigationBarHeight),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -109,6 +109,7 @@ class _BookingDetailsContent extends StatelessWidget {
           Center(
             child: StatusBadge(booking.status),
           ),
+
         ],
       ),
     );

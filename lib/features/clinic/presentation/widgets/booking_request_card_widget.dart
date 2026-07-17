@@ -9,14 +9,14 @@ import 'package:flutter/material.dart';
 
 class BookingRequestCardWidget extends StatelessWidget {
   final BookingRequestModel booking;
-  final VoidCallback onAccept;
-  final VoidCallback onReject;
+  final VoidCallback? onAccept;
+  final VoidCallback? onReject;
 
   const BookingRequestCardWidget({
     super.key,
     required this.booking,
-    required this.onAccept,
-    required this.onReject,
+    this.onAccept,
+    this.onReject,
   });
 
   @override
@@ -65,7 +65,7 @@ class BookingRequestCardWidget extends StatelessWidget {
                     ],
                   ),
                 ),
-                StatusBadgeWidget.pending(),
+                StatusBadgeWidget.fromStatus(booking.status),
               ],
             ),
             const SizedBox(height: 12),
@@ -89,50 +89,53 @@ class BookingRequestCardWidget extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
               ),
             ],
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: SizedBox(
-                    height: 40,
-                    child: TextButton(
-                      onPressed: onReject,
-                      style: TextButton.styleFrom(
-                        backgroundColor: AppColors.error.withValues(alpha: 0.1),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+            if (onAccept != null || onReject != null) ...[
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  if (onReject != null)
+                    Expanded(
+                      child: SizedBox(
+                        height: 40,
+                        child: TextButton(
+                          onPressed: onReject,
+                          style: TextButton.styleFrom(
+                            backgroundColor: AppColors.error.withValues(alpha: 0.1),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            LocaleKeys.rejectButton.tr(),
+                            style: AppStyles.s14Medium.withColor(AppColors.error),
+                          ),
                         ),
                       ),
-                      child: Text(
-                        LocaleKeys.rejectButton.tr(),
-                        style:
-                            AppStyles.s14Medium.withColor(AppColors.error),
-                      ),
                     ),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: SizedBox(
-                    height: 40,
-                    child: TextButton(
-                      onPressed: onAccept,
-                      style: TextButton.styleFrom(
-                        backgroundColor: AppColors.primary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
+                  if (onReject != null && onAccept != null)
+                    const SizedBox(width: 12),
+                  if (onAccept != null)
+                    Expanded(
+                      child: SizedBox(
+                        height: 40,
+                        child: TextButton(
+                          onPressed: onAccept,
+                          style: TextButton.styleFrom(
+                            backgroundColor: AppColors.primary,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Text(
+                            LocaleKeys.accept.tr(),
+                            style: AppStyles.s14Medium.withColor(AppColors.white),
+                          ),
                         ),
                       ),
-                      child: Text(
-                        LocaleKeys.accept.tr(),
-                        style:
-                            AppStyles.s14Medium.withColor(AppColors.white),
-                      ),
                     ),
-                  ),
-                ),
-              ],
-            ),
+                ],
+              ),
+            ],
           ],
         ),
       ),

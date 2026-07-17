@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctory/core/error/failures.dart';
 import 'package:doctory/core/locator/service_locator.dart';
@@ -11,7 +10,7 @@ import 'package:doctory/features/notifications/data/repo/notifications_repo.dart
 
 class ClinicDashboardCubit extends Cubit<ClinicDashboardState> {
   final ClinicDashboardRepo _repo;
-  Timer? _debounceTimer;
+  static const int _perPage = 10;
 
   ClinicDashboardCubit(this._repo) : super(ClinicDashboardInitial());
 
@@ -20,24 +19,38 @@ class ClinicDashboardCubit extends Cubit<ClinicDashboardState> {
 
     final results = await Future.wait([
       _repo.getStats(),
-      _repo.getPendingBookings(),
+      _repo.getBookingsByStatus('pending', 1, _perPage),
+      _repo.getBookingsByStatus('pending', 1, 0),
+      _repo.getBookingsByStatus('accepted', 1, 0),
+      _repo.getBookingsByStatus('rejected', 1, 0),
       sl<NotificationsRepo>().getUnreadCount(),
     ]);
 
     final statsResult = results[0] as ApiResult<DashboardStatsModel>;
     final bookingsResult = results[1] as ApiResult<List<BookingRequestModel>>;
-    final countResult = results[2] as ApiResult<int>;
+    final pendingCountResult = results[2] as ApiResult<List<BookingRequestModel>>;
+    final acceptedCountResult = results[3] as ApiResult<List<BookingRequestModel>>;
+    final rejectedCountResult = results[4] as ApiResult<List<BookingRequestModel>>;
+    final countResult = results[5] as ApiResult<int>;
     final unreadCount = countResult.fold(onSuccess: (c) => c, onFailure: (_) => 0);
 
     statsResult.fold(
       onSuccess: (stats) {
         bookingsResult.fold(
           onSuccess: (bookings) {
+            final pending = pendingCountResult.fold(onSuccess: (l) => l.length, onFailure: (_) => 0);
+            final accepted = acceptedCountResult.fold(onSuccess: (l) => l.length, onFailure: (_) => 0);
+            final rejected = rejectedCountResult.fold(onSuccess: (l) => l.length, onFailure: (_) => 0);
             emit(
               ClinicDashboardLoaded(
                 stats: stats,
                 bookings: bookings,
-                searchResults: [],
+                currentStatus: BookingStatus.pending,
+                page: 1,
+                hasMore: bookings.length >= _perPage,
+                pendingCount: pending,
+                acceptedCount: accepted,
+                rejectedCount: rejected,
                 unreadCount: unreadCount,
               ),
             );
@@ -53,6 +66,64 @@ class ClinicDashboardCubit extends Cubit<ClinicDashboardState> {
     );
   }
 
+  Future<void> loadMoreBookings() async {
+    final current = state;
+    if (current is! ClinicDashboardLoaded) return;
+    if (current.isLoadingMore || !current.hasMore) return;
+
+    emit(current.copyWith(isLoadingMore: true));
+
+    final nextPage = current.page + 1;
+    final result = await _repo.getBookingsByStatus(
+      current.currentStatus.name,
+      nextPage,
+      _perPage,
+    );
+
+    result.fold(
+      onSuccess: (newItems) {
+        if (state is! ClinicDashboardLoaded) return;
+        final loaded = state as ClinicDashboardLoaded;
+        emit(loaded.copyWith(
+          bookings: [...loaded.bookings, ...newItems],
+          page: nextPage,
+          hasMore: newItems.length >= _perPage,
+          isLoadingMore: false,
+        ));
+      },
+      onFailure: (_) {
+        if (state is! ClinicDashboardLoaded) return;
+        emit((state as ClinicDashboardLoaded).copyWith(isLoadingMore: false));
+      },
+    );
+  }
+
+  Future<void> switchStatus(BookingStatus status) async {
+    final current = state;
+    if (current is! ClinicDashboardLoaded) return;
+    if (current.currentStatus == status) return;
+
+    emit(current.copyWith(isLoadingMore: true));
+
+    final result = await _repo.getBookingsByStatus(status.name, 1, _perPage);
+    result.fold(
+      onSuccess: (bookings) {
+        if (state is! ClinicDashboardLoaded) return;
+        emit((state as ClinicDashboardLoaded).copyWith(
+          bookings: bookings,
+          currentStatus: status,
+          page: 1,
+          hasMore: bookings.length >= _perPage,
+          isLoadingMore: false,
+        ));
+      },
+      onFailure: (_) {
+        if (state is! ClinicDashboardLoaded) return;
+        emit((state as ClinicDashboardLoaded).copyWith(isLoadingMore: false));
+      },
+    );
+  }
+
   Future<void> acceptBooking(int id) async {
     final result = await _repo.acceptBooking(id);
     result.fold(
@@ -60,22 +131,22 @@ class ClinicDashboardCubit extends Cubit<ClinicDashboardState> {
         final current = state;
         if (current is ClinicDashboardLoaded) {
           final updated = current.bookings.where((b) => b.id != id).toList();
-          emit(
-            current.copyWith(
-              bookings: updated,
-              stats: DashboardStatsModel(
-                todayVisits: current.stats.todayVisits,
-                todayIncome: current.stats.todayIncome,
-                weeklyVisits: current.stats.weeklyVisits,
-                weeklyIncome: current.stats.weeklyIncome,
-                monthlyVisits: current.stats.monthlyVisits,
-                monthlyIncome: current.stats.monthlyIncome,
-                yearlyVisits: current.stats.yearlyVisits,
-                yearlyIncome: current.stats.yearlyIncome,
-                pendingActions: updated.length,
-              ),
+          emit(current.copyWith(
+            bookings: updated,
+            pendingCount: current.pendingCount - 1,
+            acceptedCount: current.acceptedCount + 1,
+            stats: DashboardStatsModel(
+              todayVisits: current.stats.todayVisits,
+              todayIncome: current.stats.todayIncome,
+              weeklyVisits: current.stats.weeklyVisits,
+              weeklyIncome: current.stats.weeklyIncome,
+              monthlyVisits: current.stats.monthlyVisits,
+              monthlyIncome: current.stats.monthlyIncome,
+              yearlyVisits: current.stats.yearlyVisits,
+              yearlyIncome: current.stats.yearlyIncome,
+              pendingActions: updated.length,
             ),
-          );
+          ));
         }
       },
       onFailure: (_) {},
@@ -89,56 +160,25 @@ class ClinicDashboardCubit extends Cubit<ClinicDashboardState> {
         final current = state;
         if (current is ClinicDashboardLoaded) {
           final updated = current.bookings.where((b) => b.id != id).toList();
-          emit(
-            current.copyWith(
-              bookings: updated,
-              stats: DashboardStatsModel(
-                todayVisits: current.stats.todayVisits,
-                todayIncome: current.stats.todayIncome,
-                weeklyVisits: current.stats.weeklyVisits,
-                weeklyIncome: current.stats.weeklyIncome,
-                monthlyVisits: current.stats.monthlyVisits,
-                monthlyIncome: current.stats.monthlyIncome,
-                yearlyVisits: current.stats.yearlyVisits,
-                yearlyIncome: current.stats.yearlyIncome,
-                pendingActions: updated.length,
-              ),
+          emit(current.copyWith(
+            bookings: updated,
+            pendingCount: current.pendingCount - 1,
+            rejectedCount: current.rejectedCount + 1,
+            stats: DashboardStatsModel(
+              todayVisits: current.stats.todayVisits,
+              todayIncome: current.stats.todayIncome,
+              weeklyVisits: current.stats.weeklyVisits,
+              weeklyIncome: current.stats.weeklyIncome,
+              monthlyVisits: current.stats.monthlyVisits,
+              monthlyIncome: current.stats.monthlyIncome,
+              yearlyVisits: current.stats.yearlyVisits,
+              yearlyIncome: current.stats.yearlyIncome,
+              pendingActions: updated.length,
             ),
-          );
+          ));
         }
       },
       onFailure: (_) {},
     );
-  }
-
-  void searchPatients(String query) {
-    _debounceTimer?.cancel();
-    _debounceTimer = Timer(const Duration(milliseconds: 300), () async {
-      final current = state;
-      if (current is! ClinicDashboardLoaded) return;
-
-      final result = await _repo.searchPatients(query);
-      result.fold(
-        onSuccess: (results) {
-          emit(
-            current.copyWith(searchResults: results),
-          );
-        },
-        onFailure: (_) {},
-      );
-    });
-  }
-
-  void switchTab(int index) {
-    final current = state;
-    if (current is ClinicDashboardLoaded) {
-      emit(current.copyWith(selectedTabIndex: index));
-    }
-  }
-
-  @override
-  Future<void> close() {
-    _debounceTimer?.cancel();
-    return super.close();
   }
 }
