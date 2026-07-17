@@ -1,4 +1,5 @@
 import 'package:doctory/core/theme/app_colors.dart';
+import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/features/create_post/cubit/create_post_cubit.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +10,9 @@ class MediaPickerBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    double bottomPadding = MediaQuery.of(context).viewPadding.bottom;
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8).copyWith(bottom: bottomPadding),
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: AppColors.grey100)),
@@ -19,7 +21,7 @@ class MediaPickerBar extends StatelessWidget {
         children: [
           Text(
             'add_to_post'.tr(),
-            style: const TextStyle(fontWeight: FontWeight.bold),
+            style: AppStyles.s12Bold,
           ),
           const Spacer(),
           IconButton(

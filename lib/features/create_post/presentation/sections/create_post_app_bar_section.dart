@@ -1,4 +1,6 @@
+import 'package:doctory/core/common/widgets/buttons/custom_button.dart';
 import 'package:doctory/core/theme/app_colors.dart';
+import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/features/community/presentation/widgets/community_app_bar.dart';
 import 'package:doctory/features/create_post/cubit/create_post_cubit.dart';
 import 'package:doctory/features/create_post/cubit/create_post_states.dart';
@@ -20,7 +22,8 @@ class CreatePostAppBarSection extends StatelessWidget
       actions: [
         BlocBuilder<CreatePostCubit, CreatePostStates>(
           builder: (context, state) {
-            return TextButton(
+            return CustomButton(
+              padding: EdgeInsetsDirectional.symmetric(horizontal: 20,vertical: 10),
               onPressed: () {
                 final text = contentController.text.trim();
                 final cubit = context.read<CreatePostCubit>();
@@ -33,10 +36,7 @@ class CreatePostAppBarSection extends StatelessWidget
               },
               child: Text(
                 'post_action'.tr(),
-                style: const TextStyle(
-                  color: AppColors.stitchPrimary,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: AppStyles.s14SemiBold.withColor(AppColors.white),
               ),
             );
           },

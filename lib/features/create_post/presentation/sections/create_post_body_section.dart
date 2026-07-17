@@ -1,3 +1,5 @@
+import 'package:doctory/core/common/widgets/inputs/custom_text_form_field.dart';
+import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/create_post/presentation/sections/create_post_media_section.dart';
@@ -26,29 +28,15 @@ class CreatePostBodySection extends StatelessWidget {
                   ),
                   child: Column(
                     children: [
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 20,
-                            backgroundColor: AppColors.grey100,
-                            child: const Icon(Icons.person, color: Colors.grey),
-                          ),
-                          12.pw,
-                          Text(
-                            'user'.tr(),
-                            style: const TextStyle(fontWeight: FontWeight.bold),
-                          ),
-                        ],
-                      ),
+                      const UserInfoRow(),
                       16.ph,
-                      TextField(
+                      CustomTextFormField(
                         controller: contentController,
-                        maxLines: null,
-                        minLines: 3,
-                        decoration: InputDecoration(
-                          hintText: 'post_content_hint'.tr(),
-                          border: InputBorder.none,
-                        ),
+                        maxLines: 20,
+                        hintText: 'post_content_hint'.tr(),
+                        fillColor: Colors.transparent,
+                        borderColor: Colors.transparent,
+
                       ),
                     ],
                   ),
@@ -61,6 +49,45 @@ class CreatePostBodySection extends StatelessWidget {
         ),
         const MediaPickerBar(),
       ],
+    );
+  }
+}
+
+class UserInfoRow extends StatelessWidget {
+  const UserInfoRow({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ValueListenableBuilder(
+      valueListenable: UserSession.userNotifier,
+      builder: (context, user, child) {
+        final String userName = (user is Map)
+            ? (user['fullName'] ?? user['name'] ?? 'User').toString()
+            : 'User';
+        final String? imageUrl = (user is Map)
+            ? (user['profilePictureUrl'] ?? user['avatar'])?.toString()
+            : null;
+
+        return Row(
+          children: [
+            CircleAvatar(
+              radius: 20,
+              backgroundColor: AppColors.grey100,
+              backgroundImage: (imageUrl != null && imageUrl.isNotEmpty)
+                  ? NetworkImage(imageUrl.toImageUrl)
+                  : null,
+              child: (imageUrl == null || imageUrl.isEmpty)
+                  ? const Icon(Icons.person, color: Colors.grey)
+                  : null,
+            ),
+            12.pw,
+            Text(
+              userName,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        );
+      },
     );
   }
 }
