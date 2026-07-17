@@ -62,12 +62,16 @@ void main() async {
 }
 
 void _initDeepLinks() {
-  final appLinks = AppLinks();
+  try {
+    final appLinks = AppLinks();
 
-  appLinks.uriLinkStream.listen(_handleDeepLink);
-  appLinks.getInitialLink().then((uri) {
-    if (uri != null) _handleDeepLink(uri);
-  });
+    appLinks.uriLinkStream.listen(_handleDeepLink);
+    appLinks.getInitialLink().then((uri) {
+      if (uri != null) _handleDeepLink(uri);
+    });
+  } catch (e) {
+    debugPrint('Deep links not available on this platform: $e');
+  }
 }
 
 void _handleDeepLink(Uri uri) {

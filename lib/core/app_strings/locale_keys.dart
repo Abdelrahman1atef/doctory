@@ -537,4 +537,10 @@ abstract class LocaleKeys {
   static const rejected = 'rejected';
   static const requests_inbox = 'requests_inbox';
   static const no_requests = 'no_requests';
+  static const period_overview = 'period_overview';
+  static const weekly = 'weekly';
+  static const monthly = 'monthly';
+  static const yearly = 'yearly';
+  static const visits = 'visits';
+  static const income = 'income';
 }

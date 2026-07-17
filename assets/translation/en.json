@@ -775,6 +775,12 @@
   "notifications": "Notifications",
   "requests_inbox": "Booking Requests",
   "no_requests": "No booking requests",
+  "period_overview": "Period Overview",
+  "weekly": "Weekly",
+  "monthly": "Monthly",
+  "yearly": "Yearly",
+  "visits": "Visits",
+  "income": "Income",
 
   "sunday": "Sunday",
   "monday": "Monday",

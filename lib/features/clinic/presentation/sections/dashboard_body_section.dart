@@ -5,6 +5,7 @@ import 'package:doctory/features/clinic/cubit/clinic_dashboard_cubit.dart';
 import 'package:doctory/features/clinic/cubit/clinic_dashboard_state.dart';
 import 'package:doctory/features/clinic/presentation/sections/dashboard_appbar_section.dart';
 import 'package:doctory/features/clinic/presentation/sections/dashboard_stats_section.dart';
+import 'package:doctory/features/clinic/presentation/sections/dashboard_period_stats_section.dart';
 import 'package:doctory/features/clinic/presentation/sections/dashboard_quick_actions_section.dart';
 
 class DashboardBodySection extends StatelessWidget {
@@ -48,6 +49,7 @@ class DashboardBodySection extends StatelessWidget {
           children: [
             DashboardAppbarSection(unreadCount: unreadCount),
             DashboardStatsSection(),
+            const DashboardPeriodStatsSection(),
             Expanded(
               child: DashboardQuickActionsSection(),
             ),

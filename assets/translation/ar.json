@@ -770,6 +770,12 @@
   "notifications": "الإشعارات",
   "requests_inbox": "طلبات الحجز",
   "no_requests": "لا توجد طلبات حجز",
+  "period_overview": "نظرة عامة دورية",
+  "weekly": "أسبوعي",
+  "monthly": "شهري",
+  "yearly": "سنوي",
+  "visits": "الزيارات",
+  "income": "الدخل",
 
   "sunday": "الأحد",
   "monday": "الإثنين",
