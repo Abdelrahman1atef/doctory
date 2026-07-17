@@ -33,6 +33,7 @@ abstract class AppRoutes {
   static const String galleryPicker = '/galleryPicker';
   static const String postDetails = '/post-details';
   static const String postImageView = '/post-image-view';
+  static const String postDeepLink = '/post';
 
   // My Appointments
   static const String myAppointments = '/my-appointments';

@@ -13,26 +13,12 @@ class PostCardHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDoctor = post.authorRole == 'doctor';
-
     return Row(
       children: [
-        isDoctor
-            ? DoctorAvatarBadge(
-                imageUrl: post.authorImage?.toImageUrl,
-                size: 40,
-              )
-            : CircleAvatar(
-                radius: 20,
-                backgroundImage:
-                    post.authorImage != null && post.authorImage!.isNotEmpty
-                    ? NetworkImage(post.authorImage!.toImageUrl)
-                    : null,
-                backgroundColor: AppColors.grey100,
-                child: post.authorImage == null || post.authorImage!.isEmpty
-                    ? const Icon(Icons.person, color: Colors.grey)
-                    : null,
-              ),
+        DoctorAvatarBadge(
+          imageUrl: post.authorImage?.toImageUrl,
+          size: 40,
+        ),
         12.pw,
         Expanded(
           child: Column(

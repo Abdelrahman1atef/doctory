@@ -1,5 +1,7 @@
+import 'package:app_links/app_links.dart';
 import 'package:doctory/core/cache/cache_helper.dart';
 import 'package:doctory/core/locator/service_locator.dart';
+import 'package:doctory/core/router/app_router.dart';
 import 'package:doctory/core/services/notifications/fcm_service.dart';
 import 'package:doctory/core/theme/theme_manager.dart';
 import 'package:doctory/src/app.dart';
@@ -8,6 +10,7 @@ import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:doctory/core/network/util/auth_listener.dart';
 import 'package:doctory/core/services/remote_config_service.dart';
@@ -54,7 +57,26 @@ void main() async {
     FirebaseAnalytics.instance.logAppOpen();
     RemoteConfigService.init();
     FBMessaging.initialize();
+    _initDeepLinks();
   });
+}
+
+void _initDeepLinks() {
+  final appLinks = AppLinks();
+
+  appLinks.uriLinkStream.listen(_handleDeepLink);
+  appLinks.getInitialLink().then((uri) {
+    if (uri != null) _handleDeepLink(uri);
+  });
+}
+
+void _handleDeepLink(Uri uri) {
+  if (uri.scheme == 'doctory' && uri.host == 'post') {
+    final postId = uri.pathSegments.isNotEmpty ? uri.pathSegments.first : '';
+    if (postId.isNotEmpty) {
+      AppRouter.navigatorKey.currentContext!.go('/post/$postId');
+    }
+  }
 }
 
 Future<void> _initFirebase() async {

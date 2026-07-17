@@ -1,6 +1,7 @@
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/features/community/data/model/community_models.dart';
 import 'package:doctory/features/community/presentation/views/community_view.dart';
+import 'package:doctory/features/community/presentation/views/post_deep_link_view.dart';
 import 'package:doctory/features/community/presentation/views/post_details_view.dart';
 import 'package:doctory/features/community/presentation/widgets/post_image_full_screen_view.dart';
 import 'package:go_router/go_router.dart';
@@ -25,6 +26,13 @@ class CommunityRouter {
         }
         final post = state.extra as PostModel;
         return PostDetailsView(post: post);
+      },
+    ),
+    GoRoute(
+      path: '${AppRoutes.postDeepLink}/:id',
+      builder: (context, state) {
+        final postId = state.pathParameters['id'] ?? '';
+        return PostDeepLinkView(postId: postId);
       },
     ),
     GoRoute(

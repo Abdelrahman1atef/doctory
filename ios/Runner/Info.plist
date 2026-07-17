@@ -45,7 +45,16 @@
 		<true/>
 		<key>UIApplicationSupportsIndirectInputEvents</key>
 		<true/>
-		<key>UIBackgroundModes</key>
+		<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>doctory</string>
+			</array>
+		</dict>
+	</array>
+	<key>UIBackgroundModes</key>
 		<array>
 			<string>remote-notification</string>
 			<string>location</string>
