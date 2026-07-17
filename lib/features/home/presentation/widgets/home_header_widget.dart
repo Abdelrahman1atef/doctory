@@ -26,7 +26,6 @@ class HomeHeaderWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDoctor = userRole == 'doctor';
-    print(imageUrl?.toImageUrl);
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
