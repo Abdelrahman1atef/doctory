@@ -33,6 +33,7 @@ class HomeHeaderSection extends StatelessWidget {
           userName: userName,
           imageUrl: imageUrl,
           userRole: role,
+          doctorType: UserSession.currentDoctorType,
           unreadCount: unreadCount,
         );
       },

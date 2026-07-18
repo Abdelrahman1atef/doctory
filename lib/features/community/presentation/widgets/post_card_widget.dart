@@ -14,6 +14,7 @@ class PostCardWidget extends StatelessWidget {
   final VoidCallback onCommentTapped;
   final VoidCallback onReactionsTapped;
   final VoidCallback? onPostTapped;
+  final VoidCallback? onAvatarTap;
 
   const PostCardWidget({
     super.key,
@@ -22,6 +23,7 @@ class PostCardWidget extends StatelessWidget {
     required this.onCommentTapped,
     required this.onReactionsTapped,
     this.onPostTapped,
+    this.onAvatarTap,
   });
 
   @override
@@ -36,7 +38,7 @@ class PostCardWidget extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                PostCardHeader(post: post),
+                PostCardHeader(post: post, onAvatarTap: onAvatarTap),
                 12.ph,
                 ExpandableTextWidget(text: post.content),
               ],

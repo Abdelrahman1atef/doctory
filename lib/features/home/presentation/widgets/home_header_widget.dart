@@ -1,3 +1,4 @@
+import 'package:doctory/core/common/models/role.dart';
 import 'package:doctory/core/common/widgets/images/doctor_avatar_badge.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/theme/app_colors.dart';
@@ -11,6 +12,7 @@ class HomeHeaderWidget extends StatelessWidget {
   final String userName;
   final String? imageUrl;
   final String? userRole;
+  final DoctorEmploymentType? doctorType;
   final VoidCallback? onNotificationTap;
   final int unreadCount;
 
@@ -19,13 +21,14 @@ class HomeHeaderWidget extends StatelessWidget {
     required this.userName,
     this.imageUrl,
     this.userRole,
+    this.doctorType,
     this.onNotificationTap,
     this.unreadCount = 0,
   });
 
   @override
   Widget build(BuildContext context) {
-    final isDoctor = userRole == 'doctor';
+    final isDoctorOrOwner = userRole == 'doctor' || userRole == 'clinicowner';
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
@@ -48,6 +51,22 @@ class HomeHeaderWidget extends StatelessWidget {
                   color: AppColors.stitchPrimary,
                 ),
               ),
+              if (doctorType != null) ...[
+                const SizedBox(height: 4),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                  decoration: BoxDecoration(
+                    color: AppColors.stitchPrimary.withValues(alpha: 0.1),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    _typeLabel(context),
+                    style: AppStyles.s12Medium.copyWith(
+                      color: AppColors.stitchPrimary,
+                    ),
+                  ),
+                ),
+              ],
               const SizedBox(height: 8),
               Text(
                 context.l10n('how_can_we_help'),
@@ -95,10 +114,12 @@ class HomeHeaderWidget extends StatelessWidget {
               ],
             ),
             const SizedBox(width: 4),
-            isDoctor
+            isDoctorOrOwner
                 ? DoctorAvatarBadge(
                     imageUrl: imageUrl?.toImageUrl,
                     size: 56,
+                    isFreelance: doctorType == DoctorEmploymentType.freelance,
+                    onTap: () => context.push(AppRoutes.clinicDashboard),
                   )
                 : Container(
                     width: 56,
@@ -129,5 +150,18 @@ class HomeHeaderWidget extends StatelessWidget {
         ),
       ],
     );
+  }
+
+  String _typeLabel(BuildContext context) {
+    switch (doctorType) {
+      case DoctorEmploymentType.freelance:
+        return context.l10n('freelance_doctor');
+      case DoctorEmploymentType.ownClinic:
+        return context.l10n('clinic_owner');
+      case DoctorEmploymentType.inCenter:
+        return context.l10n('doctor');
+      case null:
+        return '';
+    }
   }
 }

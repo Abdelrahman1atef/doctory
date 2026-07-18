@@ -17,7 +17,7 @@ class ReservationRequestsCubit extends Cubit<ReservationRequestsState> {
     );
   }
 
-  Future<void> accept(int requestId) async {
+  Future<void> accept(String requestId) async {
     final current = state;
     if (current is! RequestsLoaded) return;
     final result = await _repository.accept(requestId);
@@ -33,7 +33,7 @@ class ReservationRequestsCubit extends Cubit<ReservationRequestsState> {
     );
   }
 
-  Future<void> reject(int requestId) async {
+  Future<void> reject(String requestId) async {
     final current = state;
     if (current is! RequestsLoaded) return;
     final result = await _repository.reject(requestId);

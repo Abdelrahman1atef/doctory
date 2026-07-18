@@ -124,7 +124,7 @@ class ClinicDashboardCubit extends Cubit<ClinicDashboardState> {
     );
   }
 
-  Future<void> acceptBooking(int id) async {
+  Future<void> acceptBooking(String id) async {
     final result = await _repo.acceptBooking(id);
     result.fold(
       onSuccess: (_) {
@@ -153,7 +153,7 @@ class ClinicDashboardCubit extends Cubit<ClinicDashboardState> {
     );
   }
 
-  Future<void> rejectBooking(int id) async {
+  Future<void> rejectBooking(String id) async {
     final result = await _repo.rejectBooking(id);
     result.fold(
       onSuccess: (_) {

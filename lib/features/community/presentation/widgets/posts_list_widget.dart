@@ -18,6 +18,7 @@ class PostsListWidget extends StatelessWidget {
   final void Function(PostModel) onCommentTapped;
   final void Function(PostModel) onReactionsTapped;
   final void Function(PostModel) onPostTapped;
+  final void Function(PostModel)? onAvatarTap;
 
   const PostsListWidget({
     super.key,
@@ -32,6 +33,7 @@ class PostsListWidget extends StatelessWidget {
     required this.onCommentTapped,
     required this.onReactionsTapped,
     required this.onPostTapped,
+    this.onAvatarTap,
   });
 
   @override
@@ -98,6 +100,7 @@ class PostsListWidget extends StatelessWidget {
                         onCommentTapped: () => onCommentTapped(post),
                         onReactionsTapped: () => onReactionsTapped(post),
                         onPostTapped: () => onPostTapped(post),
+                        onAvatarTap: onAvatarTap != null ? () => onAvatarTap!(post) : null,
                       ),
                       if (index < posts.length - 1)
                         Container(height: 5, color: AppColors.grey100),

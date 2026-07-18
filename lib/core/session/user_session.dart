@@ -97,9 +97,7 @@ class UserSession {
         currentRole = UserRole.fromJson(
           (userData['role'] ?? userData['roles'])?.toString(),
         );
-        currentDoctorType = DoctorEmploymentType.fromJson(
-          userData['doctorType']?.toString(),
-        );
+        currentDoctorType = _parseDoctorType(userData);
         final rawPermissions = userData['permissions'] as List<dynamic>?;
         if (rawPermissions != null) {
           currentPermissions = rawPermissions
@@ -169,6 +167,18 @@ class UserSession {
     }
   }
 
+  static DoctorEmploymentType? _parseDoctorType(Map<String, dynamic> userData) {
+    if (userData['doctorType'] != null) {
+      return DoctorEmploymentType.fromJson(userData['doctorType'].toString());
+    }
+    if (userData['isFreelanceDoctor'] is bool) {
+      return userData['isFreelanceDoctor'] as bool
+          ? DoctorEmploymentType.freelance
+          : DoctorEmploymentType.ownClinic;
+    }
+    return null;
+  }
+
   /// Logout and clear session
   static Future<void> logout() async {
     // Disconnect Chat Realtime Service
@@ -229,9 +239,7 @@ class UserSession {
         currentRole = UserRole.fromJson(
           (userData['role'] ?? userData['roles'])?.toString(),
         );
-        currentDoctorType = DoctorEmploymentType.fromJson(
-          userData['doctorType']?.toString(),
-        );
+        currentDoctorType = _parseDoctorType(userData);
         final rawPermissions = userData['permissions'] as List<dynamic>?;
         if (rawPermissions != null) {
           currentPermissions = rawPermissions

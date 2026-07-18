@@ -8,8 +8,9 @@ import 'package:flutter/material.dart';
 
 class PostCardHeader extends StatelessWidget {
   final PostModel post;
+  final VoidCallback? onAvatarTap;
 
-  const PostCardHeader({super.key, required this.post});
+  const PostCardHeader({super.key, required this.post, this.onAvatarTap});
 
   @override
   Widget build(BuildContext context) {
@@ -18,6 +19,9 @@ class PostCardHeader extends StatelessWidget {
         DoctorAvatarBadge(
           imageUrl: post.authorImage?.toImageUrl,
           size: 40,
+          showBadge: post.isMedicalProfessional,
+          isFreelance: post.isFreelanceDoctor,
+          onTap: onAvatarTap,
         ),
         12.pw,
         Expanded(

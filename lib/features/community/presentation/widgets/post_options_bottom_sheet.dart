@@ -5,7 +5,6 @@ import 'package:doctory/features/chat/data/repo/chat_repo.dart';
 import 'package:doctory/features/community/data/model/community_models.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:go_router/go_router.dart';
 
@@ -45,16 +44,16 @@ class PostOptionsBottomSheet extends StatelessWidget {
                 );
               },
             ),
-          ListTile(
-            leading: const Icon(Icons.copy),
-            title: Text('copy_link'.tr()),
-            onTap: () {
-              final url = 'doctory://post/${post.id}';
-              Clipboard.setData(ClipboardData(text: url));
-              Navigator.pop(context);
-              Alerts.showToast('copy_link'.tr());
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.copy),
+          //   title: Text('copy_link'.tr()),
+          //   onTap: () {
+          //     final url = 'doctory://post/${post.id}';
+          //     Clipboard.setData(ClipboardData(text: url));
+          //     Navigator.pop(context);
+          //     Alerts.showToast('copy_link'.tr());
+          //   },
+          // ),
           // ListTile(
           //   leading: const Icon(Icons.report_outlined),
           //   title: Text('report'.tr()),

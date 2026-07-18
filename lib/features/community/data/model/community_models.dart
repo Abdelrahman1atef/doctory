@@ -25,11 +25,15 @@ class PostModel {
   final String? authorName;
   final String? authorImage;
   final String? authorRole;
+  final bool isFreelanceDoctor;
   final String createdAt;
   final int reactionCount;
   final int commentCount;
   final List<MediaModel> media;
   final ReactionType myReaction;
+
+  bool get isMedicalProfessional =>
+      authorRole != null && authorRole != 'patient' || isFreelanceDoctor;
 
   PostModel({
     required this.id,
@@ -38,6 +42,7 @@ class PostModel {
     this.authorName,
     this.authorImage,
     this.authorRole,
+    this.isFreelanceDoctor = false,
     required this.createdAt,
     required this.reactionCount,
     required this.commentCount,
@@ -53,6 +58,7 @@ class PostModel {
       authorName: json['authorName'],
       authorImage: json['authorProfileImageUrl'] ?? json['authorImage'],
       authorRole: json['authorRole'],
+      isFreelanceDoctor: json['isFreelanceDoctor'] == true,
       createdAt: json['createdAt'] ?? '',
       reactionCount: json['reactionCount'] ?? 0,
       commentCount: json['commentCount'] ?? 0,
@@ -74,6 +80,7 @@ class PostModel {
     String? authorName,
     String? authorImage,
     String? authorRole,
+    bool? isFreelanceDoctor,
     String? createdAt,
     int? reactionCount,
     int? commentCount,
@@ -87,6 +94,7 @@ class PostModel {
       authorName: authorName ?? this.authorName,
       authorImage: authorImage ?? this.authorImage,
       authorRole: authorRole ?? this.authorRole,
+      isFreelanceDoctor: isFreelanceDoctor ?? this.isFreelanceDoctor,
       createdAt: createdAt ?? this.createdAt,
       reactionCount: reactionCount ?? this.reactionCount,
       commentCount: commentCount ?? this.commentCount,

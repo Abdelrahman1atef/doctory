@@ -5,12 +5,16 @@ class DoctorAvatarBadge extends StatelessWidget {
   final String? imageUrl;
   final double size;
   final VoidCallback? onTap;
+  final bool showBadge;
+  final bool? isFreelance;
 
   const DoctorAvatarBadge({
     super.key,
     this.imageUrl,
     this.size = 48,
     this.onTap,
+    this.showBadge = true,
+    this.isFreelance,
   });
 
   @override
@@ -22,28 +26,30 @@ class DoctorAvatarBadge extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: size / 2,
-            backgroundImage: imageUrl != null && imageUrl!.isNotEmpty ? NetworkImage(imageUrl!) : null,
+            backgroundImage:
+                imageUrl != null && imageUrl!.isNotEmpty ? NetworkImage(imageUrl!) : null,
             child: imageUrl == null || imageUrl!.isEmpty
                 ? const Icon(Icons.person, size: 28)
                 : null,
           ),
-          Positioned(
-            bottom: -2,
-            right: -2,
-            child: Container(
-              width: size / 3.2,
-              height: size / 3.2,
-              decoration: const BoxDecoration(
-                color: AppColors.stitchPrimary,
-                shape: BoxShape.circle,
-              ),
-              child: const Icon(
-                Icons.verified,
-                color: Colors.white,
-                size: 12,
+          if (showBadge)
+            Positioned(
+              bottom: -2,
+              right: -2,
+              child: Container(
+                width: size / 3.2,
+                height: size / 3.2,
+                decoration: BoxDecoration(
+                  color: isFreelance == true ? AppColors.warning : AppColors.stitchPrimary,
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  isFreelance == true ? Icons.person_pin : Icons.local_hospital,
+                  color: Colors.white,
+                  size: 12,
+                ),
               ),
             ),
-          ),
         ],
       ),
     );

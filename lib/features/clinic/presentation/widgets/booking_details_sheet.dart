@@ -119,8 +119,6 @@ class _BookingDetailsContent extends StatelessWidget {
     switch (type) {
       case AppointmentType.inPerson:
         return 'in_person'.tr();
-      case AppointmentType.online:
-        return 'online'.tr();
       case AppointmentType.followUp:
         return 'follow_up'.tr();
     }
