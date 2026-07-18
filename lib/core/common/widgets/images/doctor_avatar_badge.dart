@@ -44,7 +44,7 @@ class DoctorAvatarBadge extends StatelessWidget {
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  isFreelance == true ? Icons.person_pin : Icons.local_hospital,
+                  isFreelance == true ? Icons.medical_services : Icons.local_hospital,
                   color: Colors.white,
                   size: 12,
                 ),

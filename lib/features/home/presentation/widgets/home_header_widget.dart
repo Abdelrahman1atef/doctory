@@ -28,7 +28,7 @@ class HomeHeaderWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isDoctorOrOwner = userRole == 'doctor' || userRole == 'clinicowner';
+    final isDoctorOrOwner = userRole?.toLowerCase() == 'doctor' || userRole?.toLowerCase() == 'clinicowner';
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.center,
