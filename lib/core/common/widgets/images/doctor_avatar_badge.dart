@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import '../../../theme/app_colors.dart';
 
@@ -26,11 +27,10 @@ class DoctorAvatarBadge extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: size / 2,
-            backgroundImage:
-                imageUrl != null && imageUrl!.isNotEmpty ? NetworkImage(imageUrl!) : null,
-            child: imageUrl == null || imageUrl!.isEmpty
-                ? const Icon(Icons.person, size: 28)
+            backgroundImage: imageUrl != null && imageUrl!.isNotEmpty
+                ? null
                 : null,
+            child: _buildAvatarContent(),
           ),
           if (showBadge)
             Positioned(
@@ -51,6 +51,28 @@ class DoctorAvatarBadge extends StatelessWidget {
               ),
             ),
         ],
+      ),
+    );
+  }
+
+  Widget _buildAvatarContent() {
+    if (imageUrl == null || imageUrl!.isEmpty) {
+      return const Icon(Icons.person, size: 28);
+    }
+
+    return ClipOval(
+      child: CachedNetworkImage(
+        imageUrl: imageUrl!,
+        width: size,
+        height: size,
+        fit: BoxFit.cover,
+        placeholder: (context, url) => Image.asset(
+          'assets/images/app_logo.png',
+          width: size,
+          height: size,
+          fit: BoxFit.contain,
+        ),
+        errorWidget: (context, url, error) => const Icon(Icons.person, size: 28),
       ),
     );
   }

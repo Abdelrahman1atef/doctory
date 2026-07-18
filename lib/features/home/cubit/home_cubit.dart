@@ -13,9 +13,12 @@ class HomeCubit extends Cubit<HomeStates> {
   HomeCubit(this._homeRepo) : super(HomeInitialState());
 
   void getHomeData() async {
-    if (state is! HomeSuccessState) {
-      emit(HomeLoadingState());
-    }
+    emit(HomeSuccessState(
+      specialties: const [],
+      recommendedDoctors: const [],
+      featuredClinics: const [],
+      unreadCount: 0,
+    ));
 
     final sharedCubit = sl<SharedSpecializationsCubit>();
     if (sharedCubit.state is! SharedSpecializationsLoaded) {
