@@ -18,7 +18,7 @@ class PostCardHeader extends StatelessWidget {
       children: [
         DoctorAvatarBadge(
           imageUrl: post.authorImage?.toImageUrl,
-          size: 40,
+          size: 50,
           showBadge: post.isMedicalProfessional,
           isFreelance: post.isFreelanceDoctor,
           onTap: onAvatarTap,

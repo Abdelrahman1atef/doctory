@@ -114,6 +114,10 @@ class AuthCubit extends Cubit<AuthStates> {
       unionIdImage: unionIdImage,
       taxCardImage: taxCardImage,
       commercialRegisterImage: commercialRegisterImage,
+      clinicGuid: request.clinicGuid,
+      specializationId: request.specializationId,
+      bio: request.bio,
+      yearsOfExperience: request.yearsOfExperience,
     );
 
     final result = await _authRepo.signup(updatedRequest);

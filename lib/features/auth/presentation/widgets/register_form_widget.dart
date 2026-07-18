@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../../../core/common/models/specialty_model.dart';
 import '../../../../core/common/widgets/buttons/social_auth_button.dart';
 import '../../../../core/common/widgets/images/profile_image_picker.dart';
 import '../../../../core/common/widgets/inputs/stitch_text_field.dart';
@@ -22,6 +23,8 @@ class RegisterFormWidget extends StatelessWidget {
   final TextEditingController yearController;
   final TextEditingController passwordController;
   final TextEditingController confirmPasswordController;
+  final TextEditingController bioController;
+  final TextEditingController yearsOfExperienceController;
   final String? selectedGender;
   final bool obscurePassword;
   final bool obscureConfirmPassword;
@@ -37,13 +40,14 @@ class RegisterFormWidget extends StatelessWidget {
   final String? practiceCardFileName;
   final String? unionFileName;
   final String? taxCardFileName;
-  final String? commercialRegisterFileName;
   final File? profileImage;
   final VoidCallback? onPickPracticeCard;
   final VoidCallback? onPickUnion;
   final VoidCallback? onPickTaxCard;
-  final VoidCallback? onPickCommercialRegister;
   final ValueChanged<File?>? onPickProfileImage;
+  final List<SpecialtyModel>? specializations;
+  final String? selectedSpecializationId;
+  final ValueChanged<String?>? onSpecializationChanged;
 
   const RegisterFormWidget({
     super.key,
@@ -71,13 +75,16 @@ class RegisterFormWidget extends StatelessWidget {
     this.practiceCardFileName,
     this.unionFileName,
     this.taxCardFileName,
-    this.commercialRegisterFileName,
     this.profileImage,
     this.onPickPracticeCard,
     this.onPickUnion,
     this.onPickTaxCard,
-    this.onPickCommercialRegister,
     this.onPickProfileImage,
+    this.specializations,
+    this.selectedSpecializationId,
+    this.onSpecializationChanged,
+    required this.bioController,
+    required this.yearsOfExperienceController,
   });
 
   @override
@@ -351,17 +358,6 @@ class RegisterFormWidget extends StatelessWidget {
               hint: context.l10n('upload_file_hint'),
               isRequired: true,
               onPick: onPickTaxCard!,
-            ),
-            12.ph,
-          ],
-
-          if (onPickCommercialRegister != null) ...[
-            StitchUploadField(
-              label: context.l10n('commercial_register_label'),
-              fileName: commercialRegisterFileName,
-              hint: context.l10n('upload_file_hint'),
-              isRequired: true,
-              onPick: onPickCommercialRegister!,
             ),
             12.ph,
           ],

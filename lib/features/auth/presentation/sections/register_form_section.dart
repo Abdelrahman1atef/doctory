@@ -9,6 +9,8 @@ import '../../../../core/common/models/type_of_user_for_register_flow.dart';
 import '../../../../core/router/router_names.dart';
 import '../../../../core/services/alerts.dart';
 import '../../../../core/utils/extensions.dart';
+import '../../../../core/locator/service_locator.dart';
+import '../../../../shared/cubit/specializations_cubit.dart';
 import '../../cubit/auth_cubit.dart';
 import '../../cubit/auth_states.dart';
 import '../../data/model/signup_request.dart';
@@ -35,14 +37,16 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
   final _dayController = TextEditingController();
   final _monthController = TextEditingController();
   final _yearController = TextEditingController();
+  final _bioController = TextEditingController();
+  final _yearsOfExperienceController = TextEditingController();
 
   String? _selectedGender;
+  String? _selectedSpecializationId;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   File? _professionalPracticeCard;
   File? _unionIdImage;
   File? _taxCardImage;
-  File? _commercialRegister;
   File? _profileImage;
 
   TypeOfUserForRegisterFlow get _typeOfUser {
@@ -54,6 +58,14 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
   bool get _isDoctor => widget.role == 'doctor';
 
   @override
+  void initState() {
+    super.initState();
+    if (_isDoctor) {
+      sl<SharedSpecializationsCubit>().getFamousSpecializations();
+    }
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
     _emailController.dispose();
@@ -63,6 +75,8 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
     _dayController.dispose();
     _monthController.dispose();
     _yearController.dispose();
+    _bioController.dispose();
+    _yearsOfExperienceController.dispose();
     super.dispose();
   }
 
@@ -99,7 +113,6 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
     bool isUnion = false,
     bool isPracticeCard = false,
     bool isTaxCard = false,
-    bool isCommercialRegister = false,
     bool isProfile = false,
   }) async {
     final result = await FilePicker.platform.pickFiles(
@@ -113,8 +126,6 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
           _professionalPracticeCard = File(result.files.single.path!);
         } else if (isTaxCard) {
           _taxCardImage = File(result.files.single.path!);
-        } else if (isCommercialRegister) {
-          _commercialRegister = File(result.files.single.path!);
         } else if (isProfile) {
           _profileImage = File(result.files.single.path!);
         }
@@ -150,6 +161,11 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
         typeOfUser: _typeOfUser,
         birthDate: _buildBirthDate(),
         gender: _getGenderValue(),
+        specializationId: _selectedSpecializationId,
+        bio: _bioController.text.trim().isEmpty ? null : _bioController.text.trim(),
+        yearsOfExperience: _yearsOfExperienceController.text.trim().isEmpty
+            ? null
+            : int.tryParse(_yearsOfExperienceController.text.trim()),
       );
 
       context.read<AuthCubit>().signup(
@@ -158,13 +174,17 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
         professionalPracticeCardFile: _isDoctor ? _professionalPracticeCard : null,
         unionIdFile: _isDoctor ? _unionIdImage : null,
         taxCardFile: _isDoctor && widget.doctorType == 'ownClinic' ? _taxCardImage : null,
-        commercialRegisterFile: _isDoctor && widget.doctorType == 'ownClinic' ? _commercialRegister : null,
       );
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final specState = sl<SharedSpecializationsCubit>().state;
+    final specializations = _isDoctor && specState is SharedSpecializationsLoaded
+        ? specState.specializations
+        : null;
+
     return BlocListener<AuthCubit, AuthStates>(
       listener: (context, state) {
         if (state is AuthLoadingState) {
@@ -206,6 +226,8 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
         yearController: _yearController,
         passwordController: _passwordController,
         confirmPasswordController: _confirmPasswordController,
+        bioController: _bioController,
+        yearsOfExperienceController: _yearsOfExperienceController,
         selectedGender: _selectedGender,
         obscurePassword: _obscurePassword,
         obscureConfirmPassword: _obscureConfirmPassword,
@@ -226,9 +248,6 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
         taxCardFileName: _isDoctor
             ? _taxCardImage?.path.split('/').last ?? _taxCardImage?.path.split('\\').last
             : null,
-        commercialRegisterFileName: _isDoctor && widget.doctorType == 'ownClinic'
-            ? _commercialRegister?.path.split('/').last ?? _commercialRegister?.path.split('\\').last
-            : null,
         profileImage: _isDoctor ? _profileImage : null,
         onPickPracticeCard: _isDoctor
             ? () => _pickFile(isPracticeCard: true)
@@ -239,15 +258,17 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
         onPickTaxCard: _isDoctor && widget.doctorType == 'ownClinic'
             ? () => _pickFile(isTaxCard: true)
             : null,
-        onPickCommercialRegister: _isDoctor && widget.doctorType == 'ownClinic'
-            ? () => _pickFile(isCommercialRegister: true)
-            : null,
         onPickProfileImage: _isDoctor
             ? (File? file) {
                 setState(() {
                   if (file != null) _profileImage = file;
                 });
               }
+            : null,
+        specializations: _isDoctor ? specializations : null,
+        selectedSpecializationId: _selectedSpecializationId,
+        onSpecializationChanged: _isDoctor
+            ? (value) => setState(() => _selectedSpecializationId = value)
             : null,
         onGoogleSignIn: () => context.read<AuthCubit>().signInWithGoogle(),
         onFacebookSignIn: () => context.read<AuthCubit>().signInWithFacebook(),

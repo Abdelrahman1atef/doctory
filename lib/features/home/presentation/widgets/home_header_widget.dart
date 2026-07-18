@@ -117,7 +117,7 @@ class HomeHeaderWidget extends StatelessWidget {
             isDoctorOrOwner
                 ? DoctorAvatarBadge(
                     imageUrl: imageUrl?.toImageUrl,
-                    size: 56,
+                    size: 60,
                     isFreelance: doctorType == DoctorEmploymentType.freelance,
                     onTap: () => context.push(AppRoutes.clinicDashboard),
                   )

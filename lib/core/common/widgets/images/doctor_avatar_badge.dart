@@ -27,24 +27,23 @@ class DoctorAvatarBadge extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: size / 2,
-            backgroundImage: imageUrl != null && imageUrl!.isNotEmpty
-                ? null
-                : null,
+            backgroundImage: imageUrl != null && imageUrl!.isNotEmpty ? null : null,
             child: _buildAvatarContent(),
           ),
           if (showBadge)
             Positioned(
-              bottom: -2,
-              right: -2,
+              bottom: -5,
+              right: -5,
               child: Container(
-                width: size / 3.2,
-                height: size / 3.2,
+                width: size * 0.5,
+                height: size * 0.5,
+                padding: const EdgeInsetsDirectional.all(2),
                 decoration: BoxDecoration(
-                  color: isFreelance == true ? AppColors.warning : AppColors.stitchPrimary,
+                  color: isFreelance == true ? AppColors.info : AppColors.stitchPrimary,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
-                  isFreelance == true ? Icons.medical_services : Icons.local_hospital,
+                  isFreelance == true ? Icons.medical_information_outlined : Icons.local_hospital,
                   color: Colors.white,
                   size: 12,
                 ),

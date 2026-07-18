@@ -17,6 +17,10 @@ class SignupRequest {
   final String? unionIdImage;
   final String? taxCardImage;
   final String? commercialRegisterImage;
+  final String? clinicGuid;
+  final String? specializationId;
+  final String? bio;
+  final int? yearsOfExperience;
 
   SignupRequest({
     required this.fullName,
@@ -34,6 +38,10 @@ class SignupRequest {
     this.unionIdImage,
     this.taxCardImage,
     this.commercialRegisterImage,
+    this.clinicGuid,
+    this.specializationId,
+    this.bio,
+    this.yearsOfExperience,
   });
 
   Map<String, dynamic> toJson() {
@@ -53,6 +61,10 @@ class SignupRequest {
       if (unionIdImage != null) 'unionIdCardImage': unionIdImage,
       if (taxCardImage != null) 'taxCardImage': taxCardImage,
       if (commercialRegisterImage != null) 'commercialRegisterImage': commercialRegisterImage,
+      if (clinicGuid != null) 'clinicGuid': clinicGuid,
+      if (specializationId != null) 'SpecializationId': specializationId,
+      if (bio != null) 'Bio': bio,
+      if (yearsOfExperience != null) 'YearsOfExperience': yearsOfExperience,
     };
   }
 }
