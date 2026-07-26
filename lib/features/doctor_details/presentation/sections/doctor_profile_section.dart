@@ -17,31 +17,52 @@ class DoctorProfileSection extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
-        // Avatar
         Center(
-          child: Container(
-            width: 120,
-            height: 120,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(color: AppColors.stitchSurfaceLow, width: 4),
-              image: DecorationImage(
-                image: NetworkImage(doctor.imageUrl!.toImageUrl),
-                fit: BoxFit.cover,
-                onError: (_, _) {},
+          child: Stack(
+            children: [
+              Container(
+                width: 120,
+                height: 120,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.stitchSurfaceLow, width: 4),
+                  image: doctor.imageUrl != null
+                      ? DecorationImage(
+                          image: NetworkImage(doctor.imageUrl!.toImageUrl),
+                          fit: BoxFit.cover,
+                          onError: (_, _) {},
+                        )
+                      : null,
+                ),
+                child: doctor.imageUrl == null
+                    ? const Icon(
+                        Icons.person,
+                        size: 60,
+                        color: AppColors.stitchSecondary,
+                      )
+                    : null,
               ),
-            ),
-            child: doctor.imageUrl == null
-                ? const Icon(
-                    Icons.person,
-                    size: 60,
-                    color: AppColors.stitchSecondary,
-                  )
-                : null,
+              if (doctor.isFreelance)
+                Positioned(
+                  bottom: 0,
+                  right: 0,
+                  child: Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: const BoxDecoration(
+                      color: AppColors.stitchPrimaryContainer,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.verified,
+                      size: 20,
+                      color: AppColors.stitchSurfaceLowest,
+                    ),
+                  ),
+                ),
+            ],
           ),
         ),
         16.ph,
-        // Name and Specialty
         Text(
           doctor.displayName,
           style: AppStyles.s24Bold.withColor(AppColors.stitchPrimaryContainer),
@@ -51,6 +72,15 @@ class DoctorProfileSection extends StatelessWidget {
           doctor.displaySpecialty,
           style: AppStyles.s16Medium.withColor(AppColors.stitchSecondary),
         ),
+        if (doctor.clinicName != null && doctor.clinicName!.isNotEmpty) ...[
+          4.ph,
+          Text(
+            doctor.clinicName!,
+            style: AppStyles.s14Medium.withColor(AppColors.stitchSecondary).copyWith(
+              fontStyle: FontStyle.italic,
+            ),
+          ),
+        ],
         8.ph,
         GestureDetector(
           onTap: () => context.push(
@@ -63,7 +93,7 @@ class DoctorProfileSection extends StatelessWidget {
               const Icon(Icons.star_rounded, color: Colors.amber, size: 20),
               4.pw,
               Text(
-                doctor.rating.toString(),
+                doctor.rating.toStringAsFixed(1),
                 style: AppStyles.s14Bold.withColor(
                   AppColors.stitchSecondary,
                 ),
@@ -79,15 +109,9 @@ class DoctorProfileSection extends StatelessWidget {
           ),
         ),
         24.ph,
-        // Stats Row
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // _buildStatCard(
-            //   'patients'.tr(),
-            //   '${doctor.patientsCount ?? 0}+',
-            //   Icons.people_outline,
-            // ),
             _buildStatCard(
               'experience'.tr(),
               '${doctor.experience ?? 0} ${'years'.tr()}',
@@ -96,7 +120,7 @@ class DoctorProfileSection extends StatelessWidget {
             20.pw,
             _buildStatCard(
               LocaleKeys.rating.tr(),
-              doctor.rating.toString(),
+              doctor.rating.toStringAsFixed(1),
               Icons.star_border,
             ),
           ],

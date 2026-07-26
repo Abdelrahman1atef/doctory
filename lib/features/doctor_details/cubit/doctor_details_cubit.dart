@@ -1,18 +1,19 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:doctory/features/doctor_details/data/data_source/doctor_details_mock_data.dart';
 import 'doctor_details_states.dart';
+import '../data/data_source/doctor_details_remote_data_source.dart';
 
 class DoctorDetailsCubit extends Cubit<DoctorDetailsStates> {
-  DoctorDetailsCubit() : super(DoctorDetailsInitial());
+  final DoctorDetailsRemoteDataSource remoteDataSource;
+
+  DoctorDetailsCubit({required this.remoteDataSource})
+      : super(DoctorDetailsInitial());
 
   void loadDoctorDetails(String id) async {
     emit(DoctorDetailsLoading());
-    try {
-      await Future.delayed(const Duration(milliseconds: 500));
-      final doctor = DoctorDetailsMockData.getDoctorDetails(id);
-      emit(DoctorDetailsLoaded(doctor));
-    } catch (e) {
-      emit(DoctorDetailsError('Failed to load doctor details'));
-    }
+    final result = await remoteDataSource.getDoctorDetails(id);
+    result.fold(
+      onSuccess: (doctor) => emit(DoctorDetailsLoaded(doctor)),
+      onFailure: (failure) => emit(DoctorDetailsError(failure.message)),
+    );
   }
 }

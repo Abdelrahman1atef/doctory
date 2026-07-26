@@ -1,5 +1,6 @@
 import 'package:doctory/core/cache/cache_helper.dart';
 import 'package:doctory/core/locator/service_locator.dart';
+import 'package:doctory/core/router/app_router.dart';
 import 'package:doctory/core/services/deep_link_service.dart';
 import 'package:doctory/core/services/notifications/fcm_service.dart';
 import 'package:doctory/core/theme/theme_manager.dart';
@@ -8,7 +9,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:doctory/core/network/util/auth_listener.dart';
 import 'package:doctory/core/services/remote_config_service.dart';
@@ -56,6 +59,20 @@ void main() async {
     RemoteConfigService.init();
     FBMessaging.initialize();
     DeepLinkService.instance.init();
+
+    if (kDebugMode) {
+      _registerDebugDeepLinkHandlers();
+    }
+  });
+}
+
+void _registerDebugDeepLinkHandlers() {
+  // Debug-only: handles doctory:// scheme for testing without a real domain
+  DeepLinkService.instance.register((uri) {
+    if (uri.scheme != 'doctory') return false;
+    final path = '/${uri.host}${uri.path == '/' ? '' : uri.path}';
+    AppRouter.navigatorKey.currentContext?.go(path);
+    return true;
   });
 }
 

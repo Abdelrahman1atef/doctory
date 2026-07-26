@@ -1,3 +1,5 @@
+import 'doctor_availability_dto.dart';
+import 'doctor_rating_summary_dto.dart';
 import 'time_slot_model.dart';
 
 class DoctorModel {
@@ -13,13 +15,18 @@ class DoctorModel {
   final double? behaviorRating;
   final double? receptionRating;
   final int reviewsCount;
-  final int? experience; // in years
+  final int? experience;
   final int? patientsCount;
   final String? bio;
   final String? bioAr;
   final List<String>? qualifications;
-  final Map<String, List<TimeSlotModel>>?
-      availableSlots; // Map of ISO Date String to slots
+  final Map<String, List<TimeSlotModel>>? availableSlots;
+  final bool isFreelance;
+  final String? clinicId;
+  final String? clinicName;
+  final String? specializationId;
+  final List<DoctorRatingSummaryDto>? recentRatings;
+  final List<DoctorAvailabilityDto>? availabilities;
 
   DoctorModel({
     required this.id,
@@ -40,6 +47,12 @@ class DoctorModel {
     this.bioAr,
     this.qualifications,
     this.availableSlots,
+    this.isFreelance = false,
+    this.clinicId,
+    this.clinicName,
+    this.specializationId,
+    this.recentRatings,
+    this.availabilities,
   });
 
   /// The display name: prefer Arabic name if available, fallback to name.
@@ -69,17 +82,17 @@ class DoctorModel {
 
     return DoctorModel(
       id: json['id']?.toString() ?? '',
-      name: json['name'] ?? '',
+      name: json['name'] ?? json['fullName'] ?? '',
       nameAr: json['nameAr'],
-      specialty: json['specialty'] ?? json['specializationEnName'] ?? '',
+      specialty: json['specialty'] ?? json['specializationEnName'] ?? json['specializationName'] ?? '',
       specialtyAr: json['specialtyAr'] ?? json['specializationArName'],
       nextAppointment: json['nextAppointment'],
-      imageUrl: json['imageUrl'] ?? json['image'],
-      rating: (json['rating'] ?? 0.0).toDouble(),
+      imageUrl: json['imageUrl'] ?? json['image'] ?? json['profilePictureUrl'],
+      rating: (json['rating'] ?? json['averageRating'] ?? 0.0).toDouble(),
       cleanlinessRating: (json['cleanlinessRating'] ?? 0.0).toDouble(),
       behaviorRating: (json['behaviorRating'] ?? 0.0).toDouble(),
       receptionRating: (json['receptionRating'] ?? 0.0).toDouble(),
-      reviewsCount: json['reviewsCount'] ?? 0,
+      reviewsCount: json['reviewsCount'] ?? json['totalRatings'] ?? 0,
       experience: json['experience'] ?? json['yearsOfExperience'],
       patientsCount: json['patientsCount'],
       bio: json['bio'],
@@ -88,6 +101,20 @@ class DoctorModel {
           ? List<String>.from(json['qualifications'])
           : null,
       availableSlots: parsedSlots,
+      isFreelance: json['isFreelance'] ?? false,
+      clinicId: json['clinicId']?.toString(),
+      clinicName: json['clinicName'],
+      specializationId: json['specializationId']?.toString(),
+      recentRatings: json['recentRatings'] != null
+          ? (json['recentRatings'] as List)
+              .map((e) => DoctorRatingSummaryDto.fromJson(e))
+              .toList()
+          : null,
+      availabilities: json['availabilities'] != null
+          ? (json['availabilities'] as List)
+              .map((e) => DoctorAvailabilityDto.fromJson(e))
+              .toList()
+          : null,
     );
   }
 
@@ -119,6 +146,12 @@ class DoctorModel {
       'bioAr': bioAr,
       'qualifications': qualifications,
       'availableSlots': encodedSlots,
+      'isFreelance': isFreelance,
+      'clinicId': clinicId,
+      'clinicName': clinicName,
+      'specializationId': specializationId,
+      'recentRatings': recentRatings?.map((e) => e.toJson()).toList(),
+      'availabilities': availabilities?.map((e) => e.toJson()).toList(),
     };
   }
 }

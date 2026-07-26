@@ -25,6 +25,7 @@ import 'package:doctory/features/chat/di/chat_di.dart';
 import 'package:doctory/features/booking/di/booking_di.dart';
 import 'package:doctory/features/specializations/di/specializations_di.dart';
 import 'package:doctory/features/clinic_details/di/clinic_details_di.dart';
+import 'package:doctory/features/doctor_details/di/doctor_details_di.dart';
 import 'package:doctory/features/my_appointments/di/my_appointments_di.dart';
 import 'package:doctory/features/clinic/di/clinic_di.dart';
 import 'package:doctory/features/notifications/di/notifications_di.dart';
@@ -102,6 +103,7 @@ class ServiceLocator {
     setupSpecializationsLocator();
     setupMyAppointmentsDI(sl);
     setupClinicDetailsDI(sl);
+    setupDoctorDetailsDI(sl);
     setupClinicDI(sl);
     setupNotificationsDI();
     setupAdminLocator();
