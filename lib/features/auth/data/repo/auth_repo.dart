@@ -39,6 +39,7 @@ abstract class AuthRepo {
     required String fcmToken,
     required DevicePlatform devicePlatform,
   });
+  Future<ApiResult<bool>> verifyDeepLink(String data, String token);
 }
 
 class AuthRepoImpl implements AuthRepo {
@@ -198,6 +199,11 @@ class AuthRepoImpl implements AuthRepo {
       fcmToken: fcmToken,
       devicePlatform: devicePlatform,
     );
+  }
+
+  @override
+  Future<ApiResult<bool>> verifyDeepLink(String data, String token) async {
+    return await _dataSource.verifyDeepLink(data, token);
   }
 
   Future<void> _saveAuthSession(AuthResponse response) async {

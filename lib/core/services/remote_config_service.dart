@@ -23,6 +23,7 @@ class RemoteConfigService {
         "SHOW_FACEBOOK_AUTH": false,
         "SHOW_GOOGLE_AUTH": false,
         "SHOW_MAP_DIRECTIONS_FAB": false,
+        "FRONTEND_URL": "https://doctory.runasp.net/",
       });
 
       await _remoteConfig.setConfigSettings(
@@ -63,6 +64,9 @@ class RemoteConfigService {
   static bool get showGoogleAuth => _remoteConfig.getBool("SHOW_GOOGLE_AUTH");
   static bool get showMapDirectionsFab =>
       _remoteConfig.getBool("SHOW_MAP_DIRECTIONS_FAB");
+
+  static String get frontendUrl =>
+      _remoteConfig.getString("FRONTEND_URL");
 
   // For Force Update
   static bool get needsForceUpdate {

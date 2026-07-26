@@ -37,6 +37,7 @@ abstract class AuthRemoteDataSource {
     required String fcmToken,
     required DevicePlatform devicePlatform,
   });
+  Future<ApiResult<bool>> verifyDeepLink(String data, String token);
 }
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
@@ -206,6 +207,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
         'fcmToken': fcmToken,
         'devicePlatform': devicePlatform.toJson(),
       },
+    );
+  }
+
+  @override
+  Future<ApiResult<bool>> verifyDeepLink(String data, String token) async {
+    return await _apiConsumer.post(
+      path: AuthEndpoints.deepLinkVerify,
+      body: {'data': data, 'token': token},
+      parser: (json) => json['valid'] == true,
     );
   }
 }

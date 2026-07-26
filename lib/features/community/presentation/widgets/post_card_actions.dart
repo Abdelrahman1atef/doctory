@@ -1,9 +1,12 @@
+import 'package:doctory/core/config/deep_link_config.dart';
+import 'package:doctory/core/services/alerts.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/community/data/model/community_models.dart';
 import 'package:doctory/features/community/presentation/widgets/post_card_action_button.dart';
 import 'package:doctory/features/community/presentation/widgets/reaction_button_content_widget.dart';
 import 'package:easy_localization/easy_localization.dart' as easy_localization;
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:doctory/core/common/widgets/reaction_button/flutter_reaction_button.dart';
 
 class PostCardActions extends StatelessWidget {
@@ -79,7 +82,12 @@ class PostCardActions extends StatelessWidget {
             icon: Icons.share_outlined,
             color: AppColors.textSecondary,
             label: 'share'.tr(),
-            onTap: () {}, // Share action
+            onTap: () {
+              final subPath = '/post/${post.id}';
+              final url = '${DeepLinkConfig.scheme}://${DeepLinkConfig.host}$subPath';
+              Clipboard.setData(ClipboardData(text: url));
+              Alerts.showToast('copy_link'.tr());
+            },
           ),
         ),
       ],

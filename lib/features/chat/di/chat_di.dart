@@ -1,4 +1,8 @@
+import 'package:doctory/core/config/deep_link_config.dart';
+import 'package:doctory/core/router/app_router.dart';
+import 'package:doctory/core/services/deep_link_service.dart';
 import 'package:get_it/get_it.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/network/interfaces/api_consumer.dart';
 import '../../../../core/services/chat/chat_realtime_service.dart';
 import '../../../../core/services/file_upload_service.dart';
@@ -49,4 +53,24 @@ void setupChatDI(GetIt sl) {
       () => NewChatCubit(sl<ChatRepo>()),
     );
   }
+
+  // Deep link handler — /chat/*
+  DeepLinkService.instance.register((uri) {
+    if (uri.scheme != DeepLinkConfig.scheme ||
+        uri.host != DeepLinkConfig.host) {
+      return false;
+    }
+    if (uri.path.startsWith('/chat/room/')) {
+      final roomId = uri.pathSegments.last;
+      if (roomId.isNotEmpty) {
+        AppRouter.navigatorKey.currentContext?.go('/chat/room/$roomId');
+        return true;
+      }
+    }
+    if (uri.path.startsWith('/chat/')) {
+      AppRouter.navigatorKey.currentContext?.go('/chat');
+      return true;
+    }
+    return false;
+  });
 }

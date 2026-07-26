@@ -1,8 +1,7 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'package:doctory/core/router/app_router.dart';
-import 'package:doctory/core/router/router_names.dart';
-import 'package:doctory/features/chat/router/chat_router_names.dart';
+import 'package:doctory/core/services/deep_link_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
@@ -320,18 +319,29 @@ class FBMessaging {
     log('Notification clicked: ${notification.type}');
     log('Notification related data: ${notification.relatedData}');
 
+    // If notification carries a deep link, dispatch through DeepLinkService
+    if (notification.link != null && notification.link!.isNotEmpty) {
+      final uri = Uri.tryParse(notification.link!);
+      if (uri != null) {
+        DeepLinkService.instance.dispatch(uri);
+        return;
+      }
+    }
+
     final context = AppRouter.navigatorKey.currentContext;
     if (context == null) return;
 
     // التنقل بناءً على النوع المسجل في المشروع النيتف
     switch (notification.type) {
       case "NewMessage":
-        AppRouter.router.pushNamed(
-          ChatRouterNames.chatRoom,
-          pathParameters: {'id': ?notification.conversationId},
-        );
+        if (notification.conversationId != null) {
+          AppRouter.router.pushNamed(
+            'chatRoom',
+            pathParameters: {'id': notification.conversationId!},
+          );
+        }
       default:
-        AppRouter.router.push(AppRoutes.splash);
+        AppRouter.router.push('/');
     }
   }
 }
@@ -346,8 +356,9 @@ class FCMNotification {
   final String? type;
   final String? relatedData;
   final String? conversationId;
+  final String? link;
 
-  FCMNotification({this.title, this.message, this.type, this.relatedData, this.conversationId});
+  FCMNotification({this.title, this.message, this.type, this.relatedData, this.conversationId, this.link});
 
   /// إنشاء من Map مطابق للنيتف (related_data - title - message)
   factory FCMNotification.fromMap(Map<String, dynamic> map) {
@@ -357,6 +368,7 @@ class FCMNotification {
       type: map["type"]?.toString(),
       conversationId: map["conversationId"]?.toString(),
       relatedData: map["related_data"]?.toString(),
+      link: map["link"]?.toString(),
     );
   }
 
@@ -368,11 +380,12 @@ class FCMNotification {
       "type": type,
       "conversationId": conversationId,
       "related_data": relatedData,
+      "link": link,
     };
   }
 
   @override
   String toString() {
-    return 'FCMNotification(title: $title, message: $message, type: $type, relatedData: $relatedData)';
+    return 'FCMNotification(title: $title, message: $message, type: $type, link: $link, relatedData: $relatedData)';
   }
 }
