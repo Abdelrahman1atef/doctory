@@ -5,12 +5,14 @@ import 'clinic_details_states.dart';
 
 class ClinicDetailsCubit extends Cubit<ClinicDetailsStates> {
   final ClinicDetailsRemoteDataSource _remoteDataSource;
+  ClinicModel? _initialClinic;
 
   ClinicDetailsCubit({required ClinicDetailsRemoteDataSource remoteDataSource})
       : _remoteDataSource = remoteDataSource,
         super(ClinicDetailsInitial());
 
   void loadClinicDetails(ClinicModel clinic) async {
+    _initialClinic = clinic;
     if (!clinic.isRegistered) {
       emit(ClinicDetailsLoaded(clinic));
       return;
@@ -23,5 +25,11 @@ class ClinicDetailsCubit extends Cubit<ClinicDetailsStates> {
           emit(ClinicDetailsLoaded(detailedClinic)),
       onFailure: (failure) => emit(ClinicDetailsError(failure.message)),
     );
+  }
+
+  void refresh() {
+    if (_initialClinic != null) {
+      loadClinicDetails(_initialClinic!);
+    }
   }
 }
