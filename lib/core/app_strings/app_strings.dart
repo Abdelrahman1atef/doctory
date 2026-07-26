@@ -230,6 +230,12 @@ class AppStrings {
 
   static String get minutesSuffix => "minutes_suffix";
 
+  static String get distanceKm => "distance_km";
+
+  static String get distanceM => "distance_m";
+
+  static String get durationHour => "duration_hour";
+
   static String get waitingLabel => "waiting_label";
 
   static String get retry => "retry";

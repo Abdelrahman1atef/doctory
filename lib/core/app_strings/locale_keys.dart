@@ -76,6 +76,9 @@ abstract class LocaleKeys {
   static const retry = 'retry';
   static const currency_short_sar = 'currency_short_sar';
   static const minutes_suffix = 'minutes_suffix';
+  static const distance_km = 'distance_km';
+  static const distance_m = 'distance_m';
+  static const duration_hour = 'duration_hour';
   static const waiting_label = 'waiting_label';
   static const chat_input_hint = 'chat_input_hint';
   static const chat_inbox_empty = 'chat_inbox_empty';

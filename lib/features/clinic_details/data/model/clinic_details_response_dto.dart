@@ -1,18 +1,16 @@
 import 'package:doctory/core/common/models/clinic_model.dart';
+import 'package:doctory/core/common/models/doctor_model.dart';
 
 class ClinicDetailsResponseDto {
   final ClinicModel clinic;
 
   ClinicDetailsResponseDto({required this.clinic});
 
-  static String _formatTo12Hour(String? time) {
+  static String _formatTime(String? time) {
     if (time == null || time.isEmpty) return '';
     final parts = time.split(':');
     if (parts.length < 2) return time;
-    final hour = int.tryParse(parts[0]) ?? 0;
-    final minute = parts[1];
-    final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-    return '${hour12.toString().padLeft(2, '0')}:$minute';
+    return '${parts[0].padLeft(2, '0')}:${parts[1]}';
   }
 
   factory ClinicDetailsResponseDto.fromJson(Map<String, dynamic> json) {
@@ -23,8 +21,8 @@ class ClinicDetailsResponseDto {
       operatingHours = {};
       for (final day in data['workingDays'] as List) {
         final d = day as Map<String, dynamic>;
-        final start = _formatTo12Hour(d['startTime'] as String?);
-        final end = _formatTo12Hour(d['endTime'] as String?);
+        final start = _formatTime(d['startTime'] as String?);
+        final end = _formatTime(d['endTime'] as String?);
         operatingHours[d['dayOfWeek'] as String] = '$start - $end';
       }
     }
@@ -42,6 +40,9 @@ class ClinicDetailsResponseDto {
         imageUrl: data['imageUrl'],
         logo: data['logo'],
         rating: (data['rating'] ?? 0.0).toDouble(),
+        cleanlinessRating: (data['cleanlinessRating'] ?? 0.0).toDouble(),
+        behaviorRating: (data['behaviorRating'] ?? 0.0).toDouble(),
+        receptionRating: (data['receptionRating'] ?? 0.0).toDouble(),
         address: data['address'],
         addressAr: data['addressAr'],
         phone: data['phone'],
@@ -49,17 +50,30 @@ class ClinicDetailsResponseDto {
         website: data['website'],
         lat: (data['lat'] ?? 0.0).toDouble(),
         lng: (data['lng'] ?? 0.0).toDouble(),
+        reviewsCount: data['reviewsCount'] ?? 0,
+        photos: data['photos'] != null
+            ? List<String>.from(data['photos'])
+            : null,
         isRegistered: data['isRegistered'] ?? false,
         specializationName: data['specializationName'],
         specializationNameAr: data['specializationNameAr'],
+        specialties: data['specialties'] != null
+            ? List<String>.from(data['specialties'])
+            : null,
         status: data['status'],
         isActive: data['isActive'] ?? true,
+        doctors: data['doctors'] != null
+            ? (data['doctors'] as List)
+                .map((e) => DoctorModel.fromJson(e))
+                .toList()
+            : null,
         ownerName: data['ownerName'],
         ownerEmail: data['ownerEmail'],
         ownerPhone: data['ownerPhone'],
         subscriptionStatus: data['subscriptionStatus'],
         createdAt: data['createdAt'],
         updatedAt: data['updatedAt'],
+        distance: (data['distance'] ?? 0.0).toDouble(),
         isOpen: isOpen,
         operatingHours: operatingHours,
       ),

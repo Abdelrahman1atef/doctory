@@ -110,6 +110,11 @@ class _MapSectionState extends State<MapSection> {
       if (clinic != null) {
         _focusOnUserAndClinic(clinic);
       }
+    } else if (widget.selectedClinicId == null &&
+        oldWidget.selectedClinicId != null &&
+        widget.clinics.length > 1 &&
+        !isNavigating) {
+      _fitAllClinics();
     }
   }
 
@@ -184,6 +189,33 @@ class _MapSectionState extends State<MapSection> {
     } else {
       controller.animateCamera(CameraUpdate.newLatLngZoom(clinicPos, 15));
     }
+  }
+
+  void _fitAllClinics() {
+    final controller = _mapController;
+    if (controller == null || widget.clinics.length < 2) return;
+
+    double minLat = widget.clinics.first.lat ?? 0;
+    double maxLat = widget.clinics.first.lat ?? 0;
+    double minLng = widget.clinics.first.lng ?? 0;
+    double maxLng = widget.clinics.first.lng ?? 0;
+
+    for (final c in widget.clinics) {
+      if ((c.lat ?? 0) < minLat) minLat = c.lat!;
+      if ((c.lat ?? 0) > maxLat) maxLat = c.lat!;
+      if ((c.lng ?? 0) < minLng) minLng = c.lng!;
+      if ((c.lng ?? 0) > maxLng) maxLng = c.lng!;
+    }
+
+    controller.animateCamera(
+      CameraUpdate.newLatLngBounds(
+        LatLngBounds(
+          southwest: LatLng(minLat, minLng),
+          northeast: LatLng(maxLat, maxLng),
+        ),
+        50,
+      ),
+    );
   }
 
   Future<void> _getCurrentLocation() async {

@@ -25,19 +25,19 @@ class _MyAppointmentsBodySectionState extends State<MyAppointmentsBodySection> {
     return Column(
       children: [
         Padding(
-          padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+          padding: const EdgeInsets.fromLTRB(16, 16, 16, 10),
           child: Row(
             children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back_ios_new,
-                  color: AppColors.stitchPrimaryContainer),
-                onPressed: () => context.pop(),
-              ),
+              // IconButton(
+              //   icon: const Icon(Icons.arrow_back_ios_new,
+              //     color: AppColors.stitchPrimaryContainer),
+              //   onPressed: () => context.pop(),
+              // ),
               const Spacer(),
               Text('my_appointments'.tr(),
                 style: AppStyles.s20Bold.withColor(AppColors.stitchPrimaryContainer)),
               const Spacer(),
-              const SizedBox(width: 48),
+              // const SizedBox(width: 48),
             ],
           ),
         ),

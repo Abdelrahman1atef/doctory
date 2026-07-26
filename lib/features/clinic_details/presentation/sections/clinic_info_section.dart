@@ -51,7 +51,7 @@ class ClinicInfoSection extends StatelessWidget {
           16.ph,
           const Divider(color: AppColors.stitchSurfaceLow),
           16.ph,
-          _buildOperatingHoursSection(),
+          _buildOperatingHoursSection(context),
         ],
       ),
     );
@@ -102,7 +102,23 @@ class ClinicInfoSection extends StatelessWidget {
     );
   }
 
-  Widget _buildOperatingHoursSection() {
+  String _formatTimeWithAmPm(String time24, BuildContext context) {
+    final parts = time24.split(':');
+    if (parts.length != 2) return time24;
+    final hour = int.tryParse(parts[0]) ?? 0;
+    final minute = parts[1];
+    final isPm = hour >= 12;
+    final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
+    return '${hour12.toString().padLeft(2, '0')}:$minute ${isPm ? context.l10n('pm_label') : context.l10n('am_label')}';
+  }
+
+  String _formatOperatingHoursRange(String range, BuildContext context) {
+    final times = range.split(' - ');
+    if (times.length != 2) return range;
+    return '${_formatTimeWithAmPm(times[0].trim(), context)} - ${_formatTimeWithAmPm(times[1].trim(), context)}';
+  }
+
+  Widget _buildOperatingHoursSection(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -154,7 +170,7 @@ class ClinicInfoSection extends StatelessWidget {
                         .withColor(AppColors.stitchSecondary),
                   ),
                   Text(
-                    e.value,
+                    _formatOperatingHoursRange(e.value, context),
                     style: AppStyles.s14Medium
                         .withColor(AppColors.stitchPrimaryContainer),
                   ),

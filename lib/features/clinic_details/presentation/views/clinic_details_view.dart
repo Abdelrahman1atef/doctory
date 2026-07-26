@@ -109,9 +109,9 @@ class _ClinicImageHeader extends StatelessWidget {
                 )
               : _buildPlaceholder(),
         ),
-        Positioned(
+        PositionedDirectional(
           top: topPadding + 8,
-          left: 16,
+          start: 16,
           child: IconButton(
             icon: const Icon(
               Icons.arrow_back_ios_new,

@@ -1,8 +1,11 @@
 import 'package:doctory/core/common/models/clinic_model.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
+import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/map_home/data/model/route_model.dart';
 import 'package:flutter/material.dart';
+
+
 
 class MapNavInfoWidget extends StatelessWidget {
   final ClinicModel clinic;
@@ -16,24 +19,24 @@ class MapNavInfoWidget extends StatelessWidget {
     required this.onStop,
   });
 
-  String _formatDistance(double meters) {
+  String _formatDistance(double meters, BuildContext context) {
     if (meters >= 1000) {
-      return '${(meters / 1000).toStringAsFixed(1)} km';
+      return '${(meters / 1000).toStringAsFixed(1)} ${context.l10n('distance_km')}';
     }
-    return '${meters.toInt()} m';
+    return '${meters.toInt()} ${context.l10n('distance_m')}';
   }
 
-  String _formatDuration(double seconds) {
+  String _formatDuration(double seconds, BuildContext context) {
     final minutes = (seconds / 60).round();
     if (minutes >= 60) {
       final hours = minutes ~/ 60;
       final remainingMinutes = minutes % 60;
       if (remainingMinutes > 0) {
-        return '${hours}h ${remainingMinutes}min';
+        return '$hours${context.l10n('duration_hour')} $remainingMinutes${context.l10n('minutes_suffix')}';
       }
-      return '${hours}h';
+      return '$hours${context.l10n('duration_hour')}';
     }
-    return '$minutes min';
+    return '$minutes ${context.l10n('minutes_suffix')}';
   }
 
   @override
@@ -79,7 +82,7 @@ class MapNavInfoWidget extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            _formatDistance(route.distance),
+                            _formatDistance(route.distance, context),
                             style: AppStyles.s13Medium.withColor(AppColors.stitchSecondary),
                           ),
                           const SizedBox(width: 12),
@@ -90,7 +93,7 @@ class MapNavInfoWidget extends StatelessWidget {
                           ),
                           const SizedBox(width: 4),
                           Text(
-                            _formatDuration(route.duration),
+                            _formatDuration(route.duration, context),
                             style: AppStyles.s13Medium.withColor(AppColors.stitchSecondary),
                           ),
                         ],
