@@ -1,7 +1,9 @@
-import 'package:doctory/core/common/models/shared_models.dart';
+import 'package:doctory/core/common/models/clinic_model.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
+import 'package:doctory/features/map_home/presentation/widgets/clinic_card_image_widget.dart';
+import 'package:doctory/features/map_home/presentation/widgets/clinic_card_info_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
@@ -50,192 +52,78 @@ class MapClinicCardWidget extends StatelessWidget {
           children: [
             Row(
               children: [
-                // Image
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.network(
-                    clinic.imageUrl ?? '',
-                    width: 80,
-                    height: 80,
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) => Container(
-                      width: 80,
-                      height: 80,
-                      color: AppColors.stitchSurfaceLow,
-                      child: const Icon(
-                        Icons.local_hospital,
-                        color: AppColors.stitchSecondary,
-                      ),
-                    ),
-                  ),
-                ),
+                ClinicCardImageWidget(imageUrl: clinic.imageUrl),
                 12.pw,
-                // Details
                 Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Row(
-                              children: [
-                                Flexible(
-                                  child: Text(
-                                    clinic.displayName,
-                                    style: AppStyles.s16Bold.withColor(
-                                      AppColors.stitchPrimaryContainer,
-                                    ),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                  ),
-                                ),
-                                if (clinic.isRegistered) ...[
-                                  6.pw,
-                                  const Icon(
-                                    Icons.verified,
-                                    color: AppColors.stitchPrimary,
-                                    size: 16,
-                                  ),
-                                ],
-                              ],
-                            ),
-                          ),
-                          if (clinic.rating > 0)
-                            Row(
-                              children: [
-                                const Icon(
-                                  Icons.star_rounded,
-                                  color: Colors.amber,
-                                  size: 16,
-                                ),
-                                4.pw,
-                                Text(
-                                  clinic.rating.toString(),
-                                  style: AppStyles.s13Bold.withColor(
-                                    AppColors.stitchSecondary,
-                                  ),
-                                ),
-                              ],
-                            ),
-                        ],
-                      ),
-                      4.ph,
-                      Text(
-                        clinic.displayDescription,
-                        style: AppStyles.s13Medium.withColor(
-                          AppColors.stitchSecondary,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      8.ph,
-                      Row(
-                        children: [
-                          Icon(
-                            Icons.circle,
-                            size: 8,
-                            color: clinic.isOpen
-                                ? AppColors.success
-                                : AppColors.errorColor,
-                          ),
-                          6.pw,
-                          Text(
-                            clinic.isOpen ? 'open_now'.tr() : 'closed'.tr(),
-                            style: AppStyles.s12Medium.withColor(
-                              clinic.isOpen
-                                  ? AppColors.success
-                                  : AppColors.errorColor,
-                            ),
-                          ),
-                          if (isSelected) ...[
-                            const Spacer(),
-                            const Icon(
-                              Icons.location_on,
-                              size: 14,
-                              color: AppColors.stitchSecondary,
-                            ),
-                            4.pw,
-                            Text(
-                              clinic.distanceFormatted,
-                              style: AppStyles.s12Bold.withColor(
-                                AppColors.stitchSecondary,
-                              ),
-                            ),
-                          ],
-                        ],
-                      ),
-                    ],
+                  child: ClinicCardInfoWidget(
+                    clinic: clinic,
+                    showDistance: isSelected,
                   ),
                 ),
               ],
             ),
-            if (isSelected) ...[
-              16.ph,
-              Row(
-                children: [
-                  if (clinic.isRegistered) ...[
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: AppColors.stitchPrimaryContainer.withValues(
-                          alpha: 0.1,
-                        ),
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(
-                        Icons.phone,
-                        color: AppColors.stitchPrimaryContainer,
-                        size: 20,
-                      ),
-                    ),
-                    12.pw,
-                  ],
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: clinic.isRegistered
-                          ? onTap // Still allow tapping to select/go to details
-                          : null, // Disable for non-registered if detail navigation is restricted
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: clinic.isRegistered
-                            ? AppColors.stitchPrimaryContainer
-                            : AppColors.stitchSurfaceLow,
-                        foregroundColor: clinic.isRegistered
-                            ? Colors.white
-                            : AppColors.stitchSecondary,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.symmetric(vertical: 12),
-                      ),
-                      child: Text(
-                        clinic.isRegistered
-                            ? 'book_appointment'.tr()
-                            : 'selected'.tr(),
-                        style: AppStyles.s14Bold,
-                      ),
-                    ),
-                  ),
-                  if (isSelected && onNavPressed != null ) ...[
-                    8.pw,
-                    IconButton.filled(
-                      onPressed: onNavPressed,
-                      style: IconButton.styleFrom(
-                        backgroundColor: AppColors.success,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        padding: const EdgeInsets.all(12),
-                      ),
-                      icon: const Icon(Icons.navigation, color: Colors.white),
-                    ),
-                  ],
-                ],
-              ),
-            ],
+            if (isSelected) _buildActionsRow(context),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildActionsRow(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 16),
+      child: Row(
+        children: [
+          if (clinic.isRegistered)
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(
+                color: AppColors.stitchPrimaryContainer.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
+              ),
+              child: const Icon(
+                Icons.phone,
+                color: AppColors.stitchPrimaryContainer,
+                size: 20,
+              ),
+            ),
+          if (clinic.isRegistered) 12.pw,
+          Expanded(
+            child: ElevatedButton(
+              onPressed: clinic.isRegistered ? onTap : null,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: clinic.isRegistered
+                    ? AppColors.stitchPrimaryContainer
+                    : AppColors.stitchSurfaceLow,
+                foregroundColor: clinic.isRegistered
+                    ? Colors.white
+                    : AppColors.stitchSecondary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 12),
+              ),
+              child: Text(
+                clinic.isRegistered ? 'book_appointment'.tr() : 'selected'.tr(),
+                style: AppStyles.s14Bold,
+              ),
+            ),
+          ),
+          if (isSelected && onNavPressed != null) ...[
+            8.pw,
+            IconButton.filled(
+              onPressed: onNavPressed,
+              style: IconButton.styleFrom(
+                backgroundColor: AppColors.success,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                padding: const EdgeInsets.all(12),
+              ),
+              icon: const Icon(Icons.navigation, color: Colors.white),
+            ),
+          ],
+        ],
       ),
     );
   }

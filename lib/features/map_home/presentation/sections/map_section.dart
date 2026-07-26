@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:doctory/core/common/functions/location_helper.dart';
 import 'package:doctory/core/common/models/shared_models.dart';
@@ -11,6 +12,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:doctory/features/map_home/presentation/sections/map_fabs_section.dart';
+import 'package:doctory/features/map_home/presentation/widgets/map_nav_info_widget.dart';
 
 class MapSection extends StatefulWidget {
   final List<ClinicModel> clinics;
@@ -46,14 +48,9 @@ class _MapSectionState extends State<MapSection> {
   void initState() {
     super.initState();
     _generateCustomMarkers();
-    if (widget.clinics.isNotEmpty) {
-      // Small delay to ensure controller is ready
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        _fitResults();
-      });
-    } else {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
       _getCurrentLocation();
-    }
+    });
   }
 
   @override
@@ -98,21 +95,31 @@ class _MapSectionState extends State<MapSection> {
     final isNavigating =
         currentState is MapHomeLoadedState && currentState.isNavigating;
 
-    if (widget.clinics != oldWidget.clinics) {
-      if (widget.clinics.isNotEmpty && !isNavigating) {
-        _fitResults();
-      }
-    }
     if (widget.clinics != oldWidget.clinics ||
         widget.selectedClinicId != oldWidget.selectedClinicId) {
       _generateCustomMarkers();
+    }
+
+    if (widget.selectedClinicId != null &&
+        widget.selectedClinicId != oldWidget.selectedClinicId &&
+        !isNavigating) {
+      final clinic = widget.clinics.cast<ClinicModel?>().firstWhere(
+        (c) => c?.id == widget.selectedClinicId,
+        orElse: () => null,
+      );
+      if (clinic != null) {
+        _focusOnUserAndClinic(clinic);
+      }
     }
   }
 
   Future<void> _generateCustomMarkers() async {
     final Set<Marker> newMarkers = {};
-    for (int i = 0; i < widget.clinics.length; i++) {
-      final clinic = widget.clinics[i];
+    final clinicsToShow = widget.selectedClinicId != null
+        ? widget.clinics.where((c) => c.id == widget.selectedClinicId).toList()
+        : widget.clinics;
+    for (int i = 0; i < clinicsToShow.length; i++) {
+      final clinic = clinicsToShow[i];
       final String title = clinic.displayName;
       final bool isSelected = clinic.id == widget.selectedClinicId;
 
@@ -142,49 +149,41 @@ class _MapSectionState extends State<MapSection> {
     }
   }
 
-  Future<void> _fitResults() async {
-    final currentState = context.read<MapHomeCubit>().state;
-    if (currentState is MapHomeLoadedState && currentState.isNavigating) {
-      debugPrint(
-        '📍 [MapSection] Skipping fitResults because navigation is active',
-      );
-      return;
-    }
-
-    final GoogleMapController? controller = _mapController;
+  Future<void> _focusOnUserAndClinic(ClinicModel clinic) async {
+    final controller = _mapController;
     if (controller == null) return;
 
-    if (widget.clinics.length == 1) {
-      final clinic = widget.clinics.first;
-      controller.animateCamera(
-        CameraUpdate.newLatLngZoom(
-          LatLng(clinic.lat ?? 0.0, clinic.lng ?? 0.0),
-          15,
+    final selectedId = widget.selectedClinicId;
+    final clinicPos = LatLng(clinic.lat ?? 0.0, clinic.lng ?? 0.0);
+
+    LatLng? userPos;
+    final state = context.read<MapHomeCubit>().state;
+    if (state is MapHomeLoadedState && state.currentUserLat != null) {
+      userPos = LatLng(state.currentUserLat!, state.currentUserLng!);
+    } else {
+      try {
+        final position = await LocationHelper.getCurrentLocation();
+        userPos = LatLng(position.latitude, position.longitude);
+      } catch (_) {}
+    }
+
+    if (mounted && widget.selectedClinicId != selectedId) return;
+
+    if (userPos != null) {
+      final bounds = LatLngBounds(
+        southwest: LatLng(
+          min(userPos.latitude, clinicPos.latitude),
+          min(userPos.longitude, clinicPos.longitude),
+        ),
+        northeast: LatLng(
+          max(userPos.latitude, clinicPos.latitude),
+          max(userPos.longitude, clinicPos.longitude),
         ),
       );
+      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
     } else {
-      LatLngBounds bounds = _calculateBounds(widget.clinics);
-      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 50));
+      controller.animateCamera(CameraUpdate.newLatLngZoom(clinicPos, 15));
     }
-  }
-
-  LatLngBounds _calculateBounds(List<ClinicModel> clinics) {
-    double minLat = clinics.first.lat!;
-    double maxLat = clinics.first.lat!;
-    double minLng = clinics.first.lng!;
-    double maxLng = clinics.first.lng!;
-
-    for (var clinic in clinics) {
-      if (clinic.lat! < minLat) minLat = clinic.lat!;
-      if (clinic.lat! > maxLat) maxLat = clinic.lat!;
-      if (clinic.lng! < minLng) minLng = clinic.lng!;
-      if (clinic.lng! > maxLng) maxLng = clinic.lng!;
-    }
-
-    return LatLngBounds(
-      southwest: LatLng(minLat, minLng),
-      northeast: LatLng(maxLat, maxLng),
-    );
   }
 
   Future<void> _getCurrentLocation() async {
@@ -288,6 +287,7 @@ class _MapSectionState extends State<MapSection> {
                 buildingsEnabled: false,
                 indoorViewEnabled: false,
                 tiltGesturesEnabled: false,
+                onTap: (_) => FocusScope.of(context).unfocus(),
                 onMapCreated: (GoogleMapController controller) {
                   _mapController = controller;
                 },
@@ -297,21 +297,20 @@ class _MapSectionState extends State<MapSection> {
                   sheetSizeNotifier: widget.sheetSizeNotifier!,
                   onMyLocationPressed: _getCurrentLocation,
                 ),
-              if (state is MapHomeLoadedState && state.isNavigating)
+              if (state is MapHomeLoadedState &&
+                  state.isNavigating &&
+                  state.route != null &&
+                  state.selectedClinic != null)
                 Positioned(
-                  top: 16,
-                  left: 16,
-                  child: SafeArea(
-                    child: IconButton.filled(
-                      onPressed: () {
-                        context.read<MapHomeCubit>().stopNavigation();
-                      },
-                      style: IconButton.styleFrom(
-                        backgroundColor: AppColors.errorColor,
-                        padding: const EdgeInsets.all(12),
-                      ),
-                      icon: const Icon(Icons.close, color: Colors.white),
-                    ),
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  child: MapNavInfoWidget(
+                    clinic: state.selectedClinic!,
+                    route: state.route!,
+                    onStop: () {
+                      context.read<MapHomeCubit>().stopNavigation();
+                    },
                   ),
                 ),
             ],

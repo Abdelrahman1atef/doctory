@@ -32,10 +32,8 @@ class MapFabsSection extends StatelessWidget {
     return ValueListenableBuilder<double>(
       valueListenable: sheetSizeNotifier,
       builder: (context, size, child) {
-        // Calculate the bottom padding based on the sheet's current size.
-        // size is a fraction of the screen height (e.g., 0.35)
-        // Add an extra 16 pixels for padding above the sheet.
-        final bottomPadding = MediaQuery.of(context).size.height * size + 16;
+        final bottomInset = MediaQuery.of(context).padding.bottom;
+        final bottomPadding = MediaQuery.of(context).size.height * size + 16 + bottomInset;
 
         return Positioned(
           bottom: bottomPadding,

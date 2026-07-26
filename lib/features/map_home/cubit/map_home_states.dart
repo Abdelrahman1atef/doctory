@@ -28,6 +28,9 @@ class MapHomeLoadedState extends MapHomeStates {
   final double? lastRouteLng;
   final bool isNavigating;
   final double? currentUserHeading;
+  final int currentPage;
+  final bool hasMore;
+  final bool isLoadingMore;
 
   MapHomeLoadedState({
     this.clinics = const [],
@@ -46,9 +49,11 @@ class MapHomeLoadedState extends MapHomeStates {
     this.lastRouteLng,
     this.isNavigating = false,
     this.currentUserHeading,
+    this.currentPage = 1,
+    this.hasMore = false,
+    this.isLoadingMore = false,
   });
 
-  /// Whether user has set a custom search location
   bool get hasCustomLocation => customLat != null && customLng != null;
 
   MapHomeLoadedState copyWith({
@@ -69,6 +74,9 @@ class MapHomeLoadedState extends MapHomeStates {
     double? lastRouteLng,
     bool? isNavigating,
     double? currentUserHeading,
+    int? currentPage,
+    bool? hasMore,
+    bool? isLoadingMore,
   }) {
     return MapHomeLoadedState(
       clinics: clinics ?? this.clinics,
@@ -87,10 +95,12 @@ class MapHomeLoadedState extends MapHomeStates {
       lastRouteLng: lastRouteLng ?? this.lastRouteLng,
       isNavigating: isNavigating ?? this.isNavigating,
       currentUserHeading: currentUserHeading ?? this.currentUserHeading,
+      currentPage: currentPage ?? this.currentPage,
+      hasMore: hasMore ?? this.hasMore,
+      isLoadingMore: isLoadingMore ?? this.isLoadingMore,
     );
   }
 
-  /// Create copy that resets custom location to null
   MapHomeLoadedState clearCustomLocation() {
     return MapHomeLoadedState(
       clinics: clinics,
@@ -109,6 +119,9 @@ class MapHomeLoadedState extends MapHomeStates {
       lastRouteLng: lastRouteLng,
       isNavigating: isNavigating,
       currentUserHeading: currentUserHeading,
+      currentPage: currentPage,
+      hasMore: hasMore,
+      isLoadingMore: isLoadingMore,
     );
   }
 }

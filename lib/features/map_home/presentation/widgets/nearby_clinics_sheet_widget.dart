@@ -13,6 +13,9 @@ class NearbyClinicsSheetWidget extends StatefulWidget {
   final Function(ClinicModel) onClinicTap;
   final Function(ClinicModel)? onNavPressed;
   final VoidCallback? onDeselect;
+  final bool hasMore;
+  final bool isLoadingMore;
+  final VoidCallback? onLoadMore;
 
   const NearbyClinicsSheetWidget({
     super.key,
@@ -22,6 +25,9 @@ class NearbyClinicsSheetWidget extends StatefulWidget {
     required this.onClinicTap,
     this.onNavPressed,
     this.onDeselect,
+    this.hasMore = false,
+    this.isLoadingMore = false,
+    this.onLoadMore,
   });
 
   @override
@@ -42,6 +48,12 @@ class _NearbyClinicsSheetWidgetState extends State<NearbyClinicsSheetWidget> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    widget.scrollController.addListener(_onScroll);
+  }
+
+  @override
   void didUpdateWidget(NearbyClinicsSheetWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (widget.selectedClinicId != null &&
@@ -55,6 +67,29 @@ class _NearbyClinicsSheetWidgetState extends State<NearbyClinicsSheetWidget> {
           );
         }
       });
+    }
+    if (widget.scrollController != oldWidget.scrollController) {
+      oldWidget.scrollController.removeListener(_onScroll);
+      widget.scrollController.addListener(_onScroll);
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.scrollController.removeListener(_onScroll);
+    super.dispose();
+  }
+
+  void _onScroll() {
+    if (!widget.hasMore || widget.isLoadingMore || widget.onLoadMore == null) {
+      return;
+    }
+    final controller = widget.scrollController;
+    if (!controller.hasClients) return;
+    final maxScroll = controller.position.maxScrollExtent;
+    final currentScroll = controller.position.pixels;
+    if (currentScroll >= maxScroll - 200) {
+      widget.onLoadMore!();
     }
   }
 
@@ -128,9 +163,23 @@ class _NearbyClinicsSheetWidgetState extends State<NearbyClinicsSheetWidget> {
           Expanded(
             child: ListView.builder(
               controller: widget.scrollController,
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              itemCount: clinics.length,
+              padding: EdgeInsets.fromLTRB(
+                16, 8, 16, MediaQuery.of(context).padding.bottom + 8,
+              ),
+              itemCount: clinics.length + (widget.hasMore ? 1 : 0),
               itemBuilder: (context, index) {
+                if (index == clinics.length) {
+                  return const Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Center(
+                      child: SizedBox(
+                        width: 24,
+                        height: 24,
+                        child: CircularProgressIndicator(strokeWidth: 2),
+                      ),
+                    ),
+                  );
+                }
                 final clinic = clinics[index];
                 final isSelected = clinic.id == widget.selectedClinicId;
 

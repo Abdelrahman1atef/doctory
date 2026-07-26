@@ -613,6 +613,8 @@
   "current_location": "Current Location",
   "pick_location": "Pick Location",
   "confirm_location": "Confirm Location",
+  "no_results": "No results found",
+  "try_expand_radius": "Try expanding your search radius or changing filters",
   "navigate": "Navigate",
   "community": "Community",
   "create_post": "Create Post",

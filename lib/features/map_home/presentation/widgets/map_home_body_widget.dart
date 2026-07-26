@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-/// Pure widget — manages the structural layout (Stack) for the MapHome screen
 class MapHomeBodyWidget extends StatelessWidget {
   final Widget mapSection;
   final Widget searchSection;
   final Widget? bottomSheetSection;
   final Widget? loadingOverlay;
   final Widget? errorOverlay;
+  final Widget? emptyOverlay;
 
   const MapHomeBodyWidget({
     super.key,
@@ -15,6 +15,7 @@ class MapHomeBodyWidget extends StatelessWidget {
     this.bottomSheetSection,
     this.loadingOverlay,
     this.errorOverlay,
+    this.emptyOverlay,
   });
 
   @override
@@ -29,6 +30,7 @@ class MapHomeBodyWidget extends StatelessWidget {
         searchSection,
         if (loadingOverlay != null) loadingOverlay!,
         if (errorOverlay != null) errorOverlay!,
+        if (emptyOverlay != null) emptyOverlay!,
       ],
     );
   }

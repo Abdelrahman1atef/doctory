@@ -38,14 +38,18 @@ class _NearbyClinicsSheetState extends State<NearbyClinicsSheet> {
             return prev.runtimeType != curr.runtimeType;
           },
           builder: (context, state) {
-            final selectedClinicId = (state is MapHomeLoadedState)
-                ? state.selectedClinic?.id
-                : null;
+            final loadedState =
+                state is MapHomeLoadedState ? state : null;
+            final selectedClinicId = loadedState?.selectedClinic?.id;
 
             return NearbyClinicsSheetWidget(
               clinics: widget.clinics,
               selectedClinicId: selectedClinicId,
               scrollController: scrollController,
+              hasMore: loadedState?.hasMore ?? false,
+              isLoadingMore: loadedState?.isLoadingMore ?? false,
+              onLoadMore: () =>
+                  context.read<MapHomeCubit>().loadMore(),
               onClinicTap: (clinic) {
                 if (clinic.id == selectedClinicId) {
                   if (clinic.isRegistered) {

@@ -105,15 +105,14 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
       }
     }
 
+    if (state is MapHomeLoadedState) {
+      _previousLoadedState = state as MapHomeLoadedState;
+    }
+
     _debounce?.cancel();
     
     Future<void> performSearch() async {
       if (isClosed) return;
-      if (currentState is MapHomeLoadedState) {
-        _previousLoadedState = currentState;
-      } else {
-        _previousLoadedState = null;
-      }
       emit(MapHomeLoadingState(clinics: currentClinics));
 
       // Use custom location from state > provided params > GPS
@@ -165,6 +164,8 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
                 specializationId: currentSpec,
                 isNearest: currentNearest,
                 radiusInKm: currentRadius,
+                currentPage: data.pageNumber,
+                hasMore: data.hasNextPage,
               ),
             );
           } else {
@@ -176,6 +177,8 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
                 specializationId: currentSpec,
                 isNearest: currentNearest,
                 radiusInKm: currentRadius,
+                currentPage: data.pageNumber,
+                hasMore: data.hasNextPage,
               ),
             );
           }
@@ -263,8 +266,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
         );
         startLat = position.latitude;
         startLng = position.longitude;
-
-        // Update state with fetch location and heading
+        _cachedPosition = LatLng(position.latitude, position.longitude);
         if (isClosed) return;
         if (state is MapHomeLoadedState) {
           emit(
@@ -332,6 +334,8 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
         position.longitude,
       );
     }
+
+    _cachedPosition = LatLng(position.latitude, position.longitude);
 
     if (distance > 20) {
       debugPrint('📍 [LiveNav] Moved ${distance.toInt()}m. Updating route...');
@@ -409,6 +413,66 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     } else {
       emit(MapHomeInitialState());
     }
+  }
+
+  Future<void> loadMore() async {
+    final currentState = state;
+    if (currentState is! MapHomeLoadedState) return;
+    if (!currentState.hasMore || currentState.isLoadingMore) return;
+
+    emit(currentState.copyWith(isLoadingMore: true));
+
+    final nextPage = currentState.currentPage + 1;
+
+    double? lat;
+    double? lng;
+    if (currentState.hasCustomLocation) {
+      lat = currentState.customLat;
+      lng = currentState.customLng;
+    } else if (currentState.currentUserLat != null) {
+      lat = currentState.currentUserLat;
+      lng = currentState.currentUserLng;
+    } else {
+      final position = _cachedPosition ?? await LocationHelper.getCurrentLocation();
+      _cachedPosition = position;
+      lat = position.latitude;
+      lng = position.longitude;
+    }
+
+    final result = await _mapHomeRepo.searchClinics(
+      searchText: currentState.query,
+      specializationId: currentState.specializationId,
+      userLat: lat,
+      userLng: lng,
+      isNearest: currentState.isNearest,
+      radiusInKm: currentState.radiusInKm,
+      pageNumber: nextPage,
+      cancelToken: _searchCancelToken,
+    );
+
+    if (isClosed) return;
+
+    result.fold(
+      onSuccess: (data) {
+        if (isClosed) return;
+        if (state is MapHomeLoadedState) {
+          emit(
+            (state as MapHomeLoadedState).copyWith(
+              clinics: [...(state as MapHomeLoadedState).clinics, ...data.items],
+              currentPage: data.pageNumber,
+              hasMore: data.hasNextPage,
+              isLoadingMore: false,
+            ),
+          );
+        }
+      },
+      onFailure: (failure) {
+        if (isClosed) return;
+        if (state is MapHomeLoadedState) {
+          emit((state as MapHomeLoadedState).copyWith(isLoadingMore: false));
+        }
+      },
+    );
   }
 
   void startNavigation() {

@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:doctory/features/map_home/cubit/map_home_cubit.dart';
 import 'package:doctory/features/map_home/cubit/map_home_states.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:geocoding/geocoding.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class MapFilterBottomSheet extends StatefulWidget {
@@ -25,6 +26,7 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
   late double _radiusInKm;
   double? _customLat;
   double? _customLng;
+  String _locationAddress = '';
 
   List<SpecialtyModel> _specialties = [];
 
@@ -37,9 +39,28 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
     _customLat = widget.initialState.customLat;
     _customLng = widget.initialState.customLng;
     _specialties = widget.initialState.specializations;
+    if (_hasCustomLocation) {
+      _reverseGeocode(_customLat!, _customLng!);
+    }
   }
 
   bool get _hasCustomLocation => _customLat != null && _customLng != null;
+
+  Future<void> _reverseGeocode(double lat, double lng) async {
+    try {
+      final placemarks = await placemarkFromCoordinates(lat, lng);
+      if (placemarks.isNotEmpty) {
+        final p = placemarks.first;
+        final address = [
+          p.locality,
+          p.thoroughfare,
+        ].where((s) => s != null && s.isNotEmpty).join(', ');
+        if (mounted && address.isNotEmpty) {
+          setState(() => _locationAddress = address);
+        }
+      }
+    } catch (_) {}
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -155,7 +176,9 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
                 setState(() {
                   _customLat = picked.latitude;
                   _customLng = picked.longitude;
+                  _locationAddress = '';
                 });
+                _reverseGeocode(picked.latitude, picked.longitude);
               }
             },
             borderRadius: BorderRadius.circular(12),
@@ -182,7 +205,9 @@ class _MapFilterBottomSheetState extends State<MapFilterBottomSheet> {
                   Expanded(
                     child: Text(
                       _hasCustomLocation
-                          ? '${_customLat!.toStringAsFixed(4)}, ${_customLng!.toStringAsFixed(4)}'
+                          ? (_locationAddress.isNotEmpty
+                              ? _locationAddress
+                              : '${_customLat!.toStringAsFixed(4)}, ${_customLng!.toStringAsFixed(4)}')
                           : 'current_location'.tr(),
                       style: AppStyles.s14Medium.withColor(
                         _hasCustomLocation

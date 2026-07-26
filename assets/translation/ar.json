@@ -610,6 +610,8 @@
   "current_location": "الموقع الحالي",
   "pick_location": "اختيار موقع",
   "confirm_location": "تأكيد الموقع",
+  "no_results": "لا توجد نتائج",
+  "try_expand_radius": "حاول توسيع نطاق البحث أو تغيير الفلاتر",
   "navigate": "رسم الطريق",
   "community": "المجتمع",
   "create_post": "إنشاء منشور",

@@ -4,6 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../cubit/map_home_cubit.dart';
 import '../../cubit/map_home_states.dart';
 import '../widgets/map_home_body_widget.dart';
+import '../widgets/map_home_empty_widget.dart';
 import '../widgets/map_home_error_widget.dart';
 import '../widgets/map_home_loading_widget.dart';
 import 'map_search_section.dart';
@@ -54,26 +55,29 @@ class _MapHomeBodySectionState extends State<MapHomeBodySection> {
         }
         return true;
       },
-      // TODO(dev): remove this and use the real data from the cubit
       builder: (context, state) {
-        final List<ClinicModel> clinics =
-            (state is MapHomeLoadedState && state.clinics.isNotEmpty)
-            ? state.clinics
-            : [];
-        final String? selectedClinicId = (state is MapHomeLoadedState)
-            ? state.selectedClinic?.id
-            : null;
-        final bool isNavigating = (state is MapHomeLoadedState)
-            ? state.isNavigating
-            : false;
-        final bool isLoading = state is MapHomeLoadingState;
+        final isLoaded = state is MapHomeLoadedState;
+        final clinics = isLoaded ? state.clinics : <ClinicModel>[];
+        final selectedClinicId = isLoaded ? state.selectedClinic?.id : null;
+        final isNavigating = isLoaded && state.isNavigating;
+        final isLoading = state is MapHomeLoadingState;
+        final isError = state is MapHomeErrorState;
+        final isEmpty =
+            isLoaded && clinics.isEmpty && !isLoading;
 
         Widget? errorOverlay;
-        if (state is MapHomeErrorState) {
-          errorOverlay = MapHomeErrorWidget(message: state.message);
+        if (isError) {
+          errorOverlay = MapHomeErrorWidget(
+            message: state.message,
+            onRetry: () => context.read<MapHomeCubit>().searchClinics(),
+          );
         }
 
-        // Reset sheet size notifier if clinics are empty (sheet goes away)
+        Widget? emptyOverlay;
+        if (isEmpty && !isError && !isLoading) {
+          emptyOverlay = const MapHomeEmptyWidget();
+        }
+
         if ((clinics.isEmpty || isNavigating) &&
             _sheetSizeNotifier.value != 0.0) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -109,6 +113,7 @@ class _MapHomeBodySectionState extends State<MapHomeBodySection> {
                 )
               : null,
           errorOverlay: errorOverlay,
+          emptyOverlay: emptyOverlay,
         );
       },
     );

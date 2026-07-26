@@ -3,15 +3,10 @@ import 'package:doctory/core/theme/app_typography.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
-class MapHomeErrorWidget extends StatelessWidget {
-  final String message;
+class MapHomeEmptyWidget extends StatelessWidget {
   final VoidCallback? onRetry;
 
-  const MapHomeErrorWidget({
-    super.key,
-    required this.message,
-    this.onRetry,
-  });
+  const MapHomeEmptyWidget({super.key, this.onRetry});
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +19,20 @@ class MapHomeErrorWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Icon(
-                Icons.error_outline_rounded,
+                Icons.search_off_rounded,
                 size: 64,
-                color: AppColors.errorColor.withValues(alpha: 0.7),
+                color: AppColors.stitchSecondary.withValues(alpha: 0.5),
               ),
               const SizedBox(height: 16),
               Text(
-                message,
-                style: AppStyles.s16Medium.withColor(AppColors.stitchSecondary),
+                'no_results'.tr(),
+                style: AppStyles.s18Bold.withColor(AppColors.stitchPrimaryContainer),
+                textAlign: TextAlign.center,
+              ),
+              const SizedBox(height: 8),
+              Text(
+                'try_expand_radius'.tr(),
+                style: AppStyles.s14Medium.withColor(AppColors.stitchSecondary),
                 textAlign: TextAlign.center,
               ),
               if (onRetry != null) ...[
