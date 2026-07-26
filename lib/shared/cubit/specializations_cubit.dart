@@ -26,11 +26,13 @@ class SharedSpecializationsCubit extends Cubit<SharedSpecializationsState> {
   SharedSpecializationsCubit(this._apiConsumer)
       : super(SharedSpecializationsInitial());
 
-  Future<void> getFamousSpecializations() async {
-    if (state is SharedSpecializationsLoaded) return;
-    if (_pendingRequest != null) {
-      await _pendingRequest;
-      return;
+  Future<void> getFamousSpecializations({bool forceRefresh = false}) async {
+    if (!forceRefresh) {
+      if (state is SharedSpecializationsLoaded) return;
+      if (_pendingRequest != null) {
+        await _pendingRequest;
+        return;
+      }
     }
 
     emit(SharedSpecializationsLoading());

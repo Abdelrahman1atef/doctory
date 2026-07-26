@@ -21,9 +21,7 @@ class HomeCubit extends Cubit<HomeStates> {
     ));
 
     final sharedCubit = sl<SharedSpecializationsCubit>();
-    if (sharedCubit.state is! SharedSpecializationsLoaded) {
-      await sharedCubit.getFamousSpecializations();
-    }
+    await sharedCubit.getFamousSpecializations(forceRefresh: true);
 
     final specialties = (sharedCubit.state is SharedSpecializationsLoaded)
         ? (sharedCubit.state as SharedSpecializationsLoaded).specializations
