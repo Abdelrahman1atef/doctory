@@ -42,6 +42,7 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
 
   String? _selectedGender;
   String? _selectedSpecializationId;
+  bool _showImageErrors = false;
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   File? _professionalPracticeCard;
@@ -134,6 +135,8 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
   }
 
   void _onSubmit() {
+    setState(() => _showImageErrors = false);
+
     if (_formKey.currentState!.validate()) {
       if (_isDoctor && _selectedGender == null) {
         Alerts.showSnackBar(
@@ -143,13 +146,19 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
         );
         return;
       }
-      if (_isDoctor && _profileImage == null) {
-        Alerts.showSnackBar(
-          context,
-          message: context.l10n('profile_image_required'),
-          state: SnackState.failed,
-        );
-        return;
+
+      if (_isDoctor) {
+        final missingImages = <String>[];
+        if (_profileImage == null) missingImages.add('profile');
+        if (_professionalPracticeCard == null) missingImages.add('practice_card');
+        if (_unionIdImage == null) missingImages.add('union_id');
+        if (widget.doctorType == 'ownClinic' && _taxCardImage == null) {
+          missingImages.add('tax_card');
+        }
+        if (missingImages.isNotEmpty) {
+          setState(() => _showImageErrors = true);
+          return;
+        }
       }
 
       final signupRequest = SignupRequest(
@@ -265,6 +274,7 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
                 });
               }
             : null,
+        showImageErrors: _showImageErrors,
         specializations: _isDoctor ? specializations : null,
         selectedSpecializationId: _selectedSpecializationId,
         onSpecializationChanged: _isDoctor

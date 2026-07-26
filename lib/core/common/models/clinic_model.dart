@@ -16,6 +16,9 @@ class ClinicModel {
   final String? address;
   final String? addressAr;
   final String? phone;
+  final String? email;
+  final String? website;
+  final String? logo;
   final double? lat;
   final double? lng;
   final int reviewsCount;
@@ -23,10 +26,19 @@ class ClinicModel {
   final Map<String, String>?
       operatingHours; // e.g., {'Monday': '09:00 - 17:00'}
   final bool isOpen;
+  final int? status;
+  final bool isActive;
   final List<DoctorModel>? doctors;
   final List<String>? specialties;
   final bool isRegistered;
   final String? specializationName;
+  final String? specializationNameAr;
+  final String? ownerName;
+  final String? ownerEmail;
+  final String? ownerPhone;
+  final String? subscriptionStatus;
+  final String? createdAt;
+  final String? updatedAt;
   final double distance;
 
   ClinicModel({
@@ -43,16 +55,28 @@ class ClinicModel {
     this.address,
     this.addressAr,
     this.phone,
+    this.email,
+    this.website,
+    this.logo,
     this.lat,
     this.lng,
     this.reviewsCount = 0,
     this.photos,
     this.operatingHours,
     this.isOpen = true,
+    this.status,
+    this.isActive = true,
     this.doctors,
     this.specialties,
     this.isRegistered = false,
     this.specializationName,
+    this.specializationNameAr,
+    this.ownerName,
+    this.ownerEmail,
+    this.ownerPhone,
+    this.subscriptionStatus,
+    this.createdAt,
+    this.updatedAt,
     this.distance = 0.0,
   });
 
@@ -122,6 +146,9 @@ class ClinicModel {
       address: json['address'],
       addressAr: json['addressAr'],
       phone: json['phone'],
+      email: json['email'],
+      website: json['website'],
+      logo: json['logo'],
       lat: (json['lat'] ?? 0.0).toDouble(),
       lng: (json['lng'] ?? 0.0).toDouble(),
       reviewsCount: json['reviewsCount'] ?? 0,
@@ -130,6 +157,8 @@ class ClinicModel {
           ? Map<String, String>.from(json['operatingHours'])
           : null,
       isOpen: json['isOpen'] ?? true,
+      status: json['status'],
+      isActive: json['isActive'] ?? true,
       doctors: json['doctors'] != null
           ? (json['doctors'] as List)
               .map((e) => DoctorModel.fromJson(e))
@@ -140,6 +169,13 @@ class ClinicModel {
           : null,
       isRegistered: json['isRegistered'] ?? false,
       specializationName: json['specializationName'],
+      specializationNameAr: json['specializationNameAr'],
+      ownerName: json['ownerName'],
+      ownerEmail: json['ownerEmail'],
+      ownerPhone: json['ownerPhone'],
+      subscriptionStatus: json['subscriptionStatus'],
+      createdAt: json['createdAt'],
+      updatedAt: json['updatedAt'],
       distance: (json['distance'] ?? 0.0).toDouble(),
     );
   }
@@ -159,16 +195,28 @@ class ClinicModel {
       'address': address,
       'addressAr': addressAr,
       'phone': phone,
+      'email': email,
+      'website': website,
+      'logo': logo,
       'lat': lat,
       'lng': lng,
       'reviewsCount': reviewsCount,
       'photos': photos,
       'operatingHours': operatingHours,
       'isOpen': isOpen,
+      'status': status,
+      'isActive': isActive,
       'doctors': doctors?.map((e) => e.toJson()).toList(),
       'specialties': specialties,
       'isRegistered': isRegistered,
       'specializationName': specializationName,
+      'specializationNameAr': specializationNameAr,
+      'ownerName': ownerName,
+      'ownerEmail': ownerEmail,
+      'ownerPhone': ownerPhone,
+      'subscriptionStatus': subscriptionStatus,
+      'createdAt': createdAt,
+      'updatedAt': updatedAt,
       'distance': distance,
     };
   }

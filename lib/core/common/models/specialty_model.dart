@@ -24,7 +24,7 @@ class SpecialtyModel {
   factory SpecialtyModel.fromJson(Map<String, dynamic> json) {
     return SpecialtyModel(
       id: json['id']?.toString() ?? '',
-      name: json['name'] ?? '',
+      name: json['name'] ?? json['arName'] ?? '',
       nameAr: json['arName'] ?? json['nameAr'],
       description: json['description'],
       iconUrl: json['iconUrl'],

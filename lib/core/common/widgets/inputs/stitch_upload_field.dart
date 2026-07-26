@@ -9,6 +9,7 @@ class StitchUploadField extends StatelessWidget {
   final String hint;
   final bool isRequired;
   final VoidCallback onPick;
+  final String? errorText;
 
   const StitchUploadField({
     super.key,
@@ -17,6 +18,7 @@ class StitchUploadField extends StatelessWidget {
     required this.hint,
     this.isRequired = true,
     required this.onPick,
+    this.errorText,
   });
 
   @override
@@ -43,12 +45,15 @@ class StitchUploadField extends StatelessWidget {
         8.ph,
         GestureDetector(
           onTap: onPick,
-          child: Container(
+          child:           Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 18),
             decoration: BoxDecoration(
               color: AppColors.stitchSurfaceLow,
               borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.cardBorder, width: 1),
+              border: Border.all(
+                color: errorText != null ? AppColors.error : AppColors.cardBorder,
+                width: errorText != null ? 1.5 : 1,
+              ),
             ),
             child: Row(
               children: [
@@ -84,7 +89,7 @@ class StitchUploadField extends StatelessWidget {
                   ),
                 ),
                 if (!hasFile)
-                  Icon(
+                  const Icon(
                     Icons.arrow_forward_ios_rounded,
                     color: AppColors.textHint,
                     size: 14,
@@ -93,6 +98,13 @@ class StitchUploadField extends StatelessWidget {
             ),
           ),
         ),
+        if (errorText != null) ...[
+          4.ph,
+          Text(
+            errorText!,
+            style: AppStyles.s12Medium.copyWith(color: AppColors.error),
+          ),
+        ],
       ],
     );
   }

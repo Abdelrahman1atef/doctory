@@ -109,7 +109,8 @@
     "categories_subtitle": "تصفح حسب التصنيف",
     "currency": "ر.س",
     "appearance": "المظهر",
-    "behavior": "السلوك",
+    "behavior": "السلوك"
+  },
   "ok": "حسناً",
   "common.no_images_selected": "لم يتم تحديد صور",
   "cleanliness": "النظافة",
@@ -117,8 +118,7 @@
     "professionalism": "الاحترافية",
     "ratings": "التقييمات",
     "total_rating": "التقييم الكلي",
-    "cooperation": "التعاون"
-  },
+    "cooperation": "التعاون",
   "yes": "نعم",
   "no": "لا",
   "retry": "إعادة المحاولة",
@@ -746,6 +746,7 @@
   "bio_label": "نبذة عني",
   "bio_hint": "حدثنا عن نفسك",
   "years_of_experience": "سنوات الخبرة",
+  "years_max_100": "الحد الأقصى 100 سنة",
   "commercial_register_label": "صورة السجل التجاري",
   "clinic_name_label": "اسم العيادة",
   "clinic_name_hint": "مثال: عيادتي",
@@ -788,5 +789,9 @@
   "wednesday": "الأربعاء",
   "thursday": "الخميس",
   "friday": "الجمعة",
-  "saturday": "السبت"
+  "saturday": "السبت",
+  "name_too_short": "الاسم يجب أن يكون 3 أحرف على الأقل",
+  "field_invalid": "قيمة غير صالحة",
+  "owner": "المالك",
+  "subscription_active": "اشتراك نشط"
 }

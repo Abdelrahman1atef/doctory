@@ -11,9 +11,8 @@ class ClinicDetailsResponseDto {
     if (parts.length < 2) return time;
     final hour = int.tryParse(parts[0]) ?? 0;
     final minute = parts[1];
-    final period = hour >= 12 ? 'PM' : 'AM';
     final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-    return '${hour12.toString().padLeft(2, '0')}:$minute $period';
+    return '${hour12.toString().padLeft(2, '0')}:$minute';
   }
 
   factory ClinicDetailsResponseDto.fromJson(Map<String, dynamic> json) {

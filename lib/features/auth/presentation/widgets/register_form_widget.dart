@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../../core/common/models/specialty_model.dart';
 import '../../../../core/common/widgets/buttons/social_auth_button.dart';
+
 import '../../../../core/common/widgets/images/profile_image_picker.dart';
 import '../../../../core/common/widgets/inputs/stitch_text_field.dart';
 import '../../../../core/common/widgets/inputs/stitch_upload_field.dart';
@@ -48,6 +49,7 @@ class RegisterFormWidget extends StatelessWidget {
   final List<SpecialtyModel>? specializations;
   final String? selectedSpecializationId;
   final ValueChanged<String?>? onSpecializationChanged;
+  final bool showImageErrors;
 
   const RegisterFormWidget({
     super.key,
@@ -83,6 +85,7 @@ class RegisterFormWidget extends StatelessWidget {
     this.specializations,
     this.selectedSpecializationId,
     this.onSpecializationChanged,
+    this.showImageErrors = false,
     required this.bioController,
     required this.yearsOfExperienceController,
   });
@@ -118,6 +121,9 @@ class RegisterFormWidget extends StatelessWidget {
               if (requireBioFields && (value == null || value.trim().isEmpty)) {
                 return context.l10n('field_required');
               }
+              if (requireBioFields && value != null && value.trim().length < 3) {
+                return context.l10n('name_too_short');
+              }
               return null;
             },
           ),
@@ -137,6 +143,14 @@ class RegisterFormWidget extends StatelessWidget {
             validator: (value) {
               if (requireBioFields && (value == null || value.trim().isEmpty)) {
                 return context.l10n('field_required');
+              }
+              if (requireBioFields && value != null) {
+                final emailRegex = RegExp(
+                  r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+                );
+                if (!emailRegex.hasMatch(value.trim())) {
+                  return context.l10n('invalid_email');
+                }
               }
               return null;
             },
@@ -329,6 +343,16 @@ class RegisterFormWidget extends StatelessWidget {
           20.ph,
 
           /// Doctor Upload Fields
+          if (showImageErrors && profileImage == null) ...[
+            Padding(
+              padding: const EdgeInsets.only(bottom: 4),
+              child: Text(
+                context.l10n('field_required'),
+                style: AppStyles.s12Medium.copyWith(color: AppColors.error),
+              ),
+            ),
+          ],
+
           if (onPickPracticeCard != null) ...[
             StitchUploadField(
               label: context.l10n('professional_practice_card_label'),
@@ -336,6 +360,9 @@ class RegisterFormWidget extends StatelessWidget {
               hint: context.l10n('upload_file_hint'),
               isRequired: true,
               onPick: onPickPracticeCard!,
+              errorText: showImageErrors && practiceCardFileName == null
+                  ? context.l10n('field_required')
+                  : null,
             ),
             12.ph,
           ],
@@ -347,6 +374,9 @@ class RegisterFormWidget extends StatelessWidget {
               hint: context.l10n('upload_file_hint'),
               isRequired: true,
               onPick: onPickUnion!,
+              errorText: showImageErrors && unionFileName == null
+                  ? context.l10n('field_required')
+                  : null,
             ),
             12.ph,
           ],
@@ -358,8 +388,139 @@ class RegisterFormWidget extends StatelessWidget {
               hint: context.l10n('upload_file_hint'),
               isRequired: true,
               onPick: onPickTaxCard!,
+              errorText: showImageErrors && taxCardFileName == null
+                  ? context.l10n('field_required')
+                  : null,
             ),
             12.ph,
+          ],
+
+          if (isDoctor && specializations != null) ...[
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: context.l10n('select_specialization'),
+                        style: AppStyles.s14Bold.copyWith(
+                          color: AppColors.onSurface,
+                        ),
+                      ),
+                      const TextSpan(
+                        text: ' *',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<String>(
+                  initialValue: selectedSpecializationId,
+                  hint: Text(
+                    context.l10n('specialization'),
+                    style: AppStyles.s14Medium.copyWith(
+                      color: AppColors.textHint,
+                    ),
+                  ),
+                  icon: Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: AppColors.onSurface,
+                  ),
+                  isExpanded: true,
+                  decoration: InputDecoration(
+                    counterText: '',
+                    filled: true,
+                    fillColor: AppColors.stitchSurfaceLow,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 24,
+                      vertical: 18,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: const BorderSide(
+                        color: AppColors.stitchPrimary,
+                        width: 2,
+                      ),
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.medical_services_outlined,
+                      color: AppColors.stitchPrimary,
+                    ),
+                    prefixIconConstraints:
+                        const BoxConstraints(minWidth: 56),
+                  ),
+                  style: AppStyles.s16Medium.copyWith(
+                    color: AppColors.onSurface,
+                  ),
+                  items: specializations!.map((s) {
+                    return DropdownMenuItem<String>(
+                      value: s.id,
+                      child: Text(s.displayName),
+                    );
+                  }).toList(),
+                  onChanged: onSpecializationChanged,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return context.l10n('field_required');
+                    }
+                    return null;
+                  },
+                ),
+              ],
+            ),
+            20.ph,
+          ],
+
+          if (isDoctor) ...[
+            StitchTextField(
+              controller: bioController,
+              label: context.l10n('bio_label'),
+              hintText: context.l10n('bio_hint'),
+              maxLines: 3,
+              prefixIcon: const Icon(
+                Icons.info_outline_rounded,
+                color: AppColors.stitchPrimary,
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return context.l10n('field_required');
+                }
+                return null;
+              },
+            ),
+            20.ph,
+            StitchTextField(
+              controller: yearsOfExperienceController,
+              label: context.l10n('years_of_experience'),
+              hintText: '5',
+              keyboardType: TextInputType.number,
+              inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+              prefixIcon: const Icon(
+                Icons.work_history_rounded,
+                color: AppColors.stitchPrimary,
+              ),
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return context.l10n('field_required');
+                }
+                final years = int.tryParse(value.trim());
+                if (years == null || years > 100) {
+                  return context.l10n('years_max_100');
+                }
+                return null;
+              },
+            ),
+            20.ph,
           ],
 
           if (isDoctor) ...[

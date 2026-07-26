@@ -107,7 +107,8 @@
     "categories_subtitle": "Browse by category",
     "currency": "SAR",
     "appearance": "Appearance",
-    "behavior": "Behavior",
+    "behavior": "Behavior"
+  },
   "ok": "OK",
   "common.no_images_selected": "No images selected",
   "cleanliness": "Cleanliness",
@@ -115,8 +116,7 @@
     "professionalism": "Professionalism",
     "ratings": "Ratings",
     "total_rating": "Total Rating",
-    "cooperation": "Cooperation"
-  },
+    "cooperation": "Cooperation",
   "yes": "Yes",
   "no": "No",
   "retry": "Retry",
@@ -751,6 +751,7 @@
   "bio_label": "Bio",
   "bio_hint": "Tell us about yourself",
   "years_of_experience": "Years of Experience",
+  "years_max_100": "Maximum 100 years",
   "commercial_register_label": "Commercial Register Image",
   "clinic_name_label": "Clinic Name",
   "clinic_name_hint": "e.g., My Clinic",
@@ -793,5 +794,9 @@
   "wednesday": "Wednesday",
   "thursday": "Thursday",
   "friday": "Friday",
-  "saturday": "Saturday"
+  "saturday": "Saturday",
+  "name_too_short": "Name must be at least 3 characters",
+  "field_invalid": "Invalid value",
+  "owner": "Owner",
+  "subscription_active": "Active Subscription"
 }
