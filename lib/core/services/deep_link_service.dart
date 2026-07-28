@@ -46,11 +46,8 @@ class DeepLinkService {
   }
 
   void _dispatch(Uri uri) {
-    debugPrint('DeepLinkService: >>> dispatching $uri (${_handlers.length} handlers)');
-    for (var i = 0; i < _handlers.length; i++) {
-      final matched = _handlers[i](uri);
-      debugPrint('DeepLinkService: handler #$i returned $matched');
-      if (matched) return;
+    for (final handler in _handlers) {
+      if (handler(uri)) return;
     }
     debugPrint('DeepLinkService: unhandled URI: $uri');
   }
