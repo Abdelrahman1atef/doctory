@@ -49,12 +49,12 @@ class AppRouter {
       final location = state.matchedLocation;
 
       if (mobileRole == MobileRole.patient &&
-          location.startsWith('/clinic')) {
+          location.startsWith('/clinic/')) {
         return '/';
       }
 
       if (mobileRole == MobileRole.freelanceDoctor &&
-          location.startsWith('/clinic')) {
+          location.startsWith('/clinic/')) {
         return '/';
       }
 

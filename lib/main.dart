@@ -1,6 +1,5 @@
 import 'package:doctory/core/cache/cache_helper.dart';
 import 'package:doctory/core/locator/service_locator.dart';
-import 'package:doctory/core/router/app_router.dart';
 import 'package:doctory/core/config/deep_link_config.dart';
 import 'package:doctory/core/services/deep_link_service.dart';
 import 'package:doctory/core/services/notifications/fcm_service.dart';
@@ -12,7 +11,6 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import 'package:doctory/core/network/util/auth_listener.dart';
 import 'package:doctory/core/services/remote_config_service.dart';

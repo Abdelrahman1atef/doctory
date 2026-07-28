@@ -19,4 +19,5 @@ class AuthEndpoints {
   static const String users = '/users';
   static const String clinicRegister = '/Clinics';
   static const String deepLinkVerify = '/api/v1/deep-links/verify';
+  static const String setupClinic = '/api/v1/admin/clinics/setup';
 }

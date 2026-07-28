@@ -55,6 +55,47 @@ class _OtpInputSectionState extends State<OtpInputSection> {
     }
   }
 
+  void _resolveAndNavigate() {
+    if (UserSession.currentRole == UserRole.superAdmin) {
+      context.go(AdminRoutes.admin);
+      return;
+    }
+
+    String destination;
+    Object? extra;
+
+    if (UserSession.clinicStatus == null) {
+      destination = AppRoutes.home;
+    } else if (UserSession.verificationStatus == 'Pending') {
+      destination = AppRoutes.clinicPendingApproval;
+    } else if (UserSession.verificationStatus == 'Rejected') {
+      destination = AppRoutes.clinicRejected;
+    } else if (UserSession.clinicStatus == 'Suspended') {
+      destination = AppRoutes.clinicPendingApproval;
+    } else if (!UserSession.isClinicSetupComplete) {
+      destination = AppRoutes.clinicCompleteProfile;
+      extra = {'isSetupMode': true};
+    } else {
+      destination = AppRoutes.clinicDashboard;
+    }
+
+    if (destination == AppRoutes.home || destination == AppRoutes.clinicDashboard) {
+      LocationHelper.isPermissionGranted().then((isGranted) {
+        if (context.mounted) {
+          if (isGranted) {
+            context.go(destination, extra: extra);
+          } else {
+            context.go(AppRoutes.locationPermission);
+          }
+        }
+      });
+    } else {
+      if (context.mounted) {
+        context.go(destination, extra: extra);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocListener<AuthCubit, AuthStates>(
@@ -66,18 +107,7 @@ class _OtpInputSectionState extends State<OtpInputSection> {
         }
 
         if (state is AuthSuccessState) {
-          LocationHelper.isPermissionGranted().then((isGranted) {
-            final destination = UserSession.currentRole == UserRole.superAdmin
-                ? AdminRoutes.admin
-                : UserSession.currentRole == UserRole.clinicOwner
-                    ? AppRoutes.clinicDashboard
-                    : AppRoutes.home;
-            if (isGranted && context.mounted) {
-              context.go(destination);
-            } else if (context.mounted) {
-              context.go(AppRoutes.locationPermission);
-            }
-          });
+          _resolveAndNavigate();
         } else if (state is ResetTokenVerifiedState) {
           if (state.isValid) {
             context.push(

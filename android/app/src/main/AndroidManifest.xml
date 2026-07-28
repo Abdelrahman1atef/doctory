@@ -73,6 +73,14 @@
             android:name="flutterEmbedding"
             android:value="2" />
 
+        <!-- Deep links are fully handled by app_links + DeepLinkService (Dart side).
+             Flutter's built-in auto-forwarding must be disabled, or it pushes the raw
+             intent URI straight into GoRouter as a route name, racing our own handler
+             and rendering GoRouter's error page instead. -->
+        <meta-data
+            android:name="flutter_deeplinking_enabled"
+            android:value="false" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCVBhh3JgfNPyjXfDbGyouGQ9GP7u_25kY"/>

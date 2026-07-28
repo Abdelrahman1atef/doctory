@@ -3,6 +3,7 @@ import 'package:doctory/core/network/interfaces/api_result.dart';
 import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/auth/data/data_source/auth_remote_data_source.dart';
+import 'package:doctory/features/auth/data/model/admin_clinic_setup_request.dart';
 import 'package:doctory/features/auth/data/model/auth_response.dart';
 import 'package:doctory/features/auth/data/model/clinic_setup_request.dart';
 import 'package:doctory/features/auth/data/model/login_request.dart';
@@ -14,6 +15,7 @@ abstract class AuthRepo {
   Future<ApiResult<AuthResponse>> signup(SignupRequest request);
   Future<ApiResult<AuthResponse>> login(LoginRequest request);
   Future<ApiResult<bool>> registerClinic(ClinicSetupRequest request);
+  Future<ApiResult<AuthResponse>> setupClinic(AdminClinicSetupRequest request);
   Future<ApiResult<AuthResponse>> verify(String email, String code);
   Future<ApiResult<void>> forgotPassword(String email);
   Future<ApiResult<bool>> verifyResetToken(String email, String token);
@@ -74,6 +76,11 @@ class AuthRepoImpl implements AuthRepo {
   @override
   Future<ApiResult<bool>> registerClinic(ClinicSetupRequest request) async {
     return await _dataSource.registerClinic(request);
+  }
+
+  @override
+  Future<ApiResult<AuthResponse>> setupClinic(AdminClinicSetupRequest request) async {
+    return await _dataSource.setupClinic(request);
   }
 
   @override
@@ -228,6 +235,9 @@ class AuthRepoImpl implements AuthRepo {
       'accessToken': response.accessToken,
       'refreshToken': response.refreshToken,
       'user': userJson,
+      'clinicStatus': response.clinicStatus,
+      'verificationStatus': response.verificationStatus,
+      'isClinicSetupComplete': response.isClinicSetupComplete,
     });
   }
 }

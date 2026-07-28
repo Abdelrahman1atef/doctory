@@ -3,6 +3,8 @@ import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/features/clinic/cubit/clinic_dashboard_cubit.dart';
 import 'package:doctory/features/clinic/cubit/reservation_requests_cubit.dart';
 import 'package:doctory/features/clinic/presentation/views/clinic_dashboard_view.dart';
+import 'package:doctory/features/clinic/presentation/views/clinic_pending_approval_view.dart';
+import 'package:doctory/features/clinic/presentation/views/clinic_rejected_view.dart';
 import 'package:doctory/features/clinic/presentation/views/requests_inbox_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -22,6 +24,14 @@ abstract class ClinicRouter {
             create: (_) => sl<ReservationRequestsCubit>()..load(),
             child: const RequestsInboxView(),
           ),
+        ),
+        GoRoute(
+          path: AppRoutes.clinicPendingApproval,
+          builder: (context, state) => const ClinicPendingApprovalView(),
+        ),
+        GoRoute(
+          path: AppRoutes.clinicRejected,
+          builder: (context, state) => const ClinicRejectedView(),
         ),
       ];
 }

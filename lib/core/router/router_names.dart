@@ -23,9 +23,6 @@ abstract class AppRoutes {
   static const String clinicDetails = '/clinic-details';
   static const String doctorDetails = '/doctor-details';
   static const String bookingSelectDate = '/booking/select-date';
-  static const String bookingSelectTime = '/booking/select-time';
-  static const String bookingConfirm = '/booking/confirm';
-  static const String bookingSuccess = '/booking/success';
   static const String patientReviews = '/patient-reviews';
   static const String community = '/community';
   static const String mapPickLocation = '/mapPickLocation';
@@ -44,6 +41,10 @@ abstract class AppRoutes {
 
   // Clinic Requests (mobile)
   static const String clinicRequests = '/clinic/requests';
+
+  // Clinic Post-Login States
+  static const String clinicPendingApproval = '/clinic/pending-approval';
+  static const String clinicRejected = '/clinic/rejected';
 
   // Notifications
   static const String notifications = '/notifications';

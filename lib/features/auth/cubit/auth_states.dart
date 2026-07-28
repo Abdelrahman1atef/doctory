@@ -38,6 +38,8 @@ class LanguageUpdateSuccessState extends AuthStates {}
 
 class ClinicRegisteredState extends AuthStates {}
 
+class ClinicSetupCompleteState extends AuthStates {}
+
 class SignupPendingState extends AuthStates {}
 
 class AuthErrorState extends AuthStates {

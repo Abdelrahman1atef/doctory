@@ -59,10 +59,16 @@ class AuthRouter {
     ),
     GoRoute(
       path: AppRoutes.clinicCompleteProfile,
-      builder: (context, state) => BlocProvider(
-        create: (context) => sl<AuthCubit>(),
-        child: const ClinicCompleteProfileView(),
-      ),
+      builder: (context, state) {
+        final extra = state.extra;
+        final isSetupMode = extra is Map<String, dynamic>
+            ? extra['isSetupMode'] == true
+            : extra == true;
+        return BlocProvider(
+          create: (context) => sl<AuthCubit>(),
+          child: ClinicCompleteProfileView(isSetupMode: isSetupMode),
+        );
+      },
     ),
     GoRoute(
       path: AppRoutes.forgotPassword,

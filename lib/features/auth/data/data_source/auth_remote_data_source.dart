@@ -1,6 +1,7 @@
 import 'package:doctory/core/enums/device_platform.dart';
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import 'package:doctory/features/auth/data/data_source/auth_endpoints.dart';
+import 'package:doctory/features/auth/data/model/admin_clinic_setup_request.dart';
 import 'package:doctory/features/auth/data/model/auth_response.dart';
 import 'package:doctory/features/auth/data/model/clinic_setup_request.dart';
 import 'package:doctory/features/auth/data/model/login_request.dart';
@@ -12,6 +13,7 @@ abstract class AuthRemoteDataSource {
   Future<ApiResult<AuthResponse>> signup(SignupRequest request);
   Future<ApiResult<AuthResponse>> login(LoginRequest request);
   Future<ApiResult<bool>> registerClinic(ClinicSetupRequest request);
+  Future<ApiResult<AuthResponse>> setupClinic(AdminClinicSetupRequest request);
   Future<ApiResult<AuthResponse>> verify(String email, String code);
   Future<ApiResult<void>> forgotPassword(String email);
   Future<ApiResult<bool>> verifyResetToken(String email, String token);
@@ -69,6 +71,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       path: AuthEndpoints.clinicRegister,
       body: request.toJson(),
       parser: (json) => json['success'] ?? true,
+    );
+  }
+
+  @override
+  Future<ApiResult<AuthResponse>> setupClinic(AdminClinicSetupRequest request) async {
+    return await _apiConsumer.post(
+      path: AuthEndpoints.setupClinic,
+      body: request.toJson(),
+      parser: (json) => AuthResponse.fromJson(json),
     );
   }
 

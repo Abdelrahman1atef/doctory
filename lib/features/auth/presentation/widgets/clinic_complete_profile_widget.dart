@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:doctory/core/common/models/specialty_model.dart';
 import '../../../../core/common/widgets/inputs/stitch_text_field.dart';
 import '../../../../core/common/widgets/inputs/stitch_upload_field.dart';
 import '../../../../core/common/widgets/inputs/day_hours_widget.dart';
@@ -8,7 +9,11 @@ import '../../../../core/utils/extensions.dart';
 
 class ClinicCompleteProfileWidget extends StatelessWidget {
   final GlobalKey<FormState> formKey;
+  final bool isSetupMode;
   final TextEditingController clinicNameController;
+  final TextEditingController? descriptionController;
+  final TextEditingController? emailController;
+  final TextEditingController? websiteController;
   final String clinicAddress;
   final double? clinicLat;
   final String? clinicImageFileName;
@@ -17,12 +22,19 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
   final List<DayHours> dayHours;
   final Future<void> Function(int dayIndex, bool isFrom) onPickTime;
   final void Function(int dayIndex) onToggleClosed;
+  final List<SpecialtyModel>? specializations;
+  final String? selectedSpecializationId;
+  final ValueChanged<String?>? onSpecializationChanged;
   final VoidCallback onSubmit;
 
   const ClinicCompleteProfileWidget({
     super.key,
     required this.formKey,
+    this.isSetupMode = false,
     required this.clinicNameController,
+    this.descriptionController,
+    this.emailController,
+    this.websiteController,
     required this.clinicAddress,
     required this.clinicLat,
     required this.clinicImageFileName,
@@ -31,6 +43,9 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
     required this.dayHours,
     required this.onPickTime,
     required this.onToggleClosed,
+    this.specializations,
+    this.selectedSpecializationId,
+    this.onSpecializationChanged,
     required this.onSubmit,
   });
 
@@ -45,12 +60,12 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
           children: [
             /// Header
             Text(
-              context.l10n('complete_profile_title'),
+              context.l10n(isSetupMode ? 'setup_clinic_title' : 'complete_profile_title'),
               style: AppStyles.s24Bold.copyWith(color: AppColors.onSurface),
             ),
             8.ph,
             Text(
-              context.l10n('complete_profile_subtitle'),
+              context.l10n(isSetupMode ? 'setup_clinic_subtitle' : 'complete_profile_subtitle'),
               style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
             ),
             32.ph,
@@ -60,7 +75,7 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
               label: context.l10n('clinic_image'),
               fileName: clinicImageFileName,
               hint: context.l10n('upload_file_hint'),
-              isRequired: true,
+              isRequired: isSetupMode,
               onPick: onPickClinicImage,
             ),
             20.ph,
@@ -76,6 +91,21 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
               ),
             ),
             20.ph,
+
+            /// Description (setup mode only)
+            if (isSetupMode) ...[
+              StitchTextField(
+                controller: descriptionController,
+                label: context.l10n('clinic_description_label'),
+                hintText: context.l10n('clinic_description_hint'),
+                maxLines: 3,
+                prefixIcon: const Icon(
+                  Icons.description_outlined,
+                  color: AppColors.stitchPrimary,
+                ),
+              ),
+              20.ph,
+            ],
 
             /// Clinic Location
             Text(
@@ -130,6 +160,66 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
             ),
             20.ph,
 
+            /// Email (setup mode only)
+            if (isSetupMode) ...[
+              StitchTextField(
+                controller: emailController,
+                label: context.l10n('email_label'),
+                hintText: context.l10n('email_hint'),
+                keyboardType: TextInputType.emailAddress,
+                prefixIcon: const Icon(
+                  Icons.email_outlined,
+                  color: AppColors.stitchPrimary,
+                ),
+              ),
+              20.ph,
+            ],
+
+            /// Website (setup mode only)
+            if (isSetupMode) ...[
+              StitchTextField(
+                controller: websiteController,
+                label: context.l10n('website_label'),
+                hintText: context.l10n('website_hint'),
+                keyboardType: TextInputType.url,
+                prefixIcon: const Icon(
+                  Icons.language_outlined,
+                  color: AppColors.stitchPrimary,
+                ),
+              ),
+              20.ph,
+            ],
+
+            /// Specialization (setup mode only)
+            if (isSetupMode && specializations != null) ...[
+              Text(
+                context.l10n('specialization'),
+                style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
+              ),
+              8.ph,
+              DropdownButtonFormField<String>(
+                initialValue: selectedSpecializationId,
+                decoration: InputDecoration(
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  prefixIcon: const Icon(
+                    Icons.medical_services_outlined,
+                    color: AppColors.stitchPrimary,
+                  ),
+                ),
+                hint: Text(context.l10n('select_specialization')),
+                items: specializations!.map((s) {
+                  return DropdownMenuItem(
+                    value: s.id,
+                    child: Text(s.displayName),
+                  );
+                }).toList(),
+                onChanged: onSpecializationChanged,
+              ),
+              20.ph,
+            ],
+
             /// Operating Hours Header
             Text(
               context.l10n('operating_hours'),
@@ -170,7 +260,7 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  context.l10n('save_and_continue'),
+                  context.l10n(isSetupMode ? 'save_and_continue' : 'save_and_continue'),
                   style: AppStyles.s16SemiBold,
                 ),
               ),

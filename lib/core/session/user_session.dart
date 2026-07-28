@@ -33,6 +33,11 @@ class UserSession {
   static Set<Permission>? currentPermissions;
   static DoctorEmploymentType? currentDoctorType;
 
+  /// Clinic owner specific fields
+  static String? clinicStatus;
+  static String? verificationStatus;
+  static bool isClinicSetupComplete = false;
+
   static MobileRole? get mobileRole {
     if (currentRole == null) return null;
     return MobileRole.from(
@@ -62,8 +67,16 @@ class UserSession {
   static void setGuest(bool value) {
     _isGuest = value;
     guestNotifier.value = value;
-    // Trigger notification by re-assigning value (standard ValueNotifier practice)
-    userNotifier.value = userNotifier.value;
+    _notifyUserChanged();
+  }
+
+  /// Forces [userNotifier] to notify listeners even when [userModel]'s
+  /// reference hasn't changed. Reassigning the same reference is a no-op for
+  /// ValueNotifier (it short-circuits on `==`), so we briefly clear it first.
+  static void _notifyUserChanged() {
+    final current = userModel;
+    userNotifier.value = null;
+    userNotifier.value = current;
   }
 
   /// Current settings data
@@ -106,6 +119,10 @@ class UserSession {
               .toSet();
         }
       }
+
+      clinicStatus = response['clinicStatus']?.toString();
+      verificationStatus = response['verificationStatus']?.toString();
+      isClinicSetupComplete = response['isClinicSetupComplete'] == true;
 
       // Determine the token (accessToken, token, or access_token)
       if (response.containsKey("data") && response["data"] is Map) {
@@ -162,8 +179,10 @@ class UserSession {
   /// Update profile fields in the session and notify listeners
   static void updateProfileData(Map<String, dynamic> fields) {
     if (userModel is Map) {
-      (userModel as Map).addAll(fields);
-      userNotifier.value = userModel;
+      final updated = Map<String, dynamic>.from(userModel as Map)
+        ..addAll(fields);
+      userModel = updated;
+      userNotifier.value = updated;
     }
   }
 
@@ -191,6 +210,9 @@ class UserSession {
     currentRole = null;
     currentPermissions = null;
     currentDoctorType = null;
+    clinicStatus = null;
+    verificationStatus = null;
+    isClinicSetupComplete = false;
     userNotifier.value = null;
     await HiveService().delete(
       GeneralConstants.hiveUserBox,
@@ -279,7 +301,11 @@ class UserSession {
           }
         }
       }
-      
+
+      clinicStatus = data['clinicStatus']?.toString();
+      verificationStatus = data['verificationStatus']?.toString();
+      isClinicSetupComplete = data['isClinicSetupComplete'] == true;
+
       if (token.isNotEmpty) {
         // Intentionally empty — realtime init moved to chat cubits
       }

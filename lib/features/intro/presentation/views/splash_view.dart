@@ -45,13 +45,33 @@ class SplashView extends StatelessWidget {
           final pendingPath = DeepLinkService.instance.consumePendingPath();
           if (pendingPath != null) {
             context.go(pendingPath);
-          } else if (UserSession.currentRole == UserRole.superAdmin) {
-            context.go(AdminRoutes.admin);
-          } else if (UserSession.currentRole == UserRole.clinicOwner) {
-            context.go(AppRoutes.clinicDashboard);
-          } else {
-            context.go(AppRoutes.home);
+            return;
           }
+
+          if (UserSession.currentRole == UserRole.superAdmin) {
+            context.go(AdminRoutes.admin);
+            return;
+          }
+
+          String destination;
+          Object? extra;
+
+          if (UserSession.clinicStatus == null) {
+            destination = AppRoutes.home;
+          } else if (UserSession.verificationStatus == 'Pending') {
+            destination = AppRoutes.clinicPendingApproval;
+          } else if (UserSession.verificationStatus == 'Rejected') {
+            destination = AppRoutes.clinicRejected;
+          } else if (UserSession.clinicStatus == 'Suspended') {
+            destination = AppRoutes.clinicPendingApproval;
+          } else if (!UserSession.isClinicSetupComplete) {
+            destination = AppRoutes.clinicCompleteProfile;
+            extra = {'isSetupMode': true};
+          } else {
+            destination = AppRoutes.clinicDashboard;
+          }
+
+          context.go(destination, extra: extra);
         }
       },
       child: const Scaffold(body: SplashBodySection()),

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:doctory/core/enums/device_platform.dart';
 import 'package:doctory/core/services/file_upload_service.dart';
 import 'package:doctory/features/auth/cubit/auth_states.dart';
+import 'package:doctory/features/auth/data/model/admin_clinic_setup_request.dart';
 import 'package:doctory/features/auth/data/model/clinic_setup_request.dart';
 import 'package:doctory/features/auth/data/model/login_request.dart';
 import 'package:doctory/features/auth/data/model/signup_request.dart';
@@ -279,6 +280,15 @@ class AuthCubit extends Cubit<AuthStates> {
     final result = await _authRepo.registerClinic(request);
     result.fold(
       onSuccess: (_) => emit(ClinicRegisteredState()),
+      onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
+    );
+  }
+
+  Future<void> setupClinic(AdminClinicSetupRequest request) async {
+    emit(AuthLoadingState());
+    final result = await _authRepo.setupClinic(request);
+    result.fold(
+      onSuccess: (_) => emit(ClinicSetupCompleteState()),
       onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
     );
   }

@@ -5,19 +5,25 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:doctory/core/common/models/specialty_model.dart';
+import 'package:doctory/core/locator/service_locator.dart';
 import '../../../../core/common/functions/location_helper.dart';
 import '../../../../core/common/widgets/inputs/day_hours_widget.dart';
 import '../../../../core/common/widgets/map/location_picker_bottom_sheet.dart';
 import '../../../../core/router/router_names.dart';
 import '../../../../core/services/alerts.dart';
 import '../../../../core/session/user_session.dart';
+import '../../../../shared/cubit/specializations_cubit.dart';
 import '../../cubit/auth_cubit.dart';
 import '../../cubit/auth_states.dart';
+import '../../data/model/admin_clinic_setup_request.dart';
 import '../../data/model/clinic_setup_request.dart';
 import '../widgets/clinic_complete_profile_widget.dart';
 
 class ClinicCompleteProfileSection extends StatefulWidget {
-  const ClinicCompleteProfileSection({super.key});
+  final bool isSetupMode;
+
+  const ClinicCompleteProfileSection({super.key, this.isSetupMode = false});
 
   @override
   State<ClinicCompleteProfileSection> createState() => _ClinicCompleteProfileSectionState();
@@ -26,10 +32,15 @@ class ClinicCompleteProfileSection extends StatefulWidget {
 class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSection> {
   final _formKey = GlobalKey<FormState>();
   final _clinicNameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _websiteController = TextEditingController();
   File? _clinicImage;
   double? _clinicLat;
   double? _clinicLng;
   String _clinicAddress = '';
+  String? _selectedSpecializationId;
+  List<SpecialtyModel> _specializations = [];
 
   static const _dayNames = [
     'Sunday', 'Monday', 'Tuesday', 'Wednesday',
@@ -50,11 +61,37 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
         isClosed: false,
       );
     });
+
+    if (widget.isSetupMode) {
+      final userModel = UserSession.userModel;
+      if (userModel is Map) {
+        _emailController.text = userModel['email']?.toString() ?? '';
+      }
+      _loadSpecializations();
+    }
+  }
+
+  void _loadSpecializations() {
+    final cubit = sl<SharedSpecializationsCubit>();
+    final state = cubit.state;
+    if (state is SharedSpecializationsLoaded) {
+      setState(() => _specializations = state.specializations);
+    }
+    cubit.getFamousSpecializations().then((_) {
+      if (!mounted) return;
+      final current = cubit.state;
+      if (current is SharedSpecializationsLoaded) {
+        setState(() => _specializations = current.specializations);
+      }
+    });
   }
 
   @override
   void dispose() {
     _clinicNameController.dispose();
+    _descriptionController.dispose();
+    _emailController.dispose();
+    _websiteController.dispose();
     super.dispose();
   }
 
@@ -122,26 +159,81 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
     return map;
   }
 
+  List<String> _buildWorkingDays() {
+    return _dayHours
+        .where((d) => !d.isClosed)
+        .map((d) => d.dayName)
+        .toList();
+  }
+
   void _onSubmit() {
     if (_formKey.currentState!.validate()) {
-      final cubit = context.read<AuthCubit>();
-      cubit.registerClinic(
-        ClinicSetupRequest(
-          name: _clinicNameController.text.trim(),
-          phone: _getPhone(),
-          lat: _clinicLat ?? 0.0,
-          lng: _clinicLng ?? 0.0,
-          address: _clinicAddress,
-          operatingHours: _buildOperatingHours(),
-        ),
-      );
+      if (widget.isSetupMode) {
+        _submitSetup();
+      } else {
+        _submitRegister();
+      }
     }
+  }
+
+  void _submitRegister() {
+    final cubit = context.read<AuthCubit>();
+    cubit.registerClinic(
+      ClinicSetupRequest(
+        name: _clinicNameController.text.trim(),
+        phone: _getPhone(),
+        lat: _clinicLat ?? 0.0,
+        lng: _clinicLng ?? 0.0,
+        address: _clinicAddress,
+        operatingHours: _buildOperatingHours(),
+      ),
+    );
+  }
+
+  void _submitSetup() {
+    final cubit = context.read<AuthCubit>();
+    final openDays = _dayHours.where((d) => !d.isClosed).toList();
+    final workingHoursStart = openDays.isNotEmpty
+        ? '${openDays.first.from.hour.toString().padLeft(2, '0')}:${openDays.first.from.minute.toString().padLeft(2, '0')}'
+        : '09:00';
+    final workingHoursEnd = openDays.isNotEmpty
+        ? '${openDays.first.to.hour.toString().padLeft(2, '0')}:${openDays.first.to.minute.toString().padLeft(2, '0')}'
+        : '17:00';
+
+    cubit.setupClinic(
+      AdminClinicSetupRequest(
+        name: _clinicNameController.text.trim(),
+        description: _descriptionController.text.trim(),
+        address: _clinicAddress,
+        phone: _getPhone(),
+        email: _emailController.text.trim(),
+        website: _websiteController.text.trim().isEmpty ? null : _websiteController.text.trim(),
+        logo: _clinicImage?.path.split('\\').last ?? _clinicImage?.path.split('/').last,
+        workingHours: '$workingHoursStart-$workingHoursEnd',
+        workingHoursStart: workingHoursStart,
+        workingHoursEnd: workingHoursEnd,
+        workingDays: _buildWorkingDays(),
+        specializationId: _selectedSpecializationId ?? '',
+        lat: _clinicLat ?? 0.0,
+        lng: _clinicLng ?? 0.0,
+      ),
+    );
   }
 
   void _goHome() {
     LocationHelper.isPermissionGranted().then((isGranted) {
       if (isGranted && context.mounted) {
         context.go(AppRoutes.home);
+      } else if (context.mounted) {
+        context.push(AppRoutes.locationPermission);
+      }
+    });
+  }
+
+  void _goDashboard() {
+    LocationHelper.isPermissionGranted().then((isGranted) {
+      if (isGranted && context.mounted) {
+        context.go(AppRoutes.clinicDashboard);
       } else if (context.mounted) {
         context.push(AppRoutes.locationPermission);
       }
@@ -160,6 +252,8 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
 
         if (state is ClinicRegisteredState) {
           _goHome();
+        } else if (state is ClinicSetupCompleteState) {
+          _goDashboard();
         } else if (state is AuthErrorState) {
           Alerts.showSnackBar(
             context,
@@ -170,7 +264,11 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
       },
       child: ClinicCompleteProfileWidget(
         formKey: _formKey,
+        isSetupMode: widget.isSetupMode,
         clinicNameController: _clinicNameController,
+        descriptionController: _descriptionController,
+        emailController: _emailController,
+        websiteController: _websiteController,
         clinicAddress: _clinicAddress,
         clinicLat: _clinicLat,
         clinicImageFileName: _clinicImage?.path.split('\\').last ?? _clinicImage?.path.split('/').last,
@@ -179,6 +277,9 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
         dayHours: _dayHours,
         onPickTime: _pickTime,
         onToggleClosed: _toggleClosed,
+        specializations: _specializations,
+        selectedSpecializationId: _selectedSpecializationId,
+        onSpecializationChanged: (id) => setState(() => _selectedSpecializationId = id),
         onSubmit: _onSubmit,
       ),
     );

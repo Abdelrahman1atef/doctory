@@ -3,14 +3,16 @@ import 'package:flutter/material.dart';
 import '../sections/clinic_complete_profile_section.dart';
 
 class ClinicCompleteProfileView extends StatelessWidget {
-  const ClinicCompleteProfileView({super.key});
+  final bool isSetupMode;
+
+  const ClinicCompleteProfileView({super.key, this.isSetupMode = false});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
+    return Scaffold(
       backgroundColor: AppColors.stitchSurface,
       body: SafeArea(
-        child: ClinicCompleteProfileSection(),
+        child: ClinicCompleteProfileSection(isSetupMode: isSetupMode),
       ),
     );
   }
