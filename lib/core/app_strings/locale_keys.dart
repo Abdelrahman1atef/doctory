@@ -546,4 +546,16 @@ abstract class LocaleKeys {
   static const yearly = 'yearly';
   static const visits = 'visits';
   static const income = 'income';
+  static const setup_clinic_title = 'setup_clinic_title';
+  static const setup_clinic_subtitle = 'setup_clinic_subtitle';
+  static const clinic_description_label = 'clinic_description_label';
+  static const clinic_description_hint = 'clinic_description_hint';
+  static const email_label = 'email_label';
+  static const email_hint = 'email_hint';
+  static const website_label = 'website_label';
+  static const website_hint = 'website_hint';
+  static const pending_approval_title = 'pending_approval_title';
+  static const pending_approval_subtitle = 'pending_approval_subtitle';
+  static const rejected_title = 'rejected_title';
+  static const rejected_subtitle = 'rejected_subtitle';
 }

@@ -77,7 +77,7 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
     if (state is SharedSpecializationsLoaded) {
       setState(() => _specializations = state.specializations);
     }
-    cubit.getFamousSpecializations().then((_) {
+    cubit.getAllSpecializations().then((_) {
       if (!mounted) return;
       final current = cubit.state;
       if (current is SharedSpecializationsLoaded) {
@@ -125,7 +125,14 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
 
   Future<void> _pickTime(int dayIndex, bool isFrom) async {
     final current = isFrom ? _dayHours[dayIndex].from : _dayHours[dayIndex].to;
-    final picked = await showTimePicker(context: context, initialTime: current);
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: current,
+      builder: (context, child) => MediaQuery(
+        data: MediaQuery.of(context).copyWith(alwaysUse24HourFormat: false),
+        child: child!,
+      ),
+    );
     if (picked != null) {
       setState(() {
         if (isFrom) {

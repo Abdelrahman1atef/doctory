@@ -79,6 +79,7 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
     return await _apiConsumer.post(
       path: AuthEndpoints.setupClinic,
       body: request.toJson(),
+      isFormData: false,
       parser: (json) => AuthResponse.fromJson(json),
     );
   }

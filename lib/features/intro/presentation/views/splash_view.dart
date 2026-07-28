@@ -65,8 +65,7 @@ class SplashView extends StatelessWidget {
           } else if (UserSession.clinicStatus == 'Suspended') {
             destination = AppRoutes.clinicPendingApproval;
           } else if (!UserSession.isClinicSetupComplete) {
-            destination = AppRoutes.clinicCompleteProfile;
-            extra = {'isSetupMode': true};
+            destination = AppRoutes.login;
           } else {
             destination = AppRoutes.clinicDashboard;
           }

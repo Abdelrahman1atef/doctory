@@ -182,6 +182,7 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
                 label: context.l10n('website_label'),
                 hintText: context.l10n('website_hint'),
                 keyboardType: TextInputType.url,
+                isRequired: false,
                 prefixIcon: const Icon(
                   Icons.language_outlined,
                   color: AppColors.stitchPrimary,

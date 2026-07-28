@@ -61,6 +61,40 @@ class SharedSpecializationsCubit extends Cubit<SharedSpecializationsState> {
     );
   }
 
+  Future<void> getAllSpecializations({bool forceRefresh = false}) async {
+    if (!forceRefresh) {
+      if (state is SharedSpecializationsLoaded) return;
+      if (_pendingRequest != null) {
+        await _pendingRequest;
+        return;
+      }
+    }
+
+    emit(SharedSpecializationsLoading());
+
+    final future = _apiConsumer.get<PaginatedData<SpecialtyModel>>(
+      path: 'specializations',
+      parser: (json) => PaginatedData.fromJson(
+        json['data'],
+        (item) => SpecialtyModel.fromJson(item),
+      ),
+    );
+
+    _pendingRequest = future;
+
+    final result = await future;
+    _pendingRequest = null;
+
+    if (isClosed) return;
+
+    result.fold(
+      onSuccess: (data) =>
+          emit(SharedSpecializationsLoaded(data.items)),
+      onFailure: (failure) =>
+          emit(SharedSpecializationsError(failure.message)),
+    );
+  }
+
   void setSpecializations(List<SpecialtyModel> specializations) {
     if (state is SharedSpecializationsLoaded) return;
     emit(SharedSpecializationsLoaded(specializations));

@@ -35,15 +35,17 @@ class DayHours {
   }
 
   String get fromDisplay {
-    final h = from.hour.toString().padLeft(2, '0');
+    final hour = from.hourOfPeriod == 0 ? 12 : from.hourOfPeriod;
     final m = from.minute.toString().padLeft(2, '0');
-    return '$h:$m';
+    final period = from.period == DayPeriod.am ? 'AM' : 'PM';
+    return '$hour:$m $period';
   }
 
   String get toDisplay {
-    final h = to.hour.toString().padLeft(2, '0');
+    final hour = to.hourOfPeriod == 0 ? 12 : to.hourOfPeriod;
     final m = to.minute.toString().padLeft(2, '0');
-    return '$h:$m';
+    final period = to.period == DayPeriod.am ? 'AM' : 'PM';
+    return '$hour:$m $period';
   }
 }
 

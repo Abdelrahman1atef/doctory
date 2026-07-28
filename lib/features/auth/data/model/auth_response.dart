@@ -31,14 +31,40 @@ class AuthResponse {
       user = UserModel.fromJson(data);
     }
 
+    final clinicStatusRaw = data['clinicStatus'];
+    final verificationStatusRaw = data['verificationStatus'];
+
     return AuthResponse(
       accessToken: data['accessToken'] ?? '',
       refreshToken: data['refreshToken'],
       verificationCode: data['verificationCode']?.toString(),
       user: user,
-      clinicStatus: data['clinicStatus']?.toString(),
-      verificationStatus: data['verificationStatus']?.toString(),
+      clinicStatus: clinicStatusRaw is int
+          ? _clinicStatusFromInt(clinicStatusRaw)
+          : clinicStatusRaw?.toString(),
+      verificationStatus: verificationStatusRaw is int
+          ? _verificationStatusFromInt(verificationStatusRaw)
+          : verificationStatusRaw?.toString(),
       isClinicSetupComplete: data['isClinicSetupComplete'] == true,
     );
   }
-}
+
+  static String? _clinicStatusFromInt(int value) {
+    switch (value) {
+      case 0: return 'PendingApproval';
+      case 1: return 'Active';
+      case 2: return 'Suspended';
+      default: return null;
+    }
+  }
+
+  static String? _verificationStatusFromInt(int value) {
+    switch (value) {
+      case 0: return 'Pending';
+      case 1: return 'Approved';
+      case 2: return 'Rejected';
+      default: return null;
+    }
+  }
+  }
+
