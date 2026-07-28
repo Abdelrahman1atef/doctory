@@ -50,7 +50,8 @@ void setupClinicDI(GetIt sl) {
       return false;
     }
     if (uri.path.startsWith('/clinic/')) {
-      AppRouter.navigatorKey.currentContext?.go('/clinic-dashboard');
+      DeepLinkService.instance.setPendingPath('/clinic/dashboard');
+      AppRouter.navigatorKey.currentContext?.go('/clinic/dashboard');
       return true;
     }
     return false;

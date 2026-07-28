@@ -63,11 +63,13 @@ void setupChatDI(GetIt sl) {
     if (uri.path.startsWith('/chat/room/')) {
       final roomId = uri.pathSegments.last;
       if (roomId.isNotEmpty) {
+        DeepLinkService.instance.setPendingPath('/chat/room/$roomId');
         AppRouter.navigatorKey.currentContext?.go('/chat/room/$roomId');
         return true;
       }
     }
     if (uri.path.startsWith('/chat/')) {
+      DeepLinkService.instance.setPendingPath('/chat');
       AppRouter.navigatorKey.currentContext?.go('/chat');
       return true;
     }

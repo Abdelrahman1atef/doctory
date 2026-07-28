@@ -39,6 +39,7 @@ class CommunityDI {
       if (!uri.path.startsWith('/post/')) return false;
       final postId = uri.pathSegments.last;
       if (postId.isEmpty) return false;
+      DeepLinkService.instance.setPendingPath('/post/$postId');
       AppRouter.navigatorKey.currentContext?.go('/post/$postId');
       return true;
     });

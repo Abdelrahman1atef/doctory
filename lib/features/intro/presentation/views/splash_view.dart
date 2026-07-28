@@ -1,6 +1,7 @@
 import 'package:doctory/core/common/models/role.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/cache/cache_helper.dart';
+import 'package:doctory/core/services/deep_link_service.dart';
 import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/features/intro/cubit/intro_cubit.dart';
 import 'package:doctory/features/intro/cubit/intro_states.dart';
@@ -41,7 +42,10 @@ class SplashView extends StatelessWidget {
         } else if (state is NavigateToLoginState) {
           context.go(AppRoutes.welcome);
         } else if (state is NavigateToMainState) {
-          if (UserSession.currentRole == UserRole.superAdmin) {
+          final pendingPath = DeepLinkService.instance.consumePendingPath();
+          if (pendingPath != null) {
+            context.go(pendingPath);
+          } else if (UserSession.currentRole == UserRole.superAdmin) {
             context.go(AdminRoutes.admin);
           } else if (UserSession.currentRole == UserRole.clinicOwner) {
             context.go(AppRoutes.clinicDashboard);

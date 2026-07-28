@@ -31,6 +31,7 @@ void setupMyAppointmentsDI(GetIt sl) {
       return false;
     }
     if (uri.path.startsWith('/appointments/')) {
+      DeepLinkService.instance.setPendingPath('/my-appointments');
       AppRouter.navigatorKey.currentContext?.go('/my-appointments');
       return true;
     }

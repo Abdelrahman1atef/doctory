@@ -40,13 +40,23 @@ class AuthDI {
         return false;
       }
 
+      // /auth/verification-approved?userId=X&role=ClinicOwner&status=accepted&token=Y
+      // Must come BEFORE the generic /auth/* catch-all below
+      if (uri.path == '/auth/verification-approved') {
+        _handleVerificationApproved(uri);
+        return true;
+      }
+
       // /auth/* — navigate to login
       if (uri.path.startsWith('/auth/')) {
+        DeepLinkService.instance.setPendingPath('/login');
         AppRouter.navigatorKey.currentContext?.go('/login');
         return true;
       }
 
       // /clinic/setup?clinicId=&userId=&token= — verify HMAC then navigate
+      // MUST be registered before ClinicDI's broader /clinic/ handler
+      // (AuthDI.setup runs before setupClinicDI in service_locator.dart)
       if (uri.path.startsWith('/clinic/setup')) {
         _handleClinicSetupDeepLink(uri);
         return true;
@@ -62,6 +72,7 @@ class AuthDI {
     final token = uri.queryParameters['token'] ?? '';
 
     if (clinicId.isEmpty || userId.isEmpty || token.isEmpty) {
+      DeepLinkService.instance.setPendingPath('/login');
       AppRouter.navigatorKey.currentContext?.go('/login');
       return;
     }
@@ -83,17 +94,64 @@ class AuthDI {
     result.fold(
       onSuccess: (valid) {
         if (valid) {
+          DeepLinkService.instance.setPendingPath('/clinic-complete-profile');
           AppRouter.navigatorKey.currentContext!.go(
             '/clinic-complete-profile',
             extra: {'clinicId': clinicId, 'userId': userId},
           );
         } else {
           log('Deep link verification failed: invalid token');
+          DeepLinkService.instance.setPendingPath('/login');
           AppRouter.navigatorKey.currentContext!.go('/login');
         }
       },
       onFailure: (failure) {
         log('Deep link verification error: ${failure.message}');
+        DeepLinkService.instance.setPendingPath('/login');
+        AppRouter.navigatorKey.currentContext!.go('/login');
+      },
+    );
+  }
+
+  static void _handleVerificationApproved(Uri uri) {
+    final userId = uri.queryParameters['userId'] ?? '';
+    final status = uri.queryParameters['status'] ?? '';
+    final token = uri.queryParameters['token'] ?? '';
+    if (userId.isEmpty || token.isEmpty) {
+      DeepLinkService.instance.setPendingPath('/login');
+      AppRouter.navigatorKey.currentContext?.go('/login');
+      return;
+    }
+    unawaited(_verifyAndNavigateApproved(userId, status, token));
+  }
+
+  static Future<void> _verifyAndNavigateApproved(
+    String userId,
+    String status,
+    String token,
+  ) async {
+    final repo = sl<AuthRepo>();
+    final data = 'userid:$userId:$status';
+    final result = await repo.verifyDeepLink(data, token);
+
+    if (AppRouter.navigatorKey.currentContext == null) return;
+
+    result.fold(
+      onSuccess: (valid) {
+        if (valid) {
+          DeepLinkService.instance.setPendingPath('/clinic-complete-profile');
+          AppRouter.navigatorKey.currentContext!.go(
+            '/clinic-complete-profile',
+          );
+        } else {
+          log('Verification deep link: invalid token');
+          DeepLinkService.instance.setPendingPath('/login');
+          AppRouter.navigatorKey.currentContext!.go('/login');
+        }
+      },
+      onFailure: (failure) {
+        log('Verification deep link error: ${failure.message}');
+        DeepLinkService.instance.setPendingPath('/login');
         AppRouter.navigatorKey.currentContext!.go('/login');
       },
     );

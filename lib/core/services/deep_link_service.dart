@@ -8,6 +8,22 @@ class DeepLinkService {
   static final DeepLinkService instance = DeepLinkService._();
 
   final List<DeepLinkHandler> _handlers = [];
+  String? _pendingPath;
+
+  /// A GoRouter path to navigate to after authentication succeeds.
+  /// Set by deep link handlers before navigating.
+  String? get pendingPath => _pendingPath;
+
+  void setPendingPath(String path) {
+    _pendingPath = path;
+  }
+
+  /// Returns the pending path and clears it.
+  String? consumePendingPath() {
+    final path = _pendingPath;
+    _pendingPath = null;
+    return path;
+  }
 
   void init() {
     try {
