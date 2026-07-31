@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:doctory/core/common/models/specialty_model.dart';
+import 'package:doctory/core/common/widgets/sheets/specialization_picker_sheet.dart';
 import 'package:doctory/core/locator/service_locator.dart';
 import '../../../../core/common/functions/location_helper.dart';
 import '../../../../core/common/widgets/inputs/day_hours_widget.dart';
@@ -13,6 +14,7 @@ import '../../../../core/common/widgets/map/location_picker_bottom_sheet.dart';
 import '../../../../core/router/router_names.dart';
 import '../../../../core/services/alerts.dart';
 import '../../../../core/session/user_session.dart';
+import '../../../../core/utils/extensions.dart';
 import '../../../../shared/cubit/specializations_cubit.dart';
 import '../../cubit/auth_cubit.dart';
 import '../../cubit/auth_states.dart';
@@ -77,13 +79,33 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
     if (state is SharedSpecializationsLoaded) {
       setState(() => _specializations = state.specializations);
     }
-    cubit.getAllSpecializations().then((_) {
+    cubit.getAllSpecializations(forceRefresh: true).then((_) {
       if (!mounted) return;
       final current = cubit.state;
       if (current is SharedSpecializationsLoaded) {
         setState(() => _specializations = current.specializations);
       }
     });
+  }
+
+  Future<void> _pickSpecialization() async {
+    if (_specializations.isEmpty) {
+      _loadSpecializations();
+      Alerts.showSnackBar(
+        context,
+        message: context.l10n('loading'),
+        state: SnackState.info,
+      );
+      return;
+    }
+    final selected = await SpecializationPickerSheet.show(
+      context,
+      specializations: _specializations,
+      selectedId: _selectedSpecializationId,
+    );
+    if (selected != null) {
+      setState(() => _selectedSpecializationId = selected.id);
+    }
   }
 
   @override
@@ -97,6 +119,15 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
 
   String _getPhone() {
     return UserSession.userModel?['phoneNumber'] ?? '';
+  }
+
+  String? get _selectedSpecializationName {
+    final id = _selectedSpecializationId;
+    if (id == null) return null;
+    for (final s in _specializations) {
+      if (s.id == id) return s.displayName;
+    }
+    return null;
   }
 
   Future<void> _pickClinicImage() async {
@@ -197,8 +228,16 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
     );
   }
 
-  void _submitSetup() {
+  Future<void> _submitSetup() async {
     final cubit = context.read<AuthCubit>();
+
+    String? logoName;
+    final image = _clinicImage;
+    if (image != null) {
+      logoName = await cubit.uploadClinicImage(image);
+      if (logoName == null) return;
+    }
+
     final openDays = _dayHours.where((d) => !d.isClosed).toList();
     final workingHoursStart = openDays.isNotEmpty
         ? '${openDays.first.from.hour.toString().padLeft(2, '0')}:${openDays.first.from.minute.toString().padLeft(2, '0')}'
@@ -215,7 +254,7 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
         phone: _getPhone(),
         email: _emailController.text.trim(),
         website: _websiteController.text.trim().isEmpty ? null : _websiteController.text.trim(),
-        logo: _clinicImage?.path.split('\\').last ?? _clinicImage?.path.split('/').last,
+        logo: logoName,
         workingHours: '$workingHoursStart-$workingHoursEnd',
         workingHoursStart: workingHoursStart,
         workingHoursEnd: workingHoursEnd,
@@ -229,9 +268,10 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
 
   void _goHome() {
     LocationHelper.isPermissionGranted().then((isGranted) {
-      if (isGranted && context.mounted) {
+      if (!mounted) return;
+      if (isGranted) {
         context.go(AppRoutes.home);
-      } else if (context.mounted) {
+      } else {
         context.push(AppRoutes.locationPermission);
       }
     });
@@ -239,9 +279,10 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
 
   void _goDashboard() {
     LocationHelper.isPermissionGranted().then((isGranted) {
-      if (isGranted && context.mounted) {
+      if (!mounted) return;
+      if (isGranted) {
         context.go(AppRoutes.clinicDashboard);
-      } else if (context.mounted) {
+      } else {
         context.push(AppRoutes.locationPermission);
       }
     });
@@ -284,9 +325,8 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
         dayHours: _dayHours,
         onPickTime: _pickTime,
         onToggleClosed: _toggleClosed,
-        specializations: _specializations,
-        selectedSpecializationId: _selectedSpecializationId,
-        onSpecializationChanged: (id) => setState(() => _selectedSpecializationId = id),
+        selectedSpecializationName: _selectedSpecializationName,
+        onPickSpecialization: _pickSpecialization,
         onSubmit: _onSubmit,
       ),
     );

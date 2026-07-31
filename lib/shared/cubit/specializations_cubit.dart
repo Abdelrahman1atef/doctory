@@ -22,6 +22,7 @@ class SharedSpecializationsError extends SharedSpecializationsState {
 class SharedSpecializationsCubit extends Cubit<SharedSpecializationsState> {
   final ApiConsumer _apiConsumer;
   Future<ApiResult<PaginatedData<SpecialtyModel>>>? _pendingRequest;
+  bool _isLoadingAll = false;
 
   SharedSpecializationsCubit(this._apiConsumer)
       : super(SharedSpecializationsInitial());
@@ -64,35 +65,47 @@ class SharedSpecializationsCubit extends Cubit<SharedSpecializationsState> {
   Future<void> getAllSpecializations({bool forceRefresh = false}) async {
     if (!forceRefresh) {
       if (state is SharedSpecializationsLoaded) return;
-      if (_pendingRequest != null) {
-        await _pendingRequest;
-        return;
-      }
+      if (_isLoadingAll) return;
     }
 
+    _isLoadingAll = true;
     emit(SharedSpecializationsLoading());
 
-    final future = _apiConsumer.get<PaginatedData<SpecialtyModel>>(
-      path: 'specializations',
-      parser: (json) => PaginatedData.fromJson(
-        json['data'],
-        (item) => SpecialtyModel.fromJson(item),
-      ),
-    );
+    final all = <SpecialtyModel>[];
+    var pageNumber = 1;
+    var hasNextPage = true;
 
-    _pendingRequest = future;
+    while (hasNextPage) {
+      final result = await _apiConsumer.get<PaginatedData<SpecialtyModel>>(
+        path: 'specializations',
+        queryParameters: {'pageNumber': pageNumber, 'pageSize': 50},
+        parser: (json) => PaginatedData.fromJson(
+          json['data'],
+          (item) => SpecialtyModel.fromJson(item),
+        ),
+      );
 
-    final result = await future;
-    _pendingRequest = null;
+      if (isClosed) return;
 
+      final data = result.fold(
+        onSuccess: (data) => data,
+        onFailure: (failure) {
+          _isLoadingAll = false;
+          emit(SharedSpecializationsError(failure.message));
+          return null;
+        },
+      );
+      if (data == null) return;
+
+      all.addAll(data.items);
+      hasNextPage = data.hasNextPage;
+      pageNumber++;
+    }
+
+    _isLoadingAll = false;
     if (isClosed) return;
 
-    result.fold(
-      onSuccess: (data) =>
-          emit(SharedSpecializationsLoaded(data.items)),
-      onFailure: (failure) =>
-          emit(SharedSpecializationsError(failure.message)),
-    );
+    emit(SharedSpecializationsLoaded(all));
   }
 
   void setSpecializations(List<SpecialtyModel> specializations) {

@@ -62,6 +62,12 @@ class AuthCubit extends Cubit<AuthStates> {
     );
   }
 
+  /// Uploads the clinic logo and returns the server file name, or null on failure.
+  Future<String?> uploadClinicImage(File file) async {
+    emit(AuthLoadingState());
+    return _uploadFile(file, 0, 9);
+  }
+
   void signup({
     required SignupRequest request,
     File? doctorImageFile,

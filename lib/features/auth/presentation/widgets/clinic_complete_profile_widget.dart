@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:doctory/core/common/models/specialty_model.dart';
 import '../../../../core/common/widgets/inputs/stitch_text_field.dart';
 import '../../../../core/common/widgets/inputs/stitch_upload_field.dart';
 import '../../../../core/common/widgets/inputs/day_hours_widget.dart';
@@ -22,9 +21,8 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
   final List<DayHours> dayHours;
   final Future<void> Function(int dayIndex, bool isFrom) onPickTime;
   final void Function(int dayIndex) onToggleClosed;
-  final List<SpecialtyModel>? specializations;
-  final String? selectedSpecializationId;
-  final ValueChanged<String?>? onSpecializationChanged;
+  final String? selectedSpecializationName;
+  final VoidCallback onPickSpecialization;
   final VoidCallback onSubmit;
 
   const ClinicCompleteProfileWidget({
@@ -43,9 +41,8 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
     required this.dayHours,
     required this.onPickTime,
     required this.onToggleClosed,
-    this.specializations,
-    this.selectedSpecializationId,
-    this.onSpecializationChanged,
+    this.selectedSpecializationName,
+    required this.onPickSpecialization,
     required this.onSubmit,
   });
 
@@ -192,31 +189,60 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
             ],
 
             /// Specialization (setup mode only)
-            if (isSetupMode && specializations != null) ...[
+            if (isSetupMode) ...[
               Text(
                 context.l10n('specialization'),
                 style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
               ),
               8.ph,
-              DropdownButtonFormField<String>(
-                initialValue: selectedSpecializationId,
-                decoration: InputDecoration(
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
+              GestureDetector(
+                onTap: onPickSpecialization,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 18,
                   ),
-                  prefixIcon: const Icon(
-                    Icons.medical_services_outlined,
-                    color: AppColors.stitchPrimary,
+                  decoration: BoxDecoration(
+                    color: AppColors.stitchSurfaceLow,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.cardBorder),
+                  ),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 48,
+                        height: 48,
+                        decoration: BoxDecoration(
+                          color: AppColors.stitchPrimary.withValues(
+                            alpha: 0.05,
+                          ),
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: const Icon(
+                          Icons.medical_services_outlined,
+                          color: AppColors.stitchPrimary,
+                          size: 26,
+                        ),
+                      ),
+                      const SizedBox(width: 14),
+                      Expanded(
+                        child: Text(
+                          selectedSpecializationName ??
+                              context.l10n('select_specialization'),
+                          style: AppStyles.s16Medium.copyWith(
+                            color: selectedSpecializationName != null
+                                ? AppColors.onSurface
+                                : AppColors.textHint,
+                          ),
+                        ),
+                      ),
+                      const Icon(
+                        Icons.arrow_drop_down,
+                        color: AppColors.textSecondary,
+                      ),
+                    ],
                   ),
                 ),
-                hint: Text(context.l10n('select_specialization')),
-                items: specializations!.map((s) {
-                  return DropdownMenuItem(
-                    value: s.id,
-                    child: Text(s.displayName),
-                  );
-                }).toList(),
-                onChanged: onSpecializationChanged,
               ),
               20.ph,
             ],
@@ -261,7 +287,7 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  context.l10n(isSetupMode ? 'save_and_continue' : 'save_and_continue'),
+                  context.l10n('save_and_continue'),
                   style: AppStyles.s16SemiBold,
                 ),
               ),
