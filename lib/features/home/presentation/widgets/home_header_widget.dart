@@ -121,29 +121,32 @@ class HomeHeaderWidget extends StatelessWidget {
                     isFreelance: doctorType == DoctorEmploymentType.freelance,
                     onTap: () => context.push(AppRoutes.clinicDashboard),
                   )
-                : Container(
-                    width: 56,
-                    height: 56,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: AppColors.stitchSurface,
-                      border: Border.all(color: AppColors.cardBorder),
-                      boxShadow: [
-                        BoxShadow(
-                          color: AppColors.black.withValues(alpha: 0.05),
-                          blurRadius: 10,
-                          offset: const Offset(0, 4),
-                        ),
-                      ],
-                      image: (imageUrl != null && imageUrl!.isNotEmpty)
-                          ? DecorationImage(
-                              image: NetworkImage(imageUrl!.toImageUrl),
-                              fit: BoxFit.cover,
-                            )
-                          : const DecorationImage(
-                              image: AssetImage("assets/images/avatar.jpg"),
-                              fit: BoxFit.cover,
-                            ),
+                : GestureDetector(
+                    onTap: () => context.push(AppRoutes.profile),
+                    child: Container(
+                      width: 56,
+                      height: 56,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: AppColors.stitchSurface,
+                        border: Border.all(color: AppColors.cardBorder),
+                        boxShadow: [
+                          BoxShadow(
+                            color: AppColors.black.withValues(alpha: 0.05),
+                            blurRadius: 10,
+                            offset: const Offset(0, 4),
+                          ),
+                        ],
+                        image: (imageUrl != null && imageUrl!.isNotEmpty)
+                            ? DecorationImage(
+                                image: NetworkImage(imageUrl!.toImageUrl),
+                                fit: BoxFit.cover,
+                              )
+                            : const DecorationImage(
+                                image: AssetImage("assets/images/avatar.jpg"),
+                                fit: BoxFit.cover,
+                              ),
+                      ),
                     ),
                   ),
           ],
