@@ -61,6 +61,7 @@ class CommentInputWidget extends StatelessWidget {
           8.pw,
           FloatingActionButton(
             mini: true,
+            heroTag: 'comment_send_fab',
             onPressed: isSubmitting
                 ? null
                 : () {

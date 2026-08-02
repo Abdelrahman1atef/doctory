@@ -5,7 +5,11 @@ class MapLocationFabWidget extends StatelessWidget {
   final VoidCallback onPressed;
   final Object? heroTag;
 
-  const MapLocationFabWidget({super.key, required this.onPressed, this.heroTag});
+  const MapLocationFabWidget({
+    super.key,
+    required this.onPressed,
+    this.heroTag = 'map_location_fab',
+  });
 
   @override
   Widget build(BuildContext context) {

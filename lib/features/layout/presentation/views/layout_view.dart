@@ -67,6 +67,7 @@ class _LayoutViewState extends State<LayoutView> {
         floatingActionButton: UserSession.currentRole == UserRole.clinicOwner ||
                 UserSession.currentRole == UserRole.superAdmin
             ? FloatingActionButton(
+                heroTag: 'layout_fab',
                 onPressed: () => context.push(
                   UserSession.currentRole == UserRole.superAdmin
                       ? AdminRoutes.admin

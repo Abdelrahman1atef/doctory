@@ -9,6 +9,7 @@ class CommunityFloatingActionWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
+      heroTag: 'community_fab',
       onPressed: onPressed,
       backgroundColor: AppColors.stitchPrimary,
       child: const Icon(Icons.add, color: Colors.white),

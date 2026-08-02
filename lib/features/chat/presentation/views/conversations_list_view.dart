@@ -43,6 +43,7 @@ class _NewChatFAB extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FloatingActionButton(
+      heroTag: 'chat_fab',
       onPressed: () {
         context.pushNamed(ChatRouterNames.newChat);
       },

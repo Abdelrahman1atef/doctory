@@ -2,6 +2,7 @@ import 'package:doctory/core/common/widgets/images/doctor_avatar_badge.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/community/data/model/community_models.dart';
+import 'package:doctory/features/community/presentation/widgets/post_author_role_badge.dart';
 import 'package:doctory/features/community/presentation/widgets/post_options_bottom_sheet.dart';
 import 'package:easy_localization/easy_localization.dart' as easy_localization;
 import 'package:flutter/material.dart';
@@ -28,12 +29,28 @@ class PostCardHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                post.authorName ?? 'user'.tr(),
-                style: const TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 14,
-                ),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Flexible(
+                    child: Text(
+                      post.authorName ?? 'user'.tr(),
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                      ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  if (post.authorRole != null) ...[
+                    const SizedBox(width: 6),
+                    PostAuthorRoleBadge(
+                      role: post.authorRole,
+                      isFreelanceDoctor: post.isFreelanceDoctor,
+                    ),
+                  ],
+                ],
               ),
               2.ph,
               Text(
