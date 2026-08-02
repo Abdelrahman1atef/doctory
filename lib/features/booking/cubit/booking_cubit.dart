@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/core/error/failures.dart';
+import 'package:doctory/core/session/user_session.dart';
 import '../domain/enums/appointment_type.dart';
 import '../domain/enums/booking_step.dart';
 import '../domain/enums/gender.dart';
@@ -18,6 +19,11 @@ class BookingCubit extends Cubit<BookingState> {
     : super(BookingInitial()) {
     emit(BookingData(doctor: doctor, clinicId: clinicId));
   }
+
+  /// Phone of the logged-in user; used for reservation & payment requests
+  /// since the patient form no longer collects a phone number.
+  String get _userPhone =>
+      UserSession.userModel?['phoneNumber']?.toString() ?? '';
 
   BookingData get _data =>
       state is BookingData ? state as BookingData : BookingData(doctor: doctor, clinicId: clinicId);
@@ -37,7 +43,6 @@ class BookingCubit extends Cubit<BookingState> {
           availableSlots: data.availableSlots,
           selectedTime: data.selectedTime,
           patientName: data.patientName,
-          patientPhone: data.patientPhone,
           patientAge: data.patientAge,
           patientGender: data.patientGender,
           complaint: data.complaint,
@@ -67,7 +72,6 @@ class BookingCubit extends Cubit<BookingState> {
           availableSlots: data.availableSlots,
           selectedTime: data.selectedTime,
           patientName: data.patientName,
-          patientPhone: data.patientPhone,
           patientAge: data.patientAge,
           patientGender: data.patientGender,
           complaint: data.complaint,
@@ -94,7 +98,6 @@ class BookingCubit extends Cubit<BookingState> {
         availableSlots: data.availableSlots,
         selectedTime: data.selectedTime,
         patientName: data.patientName,
-        patientPhone: data.patientPhone,
         patientAge: data.patientAge,
         patientGender: data.patientGender,
         complaint: data.complaint,
@@ -120,7 +123,6 @@ class BookingCubit extends Cubit<BookingState> {
         availableSlots: data.availableSlots,
         selectedTime: data.selectedTime,
         patientName: data.patientName,
-        patientPhone: data.patientPhone,
         patientAge: data.patientAge,
         patientGender: data.patientGender,
         complaint: data.complaint,
@@ -146,7 +148,6 @@ class BookingCubit extends Cubit<BookingState> {
         isSlotsLoading: true,
         slotsError: null,
         patientName: data.patientName,
-        patientPhone: data.patientPhone,
         patientAge: data.patientAge,
         patientGender: data.patientGender,
         complaint: data.complaint,
@@ -161,6 +162,11 @@ class BookingCubit extends Cubit<BookingState> {
 
   Future<void> fetchAvailableSlots(DateTime date) async {
     final data = _data;
+    final slots =
+        doctor.availabilities?.expand((a) => a.slotsForDate(date)).toList() ??
+            [];
+
+    if (state is! BookingData) return;
 
     emit(
       BookingData(
@@ -169,12 +175,11 @@ class BookingCubit extends Cubit<BookingState> {
         currentStep: data.currentStep,
         appointmentType: data.appointmentType,
         selectedDate: data.selectedDate,
+        availableSlots: slots,
         selectedTime: null,
-        availableSlots: null,
-        isSlotsLoading: true,
+        isSlotsLoading: false,
         slotsError: null,
         patientName: data.patientName,
-        patientPhone: data.patientPhone,
         patientAge: data.patientAge,
         patientGender: data.patientGender,
         complaint: data.complaint,
@@ -183,65 +188,6 @@ class BookingCubit extends Cubit<BookingState> {
         payment: data.payment,
         verification: data.verification,
       ),
-    );
-
-    final result = await bookingRepo.getAvailableSlots(
-      doctorId: doctor.id,
-      clinicId: clinicId,
-      date: date,
-    );
-
-    if (state is! BookingData) return;
-
-    result.fold(
-      onSuccess: (slotsData) {
-        final current = _data;
-        emit(
-          BookingData(
-            doctor: current.doctor,
-            clinicId: current.clinicId,
-            currentStep: current.currentStep,
-            appointmentType: current.appointmentType,
-            selectedDate: current.selectedDate,
-            availableSlots: slotsData.slots,
-            selectedTime: current.selectedTime,
-            patientName: current.patientName,
-            patientPhone: current.patientPhone,
-            patientAge: current.patientAge,
-            patientGender: current.patientGender,
-            complaint: current.complaint,
-            notes: current.notes,
-            reservation: current.reservation,
-            payment: current.payment,
-            verification: current.verification,
-          ),
-        );
-      },
-      onFailure: (failure) {
-        final current = _data;
-        emit(
-          BookingData(
-            doctor: current.doctor,
-            clinicId: current.clinicId,
-            currentStep: current.currentStep,
-            appointmentType: current.appointmentType,
-            selectedDate: current.selectedDate,
-            availableSlots: current.availableSlots,
-            selectedTime: current.selectedTime,
-            isSlotsLoading: false,
-            slotsError: failure.message,
-            patientName: current.patientName,
-            patientPhone: current.patientPhone,
-            patientAge: current.patientAge,
-            patientGender: current.patientGender,
-            complaint: current.complaint,
-            notes: current.notes,
-            reservation: current.reservation,
-            payment: current.payment,
-            verification: current.verification,
-          ),
-        );
-      },
     );
   }
 
@@ -257,7 +203,6 @@ class BookingCubit extends Cubit<BookingState> {
         availableSlots: data.availableSlots,
         selectedTime: time,
         patientName: data.patientName,
-        patientPhone: data.patientPhone,
         patientAge: data.patientAge,
         patientGender: data.patientGender,
         complaint: data.complaint,
@@ -271,7 +216,6 @@ class BookingCubit extends Cubit<BookingState> {
 
   void updatePatientInfo({
     String? name,
-    String? phone,
     String? age,
     Gender? gender,
     String? complaint,
@@ -288,7 +232,6 @@ class BookingCubit extends Cubit<BookingState> {
         availableSlots: data.availableSlots,
         selectedTime: data.selectedTime,
         patientName: name ?? data.patientName,
-        patientPhone: phone ?? data.patientPhone,
         patientAge: age ?? data.patientAge,
         patientGender: gender ?? data.patientGender,
         complaint: complaint ?? data.complaint,
@@ -314,7 +257,6 @@ class BookingCubit extends Cubit<BookingState> {
         availableSlots: data.availableSlots,
         selectedTime: data.selectedTime,
         patientName: data.patientName,
-        patientPhone: data.patientPhone,
         patientAge: data.patientAge,
         patientGender: data.patientGender,
         complaint: data.complaint,
@@ -337,7 +279,7 @@ class BookingCubit extends Cubit<BookingState> {
           '${data.selectedTime!.endTime.hour.toString().padLeft(2, '0')}:${data.selectedTime!.endTime.minute.toString().padLeft(2, '0')}',
       appointmentType: data.appointmentType.value,
       patientFullName: data.patientName,
-      patientPhoneNumber: data.patientPhone,
+      patientPhoneNumber: _userPhone,
       patientAge: data.patientAge,
       patientGender: data.patientGender.value,
       complaint: data.complaint,
@@ -361,7 +303,6 @@ class BookingCubit extends Cubit<BookingState> {
             availableSlots: current.availableSlots,
             selectedTime: current.selectedTime,
             patientName: current.patientName,
-            patientPhone: current.patientPhone,
             patientAge: current.patientAge,
             patientGender: current.patientGender,
             complaint: current.complaint,
@@ -387,7 +328,6 @@ class BookingCubit extends Cubit<BookingState> {
             availableSlots: current.availableSlots,
             selectedTime: current.selectedTime,
             patientName: current.patientName,
-            patientPhone: current.patientPhone,
             patientAge: current.patientAge,
             patientGender: current.patientGender,
             complaint: current.complaint,
@@ -418,7 +358,6 @@ class BookingCubit extends Cubit<BookingState> {
         availableSlots: data.availableSlots,
         selectedTime: data.selectedTime,
         patientName: data.patientName,
-        patientPhone: data.patientPhone,
         patientAge: data.patientAge,
         patientGender: data.patientGender,
         complaint: data.complaint,
@@ -455,7 +394,6 @@ class BookingCubit extends Cubit<BookingState> {
             availableSlots: current.availableSlots,
             selectedTime: current.selectedTime,
             patientName: current.patientName,
-            patientPhone: current.patientPhone,
             patientAge: current.patientAge,
             patientGender: current.patientGender,
             complaint: current.complaint,
@@ -481,7 +419,6 @@ class BookingCubit extends Cubit<BookingState> {
             availableSlots: current.availableSlots,
             selectedTime: current.selectedTime,
             patientName: current.patientName,
-            patientPhone: current.patientPhone,
             patientAge: current.patientAge,
             patientGender: current.patientGender,
             complaint: current.complaint,
@@ -512,7 +449,6 @@ class BookingCubit extends Cubit<BookingState> {
         availableSlots: data.availableSlots,
         selectedTime: data.selectedTime,
         patientName: data.patientName,
-        patientPhone: data.patientPhone,
         patientAge: data.patientAge,
         patientGender: data.patientGender,
         complaint: data.complaint,
@@ -527,7 +463,7 @@ class BookingCubit extends Cubit<BookingState> {
 
     final result = await bookingRepo.initiatePayment(
       appointmentId: data.reservation!.reservationId,
-      phoneNumber: data.patientPhone,
+      phoneNumber: _userPhone,
     );
 
     if (state is! BookingData) return null;
@@ -545,7 +481,6 @@ class BookingCubit extends Cubit<BookingState> {
             availableSlots: current.availableSlots,
             selectedTime: current.selectedTime,
             patientName: current.patientName,
-            patientPhone: current.patientPhone,
             patientAge: current.patientAge,
             patientGender: current.patientGender,
             complaint: current.complaint,
@@ -572,7 +507,6 @@ class BookingCubit extends Cubit<BookingState> {
             availableSlots: current.availableSlots,
             selectedTime: current.selectedTime,
             patientName: current.patientName,
-            patientPhone: current.patientPhone,
             patientAge: current.patientAge,
             patientGender: current.patientGender,
             complaint: current.complaint,
@@ -605,7 +539,6 @@ class BookingCubit extends Cubit<BookingState> {
         availableSlots: data.availableSlots,
         selectedTime: data.selectedTime,
         patientName: data.patientName,
-        patientPhone: data.patientPhone,
         patientAge: data.patientAge,
         patientGender: data.patientGender,
         complaint: data.complaint,
@@ -639,7 +572,6 @@ class BookingCubit extends Cubit<BookingState> {
             availableSlots: current.availableSlots,
             selectedTime: current.selectedTime,
             patientName: current.patientName,
-            patientPhone: current.patientPhone,
             patientAge: current.patientAge,
             patientGender: current.patientGender,
             complaint: current.complaint,
@@ -665,7 +597,6 @@ class BookingCubit extends Cubit<BookingState> {
             availableSlots: current.availableSlots,
             selectedTime: current.selectedTime,
             patientName: current.patientName,
-            patientPhone: current.patientPhone,
             patientAge: current.patientAge,
             patientGender: current.patientGender,
             complaint: current.complaint,
@@ -701,7 +632,6 @@ class BookingCubit extends Cubit<BookingState> {
         availableSlots: data.availableSlots,
         selectedTime: data.selectedTime,
         patientName: data.patientName,
-        patientPhone: data.patientPhone,
         patientAge: data.patientAge,
         patientGender: data.patientGender,
         complaint: data.complaint,

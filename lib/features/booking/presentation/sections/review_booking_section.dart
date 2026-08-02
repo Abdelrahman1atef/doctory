@@ -41,7 +41,6 @@ class ReviewBookingSection extends StatelessWidget {
                 currency: state.reservation?.currency ?? 'EGP',
                 appointmentType: state.appointmentType.value,
                 patientName: state.patientName,
-                patientPhone: state.patientPhone,
               ),
               const SizedBox(height: 24),
               if (state.submissionError != null)

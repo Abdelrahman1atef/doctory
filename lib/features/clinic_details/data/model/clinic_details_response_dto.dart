@@ -23,7 +23,7 @@ class ClinicDetailsResponseDto {
         final d = day as Map<String, dynamic>;
         final start = _formatTime(d['startTime'] as String?);
         final end = _formatTime(d['endTime'] as String?);
-        operatingHours[d['dayOfWeek'] as String] = '$start - $end';
+        operatingHours[d['dayOfWeek']?.toString() ?? ''] = '$start - $end';
       }
     }
 

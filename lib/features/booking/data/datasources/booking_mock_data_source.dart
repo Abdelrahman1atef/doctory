@@ -1,6 +1,4 @@
 import 'dart:math';
-import 'package:doctory/core/common/models/time_slot_model.dart';
-import '../model/available_slots_dto.dart';
 import '../model/create_appointment_request_dto.dart';
 import '../model/payment_dto.dart';
 import '../model/appointment_response_dto.dart';
@@ -21,69 +19,6 @@ class BookingMockDataSource {
   Duration get _simulatedDelay => Duration(milliseconds: 300 + _random.nextInt(700));
 
   bool _shouldFail(double probability) => _random.nextDouble() < probability;
-
-  Future<AvailableSlotsDto> getAvailableSlots({
-    required String doctorId,
-    required String clinicId,
-    required DateTime date,
-  }) async {
-    await Future.delayed(_simulatedDelay);
-
-    if (_shouldFail(0.05)) {
-      throw Exception('Server temporarily unavailable');
-    }
-
-    final isToday = _isSameDay(date, DateTime.now());
-    final isPast = date.isBefore(DateTime.now().subtract(const Duration(days: 1)));
-
-    if (isPast) {
-      return AvailableSlotsDto(
-        doctorId: doctorId,
-        clinicId: clinicId,
-        date: date,
-        slots: [],
-      );
-    }
-
-    final slots = <TimeSlotModel>[];
-    final startHour = 8;
-    final endHour = 21;
-
-    for (var hour = startHour; hour < endHour; hour++) {
-      for (var minute = 0; minute < 60; minute += 30) {
-        final slotStart = date.copyWith(hour: hour, minute: minute);
-
-        if (isToday && slotStart.isBefore(DateTime.now())) continue;
-
-        final isBooked = _random.nextDouble() < 0.3;
-        final isHoliday = _isWeekend(date) && hour >= 17;
-
-        slots.add(TimeSlotModel(
-          id: _nextId(),
-          startTime: slotStart,
-          endTime: slotStart.add(const Duration(minutes: 30)),
-          isAvailable: !isBooked && !isHoliday,
-        ));
-      }
-    }
-
-    if (slots.isEmpty) {
-      return AvailableSlotsDto(
-        doctorId: doctorId,
-        clinicId: clinicId,
-        date: date,
-        slots: [],
-      );
-    }
-
-    return AvailableSlotsDto(
-      doctorId: doctorId,
-      clinicId: clinicId,
-      date: date,
-      slots: slots,
-      slotDurationMinutes: 30,
-    );
-  }
 
   Future<CreateReservationResponseDto> createReservation(
     CreateAppointmentRequestDto request,
@@ -246,10 +181,4 @@ class BookingMockDataSource {
     await Future.delayed(_simulatedDelay);
     return const BookingConfigDto();
   }
-
-  bool _isSameDay(DateTime a, DateTime b) =>
-      a.year == b.year && a.month == b.month && a.day == b.day;
-
-  bool _isWeekend(DateTime date) =>
-      date.weekday == DateTime.friday || date.weekday == DateTime.saturday;
 }

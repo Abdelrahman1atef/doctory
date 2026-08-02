@@ -81,33 +81,6 @@ class DoctorProfileSection extends StatelessWidget {
             ),
           ),
         ],
-        8.ph,
-        GestureDetector(
-          onTap: () => context.push(
-            AppRoutes.patientReviews,
-            extra: doctor,
-          ),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.star_rounded, color: Colors.amber, size: 20),
-              4.pw,
-              Text(
-                doctor.rating.toStringAsFixed(1),
-                style: AppStyles.s14Bold.withColor(
-                  AppColors.stitchSecondary,
-                ),
-              ),
-              8.pw,
-              Text(
-                '(${doctor.reviewsCount} ${'reviews'.tr()})',
-                style: AppStyles.s14Medium
-                    .withColor(AppColors.stitchSecondary)
-                    .underline(),
-              ),
-            ],
-          ),
-        ),
         24.ph,
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -118,11 +91,19 @@ class DoctorProfileSection extends StatelessWidget {
               Icons.work_outline,
             ),
             20.pw,
-            _buildStatCard(
-              LocaleKeys.rating.tr(),
-              doctor.rating.toStringAsFixed(1),
-              Icons.star_border,
+            8.ph,
+            GestureDetector(
+              onTap: () => context.push(
+                AppRoutes.patientReviews,
+                extra: doctor,
+              ),
+              child:_buildStatCard(
+                LocaleKeys.rating.tr(),
+                doctor.rating.toStringAsFixed(1),
+                Icons.star_border,
+              ),
             ),
+
           ],
         ),
       ],

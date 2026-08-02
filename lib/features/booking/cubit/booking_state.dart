@@ -20,7 +20,6 @@ class BookingData extends BookingState {
   final bool isSlotsLoading;
   final String? slotsError;
   final String patientName;
-  final String patientPhone;
   final String patientAge;
   final Gender patientGender;
   final String complaint;
@@ -42,7 +41,6 @@ class BookingData extends BookingState {
     this.availableSlots,
     this.selectedTime,
     this.patientName = '',
-    this.patientPhone = '',
     this.patientAge = '',
     this.patientGender = Gender.male,
     this.complaint = '',

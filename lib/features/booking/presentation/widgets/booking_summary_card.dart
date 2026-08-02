@@ -21,7 +21,6 @@ class BookingSummaryCard extends StatelessWidget {
   final String currency;
   final int appointmentType;
   final String patientName;
-  final String patientPhone;
 
   const BookingSummaryCard({
     super.key,
@@ -32,7 +31,6 @@ class BookingSummaryCard extends StatelessWidget {
     required this.currency,
     this.appointmentType = 1,
     this.patientName = '',
-    this.patientPhone = '',
   });
 
   @override
@@ -96,15 +94,6 @@ class BookingSummaryCard extends StatelessWidget {
                 icon: Icons.person_outline,
                 label: 'patient'.tr(),
                 value: patientName,
-              ),
-            ),
-          if (patientPhone.isNotEmpty)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: BookingInfoRow(
-                icon: Icons.phone_outlined,
-                label: 'phone'.tr(),
-                value: patientPhone,
               ),
             ),
           Container(height: 1, color: AppColors.grey200),

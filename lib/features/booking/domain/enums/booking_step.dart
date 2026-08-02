@@ -1,8 +1,8 @@
 enum BookingStep {
   appointmentType,
+  patientInfo,
   selectDate,
   selectTime,
-  patientInfo,
   reviewBooking,
   payment,
   verification,

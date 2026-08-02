@@ -1,6 +1,4 @@
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
-import 'package:easy_localization/easy_localization.dart';
-import '../model/available_slots_dto.dart';
 import '../model/create_appointment_request_dto.dart';
 import '../model/initiate_payment_response_dto.dart';
 import '../model/payment_dto.dart';
@@ -8,12 +6,6 @@ import '../model/appointment_response_dto.dart';
 import '../model/booking_config_dto.dart';
 
 abstract class BookingRemoteDataSource {
-  Future<ApiResult<AvailableSlotsDto>> getAvailableSlots({
-    required String doctorId,
-    required String clinicId,
-    required DateTime date,
-  });
-
   Future<ApiResult<CreateReservationResponseDto>> createReservation(
     CreateAppointmentRequestDto request,
   );
@@ -50,29 +42,6 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
   final ApiConsumer apiConsumer;
 
   BookingRemoteDataSourceImpl({required this.apiConsumer});
-
-  @override
-  Future<ApiResult<AvailableSlotsDto>> getAvailableSlots({
-    required String doctorId,
-    required String clinicId,
-    required DateTime date,
-  }) async {
-    return apiConsumer.get<AvailableSlotsDto>(
-      //todo change to real one
-      path: 'clinics/716CE65D-B063-4787-95F9-3F98BDF8B34B/doctors/C2235FDE-3D6D-4C60-98DE-58C7A8F6FA5B/slots',
-      showLoading: true,
-      // path: 'clinics/$clinicId/doctors/$doctorId/slots',
-      queryParameters: {
-        // 'date': DateFormat('yyyy-MM-dd').format(date),
-      },
-      parser: (json) {
-        if (json.containsKey('data')) {
-          return AvailableSlotsDto.fromJson(json['data']);
-        }
-        return AvailableSlotsDto.fromJson(json);
-      },
-    );
-  }
 
   @override
   Future<ApiResult<CreateReservationResponseDto>> createReservation(

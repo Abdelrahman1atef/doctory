@@ -16,8 +16,8 @@ class BookingStepIndicator extends StatelessWidget {
   const BookingStepIndicator({super.key, required this.currentStep});
 
   static const _stepGroups = [
-    _StepGroup('appointment', {BookingStep.appointmentType, BookingStep.selectDate}),
-    _StepGroup('details', {BookingStep.selectTime, BookingStep.patientInfo}),
+    _StepGroup('appointment', {BookingStep.appointmentType, BookingStep.patientInfo}),
+    _StepGroup('details', {BookingStep.selectDate, BookingStep.selectTime}),
     _StepGroup('review_step', {BookingStep.reviewBooking, BookingStep.payment}),
     _StepGroup('confirmation', {BookingStep.verification, BookingStep.success}),
   ];

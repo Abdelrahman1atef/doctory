@@ -33,11 +33,11 @@ class DoctorAvailabilitySection extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      a.dayOfWeek,
+                      a.dayLabelKey.tr(),
                       style: AppStyles.s14Medium.withColor(AppColors.stitchSecondary),
                     ),
                     Text(
-                      '${_formatTime(a.startTime)} - ${_formatTime(a.endTime)}',
+                      '${_formatTime(a.startTime, context.locale.toLanguageTag())} - ${_formatTime(a.endTime, context.locale.toLanguageTag())}',
                       style: AppStyles.s14Medium.withColor(AppColors.stitchPrimaryContainer),
                     ),
                   ],
@@ -75,9 +75,15 @@ class DoctorAvailabilitySection extends StatelessWidget {
     );
   }
 
-  String _formatTime(String time) {
+  String _formatTime(String time, String locale) {
     final parts = time.split(':');
     if (parts.length < 2) return time;
-    return '${parts[0]}:${parts[1]}';
+    final hour = int.tryParse(parts[0]) ?? 0;
+    final minute = int.tryParse(parts[1]) ?? 0;
+    final dateTime = DateTime(2000, 1, 1, hour, minute);
+    // 'en' keeps digits in Latin script (0-9); period follows app locale
+    final timePart = DateFormat('h:mm', 'en').format(dateTime);
+    final period = DateFormat('a', locale).format(dateTime);
+    return '$timePart $period';
   }
 }

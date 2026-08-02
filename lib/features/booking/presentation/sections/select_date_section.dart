@@ -12,10 +12,34 @@ class SelectDateSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final doctor = context.read<BookingCubit>().doctor;
+    final workingDays = doctor.availabilities
+        ?.map((a) => int.tryParse(a.dayOfWeek))
+        .whereType<int>()
+        .toSet();
+
+    // Only days the doctor actually works are selectable; all 30 days are
+    // still rendered so off-days show up disabled in the grid. Today is also
+    // disabled once its working hours have fully ended.
+    final now = DateTime.now();
     final availableDates = List.generate(
       30,
       (index) => DateTime.now().add(Duration(days: index)),
-    );
+    ).where((date) {
+      final isWorkingDay = workingDays == null ||
+          workingDays.isEmpty ||
+          workingDays.contains(date.weekday % 7);
+      if (!isWorkingDay) return false;
+
+      final isToday = date.year == now.year &&
+          date.month == now.month &&
+          date.day == now.day;
+      if (!isToday) return true;
+
+      final hasEnded =
+          doctor.availabilities?.any((a) => a.hasEndedAt(date, now)) ?? false;
+      return !hasEnded;
+    }).toList();
 
     return BlocBuilder<BookingCubit, BookingState>(
       buildWhen: (prev, curr) => curr is BookingData,

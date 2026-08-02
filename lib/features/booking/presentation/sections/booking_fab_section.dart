@@ -97,7 +97,7 @@ class BookingFabSection extends StatelessWidget {
       case BookingStep.selectTime:
         return s.selectedTime != null;
       case BookingStep.patientInfo:
-        return s.patientName.isNotEmpty && s.patientPhone.isNotEmpty && s.complaint.isNotEmpty;
+        return s.patientName.isNotEmpty && s.complaint.isNotEmpty;
       case BookingStep.reviewBooking:
         return true;
       case BookingStep.payment:

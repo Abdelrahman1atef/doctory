@@ -65,14 +65,6 @@ class PatientInfoSection extends StatelessWidget {
                   ),
                 ],
               ),
-              // const SizedBox(height: 14),
-              // BookingTextField(
-              //   label: 'phone_number'.tr(),
-              //   icon: Icons.phone_outlined,
-              //   keyboardType: TextInputType.phone,
-              //   initialValue: state.patientPhone,
-              //   onChanged: (val) => cubit.updatePatientInfo(phone: val),
-              // ),
               const SizedBox(height: 14),
               BookingTextField(
                 label: 'complaint'.tr(),
