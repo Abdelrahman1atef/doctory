@@ -77,6 +77,7 @@ class AppRouter {
           StatefulShellBranch(routes: HomeRouter.routes),
           StatefulShellBranch(routes: MapHomeRouter.routes, preload: true),
           StatefulShellBranch(routes: MyAppointmentsRouter.routes),
+          StatefulShellBranch(routes: ChatRouter.shellRoutes),
           StatefulShellBranch(routes: MoreRouter.routes),
         ],
       ),

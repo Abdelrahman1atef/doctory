@@ -10,7 +10,7 @@ import '../presentation/views/new_chat_view.dart';
 import 'chat_router_names.dart';
 
 class ChatRouter {
-  static List<GoRoute> routes = [
+  static List<GoRoute> shellRoutes = [
     GoRoute(
       path: '/chat',
       name: ChatRouterNames.conversationsList,
@@ -19,6 +19,9 @@ class ChatRouter {
         child: const ConversationsListView(),
       ),
     ),
+  ];
+
+  static List<GoRoute> routes = [
     GoRoute(
       path: '/chat/room/:id',
       name: ChatRouterNames.chatRoom,

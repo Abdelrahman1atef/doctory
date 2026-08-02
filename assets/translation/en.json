@@ -126,6 +126,7 @@
   "distance_m": "m",
   "duration_hour": "h",
   "waiting_label": "Waiting",
+  "chat": "Chat",
   "chat_input_hint": "Type your message...",
   "chat_inbox_empty": "You have no previous conversations",
   "chat_inbox_title": "Chat",

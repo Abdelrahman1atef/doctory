@@ -107,6 +107,11 @@ class _LayoutViewState extends State<LayoutView> {
               label: context.tr('my_appointments'),
             ),
             BottomNavigationBarItem(
+              icon: const Icon(Icons.chat_bubble_outline_rounded),
+              activeIcon: const Icon(Icons.chat_bubble_rounded),
+              label: context.tr('chat'),
+            ),
+            BottomNavigationBarItem(
               icon: const Icon(Icons.more_horiz_outlined),
               activeIcon: const Icon(Icons.more_horiz_rounded),
               label: context.tr('more'),

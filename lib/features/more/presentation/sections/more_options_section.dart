@@ -1,7 +1,6 @@
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/services/alerts.dart';
-import 'package:doctory/features/chat/router/chat_router_names.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/more/cubit/more_cubit.dart';
 import 'package:doctory/features/more/cubit/more_states.dart';
@@ -61,14 +60,6 @@ class MoreOptionsSection extends StatelessWidget {
                     icon: Icons.people_outline,
                     onTap: () {
                       context.push(AppRoutes.community);
-                    },
-                  ),
-                  12.ph,
-                  MoreOptionItem(
-                    title: 'الرسائل',
-                    icon: Icons.chat_bubble_outline_rounded,
-                    onTap: () {
-                      context.pushNamed(ChatRouterNames.conversationsList);
                     },
                   ),
                   12.ph,
