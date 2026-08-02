@@ -65,6 +65,11 @@ class AppointmentDetailCard extends StatelessWidget {
             _row(Icons.payments_rounded, 'consultation_fee'.tr(),
               '${appointment.currency ?? "SAR"} ${appointment.amount!.toStringAsFixed(0)}'),
           12.ph,
+          if (appointment.rejectionReason != null &&
+              appointment.rejectionReason!.isNotEmpty)
+            _row(Icons.block_rounded, 'rejection_reason'.tr(),
+              appointment.rejectionReason!),
+          12.ph,
           _row(Icons.person_outline, 'patient'.tr(), appointment.patientFullName),
           12.ph,
           _row(Icons.phone_outlined, 'phone'.tr(), appointment.patientPhoneNumber),

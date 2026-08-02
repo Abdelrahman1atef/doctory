@@ -14,8 +14,6 @@ class MyAppointmentsLoaded extends MyAppointmentsState {
   final bool isLoadingMore;
   final bool isRefreshing;
   final int? statusFilter;
-  final bool isProcessingPayment;
-  final String? paymentUrl;
 
   MyAppointmentsLoaded({
     required this.appointments,
@@ -25,9 +23,15 @@ class MyAppointmentsLoaded extends MyAppointmentsState {
     this.isLoadingMore = false,
     this.isRefreshing = false,
     this.statusFilter,
-    this.isProcessingPayment = false,
-    this.paymentUrl,
   });
+}
+
+class MyAppointmentsDetailsLoading extends MyAppointmentsState {}
+
+class MyAppointmentsDetailsLoaded extends MyAppointmentsState {
+  final AppointmentResponseDto appointment;
+
+  MyAppointmentsDetailsLoaded(this.appointment);
 }
 
 class MyAppointmentsError extends MyAppointmentsState {

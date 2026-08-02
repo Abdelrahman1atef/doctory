@@ -34,7 +34,8 @@ class BookingSuccessSection extends StatelessWidget {
                 doctor: cubit.doctor,
                 selectedDate: state.selectedDate!,
                 selectedTime: state.selectedTime!,
-                bookingRef: state.verification?.transactionId,
+                bookingRef: state.appointment?.bookingReference ??
+                    state.appointment?.id,
                 appointmentType: state.appointmentType,
                 patientName: state.patientName,
               ),
@@ -42,7 +43,7 @@ class BookingSuccessSection extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: Text(
-                  'success_extra_info'.tr(),
+                  'booking_submitted_waiting'.tr(),
                   style: AppStyles.s14Medium.withColor(AppColors.grey500),
                   textAlign: TextAlign.center,
                 ),

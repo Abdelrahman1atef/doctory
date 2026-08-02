@@ -1,7 +1,6 @@
 ﻿import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import 'package:doctory/features/booking/data/model/appointment_list_response_dto.dart';
 import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
-import 'package:doctory/features/booking/data/model/initiate_payment_response_dto.dart';
 import 'my_appointments_endpoints.dart';
 
 abstract class MyAppointmentsRemoteDataSource {
@@ -13,11 +12,9 @@ abstract class MyAppointmentsRemoteDataSource {
 
   Future<ApiResult<AppointmentResponseDto>> getAppointmentById(String id);
 
-  Future<ApiResult<void>> cancelAppointment(String id);
-
-  Future<ApiResult<InitiatePaymentResponseDto>> initiatePayment({
-    required String appointmentId,
-    required String phoneNumber,
+  Future<ApiResult<void>> cancelAppointment({
+    required String id,
+    required String cancellationReason,
   });
 }
 
@@ -34,11 +31,11 @@ class MyAppointmentsRemoteDataSourceImpl
     int? status,
   }) async {
     return apiConsumer.get<AppointmentListResponseDto>(
-      path: MyAppointmentsEndpoints.appointments,
+      path: MyAppointmentsEndpoints.myAppointments,
       queryParameters: {
         if (pageNumber != null) 'PageNumber': pageNumber.toString(),
         if (pageSize != null) 'PageSize': pageSize.toString(),
-        if (status != null) 'Status': status.toString(),
+        if (status != null) 'status': status.toString(),
       },
       parser: (json) => AppointmentListResponseDto.fromJson(json),
     );
@@ -55,26 +52,15 @@ class MyAppointmentsRemoteDataSourceImpl
   }
 
   @override
-  Future<ApiResult<void>> cancelAppointment(String id) async {
-    return apiConsumer.delete<void>(
-      path: '${MyAppointmentsEndpoints.appointments}/$id',
-    );
-  }
-
-  @override
-  Future<ApiResult<InitiatePaymentResponseDto>> initiatePayment({
-    required String appointmentId,
-    required String phoneNumber,
+  Future<ApiResult<void>> cancelAppointment({
+    required String id,
+    required String cancellationReason,
   }) async {
-    return apiConsumer.post<InitiatePaymentResponseDto>(
-      path: 'payments/initiate',
+    return apiConsumer.put<void>(
+      path: '${MyAppointmentsEndpoints.appointments}/$id/cancel',
       body: {
-        'appointmentId': appointmentId,
-        'phoneNumber': phoneNumber,
+        'cancellationReason': cancellationReason,
       },
-      parser: (json) => InitiatePaymentResponseDto.fromJson(
-        json['data'] ?? json,
-      ),
     );
   }
 }

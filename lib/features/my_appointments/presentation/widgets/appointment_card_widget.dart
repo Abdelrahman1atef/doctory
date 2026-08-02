@@ -79,7 +79,7 @@ class AppointmentCardWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-                    if (appointment.status == 0 && onPayTap != null) ...[
+                    if (appointment.status == 6 && onPayTap != null) ...[
                       8.ph,
                       SizedBox(
                         width: double.infinity,

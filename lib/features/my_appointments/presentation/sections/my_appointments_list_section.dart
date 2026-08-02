@@ -39,7 +39,7 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
   static const List<_TabConfig> _tabs = [
     _TabConfig('pending_payment', 0),
     _TabConfig('confirmed', 1),
-    _TabConfig('accepted', 6),
+    _TabConfig('awaiting_payment', 6),
     _TabConfig('completed', 3),
     _TabConfig('cancelled', 2),
     _TabConfig('rejected', 7),
@@ -68,6 +68,12 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
         _scrollController.position.maxScrollExtent - 200) {
       widget.onLoadMore();
     }
+  }
+
+  Future<void> _openDetails(BuildContext context, AppointmentResponseDto apt) async {
+    await context.push(AppRoutes.appointmentDetails, extra: apt);
+    if (!context.mounted) return;
+    widget.onLoadByStatus(widget.statusFilter ?? 0);
   }
 
   @override
@@ -136,11 +142,11 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
                   );
                 }
                 final apt = widget.appointments[index];
+                final showPay = apt.status == 6 && apt.paymobRedirectUrl != null;
                 return AppointmentCardWidget(
                   appointment: apt,
-                  onTap: () =>
-                      context.push(AppRoutes.appointmentDetails, extra: apt),
-                  onPayTap: apt.status == 0 ? () => widget.onPayTap(apt) : null,
+                  onTap: () => _openDetails(context, apt),
+                  onPayTap: showPay ? () => widget.onPayTap(apt) : null,
                 );
               },
             ),

@@ -74,6 +74,10 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
     loadAppointments(status: status);
   }
 
+  void refresh() {
+    loadAppointments(status: _currentStatusFilter ?? 0);
+  }
+
   Future<void> loadMore() async {
     final currentState = state;
     if (currentState is! MyAppointmentsLoaded) return;
@@ -122,168 +126,77 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
     );
   }
 
-  Future<void> cancelAppointment(String appointmentId) async {
-    final currentState = state;
-    if (currentState is! MyAppointmentsLoaded) return;
+  Future<bool> cancelAppointment({
+    required String id,
+    required String cancellationReason,
+  }) async {
+    final result = await _remoteDataSource.cancelAppointment(
+      id: id,
+      cancellationReason: cancellationReason,
+    );
 
-    final result = await _remoteDataSource.cancelAppointment(appointmentId);
-
-    if (state is! MyAppointmentsLoaded) return;
-
-    result.fold(
+    return result.fold(
       onSuccess: (_) {
-        final current = state as MyAppointmentsLoaded;
-        final updated = current.appointments.map((a) {
-          if (a.id == appointmentId) {
-            return AppointmentResponseDto(
-              id: a.id,
-              bookedByUserId: a.bookedByUserId,
-              doctorId: a.doctorId,
-              doctorName: a.doctorName,
-              clinicId: a.clinicId,
-              clinicName: a.clinicName,
-              appointmentDate: a.appointmentDate,
-              startTime: a.startTime,
-              endTime: a.endTime,
-              appointmentType: a.appointmentType,
+        if (state is MyAppointmentsLoaded) {
+          refresh();
+        } else if (state is MyAppointmentsDetailsLoaded) {
+          final current = state as MyAppointmentsDetailsLoaded;
+          final appointment = current.appointment;
+          emit(MyAppointmentsDetailsLoaded(
+            AppointmentResponseDto(
+              id: appointment.id,
+              bookedByUserId: appointment.bookedByUserId,
+              doctorId: appointment.doctorId,
+              doctorName: appointment.doctorName,
+              clinicId: appointment.clinicId,
+              clinicName: appointment.clinicName,
+              appointmentDate: appointment.appointmentDate,
+              startTime: appointment.startTime,
+              endTime: appointment.endTime,
+              appointmentType: appointment.appointmentType,
               status: 2,
-              patientFullName: a.patientFullName,
-              patientPhoneNumber: a.patientPhoneNumber,
-              patientAge: a.patientAge,
-              patientGender: a.patientGender,
-              complaint: a.complaint,
-              chronicDiseases: a.chronicDiseases,
-              cancellationReason: a.cancellationReason,
-              bookingReference: a.bookingReference,
-              paymentId: a.paymentId,
-              amount: a.amount,
-              currency: a.currency,
-              expiresAt: a.expiresAt,
-              createdAt: a.createdAt,
-              receiptUrl: a.receiptUrl,
-            );
-          }
-          return a;
-        }).toList();
-        emit(MyAppointmentsLoaded(
-          appointments: updated,
-          pageNumber: current.pageNumber,
-          totalPages: current.totalPages,
-          hasMore: current.hasMore,
-          statusFilter: _currentStatusFilter,
-        ));
+              patientFullName: appointment.patientFullName,
+              patientPhoneNumber: appointment.patientPhoneNumber,
+              patientAge: appointment.patientAge,
+              patientGender: appointment.patientGender,
+              complaint: appointment.complaint,
+              chronicDiseases: appointment.chronicDiseases,
+              cancellationReason: cancellationReason,
+              rejectionReason: appointment.rejectionReason,
+              bookingReference: appointment.bookingReference,
+              paymentId: appointment.paymentId,
+              amount: appointment.amount,
+              currency: appointment.currency,
+              expiresAt: appointment.expiresAt,
+              createdAt: appointment.createdAt,
+              receiptUrl: appointment.receiptUrl,
+              payment: appointment.payment,
+            ),
+          ));
+        }
+        return true;
       },
       onFailure: (failure) {
         emit(MyAppointmentsError(failure.userMessage));
+        return false;
       },
     );
   }
 
-  Future<void> initiatePayment(AppointmentResponseDto appointment) async {
-    final currentState = state;
-    if (currentState is! MyAppointmentsLoaded) return;
+  Future<void> loadAppointmentById(String id) async {
+    emit(MyAppointmentsDetailsLoading());
 
-    emit(MyAppointmentsLoaded(
-      appointments: currentState.appointments,
-      pageNumber: currentState.pageNumber,
-      totalPages: currentState.totalPages,
-      hasMore: currentState.hasMore,
-      isLoadingMore: currentState.isLoadingMore,
-      statusFilter: _currentStatusFilter,
-      isProcessingPayment: true,
-    ));
+    final result = await _remoteDataSource.getAppointmentById(id);
 
-    final result = await _remoteDataSource.initiatePayment(
-      appointmentId: appointment.id,
-      phoneNumber: appointment.patientPhoneNumber,
-    );
-
-    if (state is! MyAppointmentsLoaded) return;
+    if (state is! MyAppointmentsDetailsLoading) return;
 
     result.fold(
-      onSuccess: (data) {
-        final current = state as MyAppointmentsLoaded;
-        emit(MyAppointmentsLoaded(
-          appointments: current.appointments,
-          pageNumber: current.pageNumber,
-          totalPages: current.totalPages,
-          hasMore: current.hasMore,
-          isLoadingMore: current.isLoadingMore,
-          statusFilter: _currentStatusFilter,
-          isProcessingPayment: false,
-          paymentUrl: data.redirectUrl,
-        ));
+      onSuccess: (appointment) {
+        emit(MyAppointmentsDetailsLoaded(appointment));
       },
       onFailure: (failure) {
-        final current = state as MyAppointmentsLoaded;
-        emit(MyAppointmentsLoaded(
-          appointments: current.appointments,
-          pageNumber: current.pageNumber,
-          totalPages: current.totalPages,
-          hasMore: current.hasMore,
-          isLoadingMore: current.isLoadingMore,
-          statusFilter: _currentStatusFilter,
-          isProcessingPayment: false,
-        ));
         emit(MyAppointmentsError(failure.userMessage));
       },
     );
-  }
-
-  void onPaymentResult(bool success, AppointmentResponseDto appointment) {
-    final currentState = state;
-    if (currentState is! MyAppointmentsLoaded) return;
-
-    if (success) {
-      final updated = currentState.appointments.map((a) {
-        if (a.id == appointment.id) {
-          return AppointmentResponseDto(
-            id: a.id,
-            bookedByUserId: a.bookedByUserId,
-            doctorId: a.doctorId,
-            doctorName: a.doctorName,
-            clinicId: a.clinicId,
-            clinicName: a.clinicName,
-            appointmentDate: a.appointmentDate,
-            startTime: a.startTime,
-            endTime: a.endTime,
-            appointmentType: a.appointmentType,
-            status: 1,
-            patientFullName: a.patientFullName,
-            patientPhoneNumber: a.patientPhoneNumber,
-            patientAge: a.patientAge,
-            patientGender: a.patientGender,
-            complaint: a.complaint,
-            chronicDiseases: a.chronicDiseases,
-            cancellationReason: a.cancellationReason,
-            bookingReference: a.bookingReference,
-            paymentId: a.paymentId,
-            amount: a.amount,
-            currency: a.currency,
-            expiresAt: a.expiresAt,
-            createdAt: a.createdAt,
-            receiptUrl: a.receiptUrl,
-          );
-        }
-        return a;
-      }).toList();
-      emit(MyAppointmentsLoaded(
-        appointments: updated,
-        pageNumber: currentState.pageNumber,
-        totalPages: currentState.totalPages,
-        hasMore: currentState.hasMore,
-        isLoadingMore: currentState.isLoadingMore,
-        statusFilter: _currentStatusFilter,
-      ));
-    } else {
-      emit(MyAppointmentsLoaded(
-        appointments: currentState.appointments,
-        pageNumber: currentState.pageNumber,
-        totalPages: currentState.totalPages,
-        hasMore: currentState.hasMore,
-        isLoadingMore: currentState.isLoadingMore,
-        statusFilter: _currentStatusFilter,
-      ));
-    }
   }
 }

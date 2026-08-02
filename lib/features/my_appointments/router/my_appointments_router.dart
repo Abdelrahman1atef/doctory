@@ -19,10 +19,16 @@ class MyAppointmentsRouter {
     GoRoute(
       path: AppRoutes.appointmentDetails,
       builder: (context, state) {
-        final appointment = state.extra as AppointmentResponseDto;
+        final appointment = state.extra as AppointmentResponseDto?;
+        final id = appointment == null
+            ? state.uri.queryParameters['id']
+            : null;
         return BlocProvider(
           create: (_) => sl<MyAppointmentsCubit>(),
-          child: AppointmentDetailsView(appointment: appointment),
+          child: AppointmentDetailsView(
+            appointment: appointment,
+            appointmentId: id,
+          ),
         );
       },
     ),

@@ -12,9 +12,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class AppointmentDetailsSection extends StatefulWidget {
-  final AppointmentResponseDto appointment;
+  final AppointmentResponseDto? appointment;
+  final String? appointmentId;
 
-  const AppointmentDetailsSection({super.key, required this.appointment});
+  const AppointmentDetailsSection({
+    super.key,
+    this.appointment,
+    this.appointmentId,
+  });
 
   @override
   State<AppointmentDetailsSection> createState() =>
@@ -22,17 +27,50 @@ class AppointmentDetailsSection extends StatefulWidget {
 }
 
 class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
-  bool _paymentHandled = false;
+  static const Duration _paidCancelWindow = Duration(hours: 2);
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.appointment == null && widget.appointmentId != null) {
+      context
+          .read<MyAppointmentsCubit>()
+          .loadAppointmentById(widget.appointmentId!);
+    }
+  }
+
+  AppointmentResponseDto? get _appointment {
+    final state = context.read<MyAppointmentsCubit>().state;
+    if (state is MyAppointmentsDetailsLoaded) return state.appointment;
+    return widget.appointment;
+  }
+
+  bool get _canCancel {
+    final apt = _appointment;
+    if (apt == null) return false;
+    switch (apt.status) {
+      case 0:
+      case 4:
+      case 6:
+        return true;
+      case 1:
+        final paidAt = apt.paidAt;
+        if (paidAt == null) return true;
+        return DateTime.now().difference(paidAt) < _paidCancelWindow;
+      default:
+        return false;
+    }
+  }
+
+  bool get _canPay {
+    final apt = _appointment;
+    if (apt == null) return false;
+    final url = apt.paymobRedirectUrl;
+    return apt.status == 6 && url != null && url.isNotEmpty;
+  }
 
   @override
   Widget build(BuildContext context) {
-    final canCancel =
-        widget.appointment.status != 3 &&
-        widget.appointment.status != 2 &&
-        widget.appointment.status != 6 &&
-        widget.appointment.status != 7;
-    final isPending = widget.appointment.status == 0;
-
     return BlocConsumer<MyAppointmentsCubit, MyAppointmentsState>(
       listener: (context, state) {
         if (state is MyAppointmentsError) {
@@ -43,40 +81,21 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
             ),
           );
         }
-        if (state is MyAppointmentsLoaded) {
-          final updated = state.appointments.firstWhere(
-            (a) => a.id == widget.appointment.id,
-            orElse: () => widget.appointment,
-          );
-          if (updated.status == 2 && widget.appointment.status != 2) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('appointment_cancelled'.tr()),
-                backgroundColor: AppColors.success,
-              ),
-            );
-            context.pop();
-          }
-          if (state.paymentUrl != null && !_paymentHandled) {
-            _paymentHandled = true;
-            _openPaymentWebView(context, state.paymentUrl!);
-          }
-          if (updated.status == 1 &&
-              widget.appointment.status == 0 &&
-              _paymentHandled) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('payment_successful'.tr()),
-                backgroundColor: AppColors.success,
-              ),
-            );
-            context.pop();
-          }
-        }
       },
       builder: (context, state) {
-        final isProcessing =
-            state is MyAppointmentsLoaded && state.isProcessingPayment;
+        if (state is MyAppointmentsDetailsLoading &&
+            widget.appointment == null) {
+          return const Center(
+            child: CircularProgressIndicator(
+              color: AppColors.stitchPrimaryContainer,
+            ),
+          );
+        }
+
+        final apt = _appointment;
+        if (apt == null) {
+          return const SizedBox.shrink();
+        }
 
         return Column(
           children: [
@@ -109,33 +128,15 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: Column(
                   children: [
-                    AppointmentDetailCard(appointment: widget.appointment),
-                    if (isPending) ...[
+                    AppointmentDetailCard(appointment: apt),
+                    if (_canPay) ...[
                       32.ph,
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton.icon(
-                          onPressed: isProcessing
-                              ? null
-                              : () {
-                                  _paymentHandled = false;
-                                  context
-                                      .read<MyAppointmentsCubit>()
-                                      .initiatePayment(widget.appointment);
-                                },
-                          icon: isProcessing
-                              ? const SizedBox(
-                                  width: 18,
-                                  height: 18,
-                                  child: CircularProgressIndicator(
-                                    strokeWidth: 2,
-                                    color: AppColors.stitchSurfaceLowest,
-                                  ),
-                                )
-                              : const Icon(Icons.payment),
-                          label: Text(
-                            isProcessing ? 'processing'.tr() : 'pay_now'.tr(),
-                          ),
+                          onPressed: () => _openPaymentWebView(context, apt),
+                          icon: const Icon(Icons.payment),
+                          label: Text('pay_now'.tr()),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppColors.stitchPrimaryContainer,
                             foregroundColor: AppColors.stitchSurfaceLowest,
@@ -148,14 +149,12 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
                         ),
                       ),
                     ],
-                    if (canCancel) ...[
+                    if (_canCancel) ...[
                       16.ph,
                       SizedBox(
                         width: double.infinity,
                         child: OutlinedButton.icon(
-                          onPressed: isProcessing
-                              ? null
-                              : () => _confirmCancel(context),
+                          onPressed: () => _confirmCancel(context, apt),
                           icon: const Icon(Icons.cancel_outlined),
                           label: Text('cancel_appointment'.tr()),
                           style: OutlinedButton.styleFrom(
@@ -180,7 +179,13 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
     );
   }
 
-  Future<void> _openPaymentWebView(BuildContext context, String url) async {
+  Future<void> _openPaymentWebView(
+    BuildContext context,
+    AppointmentResponseDto apt,
+  ) async {
+    final url = apt.paymobRedirectUrl;
+    if (url == null || url.isEmpty) return;
+
     var paymentSuccess = false;
 
     await Navigator.push(
@@ -197,31 +202,70 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
 
     if (!context.mounted) return;
 
-    context.read<MyAppointmentsCubit>().onPaymentResult(
-      paymentSuccess,
-      widget.appointment,
-    );
+    if (paymentSuccess) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('payment_successful'.tr()),
+          backgroundColor: AppColors.success,
+        ),
+      );
+    }
+    context.pop();
   }
 
-  void _confirmCancel(BuildContext context) {
-    showDialog(
+  Future<void> _confirmCancel(
+    BuildContext context,
+    AppointmentResponseDto apt,
+  ) async {
+    final reason = await _showCancelReasonDialog(context);
+    if (reason == null || !context.mounted) return;
+
+    final cubit = context.read<MyAppointmentsCubit>();
+    final success = await cubit.cancelAppointment(
+      id: apt.id,
+      cancellationReason: reason,
+    );
+    if (!context.mounted) return;
+
+    if (success) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('appointment_cancelled'.tr()),
+          backgroundColor: AppColors.success,
+        ),
+      );
+      context.pop();
+    }
+  }
+
+  Future<String?> _showCancelReasonDialog(BuildContext context) {
+    final controller = TextEditingController();
+    return showDialog<String>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: Text('cancel_appointment'.tr()),
-        content: Text('cancel_confirm_message'.tr()),
+        content: TextField(
+          controller: controller,
+          maxLines: 3,
+          autofocus: true,
+          decoration: InputDecoration(
+            hintText: 'cancel_reason_hint'.tr(),
+            border: const OutlineInputBorder(),
+          ),
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(ctx).pop(),
             child: Text('no'.tr()),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(ctx).pop();
-              context.read<MyAppointmentsCubit>().cancelAppointment(
-                widget.appointment.id,
-              );
-            },
-            child: Text('yes'.tr(), style: TextStyle(color: AppColors.error)),
+          ValueListenableBuilder<TextEditingValue>(
+            valueListenable: controller,
+            builder: (ctx, value, _) => TextButton(
+              onPressed: value.text.trim().isEmpty
+                  ? null
+                  : () => Navigator.of(ctx).pop(value.text.trim()),
+              child: Text('yes'.tr(), style:  TextStyle(color: AppColors.error)),
+            ),
           ),
         ],
       ),

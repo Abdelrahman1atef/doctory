@@ -333,6 +333,15 @@ class FBMessaging {
 
     // التنقل بناءً على النوع المسجل في المشروع النيتف
     switch (notification.type) {
+      case "AppointmentConfirmation":
+      case "AppointmentAccepted":
+        if (notification.appointmentId != null) {
+          AppRouter.router.go(
+            '/my-appointments/details?id=${notification.appointmentId}',
+          );
+          return;
+        }
+        break;
       case "NewMessage":
         if (notification.conversationId != null) {
           AppRouter.router.pushNamed(
@@ -340,6 +349,7 @@ class FBMessaging {
             pathParameters: {'id': notification.conversationId!},
           );
         }
+        break;
       default:
         AppRouter.router.push('/');
     }
@@ -356,9 +366,10 @@ class FCMNotification {
   final String? type;
   final String? relatedData;
   final String? conversationId;
+  final String? appointmentId;
   final String? link;
 
-  FCMNotification({this.title, this.message, this.type, this.relatedData, this.conversationId, this.link});
+  FCMNotification({this.title, this.message, this.type, this.relatedData, this.conversationId, this.appointmentId, this.link});
 
   /// إنشاء من Map مطابق للنيتف (related_data - title - message)
   factory FCMNotification.fromMap(Map<String, dynamic> map) {
@@ -367,6 +378,7 @@ class FCMNotification {
       message: map["message"]?.toString() ?? map["body"]?.toString(),
       type: map["type"]?.toString(),
       conversationId: map["conversationId"]?.toString(),
+      appointmentId: map["appointmentId"]?.toString(),
       relatedData: map["related_data"]?.toString(),
       link: map["link"]?.toString(),
     );
@@ -379,6 +391,7 @@ class FCMNotification {
       "message": message,
       "type": type,
       "conversationId": conversationId,
+      "appointmentId": appointmentId,
       "related_data": relatedData,
       "link": link,
     };

@@ -24,15 +24,21 @@ void setupMyAppointmentsDI(GetIt sl) {
     );
   }
 
-  // Deep link handler — /appointments/*
+  // Deep link handler — /appointments/{id}
   DeepLinkService.instance.register((uri) {
     if (uri.scheme != DeepLinkConfig.scheme ||
         uri.host != DeepLinkConfig.host) {
       return false;
     }
     if (uri.path.startsWith('/appointments/')) {
-      DeepLinkService.instance.setPendingPath('/my-appointments');
-      AppRouter.navigatorKey.currentContext?.go('/my-appointments');
+      final segments = uri.pathSegments;
+      final appointmentId =
+          segments.length > 1 ? segments[1] : null;
+      final detailsPath = appointmentId != null && appointmentId.isNotEmpty
+          ? '/my-appointments/details?id=$appointmentId'
+          : '/my-appointments';
+      DeepLinkService.instance.setPendingPath(detailsPath);
+      AppRouter.navigatorKey.currentContext?.go(detailsPath);
       return true;
     }
     return false;

@@ -4,7 +4,5 @@ enum BookingStep {
   selectDate,
   selectTime,
   reviewBooking,
-  payment,
-  verification,
   success,
 }

@@ -10,8 +10,6 @@ import 'select_date_section.dart';
 import 'select_time_section.dart';
 import 'patient_info_section.dart';
 import 'review_booking_section.dart';
-import 'payment_section.dart';
-import 'verification_section.dart';
 import 'booking_success_section.dart';
 
 class BookingBodySection extends StatelessWidget {
@@ -51,8 +49,6 @@ class BookingBodySection extends StatelessWidget {
                     SelectDateSection(),
                     SelectTimeSection(),
                     ReviewBookingSection(),
-                    PaymentSection(),
-                    VerificationSection(),
                     BookingSuccessSection(),
                   ],
                 ),

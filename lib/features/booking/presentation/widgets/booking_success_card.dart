@@ -47,43 +47,43 @@ class BookingSuccessCard extends StatelessWidget {
             height: 72,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
-              color: AppColors.success.withValues(alpha: 0.1),
+              color: AppColors.warning.withValues(alpha: 0.1),
             ),
-            child: const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 48),
+            child: const Icon(Icons.hourglass_top_rounded, color: AppColors.warning, size: 48),
           ),
           16.ph,
           Text(
-            'booking_success'.tr(),
+            'booking_submitted_title'.tr(),
             style: AppStyles.s20Bold.withColor(AppColors.stitchPrimaryContainer),
             textAlign: TextAlign.center,
           ),
           8.ph,
           Text(
-            'booking_success_desc'.tr(),
+            'booking_submitted_desc'.tr(),
             style: AppStyles.s14Medium.withColor(AppColors.grey500),
             textAlign: TextAlign.center,
           ),
           20.ph,
-          if (bookingRef != null) ...[
-            Container(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-              decoration: BoxDecoration(
-                color: AppColors.stitchPrimaryFixed.withValues(alpha: 0.3),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Icon(Icons.confirmation_number_outlined, size: 18, color: AppColors.stitchPrimary),
-                  8.pw,
-                  Text(bookingRef!,
-                    style: AppStyles.s16Bold.withColor(AppColors.stitchPrimary),
-                  ),
-                ],
-              ),
-            ),
-            20.ph,
-          ],
+          // if (bookingRef != null) ...[
+          //   Container(
+          //     padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+          //     decoration: BoxDecoration(
+          //       color: AppColors.stitchPrimaryFixed.withValues(alpha: 0.3),
+          //       borderRadius: BorderRadius.circular(10),
+          //     ),
+          //     child: Row(
+          //       mainAxisSize: MainAxisSize.min,
+          //       children: [
+          //         const Icon(Icons.confirmation_number_outlined, size: 18, color: AppColors.stitchPrimary),
+          //         8.pw,
+          //         Text(bookingRef!,
+          //           style: AppStyles.s16Bold.withColor(AppColors.stitchPrimary),
+          //         ),
+          //       ],
+          //     ),
+          //   ),
+          //   20.ph,
+          // ],
           Container(height: 1, color: AppColors.grey200),
           20.ph,
           Row(

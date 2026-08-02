@@ -3,15 +3,23 @@ import 'package:doctory/features/my_appointments/presentation/sections/appointme
 import 'package:flutter/material.dart';
 
 class AppointmentDetailsView extends StatelessWidget {
-  final AppointmentResponseDto appointment;
+  final AppointmentResponseDto? appointment;
+  final String? appointmentId;
 
-  const AppointmentDetailsView({super.key, required this.appointment});
+  const AppointmentDetailsView({
+    super.key,
+    this.appointment,
+    this.appointmentId,
+  });
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: AppointmentDetailsSection(appointment: appointment),
+        child: AppointmentDetailsSection(
+          appointment: appointment,
+          appointmentId: appointmentId,
+        ),
       ),
     );
   }

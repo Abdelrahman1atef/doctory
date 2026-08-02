@@ -2,8 +2,7 @@ import 'package:doctory/core/common/models/shared_models.dart';
 import '../domain/enums/appointment_type.dart';
 import '../domain/enums/booking_step.dart';
 import '../domain/enums/gender.dart';
-import '../data/model/create_appointment_request_dto.dart';
-import '../data/model/payment_dto.dart';
+import '../data/model/appointment_response_dto.dart';
 
 sealed class BookingState {}
 
@@ -24,11 +23,7 @@ class BookingData extends BookingState {
   final Gender patientGender;
   final String complaint;
   final String notes;
-  final CreateReservationResponseDto? reservation;
-  final PaymentResponseDto? payment;
-  final PaymentResponseDto? verification;
-  final String? paymentUrl;
-  final String? pendingPaymentId;
+  final AppointmentResponseDto? appointment;
   final bool isSubmitting;
   final String? submissionError;
 
@@ -45,11 +40,7 @@ class BookingData extends BookingState {
     this.patientGender = Gender.male,
     this.complaint = '',
     this.notes = '',
-    this.reservation,
-    this.payment,
-    this.verification,
-    this.paymentUrl,
-    this.pendingPaymentId,
+    this.appointment,
     this.isSlotsLoading = false,
     this.slotsError,
     this.isSubmitting = false,

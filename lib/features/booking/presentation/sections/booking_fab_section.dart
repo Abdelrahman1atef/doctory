@@ -1,4 +1,3 @@
-import 'package:doctory/core/common/widgets/layout/abher_payment_webview.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/booking/cubit/booking_cubit.dart';
 import 'package:doctory/features/booking/cubit/booking_state.dart';
@@ -36,8 +35,8 @@ class BookingFabSection extends StatelessWidget {
             child: SafeArea(
               top: false,
               child: BookingActionButton(
-                label: 'done'.tr(),
-                onPressed: () => Navigator.of(context).pop(),
+                label: 'back_to_clinic'.tr(),
+                onPressed: () => _returnToClinicDetails(context),
               ),
             ),
           );
@@ -100,10 +99,6 @@ class BookingFabSection extends StatelessWidget {
         return s.patientName.isNotEmpty && s.complaint.isNotEmpty;
       case BookingStep.reviewBooking:
         return true;
-      case BookingStep.payment:
-        return true;
-      case BookingStep.verification:
-        return true;
       case BookingStep.success:
         return false;
     }
@@ -118,36 +113,18 @@ class BookingFabSection extends StatelessWidget {
         return 'next'.tr();
       case BookingStep.reviewBooking:
         return 'confirm_booking'.tr();
-      case BookingStep.payment:
-        return 'pay_now'.tr();
-      case BookingStep.verification:
-        return 'verify_payment'.tr();
       case BookingStep.success:
         return '';
     }
   }
 
-  Future<void> _handlePayment(BuildContext context, BookingCubit cubit) async {
-    final url = await cubit.initiatePaymentUrl();
-    if (url == null) return;
-    if (!context.mounted) return;
-
-    var paymentSuccess = false;
-
-    await Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (_) => AbherPaymentWebView(
-          url: url,
-          onPaymentResult: (success) {
-            paymentSuccess = success;
-          },
-        ),
-      ),
-    );
-
-    if (paymentSuccess) {
-      cubit.goToStep(BookingStep.success);
+  void _returnToClinicDetails(BuildContext context) {
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.pop();
+    }
+    if (navigator.canPop()) {
+      navigator.pop();
     }
   }
 
@@ -161,12 +138,6 @@ class BookingFabSection extends StatelessWidget {
         break;
       case BookingStep.reviewBooking:
         cubit.submitBooking();
-        break;
-      case BookingStep.payment:
-        _handlePayment(context, cubit);
-        break;
-      case BookingStep.verification:
-        cubit.verifyPayment();
         break;
       case BookingStep.success:
         break;

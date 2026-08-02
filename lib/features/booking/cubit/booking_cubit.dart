@@ -1,13 +1,11 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctory/core/common/models/shared_models.dart';
-import 'package:doctory/core/error/failures.dart';
-import 'package:doctory/core/session/user_session.dart';
+import '../../../core/error/failures.dart';
 import '../domain/enums/appointment_type.dart';
 import '../domain/enums/booking_step.dart';
 import '../domain/enums/gender.dart';
 import '../domain/repositories/booking_repository.dart';
 import '../data/model/create_appointment_request_dto.dart';
-import '../data/model/payment_dto.dart';
 import 'booking_state.dart';
 
 class BookingCubit extends Cubit<BookingState> {
@@ -20,11 +18,6 @@ class BookingCubit extends Cubit<BookingState> {
     emit(BookingData(doctor: doctor, clinicId: clinicId));
   }
 
-  /// Phone of the logged-in user; used for reservation & payment requests
-  /// since the patient form no longer collects a phone number.
-  String get _userPhone =>
-      UserSession.userModel?['phoneNumber']?.toString() ?? '';
-
   BookingData get _data =>
       state is BookingData ? state as BookingData : BookingData(doctor: doctor, clinicId: clinicId);
 
@@ -33,27 +26,23 @@ class BookingCubit extends Cubit<BookingState> {
     const steps = BookingStep.values;
     final currentIndex = steps.indexOf(data.currentStep);
     if (currentIndex < steps.length - 1) {
-      emit(
-        BookingData(
-          doctor: data.doctor,
-          clinicId: data.clinicId,
-          currentStep: steps[currentIndex + 1],
-          appointmentType: data.appointmentType,
-          selectedDate: data.selectedDate,
-          availableSlots: data.availableSlots,
-          selectedTime: data.selectedTime,
-          patientName: data.patientName,
-          patientAge: data.patientAge,
-          patientGender: data.patientGender,
-          complaint: data.complaint,
-          notes: data.notes,
-          reservation: data.reservation,
-          payment: data.payment,
-          verification: data.verification,
-          isSubmitting: data.isSubmitting,
-          submissionError: data.submissionError,
-        ),
-      );
+      emit(BookingData(
+        doctor: data.doctor,
+        clinicId: data.clinicId,
+        currentStep: steps[currentIndex + 1],
+        appointmentType: data.appointmentType,
+        selectedDate: data.selectedDate,
+        availableSlots: data.availableSlots,
+        selectedTime: data.selectedTime,
+        patientName: data.patientName,
+        patientAge: data.patientAge,
+        patientGender: data.patientGender,
+        complaint: data.complaint,
+        notes: data.notes,
+        appointment: data.appointment,
+        isSubmitting: data.isSubmitting,
+        submissionError: data.submissionError,
+      ));
     }
   }
 
@@ -62,101 +51,85 @@ class BookingCubit extends Cubit<BookingState> {
     const steps = BookingStep.values;
     final currentIndex = steps.indexOf(data.currentStep);
     if (currentIndex > 0) {
-      emit(
-        BookingData(
-          doctor: data.doctor,
-          clinicId: data.clinicId,
-          currentStep: steps[currentIndex - 1],
-          appointmentType: data.appointmentType,
-          selectedDate: data.selectedDate,
-          availableSlots: data.availableSlots,
-          selectedTime: data.selectedTime,
-          patientName: data.patientName,
-          patientAge: data.patientAge,
-          patientGender: data.patientGender,
-          complaint: data.complaint,
-          notes: data.notes,
-          reservation: data.reservation,
-          payment: data.payment,
-          verification: data.verification,
-          isSubmitting: data.isSubmitting,
-          submissionError: data.submissionError,
-        ),
-      );
+      emit(BookingData(
+        doctor: data.doctor,
+        clinicId: data.clinicId,
+        currentStep: steps[currentIndex - 1],
+        appointmentType: data.appointmentType,
+        selectedDate: data.selectedDate,
+        availableSlots: data.availableSlots,
+        selectedTime: data.selectedTime,
+        patientName: data.patientName,
+        patientAge: data.patientAge,
+        patientGender: data.patientGender,
+        complaint: data.complaint,
+        notes: data.notes,
+        appointment: data.appointment,
+        isSubmitting: data.isSubmitting,
+        submissionError: data.submissionError,
+      ));
     }
   }
 
   void goToStep(BookingStep step) {
     final data = _data;
-    emit(
-      BookingData(
-        doctor: data.doctor,
-        clinicId: data.clinicId,
-        currentStep: step,
-        appointmentType: data.appointmentType,
-        selectedDate: data.selectedDate,
-        availableSlots: data.availableSlots,
-        selectedTime: data.selectedTime,
-        patientName: data.patientName,
-        patientAge: data.patientAge,
-        patientGender: data.patientGender,
-        complaint: data.complaint,
-        notes: data.notes,
-        reservation: data.reservation,
-        payment: data.payment,
-        verification: data.verification,
-        isSubmitting: data.isSubmitting,
-        submissionError: data.submissionError,
-      ),
-    );
+    emit(BookingData(
+      doctor: data.doctor,
+      clinicId: data.clinicId,
+      currentStep: step,
+      appointmentType: data.appointmentType,
+      selectedDate: data.selectedDate,
+      availableSlots: data.availableSlots,
+      selectedTime: data.selectedTime,
+      patientName: data.patientName,
+      patientAge: data.patientAge,
+      patientGender: data.patientGender,
+      complaint: data.complaint,
+      notes: data.notes,
+      appointment: data.appointment,
+      isSubmitting: data.isSubmitting,
+      submissionError: data.submissionError,
+    ));
   }
 
   void selectAppointmentType(AppointmentType type) {
     final data = _data;
-    emit(
-      BookingData(
-        doctor: data.doctor,
-        clinicId: data.clinicId,
-        currentStep: data.currentStep,
-        appointmentType: type,
-        selectedDate: data.selectedDate,
-        availableSlots: data.availableSlots,
-        selectedTime: data.selectedTime,
-        patientName: data.patientName,
-        patientAge: data.patientAge,
-        patientGender: data.patientGender,
-        complaint: data.complaint,
-        notes: data.notes,
-        reservation: data.reservation,
-        payment: data.payment,
-        verification: data.verification,
-      ),
-    );
+    emit(BookingData(
+      doctor: data.doctor,
+      clinicId: data.clinicId,
+      currentStep: data.currentStep,
+      appointmentType: type,
+      selectedDate: data.selectedDate,
+      availableSlots: data.availableSlots,
+      selectedTime: data.selectedTime,
+      patientName: data.patientName,
+      patientAge: data.patientAge,
+      patientGender: data.patientGender,
+      complaint: data.complaint,
+      notes: data.notes,
+      appointment: data.appointment,
+    ));
   }
 
   Future<void> selectDate(DateTime date) async {
     final data = _data;
-    emit(
-      BookingData(
-        doctor: data.doctor,
-        clinicId: data.clinicId,
-        currentStep: data.currentStep,
-        appointmentType: data.appointmentType,
-        selectedDate: date,
-        selectedTime: null,
-        availableSlots: null,
-        isSlotsLoading: true,
-        slotsError: null,
-        patientName: data.patientName,
-        patientAge: data.patientAge,
-        patientGender: data.patientGender,
-        complaint: data.complaint,
-        notes: data.notes,
-        reservation: data.reservation,
-        payment: data.payment,
-        verification: data.verification,
-      ),
-    );
+    emit(BookingData(
+      doctor: data.doctor,
+      clinicId: data.clinicId,
+      currentStep: data.currentStep,
+      appointmentType: data.appointmentType,
+      selectedDate: date,
+      selectedTime: null,
+      availableSlots: null,
+      isSlotsLoading: true,
+      slotsError: null,
+      patientName: data.patientName,
+      patientAge: data.patientAge,
+      patientGender: data.patientGender,
+      complaint: data.complaint,
+      notes: data.notes,
+      appointment: data.appointment,
+    ));
     await fetchAvailableSlots(date);
   }
 
@@ -168,50 +141,42 @@ class BookingCubit extends Cubit<BookingState> {
 
     if (state is! BookingData) return;
 
-    emit(
-      BookingData(
-        doctor: data.doctor,
-        clinicId: data.clinicId,
-        currentStep: data.currentStep,
-        appointmentType: data.appointmentType,
-        selectedDate: data.selectedDate,
-        availableSlots: slots,
-        selectedTime: null,
-        isSlotsLoading: false,
-        slotsError: null,
-        patientName: data.patientName,
-        patientAge: data.patientAge,
-        patientGender: data.patientGender,
-        complaint: data.complaint,
-        notes: data.notes,
-        reservation: data.reservation,
-        payment: data.payment,
-        verification: data.verification,
-      ),
-    );
+    emit(BookingData(
+      doctor: data.doctor,
+      clinicId: data.clinicId,
+      currentStep: data.currentStep,
+      appointmentType: data.appointmentType,
+      selectedDate: data.selectedDate,
+      availableSlots: slots,
+      selectedTime: null,
+      isSlotsLoading: false,
+      slotsError: null,
+      patientName: data.patientName,
+      patientAge: data.patientAge,
+      patientGender: data.patientGender,
+      complaint: data.complaint,
+      notes: data.notes,
+      appointment: data.appointment,
+    ));
   }
 
   void selectTime(TimeSlotModel time) {
     final data = _data;
-    emit(
-      BookingData(
-        doctor: data.doctor,
-        clinicId: data.clinicId,
-        currentStep: data.currentStep,
-        appointmentType: data.appointmentType,
-        selectedDate: data.selectedDate,
-        availableSlots: data.availableSlots,
-        selectedTime: time,
-        patientName: data.patientName,
-        patientAge: data.patientAge,
-        patientGender: data.patientGender,
-        complaint: data.complaint,
-        notes: data.notes,
-        reservation: data.reservation,
-        payment: data.payment,
-        verification: data.verification,
-      ),
-    );
+    emit(BookingData(
+      doctor: data.doctor,
+      clinicId: data.clinicId,
+      currentStep: data.currentStep,
+      appointmentType: data.appointmentType,
+      selectedDate: data.selectedDate,
+      availableSlots: data.availableSlots,
+      selectedTime: time,
+      patientName: data.patientName,
+      patientAge: data.patientAge,
+      patientGender: data.patientGender,
+      complaint: data.complaint,
+      notes: data.notes,
+      appointment: data.appointment,
+    ));
   }
 
   void updatePatientInfo({
@@ -222,52 +187,44 @@ class BookingCubit extends Cubit<BookingState> {
     String? notes,
   }) {
     final data = _data;
-    emit(
-      BookingData(
-        doctor: data.doctor,
-        clinicId: data.clinicId,
-        currentStep: data.currentStep,
-        appointmentType: data.appointmentType,
-        selectedDate: data.selectedDate,
-        availableSlots: data.availableSlots,
-        selectedTime: data.selectedTime,
-        patientName: name ?? data.patientName,
-        patientAge: age ?? data.patientAge,
-        patientGender: gender ?? data.patientGender,
-        complaint: complaint ?? data.complaint,
-        notes: notes ?? data.notes,
-        reservation: data.reservation,
-        payment: data.payment,
-        verification: data.verification,
-      ),
-    );
+    emit(BookingData(
+      doctor: data.doctor,
+      clinicId: data.clinicId,
+      currentStep: data.currentStep,
+      appointmentType: data.appointmentType,
+      selectedDate: data.selectedDate,
+      availableSlots: data.availableSlots,
+      selectedTime: data.selectedTime,
+      patientName: name ?? data.patientName,
+      patientAge: age ?? data.patientAge,
+      patientGender: gender ?? data.patientGender,
+      complaint: complaint ?? data.complaint,
+      notes: notes ?? data.notes,
+      appointment: data.appointment,
+    ));
   }
 
   Future<bool> submitBooking() async {
     final data = _data;
     if (data.selectedDate == null || data.selectedTime == null) return false;
 
-    emit(
-      BookingData(
-        doctor: data.doctor,
-        clinicId: data.clinicId,
-        currentStep: data.currentStep,
-        appointmentType: data.appointmentType,
-        selectedDate: data.selectedDate,
-        availableSlots: data.availableSlots,
-        selectedTime: data.selectedTime,
-        patientName: data.patientName,
-        patientAge: data.patientAge,
-        patientGender: data.patientGender,
-        complaint: data.complaint,
-        notes: data.notes,
-        reservation: data.reservation,
-        payment: data.payment,
-        verification: data.verification,
-        isSubmitting: true,
-        submissionError: null,
-      ),
-    );
+    emit(BookingData(
+      doctor: data.doctor,
+      clinicId: data.clinicId,
+      currentStep: data.currentStep,
+      appointmentType: data.appointmentType,
+      selectedDate: data.selectedDate,
+      availableSlots: data.availableSlots,
+      selectedTime: data.selectedTime,
+      patientName: data.patientName,
+      patientAge: data.patientAge,
+      patientGender: data.patientGender,
+      complaint: data.complaint,
+      notes: data.notes,
+      appointment: data.appointment,
+      isSubmitting: true,
+      submissionError: null,
+    ));
 
     final request = CreateAppointmentRequestDto(
       doctorId: doctor.id,
@@ -279,335 +236,57 @@ class BookingCubit extends Cubit<BookingState> {
           '${data.selectedTime!.endTime.hour.toString().padLeft(2, '0')}:${data.selectedTime!.endTime.minute.toString().padLeft(2, '0')}',
       appointmentType: data.appointmentType.value,
       patientFullName: data.patientName,
-      patientPhoneNumber: _userPhone,
       patientAge: data.patientAge,
       patientGender: data.patientGender.value,
       complaint: data.complaint,
       chronicDiseases: data.notes.isEmpty ? null : data.notes,
     );
 
-    final result = await bookingRepo.createReservation(request);
+    final result = await bookingRepo.createAppointment(request);
 
     if (state is! BookingData) return false;
 
     return result.fold(
-      onSuccess: (reservation) {
+      onSuccess: (appointment) {
         final current = _data;
-        emit(
-          BookingData(
-            doctor: current.doctor,
-            clinicId: current.clinicId,
-            currentStep: BookingStep.payment,
-            appointmentType: current.appointmentType,
-            selectedDate: current.selectedDate,
-            availableSlots: current.availableSlots,
-            selectedTime: current.selectedTime,
-            patientName: current.patientName,
-            patientAge: current.patientAge,
-            patientGender: current.patientGender,
-            complaint: current.complaint,
-            notes: current.notes,
-            reservation: reservation,
-            payment: current.payment,
-            verification: current.verification,
-            isSubmitting: false,
-            submissionError: null,
-          ),
-        );
+        emit(BookingData(
+          doctor: current.doctor,
+          clinicId: current.clinicId,
+          currentStep: BookingStep.success,
+          appointmentType: current.appointmentType,
+          selectedDate: current.selectedDate,
+          availableSlots: current.availableSlots,
+          selectedTime: current.selectedTime,
+          patientName: current.patientName,
+          patientAge: current.patientAge,
+          patientGender: current.patientGender,
+          complaint: current.complaint,
+          notes: current.notes,
+          appointment: appointment,
+          isSubmitting: false,
+          submissionError: null,
+        ));
         return true;
       },
       onFailure: (failure) {
         final current = _data;
-        emit(
-          BookingData(
-            doctor: current.doctor,
-            clinicId: current.clinicId,
-            currentStep: current.currentStep,
-            appointmentType: current.appointmentType,
-            selectedDate: current.selectedDate,
-            availableSlots: current.availableSlots,
-            selectedTime: current.selectedTime,
-            patientName: current.patientName,
-            patientAge: current.patientAge,
-            patientGender: current.patientGender,
-            complaint: current.complaint,
-            notes: current.notes,
-            reservation: current.reservation,
-            payment: current.payment,
-            verification: current.verification,
-            isSubmitting: false,
-            submissionError: failure.userMessage,
-          ),
-        );
-        return false;
-      },
-    );
-  }
-
-  Future<bool> processPayment() async {
-    final data = _data;
-    if (data.reservation == null) return false;
-
-    emit(
-      BookingData(
-        doctor: data.doctor,
-        clinicId: data.clinicId,
-        currentStep: data.currentStep,
-        appointmentType: data.appointmentType,
-        selectedDate: data.selectedDate,
-        availableSlots: data.availableSlots,
-        selectedTime: data.selectedTime,
-        patientName: data.patientName,
-        patientAge: data.patientAge,
-        patientGender: data.patientGender,
-        complaint: data.complaint,
-        notes: data.notes,
-        reservation: data.reservation,
-        payment: data.payment,
-        verification: data.verification,
-        isSubmitting: true,
-        submissionError: null,
-      ),
-    );
-
-    final request = PaymentRequestDto(
-      reservationId: data.reservation!.reservationId,
-      amount: data.reservation!.amount,
-      currency: data.reservation!.currency,
-      paymentMethod: 'e_wallet',
-    );
-
-    final result = await bookingRepo.processPayment(request);
-
-    if (state is! BookingData) return false;
-
-    return result.fold(
-      onSuccess: (payment) {
-        final current = _data;
-        emit(
-          BookingData(
-            doctor: current.doctor,
-            clinicId: current.clinicId,
-            currentStep: BookingStep.verification,
-            appointmentType: current.appointmentType,
-            selectedDate: current.selectedDate,
-            availableSlots: current.availableSlots,
-            selectedTime: current.selectedTime,
-            patientName: current.patientName,
-            patientAge: current.patientAge,
-            patientGender: current.patientGender,
-            complaint: current.complaint,
-            notes: current.notes,
-            reservation: current.reservation,
-            payment: payment,
-            verification: current.verification,
-            isSubmitting: false,
-            submissionError: null,
-          ),
-        );
-        return true;
-      },
-      onFailure: (failure) {
-        final current = _data;
-        emit(
-          BookingData(
-            doctor: current.doctor,
-            clinicId: current.clinicId,
-            currentStep: current.currentStep,
-            appointmentType: current.appointmentType,
-            selectedDate: current.selectedDate,
-            availableSlots: current.availableSlots,
-            selectedTime: current.selectedTime,
-            patientName: current.patientName,
-            patientAge: current.patientAge,
-            patientGender: current.patientGender,
-            complaint: current.complaint,
-            notes: current.notes,
-            reservation: current.reservation,
-            payment: current.payment,
-            verification: current.verification,
-            isSubmitting: false,
-            submissionError: failure.userMessage,
-          ),
-        );
-        return false;
-      },
-    );
-  }
-
-  Future<String?> initiatePaymentUrl() async {
-    final data = _data;
-    if (data.reservation == null) return null;
-
-    emit(
-      BookingData(
-        doctor: data.doctor,
-        clinicId: data.clinicId,
-        currentStep: data.currentStep,
-        appointmentType: data.appointmentType,
-        selectedDate: data.selectedDate,
-        availableSlots: data.availableSlots,
-        selectedTime: data.selectedTime,
-        patientName: data.patientName,
-        patientAge: data.patientAge,
-        patientGender: data.patientGender,
-        complaint: data.complaint,
-        notes: data.notes,
-        reservation: data.reservation,
-        payment: data.payment,
-        verification: data.verification,
-        isSubmitting: true,
-        submissionError: null,
-      ),
-    );
-
-    final result = await bookingRepo.initiatePayment(
-      appointmentId: data.reservation!.reservationId,
-      phoneNumber: _userPhone,
-    );
-
-    if (state is! BookingData) return null;
-
-    return result.fold(
-      onSuccess: (paymentData) {
-        final current = _data;
-        emit(
-          BookingData(
-            doctor: current.doctor,
-            clinicId: current.clinicId,
-            currentStep: current.currentStep,
-            appointmentType: current.appointmentType,
-            selectedDate: current.selectedDate,
-            availableSlots: current.availableSlots,
-            selectedTime: current.selectedTime,
-            patientName: current.patientName,
-            patientAge: current.patientAge,
-            patientGender: current.patientGender,
-            complaint: current.complaint,
-            notes: current.notes,
-            reservation: current.reservation,
-            payment: current.payment,
-            verification: current.verification,
-            paymentUrl: paymentData.redirectUrl,
-            pendingPaymentId: paymentData.paymentId,
-            isSubmitting: false,
-          ),
-        );
-        return paymentData.redirectUrl;
-      },
-      onFailure: (failure) {
-        final current = _data;
-        emit(
-          BookingData(
-            doctor: current.doctor,
-            clinicId: current.clinicId,
-            currentStep: current.currentStep,
-            appointmentType: current.appointmentType,
-            selectedDate: current.selectedDate,
-            availableSlots: current.availableSlots,
-            selectedTime: current.selectedTime,
-            patientName: current.patientName,
-            patientAge: current.patientAge,
-            patientGender: current.patientGender,
-            complaint: current.complaint,
-            notes: current.notes,
-            reservation: current.reservation,
-            payment: current.payment,
-            verification: current.verification,
-            isSubmitting: false,
-            submissionError: failure.userMessage,
-          ),
-        );
-        return null;
-      },
-    );
-  }
-
-  Future<bool> verifyPayment() async {
-    final data = _data;
-    if (data.payment == null || data.payment!.transactionId == null) {
-      return false;
-    }
-
-    emit(
-      BookingData(
-        doctor: data.doctor,
-        clinicId: data.clinicId,
-        currentStep: data.currentStep,
-        appointmentType: data.appointmentType,
-        selectedDate: data.selectedDate,
-        availableSlots: data.availableSlots,
-        selectedTime: data.selectedTime,
-        patientName: data.patientName,
-        patientAge: data.patientAge,
-        patientGender: data.patientGender,
-        complaint: data.complaint,
-        notes: data.notes,
-        reservation: data.reservation,
-        payment: data.payment,
-        verification: data.verification,
-        isSubmitting: true,
-        submissionError: null,
-      ),
-    );
-
-    final result = await bookingRepo.verifyPayment(
-      paymentId: data.payment!.paymentId,
-      transactionId: data.payment!.transactionId!,
-    );
-
-    if (state is! BookingData) return false;
-
-    return result.fold(
-      onSuccess: (verification) {
-        final current = _data;
-        final isCompleted = verification.status == 'completed';
-        emit(
-          BookingData(
-            doctor: current.doctor,
-            clinicId: current.clinicId,
-            currentStep: isCompleted ? BookingStep.success : current.currentStep,
-            appointmentType: current.appointmentType,
-            selectedDate: current.selectedDate,
-            availableSlots: current.availableSlots,
-            selectedTime: current.selectedTime,
-            patientName: current.patientName,
-            patientAge: current.patientAge,
-            patientGender: current.patientGender,
-            complaint: current.complaint,
-            notes: current.notes,
-            reservation: current.reservation,
-            payment: current.payment,
-            verification: verification,
-            isSubmitting: false,
-            submissionError: isCompleted ? null : 'Payment verification failed. Please try again.',
-          ),
-        );
-        return isCompleted;
-      },
-      onFailure: (failure) {
-        final current = _data;
-        emit(
-          BookingData(
-            doctor: current.doctor,
-            clinicId: current.clinicId,
-            currentStep: current.currentStep,
-            appointmentType: current.appointmentType,
-            selectedDate: current.selectedDate,
-            availableSlots: current.availableSlots,
-            selectedTime: current.selectedTime,
-            patientName: current.patientName,
-            patientAge: current.patientAge,
-            patientGender: current.patientGender,
-            complaint: current.complaint,
-            notes: current.notes,
-            reservation: current.reservation,
-            payment: current.payment,
-            verification: current.verification,
-            isSubmitting: false,
-            submissionError: failure.userMessage,
-          ),
-        );
+        emit(BookingData(
+          doctor: current.doctor,
+          clinicId: current.clinicId,
+          currentStep: current.currentStep,
+          appointmentType: current.appointmentType,
+          selectedDate: current.selectedDate,
+          availableSlots: current.availableSlots,
+          selectedTime: current.selectedTime,
+          patientName: current.patientName,
+          patientAge: current.patientAge,
+          patientGender: current.patientGender,
+          complaint: current.complaint,
+          notes: current.notes,
+          appointment: current.appointment,
+          isSubmitting: false,
+          submissionError: failure.userMessage,
+        ));
         return false;
       },
     );
@@ -622,27 +301,23 @@ class BookingCubit extends Cubit<BookingState> {
 
   void clearError() {
     final data = _data;
-    emit(
-      BookingData(
-        doctor: data.doctor,
-        clinicId: data.clinicId,
-        currentStep: data.currentStep,
-        appointmentType: data.appointmentType,
-        selectedDate: data.selectedDate,
-        availableSlots: data.availableSlots,
-        selectedTime: data.selectedTime,
-        patientName: data.patientName,
-        patientAge: data.patientAge,
-        patientGender: data.patientGender,
-        complaint: data.complaint,
-        notes: data.notes,
-        reservation: data.reservation,
-        payment: data.payment,
-        verification: data.verification,
-        isSubmitting: false,
-        submissionError: null,
-      ),
-    );
+    emit(BookingData(
+      doctor: data.doctor,
+      clinicId: data.clinicId,
+      currentStep: data.currentStep,
+      appointmentType: data.appointmentType,
+      selectedDate: data.selectedDate,
+      availableSlots: data.availableSlots,
+      selectedTime: data.selectedTime,
+      patientName: data.patientName,
+      patientAge: data.patientAge,
+      patientGender: data.patientGender,
+      complaint: data.complaint,
+      notes: data.notes,
+      appointment: data.appointment,
+      isSubmitting: false,
+      submissionError: null,
+    ));
   }
 
   void reset() {
