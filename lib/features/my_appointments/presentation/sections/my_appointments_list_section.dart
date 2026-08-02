@@ -37,7 +37,7 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
   final ScrollController _scrollController = ScrollController();
 
   static const List<_TabConfig> _tabs = [
-    _TabConfig('pending_payment', 0),
+    _TabConfig('pending', 0),
     _TabConfig('confirmed', 1),
     _TabConfig('awaiting_payment', 6),
     _TabConfig('completed', 3),

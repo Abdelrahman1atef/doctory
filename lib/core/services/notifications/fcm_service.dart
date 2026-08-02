@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:doctory/core/common/widgets/layout/abher_payment_webview.dart';
 import 'package:doctory/core/router/app_router.dart';
 import 'package:doctory/core/services/deep_link_service.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 import '../../session/user_session.dart';
@@ -341,6 +343,19 @@ class FBMessaging {
           );
           return;
         }
+        if (notification.paymentUrl != null &&
+            notification.paymentUrl!.isNotEmpty) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AbherPaymentWebView(
+                url: notification.paymentUrl!,
+                onPaymentResult: (_) {},
+              ),
+            ),
+          );
+          return;
+        }
         break;
       case "NewMessage":
         if (notification.conversationId != null) {
@@ -367,9 +382,10 @@ class FCMNotification {
   final String? relatedData;
   final String? conversationId;
   final String? appointmentId;
+  final String? paymentUrl;
   final String? link;
 
-  FCMNotification({this.title, this.message, this.type, this.relatedData, this.conversationId, this.appointmentId, this.link});
+  FCMNotification({this.title, this.message, this.type, this.relatedData, this.conversationId, this.appointmentId, this.paymentUrl, this.link});
 
   /// إنشاء من Map مطابق للنيتف (related_data - title - message)
   factory FCMNotification.fromMap(Map<String, dynamic> map) {
@@ -379,6 +395,7 @@ class FCMNotification {
       type: map["type"]?.toString(),
       conversationId: map["conversationId"]?.toString(),
       appointmentId: map["appointmentId"]?.toString(),
+      paymentUrl: map["paymentUrl"]?.toString(),
       relatedData: map["related_data"]?.toString(),
       link: map["link"]?.toString(),
     );
@@ -392,6 +409,7 @@ class FCMNotification {
       "type": type,
       "conversationId": conversationId,
       "appointmentId": appointmentId,
+      "paymentUrl": paymentUrl,
       "related_data": relatedData,
       "link": link,
     };

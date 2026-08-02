@@ -30,7 +30,7 @@ class AppointmentStatusBadge extends StatelessWidget {
       case AppointmentStatus.confirmed:
         return _StatusConfig(AppColors.success, 'confirmed'.tr());
       case AppointmentStatus.pending:
-        return _StatusConfig(AppColors.warning, 'pending_payment'.tr());
+        return _StatusConfig(AppColors.warning, 'pending'.tr());
       case AppointmentStatus.reserved:
         return _StatusConfig(AppColors.warning, 'pending'.tr());
       case AppointmentStatus.completed:
