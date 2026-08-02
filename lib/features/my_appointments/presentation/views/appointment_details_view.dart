@@ -1,15 +1,14 @@
-import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
 import 'package:doctory/features/my_appointments/presentation/sections/appointment_details_section.dart';
 import 'package:flutter/material.dart';
 
 class AppointmentDetailsView extends StatelessWidget {
-  final AppointmentResponseDto? appointment;
   final String? appointmentId;
+  final String? paymentUrl;
 
   const AppointmentDetailsView({
     super.key,
-    this.appointment,
     this.appointmentId,
+    this.paymentUrl,
   });
 
   @override
@@ -17,8 +16,8 @@ class AppointmentDetailsView extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: AppointmentDetailsSection(
-          appointment: appointment,
           appointmentId: appointmentId,
+          paymentUrl: paymentUrl,
         ),
       ),
     );

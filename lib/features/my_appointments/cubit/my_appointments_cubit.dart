@@ -76,8 +76,8 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
     loadAppointments(status: status);
   }
 
-  void refresh() {
-    loadAppointments(status: _currentStatusFilter ?? 0);
+  Future<void> refresh() {
+    return loadAppointments(status: _currentStatusFilter ?? 0);
   }
 
   Future<void> loadMore() async {

@@ -1,5 +1,6 @@
 import 'package:doctory/core/common/widgets/error/app_error_widget.dart';
 import 'package:doctory/core/common/widgets/layout/abher_payment_webview.dart';
+import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
@@ -13,13 +14,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class AppointmentDetailsSection extends StatefulWidget {
-  final AppointmentResponseDto? appointment;
   final String? appointmentId;
+  final String? paymentUrl;
 
   const AppointmentDetailsSection({
     super.key,
-    this.appointment,
     this.appointmentId,
+    this.paymentUrl,
   });
 
   @override
@@ -38,8 +39,7 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
   @override
   void initState() {
     super.initState();
-    _lastAppointment = widget.appointment;
-    if (_lastAppointment == null && widget.appointmentId != null) {
+    if (widget.appointmentId != null) {
       context
           .read<MyAppointmentsCubit>()
           .loadAppointmentById(widget.appointmentId!);
@@ -72,7 +72,7 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
   bool get _canPay {
     final apt = _appointment;
     if (apt == null) return false;
-    final url = apt.paymobRedirectUrl;
+    final url = apt.paymobRedirectUrl ?? widget.paymentUrl;
     return apt.status == 6 && url != null && url.isNotEmpty;
   }
 
@@ -83,7 +83,13 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
       return;
     }
     _lastBackPress = now;
-    context.pop();
+    if (context.canPop()) {
+      try {
+        context.pop();
+        return;
+      } catch (_) {}
+    }
+    context.go(AppRoutes.myAppointments);
   }
 
   Future<void> _refresh() async {
@@ -261,7 +267,7 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
     BuildContext context,
     AppointmentResponseDto apt,
   ) async {
-    final url = apt.paymobRedirectUrl;
+    final url = apt.paymobRedirectUrl ?? widget.paymentUrl;
     if (url == null || url.isEmpty) return;
 
     var paymentSuccess = false;

@@ -88,6 +88,7 @@ class _MyAppointmentsBodySectionState extends State<MyAppointmentsBodySection> {
               context.read<MyAppointmentsCubit>().loadByStatus(status),
           onPayTap: (appointment) =>
               _openPaymentWebView(context, appointment),
+          onRefresh: () => context.read<MyAppointmentsCubit>().refresh(),
         ),
         if (state.isRefreshing)
           const Positioned.fill(

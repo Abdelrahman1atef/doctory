@@ -338,8 +338,9 @@ class FBMessaging {
       case "AppointmentConfirmation":
       case "AppointmentAccepted":
         if (notification.appointmentId != null) {
-          AppRouter.router.go(
-            '/my-appointments/details?id=${notification.appointmentId}',
+          AppRouter.router.push(
+            '/my-appointments/details?id=${notification.appointmentId}'
+            '${notification.paymentUrl != null && notification.paymentUrl!.isNotEmpty ? '&paymentUrl=${Uri.encodeComponent(notification.paymentUrl!)}' : ''}',
           );
           return;
         }

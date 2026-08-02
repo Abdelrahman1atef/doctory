@@ -102,7 +102,12 @@ class NotificationsBodySection extends StatelessWidget {
       case NotificationType.appointmentReminder:
       case NotificationType.appointmentConfirmation:
       case NotificationType.appointmentCancellation:
-        context.pushNamed(AppRoutes.myAppointments);
+        final appointmentId = notification.appointmentId;
+        if (appointmentId != null && appointmentId.isNotEmpty) {
+          context.push('${AppRoutes.appointmentDetails}?id=$appointmentId');
+        } else {
+          context.pushNamed(AppRoutes.myAppointments);
+        }
       case NotificationType.paymentConfirmation:
         context.pushNamed(AppRoutes.myAppointments);
       case NotificationType.systemAnnouncement:

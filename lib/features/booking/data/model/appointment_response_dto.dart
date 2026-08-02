@@ -23,7 +23,8 @@ class AppointmentPaymentDto {
       amount: (json['amount'] as num?)?.toDouble(),
       currency: json['currency']?.toString(),
       paymentStatus: json['paymentStatus']?.toString(),
-      paymobRedirectUrl: json['paymobRedirectUrl']?.toString(),
+      paymobRedirectUrl:
+          json['paymentUrl']?.toString() ?? json['paymobRedirectUrl']?.toString(),
       paidAt: json['paidAt'] != null
           ? DateTime.tryParse(json['paidAt'].toString())
           : json['updatedAt'] != null
@@ -102,9 +103,13 @@ class AppointmentResponseDto {
 
   factory AppointmentResponseDto.fromJson(Map<String, dynamic> json) {
     final paymentJson = json['payment'];
+    final paymentUrl =
+        json['paymentUrl']?.toString() ?? json['paymobRedirectUrl']?.toString();
     final payment = paymentJson is Map<String, dynamic>
         ? AppointmentPaymentDto.fromJson(paymentJson)
-        : null;
+        : paymentUrl != null
+            ? AppointmentPaymentDto(paymobRedirectUrl: paymentUrl)
+            : null;
     return AppointmentResponseDto(
       id: json['id']?.toString() ?? '',
       bookedByUserId: json['bookedByUserId']?.toString() ?? '',

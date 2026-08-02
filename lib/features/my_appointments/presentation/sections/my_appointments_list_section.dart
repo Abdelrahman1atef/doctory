@@ -16,6 +16,7 @@ class MyAppointmentsListSection extends StatefulWidget {
   final VoidCallback onLoadMore;
   final void Function(int status) onLoadByStatus;
   final void Function(AppointmentResponseDto appointment) onPayTap;
+  final Future<void> Function() onRefresh;
 
   const MyAppointmentsListSection({
     super.key,
@@ -26,6 +27,7 @@ class MyAppointmentsListSection extends StatefulWidget {
     required this.onLoadMore,
     required this.onLoadByStatus,
     required this.onPayTap,
+    required this.onRefresh,
   });
 
   @override
@@ -38,8 +40,8 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
 
   static const List<_TabConfig> _tabs = [
     _TabConfig('pending', 0),
-    _TabConfig('confirmed', 1),
     _TabConfig('awaiting_payment', 6),
+    _TabConfig('confirmed', 1),
     _TabConfig('completed', 3),
     _TabConfig('cancelled', 2),
     _TabConfig('rejected', 7),
@@ -73,7 +75,6 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
   Future<void> _openDetails(BuildContext context, AppointmentResponseDto apt) async {
     await context.push(
       '${AppRoutes.appointmentDetails}?id=${apt.id}',
-      extra: apt,
     );
     if (!context.mounted) return;
     widget.onLoadByStatus(widget.statusFilter ?? 0);
@@ -104,54 +105,72 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
         16.ph,
         if (widget.appointments.isEmpty && !widget.isLoadingMore)
           Expanded(
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Icon(
-                    Icons.event_busy_rounded,
-                    size: 64,
-                    color: AppColors.grey400,
-                  ),
-                  16.ph,
-                  Text(
-                    'no_appointments'.tr(),
-                    style: AppStyles.s16Medium.withColor(
-                      AppColors.stitchSecondary,
+            child: RefreshIndicator(
+              onRefresh: widget.onRefresh,
+              color: AppColors.stitchPrimaryContainer,
+              child: LayoutBuilder(
+                builder: (context, constraints) => SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: SizedBox(
+                    height: constraints.maxHeight,
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(
+                            Icons.event_busy_rounded,
+                            size: 64,
+                            color: AppColors.grey400,
+                          ),
+                          16.ph,
+                          Text(
+                            'no_appointments'.tr(),
+                            style: AppStyles.s16Medium.withColor(
+                              AppColors.stitchSecondary,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                ],
+                ),
               ),
             ),
           )
         else
           Expanded(
-            child: ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.only(top: 8, bottom: 24),
-              itemCount:
-                  widget.appointments.length + (widget.isLoadingMore ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (index == widget.appointments.length) {
-                  return const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 16),
-                    child: Center(
-                      child: SizedBox(
-                        width: 24,
-                        height: 24,
-                        child: CircularProgressIndicator(strokeWidth: 2),
+            child: RefreshIndicator(
+              onRefresh: widget.onRefresh,
+              color: AppColors.stitchPrimaryContainer,
+              child: ListView.builder(
+                controller: _scrollController,
+                physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.only(top: 8, bottom: 24),
+                itemCount:
+                    widget.appointments.length + (widget.isLoadingMore ? 1 : 0),
+                itemBuilder: (context, index) {
+                  if (index == widget.appointments.length) {
+                    return const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 16),
+                      child: Center(
+                        child: SizedBox(
+                          width: 24,
+                          height: 24,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
                       ),
-                    ),
+                    );
+                  }
+                  final apt = widget.appointments[index];
+                  final showPay =
+                      apt.status == 6 && apt.paymobRedirectUrl != null;
+                  return AppointmentCardWidget(
+                    appointment: apt,
+                    onTap: () => _openDetails(context, apt),
+                    onPayTap: showPay ? () => widget.onPayTap(apt) : null,
                   );
-                }
-                final apt = widget.appointments[index];
-                final showPay = apt.status == 6 && apt.paymobRedirectUrl != null;
-                return AppointmentCardWidget(
-                  appointment: apt,
-                  onTap: () => _openDetails(context, apt),
-                  onPayTap: showPay ? () => widget.onPayTap(apt) : null,
-                );
-              },
+                },
+              ),
             ),
           ),
       ],
