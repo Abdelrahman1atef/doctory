@@ -42,10 +42,12 @@ class ChatRealtimeService {
   bool _isCurrentlyTyping = false;
   String? _activeConversationId;
   bool _initialized = false;
+  bool _disconnected = true;
 
   Future<void> initialize() async {
     if (_initialized) return;
     _initialized = true;
+    _disconnected = false;
 
     final userId = UserSession.userId;
     if (userId == null) return;
@@ -203,6 +205,11 @@ class ChatRealtimeService {
   }
 
   Future<void> disconnect() async {
+    // Idempotent: logout flow + cubit close may both call this
+    if (_disconnected) return;
+    _disconnected = true;
+    _initialized = false;
+
     final socketId = _pusherService.socketId;
     if (socketId != null) {
       try {

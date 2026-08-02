@@ -27,12 +27,12 @@ abstract class AuthRemoteDataSource {
   Future<ApiResult<UserModel>> getProfile();
   Future<ApiResult<bool>> updateProfile(UpdateProfileRequest request);
   Future<ApiResult<bool>> updateLanguage(int language);
-  Future<ApiResult<AuthResponse>> loginFacebook(String accessToken);
+  Future<ApiResult<AuthResponse>> loginFacebook(String accessToken, {String? fcmToken, required DevicePlatform devicePlatform});
   Future<ApiResult<AuthResponse>> completeFacebookRegistration({
     required String accessToken,
     required String email,
   });
-  Future<ApiResult<AuthResponse>> loginGoogle(String idToken);
+  Future<ApiResult<AuthResponse>> loginGoogle(String idToken, {String? fcmToken, required DevicePlatform devicePlatform});
   Future<ApiResult<void>> logout(String refreshToken);
   Future<ApiResult<void>> deleteAccount(String userId);
   Future<ApiResult<void>> updateDeviceToken({
@@ -164,10 +164,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<ApiResult<AuthResponse>> loginFacebook(String accessToken) async {
+  Future<ApiResult<AuthResponse>> loginFacebook(
+    String accessToken, {
+    String? fcmToken,
+    required DevicePlatform devicePlatform,
+  }) async {
     return await _apiConsumer.post(
       path: AuthEndpoints.loginFacebook,
-      body: {'accessToken': accessToken},
+      body: {
+        'accessToken': accessToken,
+        'fcmToken': fcmToken,
+        'devicePlatform': devicePlatform.toJson(),
+      },
       parser: (json) => AuthResponse.fromJson(json),
     );
   }
@@ -185,10 +193,18 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   }
 
   @override
-  Future<ApiResult<AuthResponse>> loginGoogle(String idToken) async {
+  Future<ApiResult<AuthResponse>> loginGoogle(
+    String idToken, {
+    String? fcmToken,
+    required DevicePlatform devicePlatform,
+  }) async {
     return await _apiConsumer.post(
       path: AuthEndpoints.loginGoogle,
-      body: {'idToken': idToken},
+      body: {
+        'idToken': idToken,
+        'fcmToken': fcmToken,
+        'devicePlatform': devicePlatform.toJson(),
+      },
       parser: (json) => AuthResponse.fromJson(json),
     );
   }

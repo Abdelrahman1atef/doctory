@@ -165,7 +165,11 @@ class AuthCubit extends Cubit<AuthStates> {
 
   void loginFacebook(String accessToken) async {
     emit(AuthLoadingState());
-    final result = await _authRepo.loginFacebook(accessToken);
+    final result = await _authRepo.loginFacebook(
+      accessToken,
+      fcmToken: UserSession.fcmToken.isNotEmpty ? UserSession.fcmToken : null,
+      devicePlatform: _currentPlatform,
+    );
     result.fold(
       onSuccess: (data) => emit(AuthSuccessState(data)),
       onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
@@ -186,7 +190,11 @@ class AuthCubit extends Cubit<AuthStates> {
 
   void loginGoogle(String idToken) async {
     emit(AuthLoadingState());
-    final result = await _authRepo.loginGoogle(idToken);
+    final result = await _authRepo.loginGoogle(
+      idToken,
+      fcmToken: UserSession.fcmToken.isNotEmpty ? UserSession.fcmToken : null,
+      devicePlatform: _currentPlatform,
+    );
     result.fold(
       onSuccess: (data) => emit(AuthSuccessState(data)),
       onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),

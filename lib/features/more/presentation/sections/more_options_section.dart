@@ -5,6 +5,7 @@ import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/more/cubit/more_cubit.dart';
 import 'package:doctory/features/more/cubit/more_states.dart';
 import 'package:doctory/features/more/presentation/widgets/delete_account_bottom_sheet.dart';
+import 'package:doctory/features/more/presentation/widgets/logout_bottom_sheet.dart';
 import 'package:doctory/features/more/presentation/widgets/more_option_item.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -83,8 +84,11 @@ class MoreOptionsSection extends StatelessWidget {
                     icon: Icons.logout_rounded,
                     textColor: AppColors.error,
                     iconColor: AppColors.error,
-                    onTap: () {
-                      context.read<MoreCubit>().logout();
+                    onTap: () async {
+                      final confirmed = await LogoutBottomSheet.show(context);
+                      if (confirmed == true && context.mounted) {
+                        context.read<MoreCubit>().logout();
+                      }
                     },
                   ),
                 ],

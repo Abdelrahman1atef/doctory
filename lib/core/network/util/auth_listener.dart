@@ -11,6 +11,9 @@ import '../interceptors/auth_interceptor.dart';
 /// This should be called in the `main` function or the root widget's `initState`.
 void setupAuthListener() {
   sl<AuthInterceptor>().onUnauthorized.listen((_) async {
+    // Already logged out: ignore 401s fired by logout cleanup (realtime/disconnect etc.)
+    if (UserSession.token.isEmpty) return;
+
     final context = AppRouter.navigatorKey.currentContext;
     if (context != null) {
       // Clear user session

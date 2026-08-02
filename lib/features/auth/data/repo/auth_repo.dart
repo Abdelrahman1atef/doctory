@@ -29,12 +29,12 @@ abstract class AuthRepo {
   Future<ApiResult<UserModel>> getProfile();
   Future<ApiResult<bool>> updateProfile(UpdateProfileRequest request);
   Future<ApiResult<bool>> updateLanguage(int language);
-  Future<ApiResult<AuthResponse>> loginFacebook(String accessToken);
+  Future<ApiResult<AuthResponse>> loginFacebook(String accessToken, {String? fcmToken, required DevicePlatform devicePlatform});
   Future<ApiResult<AuthResponse>> completeFacebookRegistration({
     required String accessToken,
     required String email,
   });
-  Future<ApiResult<AuthResponse>> loginGoogle(String idToken);
+  Future<ApiResult<AuthResponse>> loginGoogle(String idToken, {String? fcmToken, required DevicePlatform devicePlatform});
   Future<ApiResult<void>> logout(String refreshToken);
   Future<ApiResult<void>> deleteAccount(String userId);
   Future<ApiResult<void>> updateDeviceToken({
@@ -140,8 +140,16 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   @override
-  Future<ApiResult<AuthResponse>> loginFacebook(String accessToken) async {
-    final result = await _dataSource.loginFacebook(accessToken);
+  Future<ApiResult<AuthResponse>> loginFacebook(
+    String accessToken, {
+    String? fcmToken,
+    required DevicePlatform devicePlatform,
+  }) async {
+    final result = await _dataSource.loginFacebook(
+      accessToken,
+      fcmToken: fcmToken,
+      devicePlatform: devicePlatform,
+    );
     return result.fold(
       onSuccess: (response) async {
         if (response.accessToken.isNotEmpty) {
@@ -174,8 +182,16 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   @override
-  Future<ApiResult<AuthResponse>> loginGoogle(String idToken) async {
-    final result = await _dataSource.loginGoogle(idToken);
+  Future<ApiResult<AuthResponse>> loginGoogle(
+    String idToken, {
+    String? fcmToken,
+    required DevicePlatform devicePlatform,
+  }) async {
+    final result = await _dataSource.loginGoogle(
+      idToken,
+      fcmToken: fcmToken,
+      devicePlatform: devicePlatform,
+    );
     return result.fold(
       onSuccess: (response) async {
         if (response.accessToken.isNotEmpty) {
