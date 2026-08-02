@@ -2,6 +2,7 @@ import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
 import 'package:doctory/features/my_appointments/cubit/my_appointments_cubit.dart';
+import 'package:doctory/features/my_appointments/data/data_source/my_appointments_remote_data_source.dart';
 import 'package:doctory/features/my_appointments/presentation/views/appointment_details_view.dart';
 import 'package:doctory/features/my_appointments/presentation/views/my_appointments_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,21 +17,23 @@ class MyAppointmentsRouter {
         child: const MyAppointmentsView(),
       ),
     ),
-    GoRoute(
-      path: AppRoutes.appointmentDetails,
-      builder: (context, state) {
-        final appointment = state.extra as AppointmentResponseDto?;
-        final id = appointment == null
-            ? state.uri.queryParameters['id']
-            : null;
-        return BlocProvider(
-          create: (_) => sl<MyAppointmentsCubit>(),
-          child: AppointmentDetailsView(
-            appointment: appointment,
-            appointmentId: id,
-          ),
-        );
-      },
-    ),
   ];
+
+  static final GoRoute detailsRoute = GoRoute(
+    path: AppRoutes.appointmentDetails,
+    builder: (context, state) {
+      final appointment = state.extra as AppointmentResponseDto?;
+      final id = state.uri.queryParameters['id'];
+      return BlocProvider(
+        create: (_) => MyAppointmentsCubit(
+          remoteDataSource: sl<MyAppointmentsRemoteDataSource>(),
+          autoLoad: false,
+        ),
+        child: AppointmentDetailsView(
+          appointment: appointment,
+          appointmentId: id,
+        ),
+      );
+    },
+  );
 }

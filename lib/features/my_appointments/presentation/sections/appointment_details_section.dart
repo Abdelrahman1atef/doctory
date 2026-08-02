@@ -1,3 +1,4 @@
+import 'package:doctory/core/common/widgets/error/app_error_widget.dart';
 import 'package:doctory/core/common/widgets/layout/abher_payment_webview.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
@@ -28,11 +29,17 @@ class AppointmentDetailsSection extends StatefulWidget {
 
 class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
   static const Duration _paidCancelWindow = Duration(hours: 2);
+  static const Duration _backPressDebounce = Duration(milliseconds: 400);
+
+  AppointmentResponseDto? _lastAppointment;
+  bool _cancelling = false;
+  DateTime? _lastBackPress;
 
   @override
   void initState() {
     super.initState();
-    if (widget.appointment == null && widget.appointmentId != null) {
+    _lastAppointment = widget.appointment;
+    if (_lastAppointment == null && widget.appointmentId != null) {
       context
           .read<MyAppointmentsCubit>()
           .loadAppointmentById(widget.appointmentId!);
@@ -42,7 +49,7 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
   AppointmentResponseDto? get _appointment {
     final state = context.read<MyAppointmentsCubit>().state;
     if (state is MyAppointmentsDetailsLoaded) return state.appointment;
-    return widget.appointment;
+    return _lastAppointment;
   }
 
   bool get _canCancel {
@@ -69,11 +76,32 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
     return apt.status == 6 && url != null && url.isNotEmpty;
   }
 
+  void _popOnce() {
+    final now = DateTime.now();
+    if (_lastBackPress != null &&
+        now.difference(_lastBackPress!) < _backPressDebounce) {
+      return;
+    }
+    _lastBackPress = now;
+    context.pop();
+  }
+
+  Future<void> _refresh() async {
+    final apt = _appointment;
+    if (apt == null) return;
+    await context
+        .read<MyAppointmentsCubit>()
+        .loadAppointmentById(apt.id);
+  }
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<MyAppointmentsCubit, MyAppointmentsState>(
       listener: (context, state) {
-        if (state is MyAppointmentsError) {
+        if (state is MyAppointmentsDetailsLoaded) {
+          _lastAppointment = state.appointment;
+        }
+        if (state is MyAppointmentsError && _lastAppointment != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
@@ -83,8 +111,9 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
         }
       },
       builder: (context, state) {
-        if (state is MyAppointmentsDetailsLoading &&
-            widget.appointment == null) {
+        final apt = _appointment;
+
+        if (apt == null && state is MyAppointmentsDetailsLoading) {
           return const Center(
             child: CircularProgressIndicator(
               color: AppColors.stitchPrimaryContainer,
@@ -92,7 +121,18 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
           );
         }
 
-        final apt = _appointment;
+        if (apt == null && state is MyAppointmentsError) {
+          return AppErrorWidget(
+            message: state.message,
+            icon: Icons.event_busy_rounded,
+            onRetry: widget.appointmentId == null
+                ? null
+                : () => context
+                    .read<MyAppointmentsCubit>()
+                    .loadAppointmentById(widget.appointmentId!),
+          );
+        }
+
         if (apt == null) {
           return const SizedBox.shrink();
         }
@@ -108,7 +148,7 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
                       Icons.arrow_back_ios_new,
                       color: AppColors.stitchPrimaryContainer,
                     ),
-                    onPressed: () => context.pop(),
+                    onPressed: _popOnce,
                   ),
                   const Spacer(),
                   Text(
@@ -124,58 +164,96 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
             ),
             16.ph,
             Expanded(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: Column(
-                  children: [
-                    AppointmentDetailCard(appointment: apt),
-                    if (_canPay) ...[
-                      32.ph,
-                      SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton.icon(
-                          onPressed: () => _openPaymentWebView(context, apt),
-                          icon: const Icon(Icons.payment),
-                          label: Text('pay_now'.tr()),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppColors.stitchPrimaryContainer,
-                            foregroundColor: AppColors.stitchSurfaceLowest,
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            textStyle: AppStyles.s16Bold,
-                          ),
-                        ),
-                      ),
+              child: RefreshIndicator(
+                onRefresh: _refresh,
+                color: AppColors.stitchPrimaryContainer,
+                child: SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: Column(
+                    children: [
+                      AppointmentDetailCard(appointment: apt),
+                      40.ph,
                     ],
-                    if (_canCancel) ...[
-                      16.ph,
-                      SizedBox(
-                        width: double.infinity,
-                        child: OutlinedButton.icon(
-                          onPressed: () => _confirmCancel(context, apt),
-                          icon: const Icon(Icons.cancel_outlined),
-                          label: Text('cancel_appointment'.tr()),
-                          style: OutlinedButton.styleFrom(
-                            foregroundColor: AppColors.error,
-                            side: BorderSide(color: AppColors.error),
-                            padding: const EdgeInsets.symmetric(vertical: 14),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                    40.ph,
-                  ],
+                  ),
+                ),
+              ),
+            ),
+            if (_canPay || _canCancel) _buildActionBar(context, apt),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _buildActionBar(
+    BuildContext context,
+    AppointmentResponseDto apt,
+  ) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+      decoration: BoxDecoration(
+        color: AppColors.stitchSurfaceLowest,
+        border: const Border(
+          top: BorderSide(color: AppColors.stitchSurfaceLow),
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.black.withValues(alpha: 0.05),
+            offset: const Offset(0, -2),
+            blurRadius: 8,
+          ),
+        ],
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (_canPay) ...[
+            SizedBox(
+              width: double.infinity,
+              child: ElevatedButton.icon(
+                onPressed: () => _openPaymentWebView(context, apt),
+                icon: const Icon(Icons.payment),
+                label: Text('pay_now'.tr()),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.stitchPrimaryContainer,
+                  foregroundColor: AppColors.stitchSurfaceLowest,
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  textStyle: AppStyles.s16Bold,
                 ),
               ),
             ),
           ],
-        );
-      },
+          if (_canPay && _canCancel) 12.ph,
+          if (_canCancel) ...[
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: _cancelling
+                    ? null
+                    : () => _confirmCancel(context, apt),
+                icon: const Icon(Icons.cancel_outlined),
+                label: Text('cancel_appointment'.tr()),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: AppColors.error,
+                  side: BorderSide(
+                    color: _cancelling
+                        ? AppColors.error.withValues(alpha: 0.4)
+                        : AppColors.error,
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ],
+      ),
     );
   }
 
@@ -220,12 +298,16 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
     final reason = await _showCancelReasonDialog(context);
     if (reason == null || !context.mounted) return;
 
+    setState(() => _cancelling = true);
+
     final cubit = context.read<MyAppointmentsCubit>();
     final success = await cubit.cancelAppointment(
       id: apt.id,
       cancellationReason: reason,
     );
+
     if (!context.mounted) return;
+    setState(() => _cancelling = false);
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(

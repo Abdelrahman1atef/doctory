@@ -9,10 +9,12 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
   static const int _pageSize = 10;
   int? _currentStatusFilter;
 
-  MyAppointmentsCubit({required MyAppointmentsRemoteDataSource remoteDataSource})
-      : _remoteDataSource = remoteDataSource,
+  MyAppointmentsCubit({
+    required MyAppointmentsRemoteDataSource remoteDataSource,
+    bool autoLoad = true,
+  })  : _remoteDataSource = remoteDataSource,
         super(MyAppointmentsInitial()) {
-    loadAppointments(status: 0);
+    if (autoLoad) loadAppointments(status: 0);
   }
 
   Future<void> loadAppointments({int? status}) async {

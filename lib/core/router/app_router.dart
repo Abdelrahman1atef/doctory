@@ -90,6 +90,7 @@ class AppRouter {
       ...ChatRouter.routes,
       ...SpecializationsRouter.routes,
       ...NotificationsRouter.routes,
+      MyAppointmentsRouter.detailsRoute,
       ...ClinicRouter.routes,
       ...AdminRouter.routes,
     ],

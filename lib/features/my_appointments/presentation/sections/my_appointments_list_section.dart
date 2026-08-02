@@ -71,7 +71,10 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
   }
 
   Future<void> _openDetails(BuildContext context, AppointmentResponseDto apt) async {
-    await context.push(AppRoutes.appointmentDetails, extra: apt);
+    await context.push(
+      '${AppRoutes.appointmentDetails}?id=${apt.id}',
+      extra: apt,
+    );
     if (!context.mounted) return;
     widget.onLoadByStatus(widget.statusFilter ?? 0);
   }
