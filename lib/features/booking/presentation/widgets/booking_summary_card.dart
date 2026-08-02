@@ -115,12 +115,12 @@ class BookingSummaryCard extends StatelessWidget {
             label: 'appointment_type'.tr(),
             value: _typeLabel(appointmentType),
           ),
-          12.ph,
-          BookingInfoRow(
-            icon: Icons.payments_rounded,
-            label: 'consultation_fee'.tr(),
-            value: '${'currency_egp'.tr()} ${consultationFee.toStringAsFixed(0)}',
-          ),
+          // 12.ph,
+          // BookingInfoRow(
+          //   icon: Icons.payments_rounded,
+          //   label: 'consultation_fee'.tr(),
+          //   value: '${'currency_egp'.tr()} ${consultationFee.toStringAsFixed(0)}',
+          // ),
           20.ph,
           Container(
             padding: const EdgeInsets.all(12),
