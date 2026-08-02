@@ -125,6 +125,7 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
         ],
       ),
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!_isRecording)
             IconButton(
@@ -145,11 +146,15 @@ class _MessageInputWidgetState extends State<MessageInputWidget> {
                   )
                 : Container(
                     decoration: BoxDecoration(
-                      color: AppColors.grey200.withValues(alpha: 0.1),
+                      color: AppColors.grey200,
                       borderRadius: BorderRadius.circular(24),
                     ),
                     child: TextField(
                       controller: _controller,
+                      minLines: 1,
+                      maxLines: 5,
+                      keyboardType: TextInputType.multiline,
+                      textInputAction: TextInputAction.newline,
                       decoration: const InputDecoration(
                         hintText: 'اكتب رسالة...',
                         border: InputBorder.none,
