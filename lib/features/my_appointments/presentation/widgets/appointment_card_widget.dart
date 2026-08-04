@@ -1,10 +1,11 @@
-﻿import 'package:doctory/core/theme/app_colors.dart';
+import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/features/my_appointments/presentation/widgets/appointment_status_badge.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
+import 'package:doctory/features/booking/domain/enums/appointment_status.dart';
 
 class AppointmentCardWidget extends StatelessWidget {
   final AppointmentResponseDto appointment;
@@ -79,7 +80,7 @@ class AppointmentCardWidget extends StatelessWidget {
                         ),
                       ],
                     ),
-                    if (appointment.status == 6 && onPayTap != null) ...[
+                    if (appointment.appointmentStatus == AppointmentStatus.accepted && onPayTap != null) ...[
                       8.ph,
                       SizedBox(
                         width: double.infinity,
@@ -105,7 +106,7 @@ class AppointmentCardWidget extends StatelessWidget {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  AppointmentStatusBadge(status: appointment.status),
+                  AppointmentStatusBadge(status: appointment.appointmentStatus),
                   8.ph,
                   const Icon(Icons.chevron_right, color: AppColors.stitchSecondary, size: 20),
                 ],

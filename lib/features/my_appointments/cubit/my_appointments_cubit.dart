@@ -1,23 +1,24 @@
-﻿import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctory/core/error/failures.dart';
 import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
+import 'package:doctory/features/booking/domain/enums/appointment_status.dart';
 import '../data/data_source/my_appointments_remote_data_source.dart';
 import 'my_appointments_state.dart';
 
 class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
   final MyAppointmentsRemoteDataSource _remoteDataSource;
   static const int _pageSize = 10;
-  int? _currentStatusFilter;
+  AppointmentStatus? _currentStatusFilter;
 
   MyAppointmentsCubit({
     required MyAppointmentsRemoteDataSource remoteDataSource,
     bool autoLoad = true,
   })  : _remoteDataSource = remoteDataSource,
         super(MyAppointmentsInitial()) {
-    if (autoLoad) loadAppointments(status: 0);
+    if (autoLoad) loadAppointments(status: AppointmentStatus.pending);
   }
 
-  Future<void> loadAppointments({int? status}) async {
+  Future<void> loadAppointments({AppointmentStatus? status}) async {
     _currentStatusFilter = status;
     final isRefresh = state is MyAppointmentsLoaded;
 
@@ -72,12 +73,12 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
     );
   }
 
-  void loadByStatus(int status) {
+  void loadByStatus(AppointmentStatus status) {
     loadAppointments(status: status);
   }
 
   Future<void> refresh() {
-    return loadAppointments(status: _currentStatusFilter ?? 0);
+    return loadAppointments(status: _currentStatusFilter ?? AppointmentStatus.pending);
   }
 
   Future<void> loadMore() async {
@@ -156,7 +157,7 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
               startTime: appointment.startTime,
               endTime: appointment.endTime,
               appointmentType: appointment.appointmentType,
-              status: 2,
+              appointmentStatus: AppointmentStatus.cancelled,
               patientFullName: appointment.patientFullName,
               patientPhoneNumber: appointment.patientPhoneNumber,
               patientAge: appointment.patientAge,

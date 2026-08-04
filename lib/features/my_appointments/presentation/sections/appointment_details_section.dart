@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../booking/domain/enums/appointment_status.dart';
+
 class AppointmentDetailsSection extends StatefulWidget {
   final String? appointmentId;
   final String? paymentUrl;
@@ -55,12 +57,12 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
   bool get _canCancel {
     final apt = _appointment;
     if (apt == null) return false;
-    switch (apt.status) {
-      case 0:
-      case 4:
-      case 6:
+    switch (apt.appointmentStatus) {
+      case AppointmentStatus.pending:
+      case AppointmentStatus.reserved:
+      case AppointmentStatus.accepted:
         return true;
-      case 1:
+      case AppointmentStatus.confirmed:
         final paidAt = apt.paidAt;
         if (paidAt == null) return true;
         return DateTime.now().difference(paidAt) < _paidCancelWindow;
@@ -73,7 +75,7 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
     final apt = _appointment;
     if (apt == null) return false;
     final url = apt.paymobRedirectUrl ?? widget.paymentUrl;
-    return apt.status == 6 && url != null && url.isNotEmpty;
+    return apt.appointmentStatus == AppointmentStatus.accepted && url != null && url.isNotEmpty;
   }
 
   void _popOnce() {

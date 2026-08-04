@@ -45,7 +45,7 @@ class AppointmentResponseDto {
   final String startTime;
   final String endTime;
   final int appointmentType;
-  final int status;
+  final AppointmentStatus appointmentStatus;
   final String patientFullName;
   final String patientPhoneNumber;
   final int? patientAge;
@@ -74,7 +74,7 @@ class AppointmentResponseDto {
     required this.startTime,
     required this.endTime,
     required this.appointmentType,
-    this.status = 0,
+    this.appointmentStatus = AppointmentStatus.pending,
     this.patientFullName = '',
     this.patientPhoneNumber = '',
     this.patientAge,
@@ -93,7 +93,8 @@ class AppointmentResponseDto {
     this.payment,
   });
 
-  AppointmentStatus get appointmentStatus => AppointmentStatus.fromValue(status);
+  /// Raw integer value for backward compat (e.g., sending to API)
+  int get status => appointmentStatus.value;
 
   String? get paymobRedirectUrl => payment?.paymobRedirectUrl;
 
@@ -123,12 +124,12 @@ class AppointmentResponseDto {
           DateTime.now(),
       startTime: json['startTime'] ?? '',
       endTime: json['endTime'] ?? '',
-      appointmentType: json['appointmentType'] as int? ?? 1,
-      status: json['status'] as int? ?? 0,
+      appointmentType: _parseInt(json['appointmentType']) ?? 1,
+      appointmentStatus: AppointmentStatus.from(json['status']),
       patientFullName: json['patientFullName'] ?? '',
       patientPhoneNumber: json['patientPhoneNumber'] ?? '',
-      patientAge: json['patientAge'] as int?,
-      patientGender: json['patientGender'] as int?,
+      patientAge: _parseInt(json['patientAge']),
+      patientGender: _parseInt(json['patientGender']),
       complaint: json['complaint']?.toString(),
       chronicDiseases: json['chronicDiseases']?.toString(),
       cancellationReason: json['cancellationReason']?.toString(),
@@ -146,4 +147,30 @@ class AppointmentResponseDto {
       payment: payment,
     );
   }
+
+  static int? _parseInt(dynamic value) {
+    if (value == null) return null;
+    if (value is int) return value;
+    if (value is String) return int.tryParse(value);
+    if (value is double) return value.toInt();
+    return null;
+  }
+
+  static int _parseStatus(dynamic status) {
+    if (status is String) {
+      switch (status.toLowerCase()) {
+        case 'Pending': return 0;
+        case 'Confirmed': return 1;
+        case 'Cancelled': return 2;
+        case 'Completed': return 3;
+        case 'Reserved': return 4;
+        case 'NoShow': return 5;
+        case 'Accepted': return 6;
+        case 'Rejected': return 7;
+        default: return 0;
+      }
+    }
+    return 0;
+  }
 }
+

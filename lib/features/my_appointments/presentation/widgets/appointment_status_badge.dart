@@ -1,11 +1,11 @@
-﻿import 'package:doctory/core/theme/app_colors.dart';
+import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/features/booking/domain/enums/appointment_status.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class AppointmentStatusBadge extends StatelessWidget {
-  final int status;
+  final AppointmentStatus status;
 
   const AppointmentStatusBadge({super.key, required this.status});
 
@@ -25,14 +25,14 @@ class AppointmentStatusBadge extends StatelessWidget {
     );
   }
 
-  _StatusConfig _statusConfig(int status) {
-    switch (AppointmentStatus.fromValue(status)) {
-      case AppointmentStatus.confirmed:
-        return _StatusConfig(AppColors.success, 'confirmed'.tr());
+  _StatusConfig _statusConfig(AppointmentStatus status) {
+    switch (status) {
       case AppointmentStatus.pending:
         return _StatusConfig(AppColors.warning, 'pending'.tr());
       case AppointmentStatus.reserved:
-        return _StatusConfig(AppColors.warning, 'pending'.tr());
+        return _StatusConfig(AppColors.warning, 'pending_payment'.tr());
+      case AppointmentStatus.confirmed:
+        return _StatusConfig(AppColors.success, 'confirmed'.tr());
       case AppointmentStatus.completed:
         return _StatusConfig(AppColors.info, 'completed'.tr());
       case AppointmentStatus.cancelled:
@@ -40,7 +40,7 @@ class AppointmentStatusBadge extends StatelessWidget {
       case AppointmentStatus.noShow:
         return _StatusConfig(AppColors.grey500, 'no_show'.tr());
       case AppointmentStatus.accepted:
-        return _StatusConfig(AppColors.success, 'accepted'.tr());
+        return _StatusConfig(AppColors.success, 'pending_payment'.tr());
       case AppointmentStatus.rejected:
         return _StatusConfig(AppColors.error, 'rejected'.tr());
     }

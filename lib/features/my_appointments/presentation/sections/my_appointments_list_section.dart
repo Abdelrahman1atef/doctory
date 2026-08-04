@@ -2,6 +2,7 @@ import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
+import 'package:doctory/features/booking/domain/enums/appointment_status.dart';
 import 'package:doctory/features/my_appointments/presentation/widgets/appointment_card_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
@@ -12,9 +13,9 @@ class MyAppointmentsListSection extends StatefulWidget {
   final List<AppointmentResponseDto> appointments;
   final bool hasMore;
   final bool isLoadingMore;
-  final int? statusFilter;
+  final AppointmentStatus? statusFilter;
   final VoidCallback onLoadMore;
-  final void Function(int status) onLoadByStatus;
+  final void Function(AppointmentStatus status) onLoadByStatus;
   final void Function(AppointmentResponseDto appointment) onPayTap;
   final Future<void> Function() onRefresh;
 
@@ -39,12 +40,12 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
   final ScrollController _scrollController = ScrollController();
 
   static const List<_TabConfig> _tabs = [
-    _TabConfig('pending', 0),
-    _TabConfig('awaiting_payment', 6),
-    _TabConfig('confirmed', 1),
-    _TabConfig('completed', 3),
-    _TabConfig('cancelled', 2),
-    _TabConfig('rejected', 7),
+    _TabConfig('pending', AppointmentStatus.pending),
+    _TabConfig('awaiting_payment', AppointmentStatus.accepted),
+    _TabConfig('confirmed', AppointmentStatus.confirmed),
+    _TabConfig('completed', AppointmentStatus.completed),
+    _TabConfig('cancelled', AppointmentStatus.cancelled),
+    _TabConfig('rejected', AppointmentStatus.rejected),
   ];
 
   int get _selectedTabIndex {
@@ -77,7 +78,7 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
       '${AppRoutes.appointmentDetails}?id=${apt.id}',
     );
     if (!context.mounted) return;
-    widget.onLoadByStatus(widget.statusFilter ?? 0);
+    widget.onLoadByStatus(widget.statusFilter ?? AppointmentStatus.pending);
   }
 
   @override
@@ -163,7 +164,7 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
                   }
                   final apt = widget.appointments[index];
                   final showPay =
-                      apt.status == 6 && apt.paymobRedirectUrl != null;
+                      apt.appointmentStatus == AppointmentStatus.accepted && apt.paymobRedirectUrl != null;
                   return AppointmentCardWidget(
                     appointment: apt,
                     onTap: () => _openDetails(context, apt),
@@ -212,6 +213,6 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
 
 class _TabConfig {
   final String label;
-  final int status;
+  final AppointmentStatus status;
   const _TabConfig(this.label, this.status);
 }

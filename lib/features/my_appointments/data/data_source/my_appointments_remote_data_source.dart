@@ -1,13 +1,14 @@
-﻿import 'package:doctory/core/network/interfaces/api_consumer.dart';
+import 'package:doctory/core/network/interfaces/api_consumer.dart';
 import 'package:doctory/features/booking/data/model/appointment_list_response_dto.dart';
 import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
+import 'package:doctory/features/booking/domain/enums/appointment_status.dart';
 import 'my_appointments_endpoints.dart';
 
 abstract class MyAppointmentsRemoteDataSource {
   Future<ApiResult<AppointmentListResponseDto>> getAppointments({
     int? pageNumber,
     int? pageSize,
-    int? status,
+    AppointmentStatus? status,
   });
 
   Future<ApiResult<AppointmentResponseDto>> getAppointmentById(String id);
@@ -28,14 +29,14 @@ class MyAppointmentsRemoteDataSourceImpl
   Future<ApiResult<AppointmentListResponseDto>> getAppointments({
     int? pageNumber,
     int? pageSize,
-    int? status,
+    AppointmentStatus? status,
   }) async {
     return apiConsumer.get<AppointmentListResponseDto>(
       path: MyAppointmentsEndpoints.myAppointments,
       queryParameters: {
         if (pageNumber != null) 'PageNumber': pageNumber.toString(),
         if (pageSize != null) 'PageSize': pageSize.toString(),
-        if (status != null) 'status': status.toString(),
+        if (status != null) 'status': status.apiName,
       },
       parser: (json) => AppointmentListResponseDto.fromJson(json),
     );

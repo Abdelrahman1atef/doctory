@@ -1,4 +1,5 @@
-﻿import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
+import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
+import 'package:doctory/features/booking/domain/enums/appointment_status.dart';
 
 sealed class MyAppointmentsState {}
 
@@ -13,7 +14,7 @@ class MyAppointmentsLoaded extends MyAppointmentsState {
   final bool hasMore;
   final bool isLoadingMore;
   final bool isRefreshing;
-  final int? statusFilter;
+  final AppointmentStatus? statusFilter;
 
   MyAppointmentsLoaded({
     required this.appointments,

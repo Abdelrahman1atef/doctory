@@ -43,7 +43,7 @@ class AppointmentDetailCard extends StatelessWidget {
                   ],
                 ),
               ),
-              AppointmentStatusBadge(status: appointment.status),
+              AppointmentStatusBadge(status: appointment.appointmentStatus),
             ],
           ),
           20.ph,
