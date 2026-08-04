@@ -23,6 +23,11 @@ class HomeCubit extends Cubit<HomeStates> {
     final sharedCubit = sl<SharedSpecializationsCubit>();
     await sharedCubit.getFamousSpecializations(forceRefresh: true);
 
+    if (sharedCubit.state is SharedSpecializationsError) {
+      emit(HomeErrorState((sharedCubit.state as SharedSpecializationsError).message));
+      return;
+    }
+
     final specialties = (sharedCubit.state is SharedSpecializationsLoaded)
         ? (sharedCubit.state as SharedSpecializationsLoaded).specializations
         : <SpecialtyModel>[];

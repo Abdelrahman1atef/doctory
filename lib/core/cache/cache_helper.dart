@@ -1,5 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 import '../error/exceptions.dart';
+import 'secure_storage.dart';
 
 /// Helper class for managing simple cache using SharedPreferences
 class CacheHelper {
@@ -11,6 +12,13 @@ class CacheHelper {
   /// Initialize SharedPreferences
   static Future<void> init() async {
     _prefs = await SharedPreferences.getInstance();
+    
+    // Wipe secure storage on first install to clear leftover iOS Keychain data
+    final isFirstInstall = _prefs?.getBool('is_first_install') ?? true;
+    if (isFirstInstall) {
+      await SecureStorage.deleteAll();
+      await _prefs?.setBool('is_first_install', false);
+    }
   }
 
   /// Save string data

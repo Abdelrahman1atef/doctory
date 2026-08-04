@@ -12,9 +12,8 @@ class NetworkInfoImpl implements NetworkInfo {
 
   @override
   Future<bool> get isConnected async {
-    if (kDebugMode) {
-      return true; // Bypass connection check in debug mode to avoid local connection or emulator blocking issues
-    }
-    return connectionChecker.hasInternetAccess;
+    // Rely on Dio's built-in timeout and SocketExceptions rather than 
+    // pinging endpoints which can block or fail on some networks in release mode.
+    return true;
   }
 }

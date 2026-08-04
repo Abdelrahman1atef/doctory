@@ -6,7 +6,18 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 class LocationHelper {
   static const LatLng defaultLocation = LatLng(27.910000, 34.333000);
 
-  static Future<bool> checkAndRequestPermission() async {
+  static Future<bool>? _permissionFuture;
+  static Future<LatLng>? _locationFuture;
+
+  static Future<bool> checkAndRequestPermission() {
+    if (_permissionFuture != null) return _permissionFuture!;
+    _permissionFuture = _checkAndRequestPermissionInternal().whenComplete(() {
+      _permissionFuture = null;
+    });
+    return _permissionFuture!;
+  }
+
+  static Future<bool> _checkAndRequestPermissionInternal() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -39,7 +50,15 @@ class LocationHelper {
         permission == LocationPermission.whileInUse;
   }
 
-  static Future<LatLng> getCurrentLocation() async {
+  static Future<LatLng> getCurrentLocation() {
+    if (_locationFuture != null) return _locationFuture!;
+    _locationFuture = _getCurrentLocationInternal().whenComplete(() {
+      _locationFuture = null;
+    });
+    return _locationFuture!;
+  }
+
+  static Future<LatLng> _getCurrentLocationInternal() async {
     try {
       final hasPermission = await checkAndRequestPermission();
       if (!hasPermission) return defaultLocation;
