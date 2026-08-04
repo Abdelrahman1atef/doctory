@@ -28,6 +28,68 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
   StreamSubscription<SharedSpecializationsState>? _specSub;
 
   MapHomeCubit(this._mapHomeRepo) : super(MapHomeInitialState()) {
+    _initWithPermissionCheck();
+  }
+
+  /// Called on init and every time the app resumes (via the View lifecycle).
+  Future<void> checkLocationPermission() async {
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      if (isClosed) return;
+      emit(MapHomeLocationDeniedState(isPermanent: true));
+      return;
+    }
+
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (isClosed) return;
+
+    if (permission == LocationPermission.denied) {
+      emit(MapHomeLocationDeniedState(isPermanent: false));
+      return;
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      emit(MapHomeLocationDeniedState(isPermanent: true));
+      return;
+    }
+
+    // Permission granted — proceed normally if we were blocked
+    if (state is MapHomeLocationDeniedState || state is MapHomeInitialState) {
+      LocationHelper.getCurrentLocation().then((pos) => _cachedPosition = pos);
+      _loadSpecializations();
+    }
+  }
+
+  Future<void> _initWithPermissionCheck() async {
+    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      if (isClosed) return;
+      emit(MapHomeLocationDeniedState(isPermanent: true));
+      return;
+    }
+
+    var permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+    }
+
+    if (isClosed) return;
+
+    if (permission == LocationPermission.denied) {
+      emit(MapHomeLocationDeniedState(isPermanent: false));
+      return;
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      emit(MapHomeLocationDeniedState(isPermanent: true));
+      return;
+    }
+
+    // All good — normal startup
     LocationHelper.getCurrentLocation().then((pos) => _cachedPosition = pos);
     _loadSpecializations();
   }

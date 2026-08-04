@@ -14,12 +14,13 @@ class MapHomeView extends StatefulWidget {
   State<MapHomeView> createState() => _MapHomeViewState();
 }
 
-class _MapHomeViewState extends State<MapHomeView> {
+class _MapHomeViewState extends State<MapHomeView> with WidgetsBindingObserver {
   Timer? _locationTimer;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _locationTimer = Timer.periodic(const Duration(seconds: 20), (_) {
       context.read<MapHomeCubit>().checkLiveLocation();
     });
@@ -35,8 +36,17 @@ class _MapHomeViewState extends State<MapHomeView> {
     }
   }
 
+  /// Re-check permission every time the user returns from Settings or background.
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      context.read<MapHomeCubit>().checkLocationPermission();
+    }
+  }
+
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
     _locationTimer?.cancel();
     super.dispose();
   }

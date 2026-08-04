@@ -6,6 +6,14 @@ abstract class MapHomeStates {}
 
 class MapHomeInitialState extends MapHomeStates {}
 
+/// Emitted when location permission is denied or the service is off.
+class MapHomeLocationDeniedState extends MapHomeStates {
+  /// true  → user denied forever or service is off → must go to Settings
+  /// false → user just denied → can re-request
+  final bool isPermanent;
+  MapHomeLocationDeniedState({this.isPermanent = false});
+}
+
 class MapHomeLoadingState extends MapHomeStates {
   final List<ClinicModel> clinics;
   MapHomeLoadingState({this.clinics = const []});
