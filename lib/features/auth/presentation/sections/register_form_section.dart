@@ -62,7 +62,7 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
   void initState() {
     super.initState();
     if (_isDoctor) {
-      sl<SharedSpecializationsCubit>().getFamousSpecializations();
+      sl<SharedSpecializationsCubit>().getAllSpecializations();
     }
   }
 
@@ -189,11 +189,6 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
 
   @override
   Widget build(BuildContext context) {
-    final specState = sl<SharedSpecializationsCubit>().state;
-    final specializations = _isDoctor && specState is SharedSpecializationsLoaded
-        ? specState.specializations
-        : null;
-
     return BlocListener<AuthCubit, AuthStates>(
       listener: (context, state) {
         if (state is AuthLoadingState) {
@@ -225,9 +220,32 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
           );
         }
       },
-      child: RegisterFormWidget(
-        formKey: _formKey,
-        nameController: _nameController,
+      child: _isDoctor
+          ? BlocBuilder<SharedSpecializationsCubit, SharedSpecializationsState>(
+              bloc: sl<SharedSpecializationsCubit>(),
+              builder: (context, specState) {
+                if (specState is SharedSpecializationsLoading) {
+                  return const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(50.0),
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+                final specializations = specState is SharedSpecializationsLoaded
+                    ? specState.specializations
+                    : null;
+                return _buildForm(specializations);
+              },
+            )
+          : _buildForm(null),
+    );
+  }
+
+  Widget _buildForm(dynamic specializations) {
+    return RegisterFormWidget(
+      formKey: _formKey,
+      nameController: _nameController,
         emailController: _emailController,
         phoneController: _phoneController,
         dayController: _dayController,
@@ -275,7 +293,7 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
               }
             : null,
         showImageErrors: _showImageErrors,
-        specializations: _isDoctor ? specializations : null,
+        specializations: specializations,
         selectedSpecializationId: _selectedSpecializationId,
         onSpecializationChanged: _isDoctor
             ? (value) => setState(() => _selectedSpecializationId = value)
@@ -283,7 +301,7 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
         onGoogleSignIn: () => context.read<AuthCubit>().signInWithGoogle(),
         onFacebookSignIn: () => context.read<AuthCubit>().signInWithFacebook(),
         onLogin: () => context.pop(),
-      ),
+
     );
   }
 }

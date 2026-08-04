@@ -32,16 +32,4 @@ class SpecialtyModel {
       isFamous: json['isFamous'] ?? false,
     );
   }
-
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-      'arName': nameAr,
-      'description': description,
-      'iconUrl': iconUrl,
-      'iconAsset': iconAsset,
-      'isFamous': isFamous,
-    };
-  }
 }

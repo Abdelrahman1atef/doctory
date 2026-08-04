@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:easy_localization/easy_localization.dart';
+import 'package:doctory/core/services/crashlytics_service.dart';
 import 'failures.dart';
 import 'exceptions.dart';
 
@@ -8,6 +9,13 @@ import 'exceptions.dart';
 class ErrorHandler {
   /// Convert DioException to Failure
   static Failure handleDioException(DioException error) {
+    final failure = _mapDioException(error);
+    _reportIfBlocking(failure, error, error.stackTrace);
+    return failure;
+  }
+
+  /// Internal mapping — pure conversion, no side effects
+  static Failure _mapDioException(DioException error) {
     switch (error.type) {
       case DioExceptionType.connectionTimeout:
       case DioExceptionType.sendTimeout:
@@ -178,7 +186,9 @@ class ErrorHandler {
     StackTrace? stackTrace,
   ]) {
     if (exception is AppException) {
-      return _mapExceptionToFailure(exception, stackTrace);
+      final failure = _mapExceptionToFailure(exception, stackTrace);
+      _reportIfBlocking(failure, exception, stackTrace);
+      return failure;
     }
 
     if (exception is DioException) {
@@ -186,24 +196,30 @@ class ErrorHandler {
     }
 
     if (exception is SocketException) {
-      return NoInternetFailure(
+      final failure = NoInternetFailure(
         originalError: exception,
         stackTrace: stackTrace,
       );
+      _reportIfBlocking(failure, exception, stackTrace);
+      return failure;
     }
 
     if (exception is FormatException) {
-      return UnknownFailure(
+      final failure = UnknownFailure(
         message: 'data_format_error'.tr(),
         code: 'FORMAT_ERROR',
       );
+      _reportIfBlocking(failure, exception, stackTrace);
+      return failure;
     }
 
-    return UnknownFailure(
+    final failure = UnknownFailure(
       message: exception.toString(),
       originalError: exception,
       stackTrace: stackTrace,
     );
+    _reportIfBlocking(failure, exception, stackTrace);
+    return failure;
   }
 
   /// Map AppException to Failure
@@ -298,6 +314,33 @@ class ErrorHandler {
       code: exception.code,
       originalError: exception.originalError,
       stackTrace: stackTrace,
+    );
+  }
+
+  /// Reports app-blocking failures to Crashlytics.
+  /// Skips user-caused errors (validation, auth, permission, not-found,
+  /// bad-request, cancel) since they are expected and don't indicate bugs.
+  static void _reportIfBlocking(
+    Failure failure,
+    Object error,
+    StackTrace? stackTrace,
+  ) {
+    final isBlocking = failure is ServerFailure ||
+        failure is NetworkFailure ||
+        failure is NoInternetFailure ||
+        failure is TimeoutFailure ||
+        failure is CacheFailure ||
+        failure is UnknownFailure;
+
+    if (!isBlocking) return;
+
+    CrashlyticsService.log(
+      '[${failure.runtimeType}] code=${failure.code} msg=${failure.message}',
+    );
+    CrashlyticsService.recordError(
+      error,
+      stackTrace ?? StackTrace.current,
+      fatal: failure is ServerFailure,
     );
   }
 }

@@ -71,41 +71,22 @@ class SharedSpecializationsCubit extends Cubit<SharedSpecializationsState> {
     _isLoadingAll = true;
     emit(SharedSpecializationsLoading());
 
-    final all = <SpecialtyModel>[];
-    var pageNumber = 1;
-    var hasNextPage = true;
+    final result = await _apiConsumer.get<List<SpecialtyModel>>(
+      path: 'specializations/active',
+      parser: (json) {
+        final data = json['data'] as List;
+        return data.map((e) => SpecialtyModel.fromJson(e)).toList();
+      },
+    );
 
-    while (hasNextPage) {
-      final result = await _apiConsumer.get<PaginatedData<SpecialtyModel>>(
-        path: 'specializations',
-        queryParameters: {'pageNumber': pageNumber, 'pageSize': 50},
-        parser: (json) => PaginatedData.fromJson(
-          json['data'],
-          (item) => SpecialtyModel.fromJson(item),
-        ),
-      );
-
-      if (isClosed) return;
-
-      final data = result.fold(
-        onSuccess: (data) => data,
-        onFailure: (failure) {
-          _isLoadingAll = false;
-          emit(SharedSpecializationsError(failure.message));
-          return null;
-        },
-      );
-      if (data == null) return;
-
-      all.addAll(data.items);
-      hasNextPage = data.hasNextPage;
-      pageNumber++;
-    }
-
-    _isLoadingAll = false;
     if (isClosed) return;
 
-    emit(SharedSpecializationsLoaded(all));
+    _isLoadingAll = false;
+
+    result.fold(
+      onSuccess: (data) => emit(SharedSpecializationsLoaded(data)),
+      onFailure: (failure) => emit(SharedSpecializationsError(failure.message)),
+    );
   }
 
   void setSpecializations(List<SpecialtyModel> specializations) {
