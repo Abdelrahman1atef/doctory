@@ -70,4 +70,20 @@ class HomeCubit extends Cubit<HomeStates> {
       onFailure: (failure) => emit(HomeErrorState(failure.message)),
     );
   }
+
+  Future<void> refreshUnreadCount() async {
+    final currentState = state;
+    if (currentState is! HomeSuccessState) return;
+
+    final count = await sl<NotificationsRepo>().getUnreadCount();
+    final unreadCount = count.fold(onSuccess: (c) => c, onFailure: (_) => 0);
+
+    emit(HomeSuccessState(
+      specialties: currentState.specialties,
+      recommendedDoctors: currentState.recommendedDoctors,
+      featuredClinics: currentState.featuredClinics,
+      ads: currentState.ads,
+      unreadCount: unreadCount,
+    ));
+  }
 }

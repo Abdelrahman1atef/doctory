@@ -1,9 +1,11 @@
+import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/features/home/cubit/home_cubit.dart';
 import 'package:doctory/features/home/cubit/home_states.dart';
 import 'package:doctory/features/home/presentation/widgets/home_header_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class HomeHeaderSection extends StatelessWidget {
   const HomeHeaderSection({super.key});
@@ -35,8 +37,15 @@ class HomeHeaderSection extends StatelessWidget {
           userRole: role,
           doctorType: UserSession.currentDoctorType,
           unreadCount: unreadCount,
+          onNotificationTap: () => _openNotifications(context),
         );
       },
     );
+  }
+
+  Future<void> _openNotifications(BuildContext context) async {
+    await context.push(AppRoutes.notifications);
+    if (!context.mounted) return;
+    context.read<HomeCubit>().refreshUnreadCount();
   }
 }

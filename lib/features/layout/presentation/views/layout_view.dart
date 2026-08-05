@@ -82,7 +82,7 @@ class _LayoutViewState extends State<LayoutView> {
                 ),
               )
             : null,
-        floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
+        floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: widget.navigationShell.currentIndex,
           onTap: _onItemTapped,
