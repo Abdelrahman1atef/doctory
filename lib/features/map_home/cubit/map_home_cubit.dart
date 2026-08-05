@@ -322,11 +322,12 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
         startLat = currentState.customLat!;
         startLng = currentState.customLng!;
       } else {
-        final position = await Geolocator.getCurrentPosition(
-          locationSettings: const LocationSettings(
-            accuracy: LocationAccuracy.high,
-          ),
-        );
+        final position = await _fetchPositionSafe();
+        if (position == null) {
+          // No GPS fix — keep the clinic selected, skip route + live nav.
+          if (isClosed) return;
+          return;
+        }
         startLat = position.latitude;
         startLng = position.longitude;
         _cachedPosition = LatLng(position.latitude, position.longitude);
@@ -370,6 +371,22 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     _navigatingClinic = clinic;
   }
 
+  /// Fetch a fresh high-accuracy position with a strict timeout so a device
+  /// without a GPS fix (indoors / no signal) can never hang the platform
+  /// thread and block the whole app.
+  Future<Position?> _fetchPositionSafe() async {
+    try {
+      return await Geolocator.getCurrentPosition(
+        locationSettings: const LocationSettings(
+          accuracy: LocationAccuracy.high,
+        ),
+      ).timeout(const Duration(seconds: 4));
+    } catch (e) {
+      debugPrint('📍 [Cubit] No GPS fix (timeout/error): $e');
+      return null;
+    }
+  }
+
   Future<void> checkLiveLocation() async {
     if (!_isLiveNavigating || _navigatingClinic == null) return;
 
@@ -380,9 +397,11 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
       return;
     }
 
-    final position = await Geolocator.getCurrentPosition(
-      locationSettings: const LocationSettings(accuracy: LocationAccuracy.high),
-    );
+    final position = await _fetchPositionSafe();
+    if (position == null) {
+      if (isClosed) return;
+      return;
+    }
 
     if (isClosed) return;
 

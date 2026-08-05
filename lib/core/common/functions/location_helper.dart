@@ -60,7 +60,10 @@ class LocationHelper {
 
   static Future<LatLng> _getCurrentLocationInternal() async {
     try {
-      final hasPermission = await checkAndRequestPermission();
+      // Only CHECK permission — never REQUEST it from background flows.
+      // Requesting shows a system dialog that can pop over the map/home
+      // mid-layout and block the UI on some Android devices.
+      final hasPermission = await isPermissionGranted();
       if (!hasPermission) return defaultLocation;
 
       debugPrint(

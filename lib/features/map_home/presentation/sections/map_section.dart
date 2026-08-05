@@ -38,6 +38,11 @@ class _MapSectionState extends State<MapSection> {
   String? _mapStyle;
   Brightness? _currentBrightness;
 
+  /// Monotonic token: incremented on each marker batch request and on
+  /// dispose, so a slow in-flight batch can never `setState` after the
+  /// widget is gone or out of date.
+  int _markerGenerationId = 0;
+
   // Default to Mansoura
   static const CameraPosition _initialPosition = CameraPosition(
     target: LatLng(31.0409, 31.3785),
@@ -55,6 +60,7 @@ class _MapSectionState extends State<MapSection> {
 
   @override
   void dispose() {
+    _markerGenerationId++;
     _mapController?.dispose();
     super.dispose();
   }
@@ -119,38 +125,61 @@ class _MapSectionState extends State<MapSection> {
   }
 
   Future<void> _generateCustomMarkers() async {
-    final Set<Marker> newMarkers = {};
     final clinicsToShow = widget.selectedClinicId != null
         ? widget.clinics.where((c) => c.id == widget.selectedClinicId).toList()
         : widget.clinics;
-    for (int i = 0; i < clinicsToShow.length; i++) {
-      final clinic = clinicsToShow[i];
-      final String title = clinic.displayName;
-      final bool isSelected = clinic.id == widget.selectedClinicId;
 
-      final icon = await MarkerGenerator.createCustomMarkerBitmap(
-        title,
-        isSelected: isSelected,
-        isRegistered: clinic.isRegistered,
-      );
-
-      newMarkers.add(
-        Marker(
-          markerId: MarkerId('${clinic.id}_$i'),
-          position: LatLng(clinic.lat ?? 0.0, clinic.lng ?? 0.0),
-          infoWindow: InfoWindow(title: clinic.displayName),
-          icon: icon,
-          onTap: () {
-            context.read<MapHomeCubit>().selectClinic(clinic);
-          },
-        ),
-      );
+    final generationId = ++_markerGenerationId;
+    if (clinicsToShow.isEmpty) {
+      if (mounted) {
+        setState(() {
+          _customMarkers = {};
+        });
+      }
+      return;
     }
 
-    if (mounted) {
-      setState(() {
-        _customMarkers = newMarkers;
-      });
+    try {
+      // Marker rendering runs on a background isolate; the UI isolate only
+      // converts bytes, so the main thread stays responsive on low-RAM
+      // devices (Redmi Note 9 Pro / 12 Pro class).
+      final descriptors = await MarkerGenerator.generateMarkers([
+        for (int i = 0; i < clinicsToShow.length; i++)
+          MarkerSpec(
+            id: '${clinicsToShow[i].id}_$i',
+            title: clinicsToShow[i].displayName,
+            isSelected: clinicsToShow[i].id == widget.selectedClinicId,
+            isRegistered: clinicsToShow[i].isRegistered,
+          ),
+      ]);
+
+      if (!mounted || generationId != _markerGenerationId) return;
+
+      final newMarkers = <Marker>[];
+      for (int i = 0; i < clinicsToShow.length; i++) {
+        final clinic = clinicsToShow[i];
+        final icon = descriptors['${clinic.id}_$i'];
+        if (icon == null) continue;
+        newMarkers.add(
+          Marker(
+            markerId: MarkerId('${clinic.id}_$i'),
+            position: LatLng(clinic.lat ?? 0.0, clinic.lng ?? 0.0),
+            infoWindow: InfoWindow(title: clinic.displayName),
+            icon: icon,
+            onTap: () {
+              context.read<MapHomeCubit>().selectClinic(clinic);
+            },
+          ),
+        );
+      }
+
+      if (mounted && generationId == _markerGenerationId) {
+        setState(() {
+          _customMarkers = newMarkers.toSet();
+        });
+      }
+    } catch (e) {
+      debugPrint('Error generating markers: $e');
     }
   }
 

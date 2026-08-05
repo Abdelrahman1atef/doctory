@@ -10,7 +10,7 @@ class MapHomeRouter {
     GoRoute(
       path: AppRoutes.mapHome,
       builder: (context, state) {
-        final query = state.extra as String?;
+        final query = state.extra is String ? state.extra as String : null;
         return BlocProvider(
           create: (_) => sl<MapHomeCubit>()..searchClinics(searchText: query),
           child: MapHomeView(searchQuery: query),
