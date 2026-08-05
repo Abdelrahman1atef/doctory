@@ -822,5 +822,7 @@
   "name_too_short": "Name must be at least 3 characters",
   "field_invalid": "Invalid value",
   "owner": "Owner",
-  "subscription_active": "Active Subscription"
+  "subscription_active": "Active Subscription",
+  "ads_title": "Featured Ads",
+  "ads_active_tag": "Active"
 }

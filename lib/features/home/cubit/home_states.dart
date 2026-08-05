@@ -1,4 +1,5 @@
 import 'package:doctory/core/common/models/shared_models.dart';
+import 'package:doctory/features/ads/data/model/public_ad_model.dart';
 
 abstract class HomeStates {}
 
@@ -10,12 +11,14 @@ class HomeSuccessState extends HomeStates {
   final List<SpecialtyModel> specialties;
   final List<DoctorModel> recommendedDoctors;
   final List<ClinicModel> featuredClinics;
+  final List<PublicAdModel> ads;
   final int unreadCount;
 
   HomeSuccessState({
     required this.specialties,
     required this.recommendedDoctors,
     required this.featuredClinics,
+    this.ads = const [],
     this.unreadCount = 0,
   });
 }

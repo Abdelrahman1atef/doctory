@@ -817,5 +817,7 @@
   "name_too_short": "الاسم يجب أن يكون 3 أحرف على الأقل",
   "field_invalid": "قيمة غير صالحة",
   "owner": "المالك",
-  "subscription_active": "اشتراك نشط"
+  "subscription_active": "اشتراك نشط",
+  "ads_title": "إعلانات مميزة",
+  "ads_active_tag": "نشط"
 }

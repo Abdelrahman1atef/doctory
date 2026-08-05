@@ -1,4 +1,5 @@
 import 'package:doctory/core/common/models/shared_models.dart';
+import 'package:doctory/features/ads/presentation/sections/ads_section.dart';
 import 'package:doctory/features/home/cubit/home_cubit.dart';
 import 'package:doctory/features/home/cubit/home_states.dart';
 import 'package:doctory/features/home/presentation/sections/home_featured_section.dart';
@@ -29,29 +30,29 @@ class HomeContentSection extends StatelessWidget {
             return HomeErrorWidget(message: state.message);
           }
 
-          final HomeSuccessState? successState =
-              state is HomeSuccessState ? state : null;
+          final HomeSuccessState? successState = state is HomeSuccessState ? state : null;
           final specialties = successState?.specialties ?? const <SpecialtyModel>[];
-          final hasFeatured = successState != null &&
-              (successState.recommendedDoctors.isNotEmpty || successState.featuredClinics.isNotEmpty);
+          final hasFeatured =
+              successState != null &&
+              (successState.recommendedDoctors.isNotEmpty ||
+                  successState.featuredClinics.isNotEmpty);
 
           return SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
             child: Column(
-              mainAxisAlignment: hasFeatured
-                  ? MainAxisAlignment.start
-                  : MainAxisAlignment.center,
+              mainAxisAlignment: hasFeatured ? MainAxisAlignment.start : MainAxisAlignment.center,
               children: [
                 const HomeHeaderSection(),
-                if (!hasFeatured)
-                  250.ph,
+                if (!hasFeatured) 150.ph,
+                if (successState?.ads.isNotEmpty ?? false) ...[
+                  AdsSection(ads: successState!.ads),
+                  const SizedBox(height: 24),
+                ],
                 const SizedBox(height: 24),
                 const HomeSearchSection(),
                 const SizedBox(height: 24),
-                SectionContainerWidget(
-                  child: HomeSpecialtiesSection(specialties: specialties),
-                ),
+                SectionContainerWidget(child: HomeSpecialtiesSection(specialties: specialties)),
                 if (hasFeatured) ...[
                   const SizedBox(height: 16),
                   SectionContainerWidget(

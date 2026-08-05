@@ -16,6 +16,7 @@ import 'package:doctory/core/network/interfaces/network_info.dart';
 import 'package:doctory/core/network/services/pusher_service.dart';
 import 'package:doctory/features/intro/di/intro_di.dart';
 import 'package:doctory/features/auth/di/auth_di.dart';
+import 'package:doctory/features/ads/di/ads_di.dart';
 import 'package:doctory/features/home/di/home_di.dart';
 import 'package:doctory/features/more/di/more_di.dart';
 import 'package:doctory/features/map_home/di/map_home_di.dart';
@@ -93,6 +94,7 @@ class ServiceLocator {
     // Register feature services
     IntroDI.setup();
     AuthDI.setup();
+    AdsDI.setup();
     HomeDI.setup();
     MapHomeDI.setup();
     MoreDI.setup();
