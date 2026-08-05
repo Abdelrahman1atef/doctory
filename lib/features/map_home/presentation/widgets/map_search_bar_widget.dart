@@ -68,7 +68,7 @@ class MapSearchBarWidget extends StatelessWidget {
                 color: AppColors.stitchPrimaryContainer,
               ),
             ),
-          8.pw,
+          20.pw,
           InkWell(
             onTap: onFilterTap,
             child: const Icon(

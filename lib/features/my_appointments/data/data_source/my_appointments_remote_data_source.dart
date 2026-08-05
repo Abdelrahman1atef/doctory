@@ -36,7 +36,7 @@ class MyAppointmentsRemoteDataSourceImpl
       queryParameters: {
         if (pageNumber != null) 'PageNumber': pageNumber.toString(),
         if (pageSize != null) 'PageSize': pageSize.toString(),
-        if (status != null) 'status': status.apiName,
+        if (status != null) 'status': status.value,
       },
       parser: (json) => AppointmentListResponseDto.fromJson(json),
     );
