@@ -30,7 +30,7 @@ class ConversationsListBodySection extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Column(
       children: [
-        CustomAppBar(title: 'الرسائل'),
+        CustomAppBar(title: 'الرسائل', canNavigateUp: false),
         Expanded(child: ConversationsListSection()),
       ],
     );

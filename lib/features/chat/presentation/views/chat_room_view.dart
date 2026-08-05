@@ -61,10 +61,7 @@ class ChatRoomAppBarSection extends StatelessWidget {
             ),
             child: Row(
               children: [
-                IconButton(
-                  icon: const Icon(Icons.arrow_back, color: Colors.black),
-                  onPressed: () => Navigator.of(context).pop(),
-                ),
+                const SizedBox(width: 8),
                 ChatAvatarWidget(
                   name: name,
                   imageUrl: avatarUrl,
@@ -96,13 +93,8 @@ class ChatRoomAppBarSection extends StatelessWidget {
             color: Colors.white,
             border: Border(bottom: BorderSide(color: AppColors.grey200, width: 0.5)),
           ),
-          child: Row(
-            children: [
-              IconButton(
-                icon: const Icon(Icons.arrow_back, color: Colors.black),
-                onPressed: () => Navigator.of(context).pop(),
-              ),
-            ],
+          child: const Row(
+            children: [],
           ),
         );
       },
