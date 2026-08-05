@@ -312,7 +312,6 @@ class _MapSectionState extends State<MapSection> {
                 myLocationButtonEnabled: false,
                 zoomControlsEnabled: false,
                 mapToolbarEnabled: false,
-                markerType: GoogleMapMarkerType.advancedMarker,
                 markers: _customMarkers,
                 polylines: _cachedPolylines,
                 style: _mapStyle,

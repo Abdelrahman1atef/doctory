@@ -4,7 +4,7 @@ publish_to: "none"
 version: 1.0.0+1
 
 environment:
-  sdk: ^3.10.4
+  sdk: ">=3.9.0 <4.0.0"
 
 dependencies:
   flutter:
@@ -95,11 +95,7 @@ dev_dependencies:
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.0 # Added for native splash screen
   flutter_lints: ^6.0.0
-  custom_lint: ^0.8.1
-  analyzer: ^8.0.0
-  hardcoded_strings_lint: ^1.0.3
-  custom_lints:
-    path: packages/custom_lints
+  hardcoded_strings_lint: ^1.0.1
 flutter:
   uses-material-design: true
 
@@ -136,21 +132,4 @@ flutter_native_splash:
   android: true
   ios: true
   web: false # Assuming not needed for web, can be changed if required
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
