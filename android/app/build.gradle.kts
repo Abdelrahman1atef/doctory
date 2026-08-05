@@ -1,9 +1,26 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
 }
+
+// Load the Google Maps API key from local.properties (gitignored) or the
+// MAPS_API_KEY env var / -PmapsApiKey gradle property for CI builds.
+// Never commit the real key into the repository.
+val localProperties = Properties()
+val localPropertiesFile = rootProject.file("local.properties")
+if (localPropertiesFile.exists()) {
+    localProperties.load(FileInputStream(localPropertiesFile))
+}
+val mapsApiKey: String =
+    providers.gradleProperty("mapsApiKey").orNull
+        ?: localProperties.getProperty("mapsApiKey")
+        ?: System.getenv("MAPS_API_KEY")
+        ?: ""
 
 android {
     namespace = "com.doctory"
@@ -17,8 +34,6 @@ android {
         targetCompatibility = JavaVersion.VERSION_11
     }
 
-
-
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
         applicationId = "com.doctory"
@@ -28,6 +43,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["mapsApiKey"] = mapsApiKey
 
         // Explicitly include ARM architectures for physical devices + x86_64 for emulators
         ndk {

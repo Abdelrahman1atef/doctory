@@ -1,1 +1,22 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"doctory-1aca1","appId":"1:1077893614286:android:51c43c18b7b298330c9e9f","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"doctory-1aca1","configurations":{"android":"1:1077893614286:android:51c43c18b7b298330c9e9f","ios":"1:1077893614286:ios:9fca740ea930f68d0c9e9f"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "doctory-1aca1",
+          "appId": "1:1077893614286:android:51c43c18b7b298330c9e9f",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "doctory-1aca1",
+          "configurations": {
+            "android": "1:1077893614286:android:51c43c18b7b298330c9e9f",
+            "ios": "1:1077893614286:ios:9fca740ea930f68d0c9e9f"
+          }
+        }
+      }
+    }
+  }
+}
