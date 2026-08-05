@@ -2,18 +2,19 @@ import 'package:doctory/core/common/widgets/error/app_error_widget.dart';
 import 'package:doctory/core/common/widgets/layout/abher_payment_webview.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/theme/app_colors.dart';
-import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
+import 'package:doctory/features/booking/domain/enums/appointment_status.dart';
 import 'package:doctory/features/my_appointments/cubit/my_appointments_cubit.dart';
 import 'package:doctory/features/my_appointments/cubit/my_appointments_state.dart';
+import 'package:doctory/features/my_appointments/presentation/sections/appointment_details_appbar_section.dart';
+import 'package:doctory/features/my_appointments/presentation/widgets/appointment_action_bar_widget.dart';
 import 'package:doctory/features/my_appointments/presentation/widgets/appointment_detail_card.dart';
+import 'package:doctory/features/my_appointments/presentation/widgets/cancel_appointment_dialog.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
-import '../../../booking/domain/enums/appointment_status.dart';
 
 class AppointmentDetailsSection extends StatefulWidget {
   final String? appointmentId;
@@ -75,7 +76,9 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
     final apt = _appointment;
     if (apt == null) return false;
     final url = apt.paymobRedirectUrl ?? widget.paymentUrl;
-    return apt.appointmentStatus == AppointmentStatus.accepted && url != null && url.isNotEmpty;
+    return apt.appointmentStatus == AppointmentStatus.accepted &&
+        url != null &&
+        url.isNotEmpty;
   }
 
   void _popOnce() {
@@ -147,29 +150,7 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
 
         return Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.arrow_back_ios_new,
-                      color: AppColors.stitchPrimaryContainer,
-                    ),
-                    onPressed: _popOnce,
-                  ),
-                  const Spacer(),
-                  Text(
-                    'appointment_details'.tr(),
-                    style: AppStyles.s20Bold.withColor(
-                      AppColors.stitchPrimaryContainer,
-                    ),
-                  ),
-                  const Spacer(),
-                  const SizedBox(width: 48),
-                ],
-              ),
-            ),
+            AppointmentDetailsAppBarSection(onBack: _popOnce),
             16.ph,
             Expanded(
               child: RefreshIndicator(
@@ -187,81 +168,19 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
                 ),
               ),
             ),
-            if (_canPay || _canCancel) _buildActionBar(context, apt),
+            if (_canPay || _canCancel)
+              AppointmentActionBarWidget(
+                onPayTap: _canPay
+                    ? () => _openPaymentWebView(context, apt)
+                    : null,
+                onCancelTap: _canCancel
+                    ? () => _confirmCancel(context, apt)
+                    : null,
+                isCancelling: _cancelling,
+              ),
           ],
         );
       },
-    );
-  }
-
-  Widget _buildActionBar(
-    BuildContext context,
-    AppointmentResponseDto apt,
-  ) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-      decoration: BoxDecoration(
-        color: AppColors.stitchSurfaceLowest,
-        border: const Border(
-          top: BorderSide(color: AppColors.stitchSurfaceLow),
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.black.withValues(alpha: 0.05),
-            offset: const Offset(0, -2),
-            blurRadius: 8,
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (_canPay) ...[
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton.icon(
-                onPressed: () => _openPaymentWebView(context, apt),
-                icon: const Icon(Icons.payment),
-                label: Text('pay_now'.tr()),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: AppColors.stitchPrimaryContainer,
-                  foregroundColor: AppColors.stitchSurfaceLowest,
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  textStyle: AppStyles.s16Bold,
-                ),
-              ),
-            ),
-          ],
-          if (_canPay && _canCancel) 12.ph,
-          if (_canCancel) ...[
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: _cancelling
-                    ? null
-                    : () => _confirmCancel(context, apt),
-                icon: const Icon(Icons.cancel_outlined),
-                label: Text('cancel_appointment'.tr()),
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: AppColors.error,
-                  side: BorderSide(
-                    color: _cancelling
-                        ? AppColors.error.withValues(alpha: 0.4)
-                        : AppColors.error,
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 14),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ],
-      ),
     );
   }
 
@@ -303,7 +222,7 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
     BuildContext context,
     AppointmentResponseDto apt,
   ) async {
-    final reason = await _showCancelReasonDialog(context);
+    final reason = await showCancelAppointmentDialog(context);
     if (reason == null || !context.mounted) return;
 
     setState(() => _cancelling = true);
@@ -326,39 +245,5 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
       );
       context.pop();
     }
-  }
-
-  Future<String?> _showCancelReasonDialog(BuildContext context) {
-    final controller = TextEditingController();
-    return showDialog<String>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: Text('cancel_appointment'.tr()),
-        content: TextField(
-          controller: controller,
-          maxLines: 3,
-          autofocus: true,
-          decoration: InputDecoration(
-            hintText: 'cancel_reason_hint'.tr(),
-            border: const OutlineInputBorder(),
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text('no'.tr()),
-          ),
-          ValueListenableBuilder<TextEditingValue>(
-            valueListenable: controller,
-            builder: (ctx, value, _) => TextButton(
-              onPressed: value.text.trim().isEmpty
-                  ? null
-                  : () => Navigator.of(ctx).pop(value.text.trim()),
-              child: Text('yes'.tr(), style:  TextStyle(color: AppColors.error)),
-            ),
-          ),
-        ],
-      ),
-    );
   }
 }
