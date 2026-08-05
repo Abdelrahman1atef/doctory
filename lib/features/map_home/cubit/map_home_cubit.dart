@@ -72,10 +72,11 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
       return;
     }
 
-    var permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
+    // Only CHECK permission — never REQUEST it from the constructor.
+    // requestPermission() can show a system dialog even when the map tab
+    // is not visible (due to preload: true), blocking the gesture handler
+    // and freezing the home screen.
+    final permission = await Geolocator.checkPermission();
 
     if (isClosed) return;
 

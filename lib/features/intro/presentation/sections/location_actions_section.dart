@@ -1,5 +1,6 @@
 import 'package:doctory/core/services/alerts.dart';
 import 'package:doctory/core/cache/cache_helper.dart';
+import 'package:doctory/core/common/functions/location_helper.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
@@ -47,15 +48,17 @@ class LocationActionsSection extends StatelessWidget {
 
     // When we reach here, permissions are granted and we can
     // continue accessing the position of the device.
+    // Uses LocationHelper which has a 4s timeout + getLastKnownPosition fallback
+    // to prevent infinite hang on devices with slow GPS lock.
     try {
       SmartDialog.showLoading();
-      Position position = await Geolocator.getCurrentPosition();
+      final position = await LocationHelper.getCurrentLocation();
       await CacheHelper.saveDouble('lat', position.latitude);
       await CacheHelper.saveDouble('lng', position.longitude);
-      SmartDialog.dismiss();
     } catch (e) {
+      // Silently fail — LocationHelper already returns defaultLocation on error
+    } finally {
       SmartDialog.dismiss();
-      // Silently fail or show toast
     }
 
     if (context.mounted) {
