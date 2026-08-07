@@ -12,7 +12,7 @@ class MapHomeRouter {
       builder: (context, state) {
         final query = state.extra is String ? state.extra as String : null;
         return BlocProvider(
-          create: (_) => sl<MapHomeCubit>()..searchClinics(searchText: query),
+          create: (_) => sl<MapHomeCubit>()..init(searchQuery: query),
           child: MapHomeView(searchQuery: query),
         );
       },

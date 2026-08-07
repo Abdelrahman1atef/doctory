@@ -1,5 +1,7 @@
 import 'dart:ui';
-
+import 'dart:io';
+import 'package:google_maps_flutter_android/google_maps_flutter_android.dart';
+import 'package:google_maps_flutter_platform_interface/google_maps_flutter_platform_interface.dart';
 import 'package:doctory/core/cache/cache_helper.dart';
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/config/deep_link_config.dart';
@@ -26,6 +28,19 @@ import 'firebase_options.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  // Force latest renderer for Android to prevent Xiaomi/Oppo freezes
+  if (Platform.isAndroid) {
+    final GoogleMapsFlutterPlatform mapsImplementation = GoogleMapsFlutterPlatform.instance;
+    if (mapsImplementation is GoogleMapsFlutterAndroid) {
+      mapsImplementation.useAndroidViewSurface = true;
+      try {
+        await mapsImplementation.initializeWithRenderer(AndroidMapRenderer.latest);
+      } catch (e) {
+        debugPrint('Failed to initialize latest map renderer: $e');
+      }
+    }
+  }
 
   // Initialize SharedPreferences early so AppThemeManager & others reuse it
   await CacheHelper.init();

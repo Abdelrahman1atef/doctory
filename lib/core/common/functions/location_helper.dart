@@ -4,7 +4,7 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class LocationHelper {
-  static const LatLng defaultLocation = LatLng(27.910000, 34.333000);
+  static const LatLng defaultLocation = LatLng(31.0409, 31.3785);
 
   static Future<bool>? _permissionFuture;
   static Future<LatLng>? _locationFuture;

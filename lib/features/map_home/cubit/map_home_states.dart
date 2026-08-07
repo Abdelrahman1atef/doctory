@@ -1,18 +1,11 @@
 import 'package:doctory/core/common/models/clinic_model.dart';
 import 'package:doctory/core/common/models/specialty_model.dart';
+import 'package:doctory/core/services/location_service.dart';
 import 'package:doctory/features/map_home/data/model/route_model.dart';
 
-abstract class MapHomeStates {}
+sealed class MapHomeStates {}
 
 class MapHomeInitialState extends MapHomeStates {}
-
-/// Emitted when location permission is denied or the service is off.
-class MapHomeLocationDeniedState extends MapHomeStates {
-  /// true  → user denied forever or service is off → must go to Settings
-  /// false → user just denied → can re-request
-  final bool isPermanent;
-  MapHomeLocationDeniedState({this.isPermanent = false});
-}
 
 class MapHomeLoadingState extends MapHomeStates {
   final List<ClinicModel> clinics;
@@ -39,6 +32,7 @@ class MapHomeLoadedState extends MapHomeStates {
   final int currentPage;
   final bool hasMore;
   final bool isLoadingMore;
+  final LocationPermissionState permissionState;
 
   MapHomeLoadedState({
     this.clinics = const [],
@@ -60,7 +54,10 @@ class MapHomeLoadedState extends MapHomeStates {
     this.currentPage = 1,
     this.hasMore = false,
     this.isLoadingMore = false,
+    this.permissionState = LocationPermissionState.unknown,
   });
+
+  bool get isLocationAvailable => permissionState == LocationPermissionState.granted;
 
   bool get hasCustomLocation => customLat != null && customLng != null;
 
@@ -85,6 +82,7 @@ class MapHomeLoadedState extends MapHomeStates {
     int? currentPage,
     bool? hasMore,
     bool? isLoadingMore,
+    LocationPermissionState? permissionState,
   }) {
     return MapHomeLoadedState(
       clinics: clinics ?? this.clinics,
@@ -106,6 +104,7 @@ class MapHomeLoadedState extends MapHomeStates {
       currentPage: currentPage ?? this.currentPage,
       hasMore: hasMore ?? this.hasMore,
       isLoadingMore: isLoadingMore ?? this.isLoadingMore,
+      permissionState: permissionState ?? this.permissionState,
     );
   }
 
@@ -130,6 +129,7 @@ class MapHomeLoadedState extends MapHomeStates {
       currentPage: currentPage,
       hasMore: hasMore,
       isLoadingMore: isLoadingMore,
+      permissionState: permissionState,
     );
   }
 }

@@ -42,6 +42,16 @@ class _MapSectionState extends State<MapSection> {
   /// dispose, so a slow in-flight batch can never `setState` after the
   /// widget is gone or out of date.
   int _markerGenerationId = 0;
+  Timer? _cameraDebounce;
+
+  void _safeAnimateCamera(CameraUpdate update) {
+    _cameraDebounce?.cancel();
+    _cameraDebounce = Timer(const Duration(milliseconds: 300), () {
+      if (mounted && _mapController != null) {
+        _mapController!.animateCamera(update);
+      }
+    });
+  }
 
   // Default to Mansoura
   static const CameraPosition _initialPosition = CameraPosition(
@@ -53,13 +63,11 @@ class _MapSectionState extends State<MapSection> {
   void initState() {
     super.initState();
     _generateCustomMarkers();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getCurrentLocation();
-    });
   }
 
   @override
   void dispose() {
+    _cameraDebounce?.cancel();
     _markerGenerationId++;
     _mapController?.dispose();
     super.dispose();
@@ -192,13 +200,12 @@ class _MapSectionState extends State<MapSection> {
 
     LatLng? userPos;
     final state = context.read<MapHomeCubit>().state;
-    if (state is MapHomeLoadedState && state.currentUserLat != null) {
-      userPos = LatLng(state.currentUserLat!, state.currentUserLng!);
-    } else {
-      try {
-        final position = await LocationHelper.getCurrentLocation();
-        userPos = LatLng(position.latitude, position.longitude);
-      } catch (_) {}
+    if (state is MapHomeLoadedState) {
+      if (state.currentUserLat != null) {
+        userPos = LatLng(state.currentUserLat!, state.currentUserLng!);
+      } else if (state.customLat != null) {
+        userPos = LatLng(state.customLat!, state.customLng!);
+      }
     }
 
     if (mounted && widget.selectedClinicId != selectedId) return;
@@ -214,9 +221,9 @@ class _MapSectionState extends State<MapSection> {
           max(userPos.longitude, clinicPos.longitude),
         ),
       );
-      controller.animateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
+      _safeAnimateCamera(CameraUpdate.newLatLngBounds(bounds, 100));
     } else {
-      controller.animateCamera(CameraUpdate.newLatLngZoom(clinicPos, 15));
+      _safeAnimateCamera(CameraUpdate.newLatLngZoom(clinicPos, 15));
     }
   }
 
@@ -236,7 +243,7 @@ class _MapSectionState extends State<MapSection> {
       if ((c.lng ?? 0) > maxLng) maxLng = c.lng!;
     }
 
-    controller.animateCamera(
+    _safeAnimateCamera(
       CameraUpdate.newLatLngBounds(
         LatLngBounds(
           southwest: LatLng(minLat, minLng),
@@ -247,21 +254,21 @@ class _MapSectionState extends State<MapSection> {
     );
   }
 
-  Future<void> _getCurrentLocation() async {
-    try {
-      final position = await LocationHelper.getCurrentLocation();
-      final GoogleMapController? controller = _mapController;
-      if (controller == null) return;
-      controller.animateCamera(
+  Future<void> _moveToUserLocation() async {
+    final cubit = context.read<MapHomeCubit>();
+    if (cubit.state is MapHomeLoadedState && !(cubit.state as MapHomeLoadedState).isLocationAvailable) {
+      await cubit.requestLocationPermission();
+    }
+    final state = cubit.state;
+    if (state is MapHomeLoadedState && state.currentUserLat != null) {
+      _safeAnimateCamera(
         CameraUpdate.newCameraPosition(
           CameraPosition(
-            target: LatLng(position.latitude, position.longitude),
+            target: LatLng(state.currentUserLat!, state.currentUserLng!),
             zoom: 14.5,
           ),
         ),
       );
-    } catch (e) {
-      debugPrint('Error getting location: $e');
     }
   }
 
@@ -289,7 +296,7 @@ class _MapSectionState extends State<MapSection> {
               state.currentUserLat != null &&
               state.currentUserLng != null) {
             // Navigation mode: follow user with tilt
-            controller.animateCamera(
+            _safeAnimateCamera(
               CameraUpdate.newCameraPosition(
                 CameraPosition(
                   target: LatLng(state.currentUserLat!, state.currentUserLng!),
@@ -337,7 +344,7 @@ class _MapSectionState extends State<MapSection> {
               GoogleMap(
                 key: const ValueKey('main_google_map'),
                 initialCameraPosition: _initialPosition,
-                myLocationEnabled: true,
+                myLocationEnabled: (state is MapHomeLoadedState) ? state.isLocationAvailable : false,
                 myLocationButtonEnabled: false,
                 zoomControlsEnabled: false,
                 mapToolbarEnabled: false,
@@ -355,7 +362,7 @@ class _MapSectionState extends State<MapSection> {
               if (widget.sheetSizeNotifier != null)
                 MapFabsSection(
                   sheetSizeNotifier: widget.sheetSizeNotifier!,
-                  onMyLocationPressed: _getCurrentLocation,
+                  onMyLocationPressed: _moveToUserLocation,
                 ),
               if (state is MapHomeLoadedState &&
                   state.isNavigating &&

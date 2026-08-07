@@ -9,6 +9,6 @@ class MapHomeDI {
       () => MapHomeRemoteDataSourceImpl(sl()),
     );
     sl.registerLazySingleton<MapHomeRepo>(() => MapHomeRepoImpl(sl()));
-    sl.registerFactory(() => MapHomeCubit(sl()));
+    sl.registerFactory(() => MapHomeCubit(sl(), sl()));
   }
 }

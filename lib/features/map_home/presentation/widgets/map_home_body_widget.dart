@@ -7,6 +7,7 @@ class MapHomeBodyWidget extends StatelessWidget {
   final Widget? loadingOverlay;
   final Widget? errorOverlay;
   final Widget? emptyOverlay;
+  final Widget? locationBanner;
 
   const MapHomeBodyWidget({
     super.key,
@@ -16,6 +17,7 @@ class MapHomeBodyWidget extends StatelessWidget {
     this.loadingOverlay,
     this.errorOverlay,
     this.emptyOverlay,
+    this.locationBanner,
   });
 
   @override
@@ -31,6 +33,7 @@ class MapHomeBodyWidget extends StatelessWidget {
         if (loadingOverlay != null) loadingOverlay!,
         if (errorOverlay != null) errorOverlay!,
         if (emptyOverlay != null) emptyOverlay!,
+        if (locationBanner != null) locationBanner!,
       ],
     );
   }

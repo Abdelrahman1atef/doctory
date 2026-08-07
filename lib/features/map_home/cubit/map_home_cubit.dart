@@ -3,6 +3,7 @@ import 'package:doctory/core/common/models/clinic_model.dart';
 import 'package:doctory/core/common/functions/location_helper.dart';
 import 'package:doctory/core/error/failures.dart';
 import 'package:doctory/core/locator/service_locator.dart';
+import 'package:doctory/core/services/location_service.dart';
 import 'package:doctory/features/map_home/cubit/map_home_states.dart';
 import 'package:doctory/features/map_home/data/repo/map_home_repo.dart';
 import 'package:doctory/shared/cubit/specializations_cubit.dart';
@@ -27,72 +28,85 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
   Timer? _debounce;
   StreamSubscription<SharedSpecializationsState>? _specSub;
 
-  MapHomeCubit(this._mapHomeRepo) : super(MapHomeInitialState()) {
-    _initWithPermissionCheck();
-  }
+  final LocationService _locationService;
 
-  /// Called on init and every time the app resumes (via the View lifecycle).
-  Future<void> checkLocationPermission() async {
-    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      if (isClosed) return;
-      emit(MapHomeLocationDeniedState(isPermanent: true));
-      return;
-    }
+  MapHomeCubit(this._mapHomeRepo, this._locationService) : super(MapHomeInitialState());
 
-    var permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-    }
-
+  /// Called when the router initializes the MapHome branch.
+  Future<void> init({String? searchQuery}) async {
     if (isClosed) return;
 
-    if (permission == LocationPermission.denied) {
-      emit(MapHomeLocationDeniedState(isPermanent: false));
-      return;
-    }
+    // 1. Immediately emit loaded state (map renders at Mansoura)
+    emit(MapHomeLoadedState(query: searchQuery));
 
-    if (permission == LocationPermission.deniedForever) {
-      emit(MapHomeLocationDeniedState(isPermanent: true));
-      return;
-    }
-
-    // Permission granted — proceed normally if we were blocked
-    if (state is MapHomeLocationDeniedState || state is MapHomeInitialState) {
-      LocationHelper.getCurrentLocation().then((pos) => _cachedPosition = pos);
-      _loadSpecializations();
-    }
-  }
-
-  Future<void> _initWithPermissionCheck() async {
-    final serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      if (isClosed) return;
-      emit(MapHomeLocationDeniedState(isPermanent: true));
-      return;
-    }
-
-    // Only CHECK permission — never REQUEST it from the constructor.
-    // requestPermission() can show a system dialog even when the map tab
-    // is not visible (due to preload: true), blocking the gesture handler
-    // and freezing the home screen.
-    final permission = await Geolocator.checkPermission();
-
+    // 2. Check permission silently
+    final permission = await _locationService.checkPermission();
     if (isClosed) return;
 
-    if (permission == LocationPermission.denied) {
-      emit(MapHomeLocationDeniedState(isPermanent: false));
-      return;
+    if (state is MapHomeLoadedState) {
+      emit((state as MapHomeLoadedState).copyWith(permissionState: permission));
     }
 
-    if (permission == LocationPermission.deniedForever) {
-      emit(MapHomeLocationDeniedState(isPermanent: true));
-      return;
-    }
-
-    // All good — normal startup
-    LocationHelper.getCurrentLocation().then((pos) => _cachedPosition = pos);
+    // 3. Load specs and get position
     _loadSpecializations();
+
+    if (_locationService.isGranted) {
+      final pos = await _locationService.getPosition();
+      _cachedPosition = LatLng(pos.latitude, pos.longitude);
+      
+      if (isClosed) return;
+      if (state is MapHomeLoadedState) {
+        emit((state as MapHomeLoadedState).copyWith(
+          currentUserLat: pos.latitude,
+          currentUserLng: pos.longitude,
+        ));
+      }
+    }
+
+    // 4. Search clinics (uses GPS if granted, Mansoura if not)
+    await searchClinics(searchText: searchQuery);
+  }
+
+  /// Called from the UI when the user taps "Enable Location" banner
+  Future<void> requestLocationPermission() async {
+    final permission = await _locationService.requestPermission();
+    if (isClosed) return;
+
+    if (state is MapHomeLoadedState) {
+      emit((state as MapHomeLoadedState).copyWith(permissionState: permission));
+    }
+
+    if (_locationService.isGranted) {
+      final pos = await _locationService.getPosition();
+      _cachedPosition = LatLng(pos.latitude, pos.longitude);
+      
+      if (isClosed) return;
+      if (state is MapHomeLoadedState) {
+        emit((state as MapHomeLoadedState).copyWith(
+          currentUserLat: pos.latitude,
+          currentUserLng: pos.longitude,
+        ));
+      }
+      await searchClinics();
+    }
+  }
+
+  /// Silently check permission when app resumes
+  Future<void> checkLocationPermission() async {
+    if (isClosed) return;
+    final permission = await _locationService.checkPermission();
+    
+    if (state is MapHomeLoadedState) {
+      emit((state as MapHomeLoadedState).copyWith(permissionState: permission));
+      if (_locationService.isGranted) {
+        final pos = await _locationService.getPosition();
+        _cachedPosition = LatLng(pos.latitude, pos.longitude);
+        emit((state as MapHomeLoadedState).copyWith(
+          currentUserLat: pos.latitude,
+          currentUserLng: pos.longitude,
+        ));
+      }
+    }
   }
 
   void _loadSpecializations() {
@@ -186,7 +200,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
           lat = (state as MapHomeLoadedState).customLat;
           lng = (state as MapHomeLoadedState).customLng;
         } else {
-          final position = _cachedPosition ?? await LocationHelper.getCurrentLocation();
+          final position = _cachedPosition ?? await _locationService.getPosition();
           _cachedPosition = position;
           lat = position.latitude;
           lng = position.longitude;
@@ -231,6 +245,19 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
                 hasMore: data.hasNextPage,
               ),
             );
+          } else if (_previousLoadedState != null) {
+            emit(
+              _previousLoadedState!.copyWith(
+                clinics: data.items,
+                specializations: currentSpecializations,
+                query: currentQuery,
+                specializationId: currentSpec,
+                isNearest: currentNearest,
+                radiusInKm: currentRadius,
+                currentPage: data.pageNumber,
+                hasMore: data.hasNextPage,
+              ),
+            );
           } else {
             emit(
               MapHomeLoadedState(
@@ -242,6 +269,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
                 radiusInKm: currentRadius,
                 currentPage: data.pageNumber,
                 hasMore: data.hasNextPage,
+                permissionState: _locationService.permissionState,
               ),
             );
           }
@@ -253,7 +281,6 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
           }
         },
       );
-      _previousLoadedState = null;
     }
 
     if (isInitialLoad) {
@@ -322,7 +349,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
         startLat = currentState.customLat!;
         startLng = currentState.customLng!;
       } else {
-        final position = await _fetchPositionSafe();
+        final position = await _locationService.getFreshPosition();
         if (position == null) {
           // No GPS fix — keep the clinic selected, skip route + live nav.
           if (isClosed) return;
@@ -371,22 +398,6 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
     _navigatingClinic = clinic;
   }
 
-  /// Fetch a fresh high-accuracy position with a strict timeout so a device
-  /// without a GPS fix (indoors / no signal) can never hang the platform
-  /// thread and block the whole app.
-  Future<Position?> _fetchPositionSafe() async {
-    try {
-      return await Geolocator.getCurrentPosition(
-        locationSettings: const LocationSettings(
-          accuracy: LocationAccuracy.high,
-        ),
-      ).timeout(const Duration(seconds: 4));
-    } catch (e) {
-      debugPrint('📍 [Cubit] No GPS fix (timeout/error): $e');
-      return null;
-    }
-  }
-
   Future<void> checkLiveLocation() async {
     if (!_isLiveNavigating || _navigatingClinic == null) return;
 
@@ -397,7 +408,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
       return;
     }
 
-    final position = await _fetchPositionSafe();
+    final position = await _locationService.getFreshPosition();
     if (position == null) {
       if (isClosed) return;
       return;
@@ -515,7 +526,7 @@ class MapHomeCubit extends Cubit<MapHomeStates> {
       lat = currentState.currentUserLat;
       lng = currentState.currentUserLng;
     } else {
-      final position = _cachedPosition ?? await LocationHelper.getCurrentLocation();
+      final position = _cachedPosition ?? await _locationService.getPosition();
       _cachedPosition = position;
       lat = position.latitude;
       lng = position.longitude;

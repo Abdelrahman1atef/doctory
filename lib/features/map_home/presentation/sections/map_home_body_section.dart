@@ -7,6 +7,7 @@ import '../widgets/map_home_body_widget.dart';
 import '../widgets/map_home_empty_widget.dart';
 import '../widgets/map_home_error_widget.dart';
 import '../widgets/map_home_loading_widget.dart';
+import '../widgets/map_home_location_banner_widget.dart';
 import 'map_search_section.dart';
 import 'map_section.dart';
 import 'nearby_clinics_sheet.dart';
@@ -78,6 +79,13 @@ class _MapHomeBodySectionState extends State<MapHomeBodySection> {
           emptyOverlay = const MapHomeEmptyWidget();
         }
 
+        Widget? locationBanner;
+        if (isLoaded && !state.isLocationAvailable) {
+          locationBanner = MapHomeLocationBannerWidget(
+            onEnableTap: () => context.read<MapHomeCubit>().requestLocationPermission(),
+          );
+        }
+
         if ((clinics.isEmpty || isNavigating) &&
             _sheetSizeNotifier.value != 0.0) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -114,6 +122,7 @@ class _MapHomeBodySectionState extends State<MapHomeBodySection> {
               : null,
           errorOverlay: errorOverlay,
           emptyOverlay: emptyOverlay,
+          locationBanner: locationBanner,
         );
       },
     );
