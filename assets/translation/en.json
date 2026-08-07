@@ -62,6 +62,8 @@
   "location_access_title": "Location Access",
   "location_access_subtitle": "We need your location to find the nearest clinics and doctors for you.",
   "allow_location": "Allow Location",
+  "enable_location_banner_msg": "Please enable location services for better results.",
+  "enable": "Enable",
   "not_now": "Not Now",
   "dont_have_account_yet": "Don't have an account yet?",
   "enter_your_phone": "Enter your phone number",

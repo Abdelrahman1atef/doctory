@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:doctory/core/common/models/clinic_model.dart';
-import 'package:doctory/core/common/functions/location_helper.dart';
 import 'package:doctory/core/error/failures.dart';
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/services/location_service.dart';

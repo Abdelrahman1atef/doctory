@@ -1,6 +1,6 @@
 import 'package:doctory/core/theme/app_colors.dart';
+import 'package:doctory/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
-
 
 class MapHomeLocationBannerWidget extends StatelessWidget {
   final VoidCallback onEnableTap;
@@ -35,8 +35,8 @@ class MapHomeLocationBannerWidget extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                'Please enable location services for better results.',
-                style: TextStyle(
+                context.l10n('enable_location_banner_msg'),
+                style: const TextStyle(
                   color: AppColors.black,
                   fontSize: 14,
                   fontWeight: FontWeight.w500,
@@ -48,7 +48,7 @@ class MapHomeLocationBannerWidget extends StatelessWidget {
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.stitchPrimaryContainer,
               ),
-              child: const Text('Enable'),
+              child: Text(context.l10n('enable')),
             ),
           ],
         ),

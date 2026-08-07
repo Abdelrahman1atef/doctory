@@ -21,6 +21,7 @@ class MapSearchBarWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       decoration: BoxDecoration(
@@ -61,12 +62,21 @@ class MapSearchBarWidget extends StatelessWidget {
             ),
           ),
           if (onSearchTap != null)
-            InkWell(
-              onTap: onSearchTap,
-              child: const Icon(
-                Icons.send,
-                color: AppColors.stitchPrimaryContainer,
-              ),
+            ValueListenableBuilder<TextEditingValue>(
+              valueListenable: controller,
+              builder: (context, value, child) {
+                final isTextEmpty = value.text.isEmpty;
+                return Opacity(
+                  opacity: isTextEmpty ? 0.5 : 1.0,
+                  child: InkWell(
+                    onTap: isTextEmpty ? null : onSearchTap,
+                    child: const Icon(
+                      Icons.send,
+                      color: AppColors.stitchPrimaryContainer,
+                    ),
+                  ),
+                );
+              },
             ),
           20.pw,
           InkWell(

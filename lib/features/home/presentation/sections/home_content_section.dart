@@ -44,7 +44,7 @@ class HomeContentSection extends StatelessWidget {
               mainAxisAlignment: hasFeatured ? MainAxisAlignment.start : MainAxisAlignment.center,
               children: [
                 const HomeHeaderSection(),
-                if (!hasFeatured) 150.ph,
+                if (!hasFeatured) 100.ph,
                 if (successState?.ads.isNotEmpty ?? false) ...[
                   AdsSection(ads: successState!.ads),
                   const SizedBox(height: 24),

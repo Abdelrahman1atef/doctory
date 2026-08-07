@@ -4,7 +4,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../../cubit/map_home_cubit.dart';
 import '../../cubit/map_home_states.dart';
 import '../widgets/map_home_body_widget.dart';
-import '../widgets/map_home_empty_widget.dart';
 import '../widgets/map_home_error_widget.dart';
 import '../widgets/map_home_loading_widget.dart';
 import '../widgets/map_home_location_banner_widget.dart';
@@ -63,20 +62,12 @@ class _MapHomeBodySectionState extends State<MapHomeBodySection> {
         final isNavigating = isLoaded && state.isNavigating;
         final isLoading = state is MapHomeLoadingState;
         final isError = state is MapHomeErrorState;
-        final isEmpty =
-            isLoaded && clinics.isEmpty && !isLoading;
-
         Widget? errorOverlay;
         if (isError) {
           errorOverlay = MapHomeErrorWidget(
             message: state.message,
             onRetry: () => context.read<MapHomeCubit>().searchClinics(),
           );
-        }
-
-        Widget? emptyOverlay;
-        if (isEmpty && !isError && !isLoading) {
-          emptyOverlay = const MapHomeEmptyWidget();
         }
 
         Widget? locationBanner;
@@ -121,7 +112,6 @@ class _MapHomeBodySectionState extends State<MapHomeBodySection> {
                 )
               : null,
           errorOverlay: errorOverlay,
-          emptyOverlay: emptyOverlay,
           locationBanner: locationBanner,
         );
       },

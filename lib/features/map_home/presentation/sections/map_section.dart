@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:doctory/core/common/functions/location_helper.dart';
 import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/map_home/cubit/map_home_cubit.dart';
@@ -283,8 +282,10 @@ class _MapSectionState extends State<MapSection> {
               (previous.currentUserLat != current.currentUserLat ||
                   previous.currentUserLng != current.currentUserLng ||
                   previous.currentUserHeading != current.currentUserHeading);
+          final userGotLocation =
+              previous.currentUserLat == null && current.currentUserLat != null;
 
-          return navToggled || userMovedWhileNav;
+          return navToggled || userMovedWhileNav || userGotLocation;
         }
         return current is MapHomeLoadedState;
       },
@@ -306,6 +307,18 @@ class _MapSectionState extends State<MapSection> {
                 ),
               ),
             );
+          } else if (state.currentUserLat != null &&
+              state.currentUserLng != null &&
+              widget.selectedClinicId == null) {
+            // Move camera to user location when first acquired
+            _safeAnimateCamera(
+              CameraUpdate.newCameraPosition(
+                CameraPosition(
+                  target: LatLng(state.currentUserLat!, state.currentUserLng!),
+                  zoom: 14.5,
+                ),
+              ),
+            );
           }
         }
       },
@@ -314,7 +327,10 @@ class _MapSectionState extends State<MapSection> {
           if (prev.runtimeType != curr.runtimeType) return true;
           if (prev is MapHomeLoadedState && curr is MapHomeLoadedState) {
             return prev.route != curr.route ||
-                prev.isNavigating != curr.isNavigating;
+                prev.isNavigating != curr.isNavigating ||
+                prev.permissionState != curr.permissionState ||
+                prev.currentUserLat != curr.currentUserLat ||
+                prev.currentUserLng != curr.currentUserLng;
           }
           return true;
         },

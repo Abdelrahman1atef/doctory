@@ -26,6 +26,7 @@ class MapSearchWidget extends StatelessWidget {
             borderRadius: BorderRadius.circular(20),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
+              clipBehavior: Clip.none,
               child: filterChips,
             ),
           ),

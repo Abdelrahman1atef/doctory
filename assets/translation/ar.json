@@ -63,6 +63,8 @@
   "location_access_title": "الوصول للموقع",
   "location_access_subtitle": "نحتاج للوصول لموقعك لنتمكن من العثور على أقرب العيادات والأطباء لك.",
   "allow_location": "السماح بالوصول للموقع",
+  "enable_location_banner_msg": "يرجى تفعيل خدمات الموقع للحصول على نتائج أفضل.",
+  "enable": "تفعيل",
   "not_now": "ليس الآن",
   "have_an_account": "لديك حساب بالفعل؟",
   "enter_your_phone": "أدخل رقم جوالك",
