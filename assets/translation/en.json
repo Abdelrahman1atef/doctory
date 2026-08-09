@@ -613,6 +613,7 @@
   "place_cleanliness": "Place Cleanliness",
   "select_doctor": "Select Doctor",
   "already_rated": "You have already rated this item",
+  "based_on_reviews": "Based on {} reviews",
   "map_home": "Map View",
   "nearby_clinics": "Nearby Clinics",
   "open_now": "Open Now",

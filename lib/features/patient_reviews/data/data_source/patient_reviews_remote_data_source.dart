@@ -12,6 +12,10 @@ abstract class PatientReviewsRemoteDataSource {
   Future<ApiResult<List<RatingDto>>> getClinicCleanlinessRatings(
     String clinicId,
   );
+
+  Future<ApiResult<List<RatingDto>>> getClinicReceptionRatings(
+    String clinicId,
+  );
 }
 
 class PatientReviewsRemoteDataSourceImpl
@@ -47,6 +51,13 @@ class PatientReviewsRemoteDataSourceImpl
     return await _getRatingList(
       'clinics/$clinicId/place-cleanliness-ratings',
     );
+  }
+
+  @override
+  Future<ApiResult<List<RatingDto>>> getClinicReceptionRatings(
+    String clinicId,
+  ) async {
+    return await _getRatingList('clinics/$clinicId/reception-ratings');
   }
 
   Future<ApiResult<List<RatingDto>>> _getRatingList(String path) async {

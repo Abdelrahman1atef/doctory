@@ -3,6 +3,7 @@ import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/features/clinic_details/cubit/clinic_details_cubit.dart';
 import 'package:doctory/features/clinic_details/presentation/views/clinic_details_view.dart';
+import 'package:doctory/features/patient_reviews/cubit/clinic_ratings_summary_cubit.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -15,7 +16,11 @@ class ClinicDetailsRouter {
         return BlocProvider(
           create: (_) =>
               sl<ClinicDetailsCubit>()..loadClinicDetails(clinic),
-          child: const ClinicDetailsView(),
+          child: BlocProvider(
+            create: (_) =>
+                sl<ClinicRatingsSummaryCubit>()..loadSummary(clinic.id),
+            child: const ClinicDetailsView(),
+          ),
         );
       },
     ),

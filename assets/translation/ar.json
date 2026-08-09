@@ -607,6 +607,7 @@
   "place_cleanliness": "نظافة المكان",
   "select_doctor": "اختر الطبيب",
   "already_rated": "لقد قمت بتقييم هذا العنصر مسبقاً",
+  "based_on_reviews": "بناءً على {} تقييم",
   "map_home": "عرض الخريطة",
   "nearby_clinics": "العيادات القريبة",
   "open_now": "مفتوح الآن",

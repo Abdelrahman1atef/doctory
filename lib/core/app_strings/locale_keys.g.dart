@@ -193,6 +193,7 @@ abstract class LocaleKeys {
   static const place_cleanliness = 'place_cleanliness';
   static const select_doctor = 'select_doctor';
   static const already_rated = 'already_rated';
+  static const based_on_reviews = 'based_on_reviews';
   static const appearance = 'appearance';
   static const behavior = 'behavior';
   static const cleanliness = 'cleanliness';

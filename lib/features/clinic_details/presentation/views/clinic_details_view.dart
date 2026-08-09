@@ -8,6 +8,7 @@ import 'package:doctory/features/clinic_details/presentation/sections/clinic_doc
 import 'package:doctory/features/clinic_details/presentation/sections/clinic_header_section.dart';
 import 'package:doctory/features/clinic_details/presentation/sections/clinic_info_section.dart';
 import 'package:doctory/features/clinic_details/presentation/sections/clinic_reviews_summary_section.dart';
+import 'package:doctory/features/patient_reviews/cubit/clinic_ratings_summary_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -35,6 +36,9 @@ class ClinicDetailsView extends StatelessWidget {
             return RefreshIndicator(
               onRefresh: () async {
                 context.read<ClinicDetailsCubit>().refresh();
+                context
+                    .read<ClinicRatingsSummaryCubit>()
+                    .loadSummary(currentClinic.id);
               },
               child: SingleChildScrollView(
                 physics: const AlwaysScrollableScrollPhysics(),

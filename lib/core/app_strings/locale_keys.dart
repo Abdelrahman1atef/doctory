@@ -494,6 +494,7 @@ abstract class LocaleKeys {
   static const place_cleanliness = 'place_cleanliness';
   static const select_doctor = 'select_doctor';
   static const already_rated = 'already_rated';
+  static const based_on_reviews = 'based_on_reviews';
   static const total_rating = 'total_rating';
   static const no_ratings_yet = 'no_ratings_yet';
   static const trip_date_hint = 'trip_date_hint';

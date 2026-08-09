@@ -13,6 +13,10 @@ abstract class PatientReviewsRepo {
   Future<ApiResult<List<RatingDto>>> getClinicCleanlinessRatings(
     String clinicId,
   );
+
+  Future<ApiResult<List<RatingDto>>> getClinicReceptionRatings(
+    String clinicId,
+  );
 }
 
 class PatientReviewsRepoImpl implements PatientReviewsRepo {
@@ -40,5 +44,12 @@ class PatientReviewsRepoImpl implements PatientReviewsRepo {
     String clinicId,
   ) {
     return _dataSource.getClinicCleanlinessRatings(clinicId);
+  }
+
+  @override
+  Future<ApiResult<List<RatingDto>>> getClinicReceptionRatings(
+    String clinicId,
+  ) {
+    return _dataSource.getClinicReceptionRatings(clinicId);
   }
 }
