@@ -188,6 +188,11 @@ abstract class LocaleKeys {
   static const currency = 'currency';
   static const ratings = 'ratings';
   static const total_rating = 'total_rating';
+  static const rate_doctor = 'rate_doctor';
+  static const rate_clinic = 'rate_clinic';
+  static const place_cleanliness = 'place_cleanliness';
+  static const select_doctor = 'select_doctor';
+  static const already_rated = 'already_rated';
   static const appearance = 'appearance';
   static const behavior = 'behavior';
   static const cleanliness = 'cleanliness';

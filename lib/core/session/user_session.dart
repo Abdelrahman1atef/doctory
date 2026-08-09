@@ -38,6 +38,9 @@ class UserSession {
   static String? verificationStatus;
   static bool isClinicSetupComplete = false;
 
+  /// Doctor entity id (only present for users linked to a Doctor entity)
+  static String? doctorId;
+
   static MobileRole? get mobileRole {
     if (currentRole == null) return null;
     return MobileRole.from(
@@ -123,6 +126,7 @@ class UserSession {
       clinicStatus = response['clinicStatus']?.toString();
       verificationStatus = response['verificationStatus']?.toString();
       isClinicSetupComplete = response['isClinicSetupComplete'] == true;
+      doctorId = response['doctorId']?.toString();
 
       // Determine the token (accessToken, token, or access_token)
       if (response.containsKey("data") && response["data"] is Map) {
@@ -213,6 +217,7 @@ class UserSession {
     clinicStatus = null;
     verificationStatus = null;
     isClinicSetupComplete = false;
+    doctorId = null;
     userNotifier.value = null;
     await HiveService().delete(
       GeneralConstants.hiveUserBox,
@@ -305,6 +310,7 @@ class UserSession {
       clinicStatus = data['clinicStatus']?.toString();
       verificationStatus = data['verificationStatus']?.toString();
       isClinicSetupComplete = data['isClinicSetupComplete'] == true;
+      doctorId = data['doctorId']?.toString();
 
       if (token.isNotEmpty) {
         // Intentionally empty — realtime init moved to chat cubits

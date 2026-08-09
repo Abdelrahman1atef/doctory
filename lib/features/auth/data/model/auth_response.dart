@@ -8,6 +8,7 @@ class AuthResponse {
   final String? clinicStatus;
   final String? verificationStatus;
   final bool isClinicSetupComplete;
+  final String? doctorId;
 
   AuthResponse({
     required this.accessToken,
@@ -17,6 +18,7 @@ class AuthResponse {
     this.clinicStatus,
     this.verificationStatus,
     this.isClinicSetupComplete = false,
+    this.doctorId,
   });
 
   factory AuthResponse.fromJson(Map<String, dynamic> json) {
@@ -46,6 +48,7 @@ class AuthResponse {
           ? _verificationStatusFromInt(verificationStatusRaw)
           : verificationStatusRaw?.toString(),
       isClinicSetupComplete: data['isClinicSetupComplete'] == true,
+      doctorId: data['doctorId']?.toString(),
     );
   }
 

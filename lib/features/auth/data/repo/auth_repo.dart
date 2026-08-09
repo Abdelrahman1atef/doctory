@@ -254,6 +254,7 @@ class AuthRepoImpl implements AuthRepo {
       'clinicStatus': response.clinicStatus,
       'verificationStatus': response.verificationStatus,
       'isClinicSetupComplete': response.isClinicSetupComplete,
+      'doctorId': response.doctorId,
     });
   }
 }

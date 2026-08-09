@@ -489,6 +489,11 @@ abstract class LocaleKeys {
   static const doctor_behavior = 'doctor_behavior';
   static const reception = 'reception';
   static const submit_review_success = 'submit_review_success';
+  static const rate_doctor = 'rate_doctor';
+  static const rate_clinic = 'rate_clinic';
+  static const place_cleanliness = 'place_cleanliness';
+  static const select_doctor = 'select_doctor';
+  static const already_rated = 'already_rated';
   static const total_rating = 'total_rating';
   static const no_ratings_yet = 'no_ratings_yet';
   static const trip_date_hint = 'trip_date_hint';
