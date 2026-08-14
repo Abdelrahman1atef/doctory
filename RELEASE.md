@@ -35,6 +35,20 @@ SHA-256 : 7B:07:9F:DB:71:5D:8C:29:59:50:F5:06:B2:A9:CF:C8:AA:51:D2:34:A0:02:30:B
 > ⚠️ **Before release you MUST create a real upload keystore (step 3.2).** The debug SHA-1 above is
 > already authorized for Google Maps (`...;com.clinichub.doctory`), so dev builds keep working.
 
+### 1.2 Android release key fingerprints (upload key)
+
+Generated from `android/release-keystore.jks`:
+
+```
+Alias    : doctory_alias
+Pass     : doctory_release_2026
+
+SHA-1   : ED:51:69:04:F4:58:4C:BD:35:2B:80:C3:DD:F1:F4:FD:8A:DB:81:7E
+SHA-256 : 97:94:E3:7D:89:5C:44:07:33:08:B3:92:42:A9:EE:29:9D:1B:07:5E:10:29:62:E5:93:D2:01:07:2F:2B:8A:67
+```
+
+> ⚠️ Add these to Firebase Console and Google Maps API restrictions!
+
 ---
 
 ## 2. Secrets & Config Files (never commit)

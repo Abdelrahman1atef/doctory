@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:1077893614286:android:51c43c18b7b298330c9e9f",
         "android_client_info": {
-          "package_name": "com.doctory"
+          "package_name": "com.clinichub.doctory"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "1077893614286-kf613gevsk5pq68739hfr34h5vfjt708.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.doctory",
+            "package_name": "com.clinichub.doctory",
             "certificate_hash": "f9540eef24a665c1e215fe6050bb13f423b0426c"
           }
         },
@@ -42,7 +42,7 @@
               "client_id": "1077893614286-71rnjraq4m1elogkkqij9sah557cnhp0.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.doctory"
+                "bundle_id": "com.clinichub.doctory"
               }
             }
           ]
