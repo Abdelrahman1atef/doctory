@@ -1,4 +1,4 @@
-package com.doctory
+package com.clinichub.doctory
 
 import io.flutter.embedding.android.FlutterActivity
 

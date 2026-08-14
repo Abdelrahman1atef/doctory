@@ -63,6 +63,6 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1077893614286',
     projectId: 'doctory-1aca1',
     storageBucket: 'doctory-1aca1.firebasestorage.app',
-    iosBundleId: 'com.doctory',
+    iosBundleId: 'com.clinichub.doctory',
   );
 }

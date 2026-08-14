@@ -49,3 +49,7 @@ GEMINI.md
 /.agents/
 /.opencode/
 /docs/
+
+# Android Keystore
+key.properties
+*.jks

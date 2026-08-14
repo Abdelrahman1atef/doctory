@@ -11,8 +11,8 @@
 | Item | Value | Where it lives |
 |---|---|---|
 | App display name | `Doctory` | iOS Info.plist `CFBundleDisplayName`, Android `strings.xml` `app_name` |
-| Android applicationId | `com.doctory` | `android/app/build.gradle.kts` (`namespace` + `applicationId`) |
-| iOS bundle identifier | `com.abdelrahmanatef.doctory` | `ios/Runner.xcodeproj/project.pbxproj` |
+| Android applicationId | `com.clinichub.doctory` | `android/app/build.gradle.kts` (`namespace` + `applicationId`) |
+| iOS bundle identifier | `com.clinichub.doctory` | `ios/Runner.xcodeproj/project.pbxproj` |
 | Version | `1.0.0+1` | `pubspec.yaml` (`version: 1.0.0+1`) |
 | Firebase project | `doctory-1aca1` | `google-services.json` + `firebase_options.dart` |
 | Firebase sender ID | `1077893614286` | same |
@@ -33,7 +33,7 @@ SHA-256 : 7B:07:9F:DB:71:5D:8C:29:59:50:F5:06:B2:A9:CF:C8:AA:51:D2:34:A0:02:30:B
 ```
 
 > ⚠️ **Before release you MUST create a real upload keystore (step 3.2).** The debug SHA-1 above is
-> already authorized for Google Maps (`...;com.doctory`), so dev builds keep working.
+> already authorized for Google Maps (`...;com.clinichub.doctory`), so dev builds keep working.
 
 ---
 
@@ -43,7 +43,7 @@ SHA-256 : 7B:07:9F:DB:71:5D:8C:29:59:50:F5:06:B2:A9:CF:C8:AA:51:D2:34:A0:02:30:B
 |---|---|---|
 | `android/local.properties` | ✅ `android/.gitignore` | `mapsApiKey=AIzaSyD0zRl4KKc394VUOG46r1QGTwVLH8Tu_do` |
 | `android/key.properties` | ✅ `android/.gitignore` | upload keystore credentials (create in step 3.2) |
-| `android/app/upload.jks` | ✅ `**/*.jks` | your private keystore (create in step 3.2) |
+| `android/app/release-keystore.jks` | ✅ `**/*.jks` | your private keystore (create in step 3.2) |
 
 - Google Maps **Android** API key (above) → injected at build time via gradle placeholder `${mapsApiKey}`.
 - Google Maps **iOS** API key → hardcoded in `ios/Runner/Info.plist` under `GMSApiKey` (same key today).
@@ -62,15 +62,15 @@ SHA-256 : 7B:07:9F:DB:71:5D:8C:29:59:50:F5:06:B2:A9:CF:C8:AA:51:D2:34:A0:02:30:B
 Run in `android/`:
 
 ```
-keytool -genkeypair -v -keystore upload.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000
+keytool -genkeypair -v -keystore release-keystore.jks -alias upload -keyalg RSA -keysize 2048 -validity 10000
 ```
 
 Answer prompts (organization details appear in Play's "signed by" info; anything works).
 **Store passwords in a password manager — losing them loses the app's ability to be updated.**
-Check `upload.jks` SHA-1 for your records:
+Check `release-keystore.jks` SHA-1 for your records:
 
 ```
-keytool -list -v -keystore upload.jks -storepass ___
+keytool -list -v -keystore release-keystore.jks -storepass ___
 ```
 
 ### 3.3 Wire signing into the build
@@ -78,10 +78,10 @@ keytool -list -v -keystore upload.jks -storepass ___
 Create `android/key.properties`:
 
 ```
-storePassword=___
-keyPassword=___
-keyAlias=upload
-storeFile=upload.jks
+storePassword=doctory_release_2026
+keyPassword=doctory_release_2026
+keyAlias=doctory_alias
+storeFile=release-keystore.jks
 ```
 
 Edit `android/app/build.gradle.kts`:
@@ -94,7 +94,7 @@ Edit `android/app/build.gradle.kts`:
 1. Console → **Create app** → name `Doctory`, default language, free/paid.
 2. **Set up your app**:
    - App access: choose.
-   - **App signing**: choose "Let Google manage and protect your app signing key" (Play App Signing — required for Play; your `upload.jks` becomes the *upload key*).
+   - **App signing**: choose "Let Google manage and protect your app signing key" (Play App Signing — required for Play; your `release-keystore.jks` becomes the *upload key*).
    - You'll get an **App Signing SHA-1 / SHA-256 certificate fingerprint** — copy them (needed for Google Maps + Firebase in production, step 5.4).
 3. **Store listing**: app icon (auto-generated via `flutter_launcher_icons`), feature graphic (1024×500 PNG), phone/tablet screenshots, category, short/full description, contact email, **privacy policy URL (required)**.
 4. **App content**: data safety form (do this — the app collects location, camera, mic, photos, personal info), content rating questionnaire, target audience (children? ads?).
@@ -138,7 +138,7 @@ Smoke test (step 7).
 
 ### 4.2 Apple Developer Portal — identities
 
-1. **Register the Bundle ID** `com.abdelrahmanatef.doctory` (Identifiers → App IDs) with capabilities:
+1. **Register the Bundle ID** `com.clinichub.doctory` (Identifiers → App IDs) with capabilities:
    - Push Notifications
    - Associated Domains (already configured in project)
    - Sign in with Apple / Google Sign-In: **none** (Flutter handles them; no native capability needed)
@@ -147,10 +147,10 @@ Smoke test (step 7).
 
 ### 4.3 Fix iOS bundle ID in Firebase FIRST (blocker)
 
-Firebase's iOS app is currently registered as `com.doctory` but the app builds as `com.abdelrahmanatef.doctory` — **must be fixed before anything Firebase works on iOS**.
+Firebase's iOS app is currently registered as `com.clinichub.doctory` but the app builds as `com.clinichub.doctory` — **must be fixed before anything Firebase works on iOS**.
 
-1. Firebase Console → Project `doctory-1aca1` → Project settings → iOS apps → **Add app** with bundle ID `com.abdelrahmanatef.doctory`.
-2. Add Google Sign-In: Credentials → Create OAuth client ID → iOS → bundle `com.abdelrahmanatef.doctory`.
+1. Firebase Console → Project `doctory-1aca1` → Project settings → iOS apps → **Add app** with bundle ID `com.clinichub.doctory`.
+2. Add Google Sign-In: Credentials → Create OAuth client ID → iOS → bundle `com.clinichub.doctory`.
 3. Regenerate config for this repo (run on a machine with Flutter + Dart):
 
 ```
@@ -158,14 +158,14 @@ dart pub global activate flutterfire_cli
 flutterfire configure --project=doctory-1aca1 --platforms=ios,android
 ```
 
-This rewrites `lib/firebase_options.dart` with the correct `iosBundleId: 'com.abdelrahmanatef.doctory'`.
+This rewrites `lib/firebase_options.dart` with the correct `iosBundleId: 'com.clinichub.doctory'`.
 
 ### 4.4 Xcode — signing & capabilities (on the Mac)
 
 1. `open ios/Runner.xcworkspace` (Xcode).
 2. Runner target → **Signing & Capabilities**:
    - Select your **Team** (this fills `DEVELOPMENT_TEAM` in pbxproj).
-   - Bundle ID: `com.abdelrahmanatef.doctory` (already set).
+   - Bundle ID: `com.clinichub.doctory` (already set).
    - Add capabilities: **Push Notifications**, **Background Modes → remote notifications + location** (entitlements already in `ios/Runner/Runner.entitlements`).
 3. Update `aps-environment` in `Runner.entitlements` to `production` for the distribution build (Xcode sets this automatically when archiving with distribution profile; verify before Archive).
 4. Google Sign-In iOS:
@@ -203,15 +203,15 @@ Output: `build/ios/ipa/*.ipa` → upload via **Transporter** or Xcode Organizer 
 Key `AIzaSyD0zRl4KKc394VUOG46r1QGTwVLH8Tu_do` → Android apps restriction contains:
 
 ```
-F9:54:0E:EF:24:A6:65:C1:E2:15:FE:60:50:BB:13:F4:23:B0:42:6C;com.doctory   (debug key)
+F9:54:0E:EF:24:A6:65:C1:E2:15:FE:60:50:BB:13:F4:23:B0:42:6C;com.clinichub.doctory   (debug key)
 ```
 
 **After Play App Signing (step 3.4)**: add the **App Signing SHA-1** from Play Console the same way:
-`<APP_SIGNING_SHA1>;com.doctory` — otherwise the Play-signed release build shows the
+`<APP_SIGNING_SHA1>;com.clinichub.doctory` — otherwise the Play-signed release build shows the
 "Authorization failure" logcat error and a blank map.
 
 ### 5.4 iOS key (recommend a separate key)
-1. Create a second API key (or reuse) → **Application restrictions → iOS apps** → add bundle ID `com.abdelrahmanatef.doctory`.
+1. Create a second API key (or reuse) → **Application restrictions → iOS apps** → add bundle ID `com.clinichub.doctory`.
 2. Update `ios/Runner/Info.plist` → `GMSApiKey`.
 3. Enable **Maps SDK for iOS** in the same Cloud project.
 
@@ -221,7 +221,7 @@ F9:54:0E:EF:24:A6:65:C1:E2:15:FE:60:50:BB:13:F4:23:B0:42:6C;com.doctory   (debug
 
 | Task | Android | iOS |
 |---|---|---|
-| App registered | ✅ `com.doctory` | ❌ **re-register as `com.abdelrahmanatef.doctory` (step 4.3)** |
+| App registered | ✅ `com.clinichub.doctory` | ❌ **re-register as `com.clinichub.doctory` (step 4.3)** |
 | Config file | ✅ `google-services.json` in repo | config via `flutterfire configure` (no plist needed) |
 | Cloud Messaging | ✅ works via json | needs **APNs key** upload (step 6.4) |
 | Crashlytics | ✅ gradle applied | ✅ same via Firebase SDK |
@@ -275,9 +275,9 @@ F9:54:0E:EF:24:A6:65:C1:E2:15:FE:60:50:BB:13:F4:23:B0:42:6C;com.doctory   (debug
 
 ## 9. Known Pitfalls (from this project's history)
 
-- **Blank Android map** in logcat `Authorization failure` → Maps key missing the **signing key's** SHA-1 (`<fingerprint>;com.doctory`). Debug build = debug SHA-1; Play build = App Signing SHA-1.
+- **Blank Android map** in logcat `Authorization failure` → Maps key missing the **signing key's** SHA-1 (`<fingerprint>;com.clinichub.doctory`). Debug build = debug SHA-1; Play build = App Signing SHA-1.
 - **Marker freeze/crash on map** (Redmi Note 9 Pro/12 Pro) → marker PNG generation was done synchronously on the UI thread; fixed with isolate-based generation in `lib/features/map_home/presentation/widgets/marker_generator.dart`.
 - **`google-services.json` and bundle ID must match `applicationId`** — never change the Android package name after the first Play upload.
 - **Never change the iOS bundle ID** after Firebase/OAuth clients are created — it invalidates Google Sign-In, Maps, and FCM silently.
-- Losing `upload.jks` + its passwords = cannot ship updates through Play.
+- Losing `release-keystore.jks` + its passwords = cannot ship updates through Play.
 - **Do not commit**: `android/key.properties`, `*.jks`, `local.properties`, `.p8` files, keystore passwords.
