@@ -1,6 +1,5 @@
 import 'package:doctory/core/common/models/role.dart';
 import 'package:doctory/core/router/router_names.dart';
-import 'package:doctory/core/cache/cache_helper.dart';
 import 'package:doctory/core/services/deep_link_service.dart';
 import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/features/intro/cubit/intro_cubit.dart';
@@ -11,7 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../features/admin/router/admin_router_names.dart';
-import '../../../../../core/common/widgets/sheets/language_bottom_sheet_section.dart';
 
 class SplashView extends StatelessWidget {
   const SplashView({super.key});
@@ -20,24 +18,7 @@ class SplashView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocListener<IntroCubit, IntroStates>(
       listener: (context, state) {
-        if (state is ShowLanguageBottomSheetState) {
-          showModalBottomSheet<void>(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            isDismissible: false,
-            enableDrag: false,
-            builder: (context) => LanguageBottomSheetSection(
-              onContinue: () async {
-                context.pop(); // Close Bottom Sheet
-                await CacheHelper.saveBool('isLanguageSelected', true);
-                if (context.mounted) {
-                  context.go(AppRoutes.intro);
-                }
-              },
-            ),
-          );
-        } else if (state is NavigateToIntroState) {
+        if (state is NavigateToIntroState) {
           context.go(AppRoutes.intro);
         } else if (state is NavigateToLoginState) {
           context.go(AppRoutes.welcome);

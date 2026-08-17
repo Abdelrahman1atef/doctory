@@ -60,23 +60,16 @@ class IntroCubit extends Cubit<IntroStates> {
     }
 
     // Compatibility logic for old flags
-    bool isLanguageSelected =
-        CacheHelper.getBool('isLanguageSelected') ?? false;
     bool isIntroSeen = CacheHelper.getBool('isIntroSeen') ?? false;
 
     // If they already finished onboarding the old way (isFirstTime was false)
     final bool isFirstTimeOld = CacheHelper.getBool('isFirstTime') ?? true;
     if (!isFirstTimeOld) {
-      isLanguageSelected = true;
       isIntroSeen = true;
-      await CacheHelper.saveBool('isLanguageSelected', true);
       await CacheHelper.saveBool('isIntroSeen', true);
     }
 
-    if (!isLanguageSelected) {
-      // 1. Language Selection (First time ever)
-      emit(ShowLanguageBottomSheetState());
-    } else if (!isIntroSeen) {
+    if (!isIntroSeen) {
       // 2. Onboarding (First time after language)
       emit(NavigateToIntroState());
     } else if (isLoggedIn) {
