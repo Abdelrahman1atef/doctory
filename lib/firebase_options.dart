@@ -50,19 +50,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBe0Y23Oj65g7W_y6dj07hOaR1wEU5eZTY',
-    appId: '1:1077893614286:android:51c43c18b7b298330c9e9f',
+    apiKey: 'AIzaSyAackH_Wmv3B7gQgx8UC4ZxJSwNHWAw_pU',
+    appId: '1:1077893614286:android:fd320850eb02bdc60c9e9f',
     messagingSenderId: '1077893614286',
     projectId: 'doctory-1aca1',
     storageBucket: 'doctory-1aca1.firebasestorage.app',
   );
-
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD5mwsRZYu1qnE75tTrreD4YPeNm6ttcOQ',
-    appId: '1:1077893614286:ios:9fca740ea930f68d0c9e9f',
+    apiKey: 'AIzaSyDAWQjAH5Wee2Y0ZvN1ezOGcs8P4OiTwHg',
+    appId: '1:1077893614286:ios:17e5fece5a5a61b10c9e9f',
     messagingSenderId: '1077893614286',
     projectId: 'doctory-1aca1',
     storageBucket: 'doctory-1aca1.firebasestorage.app',
+    androidClientId: '1077893614286-blko3bppf5iskolvbbg4ttiku2t9363j.apps.googleusercontent.com',
+    iosClientId: '1077893614286-upsfe0te88flm0gc3hl2af0qjdfnk6le.apps.googleusercontent.com',
     iosBundleId: 'com.clinichub.doctory',
   );
 }

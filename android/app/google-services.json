@@ -7,14 +7,14 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1077893614286:android:51c43c18b7b298330c9e9f",
+        "mobilesdk_app_id": "1:1077893614286:android:fd320850eb02bdc60c9e9f",
         "android_client_info": {
           "package_name": "com.clinichub.doctory"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1077893614286-kf613gevsk5pq68739hfr34h5vfjt708.apps.googleusercontent.com",
+          "client_id": "1077893614286-blko3bppf5iskolvbbg4ttiku2t9363j.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.clinichub.doctory",
@@ -28,7 +28,7 @@
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyBe0Y23Oj65g7W_y6dj07hOaR1wEU5eZTY"
+          "current_key": "AIzaSyAackH_Wmv3B7gQgx8UC4ZxJSwNHWAw_pU"
         }
       ],
       "services": {
@@ -42,7 +42,7 @@
               "client_id": "1077893614286-71rnjraq4m1elogkkqij9sah557cnhp0.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.clinichub.doctory"
+                "bundle_id": "com.doctory"
               }
             }
           ]
