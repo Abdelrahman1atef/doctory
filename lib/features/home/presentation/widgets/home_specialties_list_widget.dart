@@ -33,6 +33,7 @@ class HomeSpecialtiesListWidget extends StatelessWidget {
               ),
               TextButton(
                 onPressed: onSeeAll,
+                style: ButtonStyle(backgroundColor: WidgetStateProperty.all(AppColors.white)) ,
                 child: Text(
                   context.l10n('see_all'),
                   style: AppStyles.s14Medium.copyWith(
@@ -49,6 +50,7 @@ class HomeSpecialtiesListWidget extends StatelessWidget {
           child: ListView.separated(
             scrollDirection: Axis.horizontal,
             itemCount: specialties.length,
+            clipBehavior: Clip.none,
             separatorBuilder: (_, _) => const SizedBox(width: 12),
             itemBuilder: (context, index) {
               final specialty = specialties[index];

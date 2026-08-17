@@ -51,7 +51,7 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
   File? _profileImage;
 
   TypeOfUserForRegisterFlow get _typeOfUser {
-    if (widget.role == 'user') return TypeOfUserForRegisterFlow.user;
+    if (widget.role == 'patient') return TypeOfUserForRegisterFlow.user;
     if (widget.doctorType == 'freelance') return TypeOfUserForRegisterFlow.freelanceDoctor;
     return TypeOfUserForRegisterFlow.clinic;
   }
