@@ -581,6 +581,7 @@
   "operating_hours": "Operating Hours",
   "available_doctors": "Available Doctors",
   "book_appointment": "Book Appointment",
+  "no_available_time": "No available time slots",
   "doctor_details": "Doctor Profile",
   "experience": "Experience",
   "patients": "Patients",

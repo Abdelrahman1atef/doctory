@@ -5,6 +5,7 @@ class CreateAppointmentRequestDto {
   final String startTime;
   final String endTime;
   final int appointmentType;
+  final int paymentMethod;
   final String patientFullName;
   final String patientAge;
   final int patientGender;
@@ -18,6 +19,7 @@ class CreateAppointmentRequestDto {
     required this.startTime,
     required this.endTime,
     required this.appointmentType,
+    this.paymentMethod = 0,
     required this.patientFullName,
     required this.patientAge,
     required this.patientGender,
@@ -32,6 +34,7 @@ class CreateAppointmentRequestDto {
     'startTime': startTime,
     'endTime': endTime,
     'appointmentType': appointmentType,
+    'paymentMethod': paymentMethod,
     'patientFullName': patientFullName,
     'patientAge': patientAge,
     'patientGender': patientGender,

@@ -575,6 +575,7 @@
   "operating_hours": "ساعات العمل",
   "available_doctors": "الأطباء المتاحين",
   "book_appointment": "احجز موعد",
+  "no_available_time": "لا توجد مواعيد متاحة حالياً",
   "doctor_details": "الملف الشخصي للطبيب",
   "experience": "الخبرة",
   "patients": "المرضى",

@@ -14,13 +14,15 @@ class DoctorAvailabilitySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final hasAvailability = doctor.availabilities != null &&
+        doctor.availabilities!.isNotEmpty;
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (doctor.availabilities != null &&
-              doctor.availabilities!.isNotEmpty) ...[
+          if (hasAvailability) ...[
             Text(
               'operating_hours'.tr(),
               style: AppStyles.s18Bold.withColor(AppColors.stitchPrimaryContainer),
@@ -45,19 +47,28 @@ class DoctorAvailabilitySection extends StatelessWidget {
               ),
             ),
             24.ph,
+          ] else ...[
+            Text(
+              'no_available_time'.tr(),
+              style: AppStyles.s16Medium.withColor(AppColors.textSecondary),
+              textAlign: TextAlign.center,
+            ),
+            16.ph,
           ],
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
-              onPressed: () {
-                context.push(
-                  AppRoutes.bookingSelectDate,
-                  extra: {
-                    'doctor': doctor,
-                    'clinicId': doctor.clinicId ?? '',
-                  },
-                );
-              },
+              onPressed: hasAvailability
+                  ? () {
+                      context.push(
+                        AppRoutes.bookingSelectDate,
+                        extra: {
+                          'doctor': doctor,
+                          'clinicId': doctor.clinicId ?? '',
+                        },
+                      );
+                    }
+                  : null,
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.stitchPrimaryContainer,
                 foregroundColor: AppColors.stitchSurfaceLowest,

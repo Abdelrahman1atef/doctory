@@ -3,6 +3,7 @@ import 'package:doctory/features/booking/cubit/booking_state.dart';
 import 'package:doctory/features/booking/presentation/widgets/booking_error_banner.dart';
 import 'package:doctory/features/booking/presentation/widgets/booking_section_header.dart';
 import 'package:doctory/features/booking/presentation/widgets/booking_summary_card.dart';
+import 'package:doctory/features/booking/presentation/widgets/payment_method_selector.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -41,6 +42,16 @@ class ReviewBookingSection extends StatelessWidget {
                 currency: state.appointment?.currency ?? 'EGP',
                 appointmentType: state.appointmentType.value,
                 patientName: state.patientName,
+              ),
+              const SizedBox(height: 24),
+              BookingSectionHeader(
+                title: 'payment_method'.tr(),
+                subtitle: 'choose_payment_method'.tr(),
+              ),
+              const SizedBox(height: 12),
+              PaymentMethodSelector(
+                selectedMethod: state.paymentMethod,
+                onSelected: cubit.selectPaymentMethod,
               ),
               const SizedBox(height: 24),
               if (state.submissionError != null)

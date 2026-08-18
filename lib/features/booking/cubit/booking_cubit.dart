@@ -4,6 +4,7 @@ import '../../../core/error/failures.dart';
 import '../domain/enums/appointment_type.dart';
 import '../domain/enums/booking_step.dart';
 import '../domain/enums/gender.dart';
+import '../domain/enums/payment_method.dart';
 import '../domain/repositories/booking_repository.dart';
 import '../data/model/create_appointment_request_dto.dart';
 import 'booking_state.dart';
@@ -40,6 +41,7 @@ class BookingCubit extends Cubit<BookingState> {
         complaint: data.complaint,
         notes: data.notes,
         appointment: data.appointment,
+        paymentMethod: data.paymentMethod,
         isSubmitting: data.isSubmitting,
         submissionError: data.submissionError,
       ));
@@ -65,6 +67,7 @@ class BookingCubit extends Cubit<BookingState> {
         complaint: data.complaint,
         notes: data.notes,
         appointment: data.appointment,
+        paymentMethod: data.paymentMethod,
         isSubmitting: data.isSubmitting,
         submissionError: data.submissionError,
       ));
@@ -111,6 +114,26 @@ class BookingCubit extends Cubit<BookingState> {
     ));
   }
 
+  void selectPaymentMethod(PaymentMethod method) {
+    final data = _data;
+    emit(BookingData(
+      doctor: data.doctor,
+      clinicId: data.clinicId,
+      currentStep: data.currentStep,
+      appointmentType: data.appointmentType,
+      paymentMethod: method,
+      selectedDate: data.selectedDate,
+      availableSlots: data.availableSlots,
+      selectedTime: data.selectedTime,
+      patientName: data.patientName,
+      patientAge: data.patientAge,
+      patientGender: data.patientGender,
+      complaint: data.complaint,
+      notes: data.notes,
+      appointment: data.appointment,
+    ));
+  }
+
   Future<void> selectDate(DateTime date) async {
     final data = _data;
     emit(BookingData(
@@ -129,6 +152,7 @@ class BookingCubit extends Cubit<BookingState> {
       complaint: data.complaint,
       notes: data.notes,
       appointment: data.appointment,
+      paymentMethod: data.paymentMethod,
     ));
     await fetchAvailableSlots(date);
   }
@@ -157,6 +181,7 @@ class BookingCubit extends Cubit<BookingState> {
       complaint: data.complaint,
       notes: data.notes,
       appointment: data.appointment,
+      paymentMethod: data.paymentMethod,
     ));
   }
 
@@ -176,6 +201,7 @@ class BookingCubit extends Cubit<BookingState> {
       complaint: data.complaint,
       notes: data.notes,
       appointment: data.appointment,
+      paymentMethod: data.paymentMethod,
     ));
   }
 
@@ -201,6 +227,7 @@ class BookingCubit extends Cubit<BookingState> {
       complaint: complaint ?? data.complaint,
       notes: notes ?? data.notes,
       appointment: data.appointment,
+      paymentMethod: data.paymentMethod,
     ));
   }
 
@@ -235,6 +262,7 @@ class BookingCubit extends Cubit<BookingState> {
       endTime:
           '${data.selectedTime!.endTime.hour.toString().padLeft(2, '0')}:${data.selectedTime!.endTime.minute.toString().padLeft(2, '0')}',
       appointmentType: data.appointmentType.value,
+      paymentMethod: data.paymentMethod.value,
       patientFullName: data.patientName,
       patientAge: data.patientAge,
       patientGender: data.patientGender.value,
@@ -263,6 +291,7 @@ class BookingCubit extends Cubit<BookingState> {
           complaint: current.complaint,
           notes: current.notes,
           appointment: appointment,
+          paymentMethod: current.paymentMethod,
           isSubmitting: false,
           submissionError: null,
         ));
@@ -284,6 +313,7 @@ class BookingCubit extends Cubit<BookingState> {
           complaint: current.complaint,
           notes: current.notes,
           appointment: current.appointment,
+          paymentMethod: current.paymentMethod,
           isSubmitting: false,
           submissionError: failure.userMessage,
         ));

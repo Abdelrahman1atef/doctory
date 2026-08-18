@@ -2,6 +2,7 @@ import 'package:doctory/core/common/models/shared_models.dart';
 import '../domain/enums/appointment_type.dart';
 import '../domain/enums/booking_step.dart';
 import '../domain/enums/gender.dart';
+import '../domain/enums/payment_method.dart';
 import '../data/model/appointment_response_dto.dart';
 
 sealed class BookingState {}
@@ -13,6 +14,7 @@ class BookingData extends BookingState {
   final DoctorModel doctor;
   final String clinicId;
   final AppointmentType appointmentType;
+  final PaymentMethod paymentMethod;
   final DateTime? selectedDate;
   final List<TimeSlotModel>? availableSlots;
   final TimeSlotModel? selectedTime;
@@ -32,6 +34,7 @@ class BookingData extends BookingState {
     this.currentStep = BookingStep.appointmentType,
     this.clinicId = '',
     this.appointmentType = AppointmentType.inPerson,
+    this.paymentMethod = PaymentMethod.wallet,
     this.selectedDate,
     this.availableSlots,
     this.selectedTime,
