@@ -262,7 +262,6 @@ class BookingCubit extends Cubit<BookingState> {
       endTime:
           '${data.selectedTime!.endTime.hour.toString().padLeft(2, '0')}:${data.selectedTime!.endTime.minute.toString().padLeft(2, '0')}',
       appointmentType: data.appointmentType.value,
-      paymentMethod: data.paymentMethod.value,
       patientFullName: data.patientName,
       patientAge: data.patientAge,
       patientGender: data.patientGender.value,
@@ -270,13 +269,70 @@ class BookingCubit extends Cubit<BookingState> {
       chronicDiseases: data.notes.isEmpty ? null : data.notes,
     );
 
+
     final result = await bookingRepo.createAppointment(request);
 
     if (state is! BookingData) return false;
 
-    return result.fold(
-      onSuccess: (appointment) {
+    return await result.fold(
+      onSuccess: (appointment) async {
         final current = _data;
+        
+        if (appointment.status == 4) { // Reserved
+          final paymentResult = await bookingRepo.initiateBookingPayment(
+            reservationId: appointment.id,
+            paymentMethod: current.paymentMethod.serverValue,
+            returnUrl: 'myapp://payment-result', // Placeholder, needs actual deeplink
+          );
+          
+          paymentResult.fold(
+            onSuccess: (paymentData) {
+              final redirectUrl = paymentData['redirectUrl'] as String?;
+              // Emit success with payment URL
+              emit(BookingData(
+                doctor: current.doctor,
+                clinicId: current.clinicId,
+                currentStep: BookingStep.success,
+                appointmentType: current.appointmentType,
+                selectedDate: current.selectedDate,
+                availableSlots: current.availableSlots,
+                selectedTime: current.selectedTime,
+                patientName: current.patientName,
+                patientAge: current.patientAge,
+                patientGender: current.patientGender,
+                complaint: current.complaint,
+                notes: current.notes,
+                appointment: appointment,
+                paymentMethod: current.paymentMethod,
+                isSubmitting: false,
+                submissionError: null,
+                paymentRedirectUrl: redirectUrl,
+              ));
+            },
+            onFailure: (failure) {
+              emit(BookingData(
+                doctor: current.doctor,
+                clinicId: current.clinicId,
+                currentStep: current.currentStep,
+                appointmentType: current.appointmentType,
+                selectedDate: current.selectedDate,
+                availableSlots: current.availableSlots,
+                selectedTime: current.selectedTime,
+                patientName: current.patientName,
+                patientAge: current.patientAge,
+                patientGender: current.patientGender,
+                complaint: current.complaint,
+                notes: current.notes,
+                appointment: appointment,
+                paymentMethod: current.paymentMethod,
+                isSubmitting: false,
+                submissionError: 'Payment initiation failed: ${failure.userMessage}',
+              ));
+            },
+          );
+          return true;
+        }
+
         emit(BookingData(
           doctor: current.doctor,
           clinicId: current.clinicId,
@@ -297,7 +353,7 @@ class BookingCubit extends Cubit<BookingState> {
         ));
         return true;
       },
-      onFailure: (failure) {
+      onFailure: (failure) async {
         final current = _data;
         emit(BookingData(
           doctor: current.doctor,

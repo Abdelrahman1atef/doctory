@@ -1,4 +1,5 @@
 import 'package:doctory/core/common/models/shared_models.dart';
+import 'package:doctory/core/common/widgets/images/abher_image.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
@@ -19,25 +20,28 @@ class ClinicDoctorCardWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        width: 160,
+        // width: 160,
+        constraints: BoxConstraints(
+          minWidth: 160,
+          maxWidth: 200
+        ),
         margin: const EdgeInsets.only(right: 16),
-        padding: const EdgeInsets.all(12),
+        // padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppColors.stitchSurfaceLowest,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(color: AppColors.stitchSurfaceLow),
         ),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          // mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            CircleAvatar(
-              radius: 40,
-              backgroundImage: NetworkImage(doctor.imageUrl?.toImageUrl ?? ''),
-              onBackgroundImageError: (_, _) {},
-              backgroundColor: AppColors.stitchSurfaceLow,
-              child: doctor.imageUrl == null
-                  ? const Icon(Icons.person, color: AppColors.stitchSecondary)
-                  : null,
+            Expanded(
+              child: AbherImage(
+                  doctor.imageUrl?.toImageUrl ?? '',
+                fit: BoxFit.cover,
+                radius: 12,
+              ),
             ),
             12.ph,
             Text(

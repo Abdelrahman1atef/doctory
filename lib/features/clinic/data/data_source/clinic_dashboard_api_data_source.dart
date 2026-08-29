@@ -38,20 +38,22 @@ class ClinicDashboardApiDataSource implements ClinicDashboardDataSource {
   }
 
   @override
-  Future<ApiResult<bool>> acceptBooking(String id) async {
-    return _api.post<bool>(
-      path: ClinicDashboardEndpoints.acceptBooking,
-      body: {'bookingId': id},
-      parser: (json) => json['data'] == true,
+  Future<ApiResult<bool>> acceptBooking(String id, {String? paymentMethod}) async {
+    return _api.put<bool>(
+      path: ClinicDashboardEndpoints.acceptBooking.replaceAll('{id}', id),
+      queryParameters: {
+        if (paymentMethod != null) 'paymentMethod': paymentMethod,
+        'returnUrl': 'myapp://payment-result', // Placeholder
+      },
+      parser: (json) => json['data'] != null,
     );
   }
 
   @override
   Future<ApiResult<bool>> rejectBooking(String id) async {
-    return _api.post<bool>(
-      path: ClinicDashboardEndpoints.rejectBooking,
-      body: {'bookingId': id},
-      parser: (json) => json['data'] == true,
+    return _api.put<bool>(
+      path: ClinicDashboardEndpoints.rejectBooking.replaceAll('{id}', id),
+      parser: (json) => json['data'] != null,
     );
   }
 }

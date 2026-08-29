@@ -101,7 +101,7 @@ class _ClinicImageHeader extends StatelessWidget {
     return Stack(
       children: [
         SizedBox(
-          height: 250,
+          height: 400,
           width: double.infinity,
           child: imageUrl.isNotEmpty
               ? Image.network(

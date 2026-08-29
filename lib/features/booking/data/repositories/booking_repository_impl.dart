@@ -37,4 +37,36 @@ class BookingRepositoryImpl implements BookingRepository {
       return ApiResult.failure(_toFailure(e));
     }
   }
+
+  @override
+  Future<ApiResult<Map<String, dynamic>>> initiateBookingPayment({
+    required String reservationId,
+    required String paymentMethod,
+    required String returnUrl,
+  }) async {
+    try {
+      return await remoteDataSource.initiateBookingPayment(
+        reservationId: reservationId,
+        paymentMethod: paymentMethod,
+        returnUrl: returnUrl,
+      );
+    } catch (e) {
+      return ApiResult.failure(_toFailure(e));
+    }
+  }
+
+  @override
+  Future<ApiResult<AppointmentResponseDto>> verifyPayment({
+    required String paymentId,
+    required String transactionId,
+  }) async {
+    try {
+      return await remoteDataSource.verifyPayment(
+        paymentId: paymentId,
+        transactionId: transactionId,
+      );
+    } catch (e) {
+      return ApiResult.failure(_toFailure(e));
+    }
+  }
 }

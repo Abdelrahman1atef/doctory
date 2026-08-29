@@ -41,7 +41,7 @@ class ClinicDoctorsSection extends StatelessWidget {
         ),
         16.ph,
         SizedBox(
-          height: 180,
+          height: 220,
           child: ListView.builder(
             scrollDirection: Axis.horizontal,
             padding: const EdgeInsets.symmetric(horizontal: 16),

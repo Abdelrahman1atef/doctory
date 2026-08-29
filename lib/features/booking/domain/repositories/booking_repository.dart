@@ -10,4 +10,15 @@ abstract class BookingRepository {
   Future<ApiResult<AppointmentResponseDto>> getAppointment({
     required String appointmentId,
   });
+
+  Future<ApiResult<Map<String, dynamic>>> initiateBookingPayment({
+    required String reservationId,
+    required String paymentMethod,
+    required String returnUrl,
+  });
+
+  Future<ApiResult<AppointmentResponseDto>> verifyPayment({
+    required String paymentId,
+    required String transactionId,
+  });
 }

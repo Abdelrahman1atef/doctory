@@ -25,7 +25,7 @@ class AdsCarouselWidget extends StatefulWidget {
 
 class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
   static const Duration _autoPlayInterval = Duration(seconds: 4);
-  static const double _bannerHeight = 180;
+  static const double _bannerHeight = 300;
 
   late final PageController _pageController;
   Timer? _autoPlayTimer;

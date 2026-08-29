@@ -30,9 +30,9 @@ class ClinicDashboardRepoImpl implements ClinicDashboardRepo {
   }
 
   @override
-  Future<ApiResult<bool>> acceptBooking(String id) async {
+  Future<ApiResult<bool>> acceptBooking(String id, {String? paymentMethod}) async {
     try {
-      return _dataSource.acceptBooking(id);
+      return _dataSource.acceptBooking(id, paymentMethod: paymentMethod);
     } on Exception catch (e) {
       return ApiResult.failure(ErrorHandler.handleException(e));
     }

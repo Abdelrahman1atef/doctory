@@ -5,6 +5,6 @@ import 'package:doctory/features/clinic/data/model/dashboard_stats_model.dart';
 abstract class ClinicDashboardRepo {
   Future<ApiResult<DashboardStatsModel>> getStats();
   Future<ApiResult<List<BookingRequestModel>>> getBookingsByStatus(String status, int page, int perPage);
-  Future<ApiResult<bool>> acceptBooking(String id);
+  Future<ApiResult<bool>> acceptBooking(String id, {String? paymentMethod});
   Future<ApiResult<bool>> rejectBooking(String id);
 }
