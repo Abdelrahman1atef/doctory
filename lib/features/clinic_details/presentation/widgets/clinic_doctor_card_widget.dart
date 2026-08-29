@@ -26,7 +26,7 @@ class ClinicDoctorCardWidget extends StatelessWidget {
           maxWidth: 200
         ),
         margin: const EdgeInsets.only(right: 16),
-        // padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
           color: AppColors.stitchSurfaceLowest,
           borderRadius: BorderRadius.circular(16),
