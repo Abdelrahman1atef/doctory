@@ -28,7 +28,6 @@ class BookingData extends BookingState {
   final AppointmentResponseDto? appointment;
   final bool isSubmitting;
   final String? submissionError;
-  final String? paymentRedirectUrl;
 
   BookingData({
     required this.doctor,
@@ -49,6 +48,5 @@ class BookingData extends BookingState {
     this.slotsError,
     this.isSubmitting = false,
     this.submissionError,
-    this.paymentRedirectUrl,
   });
 }

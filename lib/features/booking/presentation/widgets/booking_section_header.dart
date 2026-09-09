@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 
 class BookingSectionHeader extends StatelessWidget {
   final String title;
-  final String subtitle;
+
+  /// Optional: omitted when the section body already explains itself.
+  final String? subtitle;
 
   const BookingSectionHeader({
     super.key,
     required this.title,
-    required this.subtitle,
+    this.subtitle,
   });
 
   @override
@@ -21,11 +23,13 @@ class BookingSectionHeader extends StatelessWidget {
           title,
           style: AppStyles.s18Bold.withColor(AppColors.stitchPrimaryContainer),
         ),
-        const SizedBox(height: 6),
-        Text(
-          subtitle,
-          style: AppStyles.s14Medium.withColor(AppColors.grey500),
-        ),
+        if (subtitle != null) ...[
+          const SizedBox(height: 6),
+          Text(
+            subtitle!,
+            style: AppStyles.s14Medium.withColor(AppColors.grey500),
+          ),
+        ],
       ],
     );
   }

@@ -8,12 +8,14 @@ class AppointmentActionBarWidget extends StatelessWidget {
   final VoidCallback? onPayTap;
   final VoidCallback? onCancelTap;
   final bool isCancelling;
+  final bool isInitiatingPayment;
 
   const AppointmentActionBarWidget({
     super.key,
     this.onPayTap,
     this.onCancelTap,
     this.isCancelling = false,
+    this.isInitiatingPayment = false,
   });
 
   bool get _canPay => onPayTap != null;
@@ -43,8 +45,17 @@ class AppointmentActionBarWidget extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: onPayTap,
-                icon: const Icon(Icons.payment),
+                onPressed: isInitiatingPayment ? null : onPayTap,
+                icon: isInitiatingPayment
+                    ? const SizedBox(
+                        width: 18,
+                        height: 18,
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.stitchSurfaceLowest,
+                        ),
+                      )
+                    : const Icon(Icons.payment),
                 label: Text('pay_now'.tr()),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.stitchPrimaryContainer,

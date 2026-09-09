@@ -1,4 +1,5 @@
 import 'package:doctory/core/common/models/shared_models.dart';
+import 'package:doctory/core/enums/week_day.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
@@ -165,7 +166,7 @@ class ClinicInfoSection extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    e.key,
+                    WeekDay.labelKeyFor(e.key).tr(),
                     style: AppStyles.s14Medium
                         .withColor(AppColors.stitchSecondary),
                   ),

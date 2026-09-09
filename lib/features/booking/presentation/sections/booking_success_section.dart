@@ -4,8 +4,6 @@ import 'package:doctory/features/booking/cubit/booking_cubit.dart';
 import 'package:doctory/features/booking/cubit/booking_state.dart';
 import 'package:doctory/features/booking/domain/enums/booking_step.dart';
 import 'package:doctory/features/booking/presentation/widgets/booking_success_card.dart';
-import 'package:doctory/features/booking/presentation/widgets/booking_action_button.dart';
-import 'package:doctory/core/common/widgets/layout/abher_payment_webview.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -50,28 +48,6 @@ class BookingSuccessSection extends StatelessWidget {
                   textAlign: TextAlign.center,
                 ),
               ),
-              if (state.paymentRedirectUrl != null) ...[
-                const SizedBox(height: 24),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
-                  child: BookingActionButton(
-                    label: 'pay_now'.tr(),
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => AbherPaymentWebView(
-                            url: state.paymentRedirectUrl!,
-                            onPaymentResult: (success) {
-                              // Optional: handle result, although webhook is truth
-                              // You could poll D status endpoint here
-                            },
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ],
             ],
           ),
         );

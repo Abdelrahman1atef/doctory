@@ -1,3 +1,5 @@
+import 'package:doctory/core/enums/week_day.dart';
+
 import 'time_slot_model.dart';
 
 class DoctorAvailabilityDto {
@@ -26,24 +28,8 @@ class DoctorAvailabilityDto {
   }
 
   /// Translation key for the localized day name (e.g. 'sunday').
-  /// Falls back to the raw dayOfWeek value when it is not a valid 0-6 index.
-  String get dayLabelKey {
-    final index = int.tryParse(dayOfWeek);
-    if (index != null && index >= 0 && index < _dayKeys.length) {
-      return _dayKeys[index];
-    }
-    return dayOfWeek;
-  }
-
-  static const _dayKeys = [
-    'sunday',
-    'monday',
-    'tuesday',
-    'wednesday',
-    'thursday',
-    'friday',
-    'saturday',
-  ];
+  /// Falls back to the raw dayOfWeek value when it is not a recognized day.
+  String get dayLabelKey => WeekDay.labelKeyFor(dayOfWeek);
 
   /// Generates time slots for [date] based on this availability entry.
   /// Returns an empty list when [date] is not covered by this entry.

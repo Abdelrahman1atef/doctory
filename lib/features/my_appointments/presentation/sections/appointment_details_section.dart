@@ -6,11 +6,13 @@ import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
 import 'package:doctory/features/booking/domain/enums/appointment_status.dart';
 import 'package:doctory/features/my_appointments/cubit/my_appointments_cubit.dart';
+import 'package:doctory/features/my_appointments/domain/pending_payment.dart';
 import 'package:doctory/features/my_appointments/cubit/my_appointments_state.dart';
 import 'package:doctory/features/my_appointments/presentation/sections/appointment_details_appbar_section.dart';
 import 'package:doctory/features/my_appointments/presentation/widgets/appointment_action_bar_widget.dart';
 import 'package:doctory/features/my_appointments/presentation/widgets/appointment_detail_card.dart';
 import 'package:doctory/features/my_appointments/presentation/widgets/cancel_appointment_dialog.dart';
+import 'package:doctory/features/my_appointments/presentation/widgets/payment_method_sheet.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -37,6 +39,8 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
 
   AppointmentResponseDto? _lastAppointment;
   bool _cancelling = false;
+  bool _initiatingPayment = false;
+  bool _verifyingPayment = false;
   DateTime? _lastBackPress;
 
   @override
@@ -47,6 +51,33 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
           .read<MyAppointmentsCubit>()
           .loadAppointmentById(widget.appointmentId!);
     }
+    // Returning from the gateway: confirm the payment with our own server
+    // rather than trusting the redirect's success flag.
+    if (PendingPayment.hasPaymentToVerify) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        _verifyReturnedPayment();
+      });
+    }
+  }
+
+  Future<void> _verifyReturnedPayment() async {
+    final paymentId = PendingPayment.consumePaymentId();
+    if (paymentId == null || paymentId.isEmpty) return;
+
+    setState(() => _verifyingPayment = true);
+    final paid = await context
+        .read<MyAppointmentsCubit>()
+        .verifyPayment(paymentId: paymentId);
+
+    if (!mounted) return;
+    setState(() => _verifyingPayment = false);
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text((paid ? 'payment_successful' : 'payment_failed').tr()),
+        backgroundColor: paid ? AppColors.success : AppColors.error,
+      ),
+    );
   }
 
   AppointmentResponseDto? get _appointment {
@@ -72,13 +103,13 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
     }
   }
 
+  /// The patient can only pay once the clinic accepted the request, and only
+  /// while it is still unpaid. The payment itself is created on tap.
   bool get _canPay {
     final apt = _appointment;
     if (apt == null) return false;
-    final url = apt.paymobRedirectUrl ?? widget.paymentUrl;
     return apt.appointmentStatus == AppointmentStatus.accepted &&
-        url != null &&
-        url.isNotEmpty;
+        apt.paidAt == null;
   }
 
   void _popOnce() {
@@ -177,6 +208,7 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
                     ? () => _confirmCancel(context, apt)
                     : null,
                 isCancelling: _cancelling,
+                isInitiatingPayment: _initiatingPayment || _verifyingPayment,
               ),
           ],
         );
@@ -188,8 +220,26 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
     BuildContext context,
     AppointmentResponseDto apt,
   ) async {
-    final url = apt.paymobRedirectUrl ?? widget.paymentUrl;
+    final method = await showPaymentMethodSheet(context);
+    if (method == null || !context.mounted) return;
+
+    final cubit = context.read<MyAppointmentsCubit>();
+
+    setState(() => _initiatingPayment = true);
+    final url = apt.paymobRedirectUrl ??
+        widget.paymentUrl ??
+        await cubit.initiatePayment(
+          appointmentId: apt.id,
+          paymentMethod: method,
+        );
+    if (!context.mounted) return;
+    setState(() => _initiatingPayment = false);
+
     if (url == null || url.isEmpty) return;
+
+    // The gateway's return URL cannot carry our appointment id, so the deep
+    // link handler picks it up from here.
+    PendingPayment.start(apt.id);
 
     var paymentSuccess = false;
 
@@ -205,6 +255,8 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
       ),
     );
 
+    PendingPayment.clear();
+
     if (!context.mounted) return;
 
     if (paymentSuccess) {
@@ -214,6 +266,8 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
           backgroundColor: AppColors.success,
         ),
       );
+      await _refresh();
+      return;
     }
     context.pop();
   }

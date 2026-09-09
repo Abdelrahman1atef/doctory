@@ -2,12 +2,14 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:doctory/core/error/failures.dart';
 import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
 import 'package:doctory/features/booking/domain/enums/appointment_status.dart';
+import 'package:doctory/features/booking/domain/enums/payment_method.dart';
 import '../data/data_source/my_appointments_remote_data_source.dart';
 import 'my_appointments_state.dart';
 
 class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
   final MyAppointmentsRemoteDataSource _remoteDataSource;
   static const int _pageSize = 10;
+  static const String _paymentReturnUrl = 'doctory://payment-result';
   AppointmentStatus? _currentStatusFilter;
 
   MyAppointmentsCubit({
@@ -125,6 +127,56 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
           isLoadingMore: false,
           statusFilter: _currentStatusFilter,
         ));
+      },
+    );
+  }
+
+  /// Creates the payment for an accepted appointment and returns the gateway
+  /// redirect URL, or null when the request failed (an error state is emitted).
+  ///
+  /// Payment only happens here, after the clinic accepted the request — the
+  /// booking flow never charges the patient.
+  Future<String?> initiatePayment({
+    required String appointmentId,
+    required PaymentMethod paymentMethod,
+    String returnUrl = _paymentReturnUrl,
+  }) async {
+    final result = await _remoteDataSource.initiatePayment(
+      appointmentId: appointmentId,
+      paymentMethod: paymentMethod.serverValue,
+      returnUrl: returnUrl,
+    );
+
+    return result.fold(
+      onSuccess: (data) =>
+          (data['redirectUrl'] ?? data['paymentUrl'])?.toString(),
+      onFailure: (failure) {
+        emit(MyAppointmentsError(failure.userMessage));
+        return null;
+      },
+    );
+  }
+
+  /// Confirms a returned payment with the server and emits the refreshed
+  /// appointment. Returns true when the appointment came back paid.
+  Future<bool> verifyPayment({
+    required String paymentId,
+    String? transactionId,
+  }) async {
+    final result = await _remoteDataSource.verifyPayment(
+      paymentId: paymentId,
+      transactionId: transactionId,
+    );
+
+    return result.fold(
+      onSuccess: (appointment) {
+        emit(MyAppointmentsDetailsLoaded(appointment));
+        return appointment.paidAt != null ||
+            appointment.appointmentStatus == AppointmentStatus.confirmed;
+      },
+      onFailure: (failure) {
+        emit(MyAppointmentsError(failure.userMessage));
+        return false;
       },
     );
   }

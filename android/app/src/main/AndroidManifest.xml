@@ -55,6 +55,14 @@
                 <data android:pathPrefix="/appointments/" />
                 <data android:pathPrefix="/chat/" />
             </intent-filter>
+            <!-- Custom scheme, used for the Paymob return URL
+                 (doctory://payment-result) after the user pays. -->
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="doctory" />
+            </intent-filter>
         </activity>
 
         <activity

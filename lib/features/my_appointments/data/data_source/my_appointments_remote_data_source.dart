@@ -17,6 +17,24 @@ abstract class MyAppointmentsRemoteDataSource {
     required String id,
     required String cancellationReason,
   });
+
+  /// Creates the payment for an accepted appointment and returns the gateway
+  /// payload, which carries the `redirectUrl` the webview opens.
+  Future<ApiResult<Map<String, dynamic>>> initiatePayment({
+    required String appointmentId,
+    required String paymentMethod,
+    required String returnUrl,
+  });
+
+  /// Confirms a payment with the server after the gateway returns, and yields
+  /// the refreshed appointment.
+  ///
+  /// [transactionId] is optional: the gateway's return URL carries only the
+  /// payment id, so it is omitted from the request when unknown.
+  Future<ApiResult<AppointmentResponseDto>> verifyPayment({
+    required String paymentId,
+    String? transactionId,
+  });
 }
 
 class MyAppointmentsRemoteDataSourceImpl
@@ -62,6 +80,39 @@ class MyAppointmentsRemoteDataSourceImpl
       body: {
         'cancellationReason': cancellationReason,
       },
+    );
+  }
+
+  @override
+  Future<ApiResult<Map<String, dynamic>>> initiatePayment({
+    required String appointmentId,
+    required String paymentMethod,
+    required String returnUrl,
+  }) async {
+    return apiConsumer.post<Map<String, dynamic>>(
+      path: MyAppointmentsEndpoints.payments,
+      body: {
+        'reservationId': appointmentId,
+        'paymentMethod': paymentMethod,
+        'returnUrl': returnUrl,
+      },
+      parser: (json) => (json['data'] ?? json) as Map<String, dynamic>,
+    );
+  }
+
+  @override
+  Future<ApiResult<AppointmentResponseDto>> verifyPayment({
+    required String paymentId,
+    String? transactionId,
+  }) async {
+    return apiConsumer.post<AppointmentResponseDto>(
+      path: MyAppointmentsEndpoints.verifyPayment,
+      body: {
+        'paymentId': paymentId,
+        if (transactionId != null && transactionId.isNotEmpty)
+          'transactionId': transactionId,
+      },
+      parser: (json) => AppointmentResponseDto.fromJson(json['data'] ?? json),
     );
   }
 }

@@ -1,7 +1,7 @@
 name: doctory
 description: "A new Flutter project for Doctory."
 publish_to: "none"
-version: 1.0.2+2
+version: 1.0.3+3
 
 environment:
   sdk: ">=3.9.0 <4.0.0"
@@ -92,7 +92,6 @@ dev_dependencies:
   mocktail: ^1.0.4
   bloc_test: ^9.1.7
   build_runner: ^2.7.1
-  flutter_native_splash: ^2.4.0 # Added for native splash screen
   flutter_lints: ^6.0.0
   hardcoded_strings_lint: ^1.0.1
 flutter:
@@ -112,12 +111,3 @@ flutter:
         - asset: assets/fonts/Bukra-Regular.ttf
         - asset: assets/fonts/Bukra-Bold.ttf
           weight: 700
-
-
-flutter_native_splash:
-  color: "#FFFFFF"
-  image: assets/images/app_logo.png
-  android: true
-  ios: true
-  web: false # Assuming not needed for web, can be changed if required
-
