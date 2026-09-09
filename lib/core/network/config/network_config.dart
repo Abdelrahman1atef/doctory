@@ -12,9 +12,9 @@ class NetworkConfig {
 
   const NetworkConfig({
     required this.baseUrl,
-    this.connectTimeout = const Duration(seconds: 15),
-    this.receiveTimeout = const Duration(seconds: 15),
-    this.sendTimeout = const Duration(seconds: 15),
+    this.connectTimeout = const Duration(seconds: 30),
+    this.receiveTimeout = const Duration(seconds: 30),
+    this.sendTimeout = const Duration(seconds: 30),
     this.defaultHeaders = const {
       'Accept': 'application/json',
       'Content-Type': 'application/json',

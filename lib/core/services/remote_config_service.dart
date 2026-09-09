@@ -21,7 +21,7 @@ class RemoteConfigService {
         "ios_store_link": "",
         "force_update": false,
         "SHOW_FACEBOOK_AUTH": false,
-        "SHOW_GOOGLE_AUTH": false,
+        "SHOW_GOOGLE_AUTH": true,
         "SHOW_MAP_DIRECTIONS_FAB": false,
         "FRONTEND_URL": "https://doctory.runasp.net/",
       });
