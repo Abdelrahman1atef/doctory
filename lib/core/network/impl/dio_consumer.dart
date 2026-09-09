@@ -17,6 +17,10 @@ export 'dio_consumer_extensions.dart';
 
 /// Comprehensive Dio implementation of ApiConsumer
 class DioConsumer implements ApiConsumer {
+  /// File transfers are given their own budget: the global timeouts are sized
+  /// for small JSON responses and abort multi-megabyte uploads mid-flight.
+  static const Duration _uploadTimeout = Duration(minutes: 2);
+
   late final Dio _dio;
   final NetworkConfig config;
   final AuthInterceptor authInterceptor;
@@ -282,7 +286,13 @@ class DioConsumer implements ApiConsumer {
         path,
         data: FormData.fromMap(data),
         queryParameters: queryParameters,
-        options: Options(headers: headers),
+        // Uploads move far more bytes than a JSON call, so they get their own
+        // timeouts instead of the global ones tuned for small responses.
+        options: Options(
+          headers: headers,
+          sendTimeout: _uploadTimeout,
+          receiveTimeout: _uploadTimeout,
+        ),
         onSendProgress: onProgress,
       ),
       parser: parser,

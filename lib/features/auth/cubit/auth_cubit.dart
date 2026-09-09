@@ -62,6 +62,44 @@ class AuthCubit extends Cubit<AuthStates> {
     );
   }
 
+  /// Uploads every non-null file concurrently and returns the server file names
+  /// keyed by the same keys as [files]. Each entry keeps its own `place`, which a
+  /// single batched upload call could not express.
+  ///
+  /// Returns null if any upload failed (an [AuthErrorState] is emitted for the
+  /// first failure).
+  Future<Map<String, String?>?> _uploadFilesConcurrently(
+    Map<String, ({File? file, int place})> files,
+  ) async {
+    final pending = files.entries.where((e) => e.value.file != null).toList();
+    if (pending.isEmpty) return const {};
+
+    final results = await Future.wait(
+      pending.map(
+        (e) => _fileUploadService.uploadAttachment(
+          file: e.value.file!,
+          fileType: 0,
+          place: e.value.place,
+        ),
+      ),
+    );
+
+    final uploaded = <String, String?>{};
+    Failure? firstFailure;
+    for (var i = 0; i < pending.length; i++) {
+      results[i].fold(
+        onSuccess: (name) => uploaded[pending[i].key] = name,
+        onFailure: (failure) => firstFailure ??= failure,
+      );
+    }
+
+    if (firstFailure != null) {
+      emit(AuthErrorState(firstFailure!.userMessage, firstFailure!.code ?? ''));
+      return null;
+    }
+    return uploaded;
+  }
+
   /// Uploads the clinic logo and returns the server file name, or null on failure.
   Future<String?> uploadClinicImage(File file) async {
     emit(AuthLoadingState());
@@ -78,32 +116,20 @@ class AuthCubit extends Cubit<AuthStates> {
   }) async {
     emit(AuthLoadingState());
 
-    String? doctorImage;
-    String? professionalPracticeCardImage;
-    String? unionIdImage;
-    String? taxCardImage;
-    String? commercialRegisterImage;
+    final uploaded = await _uploadFilesConcurrently({
+      'doctorImage': (file: doctorImageFile, place: 1),
+      'professionalPracticeCardImage': (file: professionalPracticeCardFile, place: 5),
+      'unionIdImage': (file: unionIdFile, place: 6),
+      'taxCardImage': (file: taxCardFile, place: 7),
+      'commercialRegisterImage': (file: commercialRegisterFile, place: 8),
+    });
+    if (uploaded == null) return;
 
-    if (doctorImageFile != null) {
-      doctorImage = await _uploadFile(doctorImageFile, 0, 1);
-      if (state is AuthErrorState) return;
-    }
-    if (professionalPracticeCardFile != null) {
-      professionalPracticeCardImage = await _uploadFile(professionalPracticeCardFile, 0, 5);
-      if (state is AuthErrorState) return;
-    }
-    if (unionIdFile != null) {
-      unionIdImage = await _uploadFile(unionIdFile, 0, 6);
-      if (state is AuthErrorState) return;
-    }
-    if (taxCardFile != null) {
-      taxCardImage = await _uploadFile(taxCardFile, 0, 7);
-      if (state is AuthErrorState) return;
-    }
-    if (commercialRegisterFile != null) {
-      commercialRegisterImage = await _uploadFile(commercialRegisterFile, 0, 8);
-      if (state is AuthErrorState) return;
-    }
+    final doctorImage = uploaded['doctorImage'];
+    final professionalPracticeCardImage = uploaded['professionalPracticeCardImage'];
+    final unionIdImage = uploaded['unionIdImage'];
+    final taxCardImage = uploaded['taxCardImage'];
+    final commercialRegisterImage = uploaded['commercialRegisterImage'];
 
     final updatedRequest = SignupRequest(
       fullName: request.fullName,
