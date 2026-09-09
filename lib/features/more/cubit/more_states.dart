@@ -1,4 +1,4 @@
-abstract class MoreStates {
+sealed class MoreStates {
   const MoreStates();
 }
 

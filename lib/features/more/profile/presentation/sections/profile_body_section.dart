@@ -2,12 +2,11 @@ import 'dart:io';
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/services/alerts.dart';
 import 'package:doctory/core/services/media/my_media.dart';
-import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/auth/data/model/user_model.dart';
 import 'package:doctory/features/more/profile/cubit/profile_cubit.dart';
 import 'package:doctory/features/more/profile/cubit/profile_states.dart';
-import 'package:doctory/features/more/profile/presentation/widgets/profile_form_widget.dart';
-import 'package:doctory/features/more/profile/presentation/widgets/profile_image_widget.dart';
+import 'package:doctory/core/common/widgets/error/app_error_widget.dart';
+import 'package:doctory/features/more/profile/presentation/widgets/profile_form_layout_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
@@ -141,75 +140,72 @@ class _ProfileBodySectionState extends State<ProfileBodySection> {
     _onFieldChanged();
   }
 
+  void _prefillFrom(UserModel user) {
+    _loadedUser = user;
+    _nameController.text = user.fullName;
+    _phoneController.text = user.phoneNumber ?? '';
+    _selectedGender = _getGenderString(user.gender);
+
+    final String? birthDate = user.birthDate;
+    if (birthDate != null && birthDate.contains('-')) {
+      final List<String> parts = birthDate.split('-');
+      if (parts.length == 3) {
+        _yearController.text = parts[0];
+        _monthController.text = parts[1];
+        _dayController.text = parts[2];
+      }
+    }
+    _isSaveEnabled = false;
+  }
+
+  Widget _form(UserModel? user) => ProfileFormLayoutWidget(
+    imageUrl: user?.profilePictureUrl,
+    pickedImage: _pickedImage,
+    onPickImage: _onPickImage,
+    formKey: _formKey,
+    nameController: _nameController,
+    phoneController: _phoneController,
+    dayController: _dayController,
+    monthController: _monthController,
+    yearController: _yearController,
+    selectedGender: _selectedGender,
+    onGenderChanged: _onGenderChanged,
+    onSubmit: _onSubmit,
+    isSaveEnabled: _isSaveEnabled,
+  );
+
   @override
   Widget build(BuildContext context) {
     return BlocConsumer<ProfileCubit, ProfileStates>(
       listener: (context, state) {
-        if (state is ProfileUpdateLoading) {
-          SmartDialog.showLoading();
-        } else {
-          SmartDialog.dismiss();
-        }
-
-        if (state is ProfileUpdateSuccess) {
-          Alerts.snack(text: state.message.tr(), state: SnackState.success);
-        } else if (state is ProfileUpdateError) {
-          Alerts.snack(text: state.message, state: SnackState.failed);
-        }
-
-        if (state is ProfileLoadSuccess) {
-          _loadedUser = state.user;
-          _nameController.text = state.user.fullName;
-          _phoneController.text = state.user.phoneNumber ?? '';
-          _selectedGender = _getGenderString(state.user.gender);
-
-          if (state.user.birthDate != null && state.user.birthDate!.contains('-')) {
-            final parts = state.user.birthDate!.split('-');
-            if (parts.length == 3) {
-              _yearController.text = parts[0];
-              _monthController.text = parts[1];
-              _dayController.text = parts[2];
-            }
-          }
-          _isSaveEnabled = false;
+        switch (state) {
+          case ProfileUpdateLoading():
+            SmartDialog.showLoading();
+          case ProfileUpdateSuccess(:final message):
+            SmartDialog.dismiss();
+            Alerts.snack(text: message.tr(), state: SnackState.success);
+          case ProfileUpdateError(:final message):
+            SmartDialog.dismiss();
+            Alerts.snack(text: message, state: SnackState.failed);
+          case ProfileLoadSuccess(:final user):
+            SmartDialog.dismiss();
+            _prefillFrom(user);
+          case ProfileInitial() || ProfileLoading() || ProfileLoadError():
+            SmartDialog.dismiss();
         }
       },
-      builder: (context, state) {
-        if (state is ProfileLoading) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (state is ProfileLoadError) {
-          return Center(child: Text(state.message));
-        }
-
-        final user = (state is ProfileLoadSuccess) ? state.user : null;
-
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            children: [
-              ProfileImageWidget(
-                imageUrl: user?.profilePictureUrl,
-                localImage: _pickedImage,
-                onPickImage: _onPickImage,
-              ),
-              32.ph,
-              ProfileFormWidget(
-                formKey: _formKey,
-                nameController: _nameController,
-                phoneController: _phoneController,
-                dayController: _dayController,
-                monthController: _monthController,
-                yearController: _yearController,
-                selectedGender: _selectedGender,
-                onGenderChanged: _onGenderChanged,
-                onSubmit: _onSubmit,
-                isSaveEnabled: _isSaveEnabled,
-              ),
-            ],
-          ),
-        );
+      builder: (context, state) => switch (state) {
+        ProfileLoading() => const Center(child: CircularProgressIndicator()),
+        ProfileLoadError(:final message) => AppErrorWidget(
+          message: message,
+          onRetry: context.read<ProfileCubit>().getProfile,
+        ),
+        ProfileLoadSuccess(:final user) => _form(user),
+        ProfileInitial() ||
+        ProfileUpdateLoading() ||
+        ProfileUpdateSuccess() ||
+        ProfileUpdateError() =>
+          _form(_loadedUser),
       },
     );
   }

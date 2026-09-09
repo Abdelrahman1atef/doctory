@@ -1,6 +1,7 @@
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/features/community/presentation/views/community_view.dart';
+import 'package:doctory/features/more/cubit/more_cubit.dart';
 import 'package:doctory/features/more/presentation/views/more_view.dart';
 import 'package:doctory/features/more/profile/cubit/profile_cubit.dart';
 import 'package:doctory/features/more/profile/presentation/views/profile_view.dart';
@@ -11,7 +12,10 @@ class MoreRouter {
   static final List<GoRoute> routes = [
     GoRoute(
       path: AppRoutes.more,
-      builder: (context, state) => const MoreView(),
+      builder: (context, state) => BlocProvider(
+        create: (_) => sl<MoreCubit>(),
+        child: const MoreView(),
+      ),
     ),
     GoRoute(
       path: AppRoutes.profile,
