@@ -1,6 +1,6 @@
 import 'package:doctory/core/theme/app_colors.dart';
+import 'package:doctory/features/auth/presentation/sections/clinic_complete_profile_section.dart';
 import 'package:flutter/material.dart';
-import '../sections/clinic_complete_profile_section.dart';
 
 class ClinicCompleteProfileView extends StatelessWidget {
   final bool isSetupMode;
@@ -11,9 +11,7 @@ class ClinicCompleteProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.stitchSurface,
-      body: SafeArea(
-        child: ClinicCompleteProfileSection(isSetupMode: isSetupMode),
-      ),
+      body: ClinicCompleteProfileSection(isSetupMode: isSetupMode),
     );
   }
 }

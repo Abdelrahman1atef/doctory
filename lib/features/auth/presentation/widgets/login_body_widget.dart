@@ -12,23 +12,29 @@ class LoginBodyWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Edge-to-edge: this screen has no header widget above it, so it adds
+    // the status-bar inset itself.
+    final double topInset = MediaQuery.paddingOf(context).top;
     return AuthBackgroundWidget(
-      child: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              40.ph,
-              header,
-              80.ph,
-              FadeInUp(
-                duration: const Duration(milliseconds: 600),
-                delay: const Duration(milliseconds: 200),
-                child: form,
-              ),
-            ],
-          ),
+      child: SingleChildScrollView(
+        padding: EdgeInsets.only(
+          left: 24,
+          right: 24,
+          top: 40 + topInset,
+          bottom: context.bottomPadding,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            40.ph,
+            header,
+            80.ph,
+            FadeInUp(
+              duration: const Duration(milliseconds: 600),
+              delay: const Duration(milliseconds: 200),
+              child: form,
+            ),
+          ],
         ),
       ),
     );

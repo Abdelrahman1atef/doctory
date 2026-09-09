@@ -143,14 +143,14 @@ class _ProfileFormSectionState extends State<ProfileFormSection> {
     }
   }
 
-  void _goHome() {
-    LocationHelper.isPermissionGranted().then((isGranted) {
-      if (isGranted && context.mounted) {
-        context.go(AppRoutes.home);
-      } else if (context.mounted) {
-        context.push(AppRoutes.locationPermission);
-      }
-    });
+  Future<void> _goHome() async {
+    final bool isGranted = await LocationHelper.isPermissionGranted();
+    if (!mounted) return;
+    if (isGranted) {
+      context.go(AppRoutes.home);
+    } else {
+      context.push(AppRoutes.locationPermission);
+    }
   }
 
   @override

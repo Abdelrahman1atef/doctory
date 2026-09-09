@@ -55,7 +55,7 @@ class _OtpInputSectionState extends State<OtpInputSection> {
     }
   }
 
-  void _resolveAndNavigate() {
+  Future<void> _resolveAndNavigate() async {
     if (UserSession.currentRole == UserRole.superAdmin) {
       context.go(AdminRoutes.admin);
       return;
@@ -79,20 +79,18 @@ class _OtpInputSectionState extends State<OtpInputSection> {
       destination = AppRoutes.clinicDashboard;
     }
 
-    if (destination == AppRoutes.home || destination == AppRoutes.clinicDashboard) {
-      LocationHelper.isPermissionGranted().then((isGranted) {
-        if (context.mounted) {
-          if (isGranted) {
-            context.go(destination, extra: extra);
-          } else {
-            context.go(AppRoutes.locationPermission);
-          }
-        }
-      });
+    if (destination != AppRoutes.home &&
+        destination != AppRoutes.clinicDashboard) {
+      if (mounted) context.go(destination, extra: extra);
+      return;
+    }
+
+    final bool isGranted = await LocationHelper.isPermissionGranted();
+    if (!mounted) return;
+    if (isGranted) {
+      context.go(destination, extra: extra);
     } else {
-      if (context.mounted) {
-        context.go(destination, extra: extra);
-      }
+      context.go(AppRoutes.locationPermission);
     }
   }
 
