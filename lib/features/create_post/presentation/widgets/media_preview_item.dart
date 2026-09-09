@@ -29,7 +29,7 @@ class MediaPreviewItem extends StatelessWidget {
           Container(
             width: width,
             height: height,
-            decoration: BoxDecoration(color: AppColors.grey100),
+            decoration: const BoxDecoration(color: AppColors.grey100),
             child: media.type == MediaType.image
                 ? Stack(
                     fit: StackFit.expand,

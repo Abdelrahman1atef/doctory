@@ -190,6 +190,21 @@ class AppColors {
   static const Color black30 = Color(0x4D000000);
   static const Color black50 = Color(0x80000000);
 
+  // ==================== FEATURE ROLE TOKENS ====================
+  /// Ad banner fallback gradient (shown while the artwork loads / is missing).
+  static const Color adBannerGradientStart = Color(0xFF2E7D6B);
+  static const Color adBannerGradientEnd = Color(0xFF05352A);
+
+  /// Time-of-day accents for the booking slot groups.
+  static const Color timeOfDayMorning = Color(0xFFFFA726);
+  static const Color timeOfDayAfternoon = Color(0xFF42A5F5);
+  static const Color timeOfDayEvening = Color(0xFF7E57C2);
+
+  /// Map marker fills.
+  static const Color markerSelected = Color(0xFF178229);
+  static const Color markerRegistered = Color(0xFF076453);
+  static const Color markerUnregistered = Color(0xFF2196F3);
+
   // ==================== DYNAMIC ACCESSORS (WITH CONTEXT) ====================
 
   static Color primaryOf(BuildContext context) =>

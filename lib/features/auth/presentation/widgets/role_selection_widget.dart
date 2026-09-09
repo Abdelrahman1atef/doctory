@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/extensions.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class RoleSelectionWidget extends StatelessWidget {
   final String? selectedRole;
@@ -19,16 +20,16 @@ class RoleSelectionWidget extends StatelessWidget {
       children: [
         _RoleCard(
           icon: Icons.person_outline,
-          title: context.l10n('user_role'),
-          description: context.l10n('user_role_desc'),
+          title: 'user_role'.tr(),
+          description: 'user_role_desc'.tr(),
           isSelected: selectedRole == 'patient',
           onTap: () => onRoleSelected('patient'),
         ),
         const SizedBox(height: 16),
         _RoleCard(
           icon: Icons.medical_services_outlined,
-          title: context.l10n('doctor_role'),
-          description: context.l10n('doctor_role_desc'),
+          title: 'doctor_role'.tr(),
+          description: 'doctor_role_desc'.tr(),
           isSelected: selectedRole == 'doctor',
           onTap: () => onRoleSelected('doctor'),
         ),
@@ -104,7 +105,7 @@ class _RoleCard extends StatelessWidget {
               ),
             ),
             if (isSelected)
-              Icon(
+              const Icon(
                 Icons.check_circle,
                 color: AppColors.stitchPrimary,
                 size: 24,

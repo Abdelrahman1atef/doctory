@@ -28,12 +28,12 @@ class MapHomeBodyWidget extends StatelessWidget {
           key: const ValueKey('map_section_subtree'),
           child: mapSection,
         ),
-        if (bottomSheetSection != null) bottomSheetSection!,
+        ?bottomSheetSection,
         searchSection,
-        if (loadingOverlay != null) loadingOverlay!,
-        if (errorOverlay != null) errorOverlay!,
-        if (emptyOverlay != null) emptyOverlay!,
-        if (locationBanner != null) locationBanner!,
+        ?loadingOverlay,
+        ?errorOverlay,
+        ?emptyOverlay,
+        ?locationBanner,
       ],
     );
   }

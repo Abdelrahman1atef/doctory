@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:doctory/core/theme/app_colors.dart';
 
 class AdsBannerBackgroundWidget extends StatelessWidget {
   final String? imageUrl;
@@ -35,8 +36,8 @@ class _AdBannerFillWidget extends StatelessWidget {
     begin: Alignment.topLeft,
     end: Alignment.bottomRight,
     colors: [
-      Color(0xFF2E7D6B),
-      Color(0xFF05352A),
+      AppColors.adBannerGradientStart,
+      AppColors.adBannerGradientEnd,
     ],
   );
 

@@ -54,7 +54,7 @@ class PostCardWidget extends StatelessWidget {
                   onPostTapped: onPostTapped ?? onCommentTapped,
                   onReactionsTapped: onReactionsTapped,
                 ),
-                Divider(height: 24, thickness: 1, color: AppColors.grey100),
+                const Divider(height: 24, thickness: 1, color: AppColors.grey100),
                 PostCardActions(
                   post: post,
                   onReactionTapped: onReactionTapped,

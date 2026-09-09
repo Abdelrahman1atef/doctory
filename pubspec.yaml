@@ -85,6 +85,7 @@ dependencies:
   google_maps_flutter_platform_interface: ^2.15.0
   audio_waveforms: ^2.0.2
 
+  package_info_plus: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

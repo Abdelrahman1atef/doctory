@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/extensions.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class RegisterGenderWidget extends StatelessWidget {
   final String selectedGender;
@@ -19,7 +20,7 @@ class RegisterGenderWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          context.l10n('gender'),
+          'gender'.tr(),
           style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
         ),
         8.ph,
@@ -27,7 +28,7 @@ class RegisterGenderWidget extends StatelessWidget {
           children: [
             Expanded(
               child: _GenderChip(
-                label: context.l10n('male'),
+                label: 'male'.tr(),
                 isSelected: selectedGender == 'male',
                 onTap: () => onGenderChanged('male'),
               ),
@@ -35,7 +36,7 @@ class RegisterGenderWidget extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _GenderChip(
-                label: context.l10n('female'),
+                label: 'female'.tr(),
                 isSelected: selectedGender == 'female',
                 onTap: () => onGenderChanged('female'),
               ),
@@ -43,7 +44,7 @@ class RegisterGenderWidget extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: _GenderChip(
-                label: context.l10n('other'),
+                label: 'other'.tr(),
                 isSelected: selectedGender == 'other',
                 onTap: () => onGenderChanged('other'),
               ),

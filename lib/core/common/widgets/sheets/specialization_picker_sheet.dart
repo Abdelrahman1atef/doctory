@@ -4,6 +4,7 @@ import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 /// A reusable bottom sheet that lists specializations with cached icons.
 ///
@@ -64,7 +65,7 @@ class SpecializationPickerSheet extends StatelessWidget {
               ),
               16.ph,
               Text(
-                context.l10n('select_specialization'),
+                'select_specialization'.tr(),
                 style: AppStyles.s16Bold.copyWith(color: AppColors.onSurface),
               ),
               16.ph,

@@ -53,7 +53,7 @@ class ProfileImagePicker extends StatelessWidget {
                     : null,
               ),
               child: imageFile == null
-                  ? Icon(
+                  ? const Icon(
                       Icons.person_outline_rounded,
                       size: 56,
                       color: AppColors.textHint,

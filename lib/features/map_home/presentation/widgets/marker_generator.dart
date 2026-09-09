@@ -2,6 +2,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:doctory/core/theme/app_colors.dart';
 
 /// Immutable marker description. All fields are cross-isolate safe.
 class MarkerSpec {
@@ -110,8 +111,10 @@ class MarkerGenerator {
     final Canvas canvas = Canvas(pictureRecorder);
 
     final Color markerColor = spec.isSelected
-        ? const Color(0xFF178229)
-        : (spec.isRegistered ? const Color(0xFF076453) : const Color(0xFF2196F3));
+        ? AppColors.markerSelected
+        : (spec.isRegistered
+              ? AppColors.markerRegistered
+              : AppColors.markerUnregistered);
     final Color shadowColor = Colors.black.withValues(alpha: 0.3);
 
     final Paint shadowPaint = Paint()

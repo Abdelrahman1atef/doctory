@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,7 +15,6 @@ import '../../../../core/common/widgets/map/location_picker_bottom_sheet.dart';
 import '../../../../core/router/router_names.dart';
 import '../../../../core/services/alerts.dart';
 import '../../../../core/session/user_session.dart';
-import '../../../../core/utils/extensions.dart';
 import '../../../../shared/cubit/specializations_cubit.dart';
 import '../../cubit/auth_cubit.dart';
 import '../../cubit/auth_states.dart';
@@ -93,7 +93,7 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
       _loadSpecializations();
       Alerts.showSnackBar(
         context,
-        message: context.l10n('loading'),
+        message: 'loading'.tr(),
         state: SnackState.info,
       );
       return;

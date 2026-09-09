@@ -10,7 +10,7 @@ import '../widgets/chat_avatar_widget.dart';
 import '../../router/chat_router_names.dart';
 
 class NewChatView extends StatelessWidget {
-  const NewChatView({Key? key}) : super(key: key);
+  const NewChatView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -27,8 +27,8 @@ class NewChatBodySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: const [
+    return const Column(
+      children: [
         CustomAppBar(title: 'محادثة جديدة'),
         Expanded(
           child: NewChatSection(),
@@ -39,7 +39,7 @@ class NewChatBodySection extends StatelessWidget {
 }
 
 class NewChatSection extends StatefulWidget {
-  const NewChatSection({Key? key}) : super(key: key);
+  const NewChatSection({super.key});
 
   @override
   State<NewChatSection> createState() => _NewChatSectionState();
@@ -64,7 +64,7 @@ class _NewChatSectionState extends State<NewChatSection> {
             controller: _searchController,
             decoration: InputDecoration(
               hintText: 'ابحث عن مستخدمين...',
-              prefixIcon: Icon(Icons.search, color: AppColors.grey600),
+              prefixIcon: const Icon(Icons.search, color: AppColors.grey600),
               filled: true,
               fillColor: AppColors.grey200.withValues(alpha: 0.1),
               border: OutlineInputBorder(

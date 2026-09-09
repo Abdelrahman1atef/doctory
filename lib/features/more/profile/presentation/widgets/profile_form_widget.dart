@@ -4,6 +4,7 @@ import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:easy_localization/easy_localization.dart'hide TextDirection;
 
 class ProfileFormWidget extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -41,14 +42,14 @@ class ProfileFormWidget extends StatelessWidget {
           /// Full Name
           StitchTextField(
             controller: nameController,
-            label: context.l10n('full_name'),
+            label: 'full_name'.tr(),
             hintText: 'John Doe',
             prefixIcon: const Icon(
               Icons.person_outline_rounded,
               color: AppColors.stitchPrimary,
             ),
             validator: (value) => value == null || value.isEmpty
-                ? context.l10n('field_required')
+                ? 'field_required'.tr()
                 : null,
           ),
 
@@ -57,7 +58,7 @@ class ProfileFormWidget extends StatelessWidget {
           /// Phone Number
           StitchTextField(
             controller: phoneController,
-            label: context.l10n('phone_number'),
+            label: 'phone_number'.tr(),
             hintText: '01XXXXXXXXX',
             keyboardType: TextInputType.phone,
             maxLength: 11,
@@ -82,9 +83,10 @@ class ProfileFormWidget extends StatelessWidget {
               ),
             ),
             validator: (value) {
-              if (value == null || value.isEmpty)
-                return context.l10n('field_required');
-              if (value.length != 11) return context.l10n('invalid_phone');
+              if (value == null || value.isEmpty) {
+                return 'field_required'.tr();
+              }
+              if (value.length != 11) return 'invalid_phone'.tr();
               return null;
             },
           ),
@@ -96,11 +98,11 @@ class ProfileFormWidget extends StatelessWidget {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: context.l10n('birth_date'),
+                  text: 'birth_date'.tr(),
                   style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
                 ),
                 TextSpan(
-                  text: ' ${context.l10n('optional')}',
+                  text: ' ${'optional'.tr()}',
                   style: AppStyles.s14Bold.copyWith(color: AppColors.textSecondary),
                 ),
               ],
@@ -114,7 +116,7 @@ class ProfileFormWidget extends StatelessWidget {
                 flex: 2,
                 child: StitchTextField(
                   controller: dayController,
-                  hintText: context.l10n('day'),
+                  hintText: 'day'.tr(),
                   keyboardType: TextInputType.number,
                   maxLength: 2,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -132,7 +134,7 @@ class ProfileFormWidget extends StatelessWidget {
                 flex: 2,
                 child: StitchTextField(
                   controller: monthController,
-                  hintText: context.l10n('month'),
+                  hintText: 'month'.tr(),
                   keyboardType: TextInputType.number,
                   maxLength: 2,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -150,7 +152,7 @@ class ProfileFormWidget extends StatelessWidget {
                 flex: 3,
                 child: StitchTextField(
                   controller: yearController,
-                  hintText: context.l10n('year'),
+                  hintText: 'year'.tr(),
                   keyboardType: TextInputType.number,
                   maxLength: 4,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -158,8 +160,9 @@ class ProfileFormWidget extends StatelessWidget {
                   validator: (value) {
                     if (value == null || value.isEmpty) return null;
                     final year = int.tryParse(value);
-                    if (year == null || year < 1900 || year > DateTime.now().year)
+                    if (year == null || year < 1900 || year > DateTime.now().year) {
                       return '';
+                    }
                     return null;
                   },
                 ),
@@ -171,7 +174,7 @@ class ProfileFormWidget extends StatelessWidget {
 
           /// Gender Selection
           Text(
-            context.l10n('gender'),
+            'gender'.tr(),
             style: AppStyles.s14Bold.copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: 16),
@@ -179,7 +182,7 @@ class ProfileFormWidget extends StatelessWidget {
             children: [
               Expanded(
                 child: _GenderChip(
-                  label: context.l10n('male'),
+                  label: 'male'.tr(),
                   isSelected: selectedGender == 'male',
                   onTap: () => onGenderChanged('male'),
                 ),
@@ -187,7 +190,7 @@ class ProfileFormWidget extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _GenderChip(
-                  label: context.l10n('female'),
+                  label: 'female'.tr(),
                   isSelected: selectedGender == 'female',
                   onTap: () => onGenderChanged('female'),
                 ),
@@ -207,13 +210,13 @@ class ProfileFormWidget extends StatelessWidget {
                 backgroundColor: isSaveEnabled ? AppColors.stitchPrimaryContainer : Colors.transparent,
                 foregroundColor: isSaveEnabled ? Colors.white : AppColors.textSecondary,
                 elevation: 0,
-                side: isSaveEnabled ? null : BorderSide(color: AppColors.cardBorder),
+                side: isSaveEnabled ? null : const BorderSide(color: AppColors.cardBorder),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               child: Text(
-                context.l10n('save'),
+                'save'.tr(),
                 style: AppStyles.s16SemiBold.copyWith(
                   color: isSaveEnabled ? Colors.white : AppColors.textSecondary,
                 ),

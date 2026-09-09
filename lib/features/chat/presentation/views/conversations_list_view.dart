@@ -54,7 +54,7 @@ class _NewChatFAB extends StatelessWidget {
 }
 
 class ConversationsListSection extends StatelessWidget {
-  const ConversationsListSection({Key? key}) : super(key: key);
+  const ConversationsListSection({super.key});
 
   @override
   Widget build(BuildContext context) {

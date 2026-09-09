@@ -8,6 +8,7 @@ import 'package:doctory/features/booking/presentation/widgets/booking_time_group
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:doctory/core/theme/app_colors.dart';
 
 class SelectTimeSection extends StatelessWidget {
   const SelectTimeSection({super.key});
@@ -56,7 +57,7 @@ class SelectTimeSection extends StatelessWidget {
                 BookingTimeGroup(
                   title: 'morning'.tr(),
                   icon: Icons.wb_sunny_outlined,
-                  iconColor: const Color(0xFFFFA726),
+                  iconColor: AppColors.timeOfDayMorning,
                   slots: categorized['morning'] ?? [],
                   selectedSlot: state.selectedTime,
                   onSlotSelected: (slot) => context.read<BookingCubit>().selectTime(slot),
@@ -67,7 +68,7 @@ class SelectTimeSection extends StatelessWidget {
                 BookingTimeGroup(
                   title: 'afternoon'.tr(),
                   icon: Icons.wb_cloudy_outlined,
-                  iconColor: const Color(0xFF42A5F5),
+                  iconColor: AppColors.timeOfDayAfternoon,
                   slots: categorized['afternoon'] ?? [],
                   selectedSlot: state.selectedTime,
                   onSlotSelected: (slot) => context.read<BookingCubit>().selectTime(slot),
@@ -78,7 +79,7 @@ class SelectTimeSection extends StatelessWidget {
                 BookingTimeGroup(
                   title: 'evening'.tr(),
                   icon: Icons.nights_stay_outlined,
-                  iconColor: const Color(0xFF7E57C2),
+                  iconColor: AppColors.timeOfDayEvening,
                   slots: categorized['evening'] ?? [],
                   selectedSlot: state.selectedTime,
                   onSlotSelected: (slot) => context.read<BookingCubit>().selectTime(slot),

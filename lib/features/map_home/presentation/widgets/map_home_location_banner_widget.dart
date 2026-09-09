@@ -1,6 +1,6 @@
 import 'package:doctory/core/theme/app_colors.dart';
-import 'package:doctory/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class MapHomeLocationBannerWidget extends StatelessWidget {
   final VoidCallback onEnableTap;
@@ -35,7 +35,7 @@ class MapHomeLocationBannerWidget extends StatelessWidget {
             const SizedBox(width: 12),
             Expanded(
               child: Text(
-                context.l10n('enable_location_banner_msg'),
+                'enable_location_banner_msg'.tr(),
                 style: const TextStyle(
                   color: AppColors.black,
                   fontSize: 14,
@@ -48,7 +48,7 @@ class MapHomeLocationBannerWidget extends StatelessWidget {
               style: TextButton.styleFrom(
                 foregroundColor: AppColors.stitchPrimaryContainer,
               ),
-              child: Text(context.l10n('enable')),
+              child: Text('enable'.tr()),
             ),
           ],
         ),

@@ -1,7 +1,7 @@
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
-import 'package:doctory/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class GenderSelectionWidget extends StatelessWidget {
   final String? selectedGender;
@@ -24,7 +24,7 @@ class GenderSelectionWidget extends StatelessWidget {
           text: TextSpan(
             children: [
               TextSpan(
-                text: context.l10n('gender'),
+                text: 'gender'.tr(),
                 style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
               ),
               if (isRequired)
@@ -34,7 +34,7 @@ class GenderSelectionWidget extends StatelessWidget {
                 )
               else
                 TextSpan(
-                  text: ' ${context.l10n('optional')}',
+                  text: ' ${'optional'.tr()}',
                   style: AppStyles.s14Bold.copyWith(color: AppColors.textSecondary),
                 ),
             ],
@@ -45,7 +45,7 @@ class GenderSelectionWidget extends StatelessWidget {
           children: [
             Expanded(
               child: _GenderChip(
-                label: context.l10n('male'),
+                label: 'male'.tr(),
                 isSelected: selectedGender == 'male',
                 onTap: () => onGenderChanged('male'),
               ),
@@ -53,7 +53,7 @@ class GenderSelectionWidget extends StatelessWidget {
             const SizedBox(width: 8),
             Expanded(
               child: _GenderChip(
-                label: context.l10n('female'),
+                label: 'female'.tr(),
                 isSelected: selectedGender == 'female',
                 onTap: () => onGenderChanged('female'),
               ),

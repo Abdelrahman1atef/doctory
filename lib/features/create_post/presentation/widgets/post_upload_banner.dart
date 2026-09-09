@@ -87,7 +87,7 @@ class PostUploadBanner extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: bgColor,
-        border: Border(bottom: BorderSide(color: AppColors.grey100)),
+        border: const Border(bottom: BorderSide(color: AppColors.grey100)),
       ),
       child: Row(
         children: [

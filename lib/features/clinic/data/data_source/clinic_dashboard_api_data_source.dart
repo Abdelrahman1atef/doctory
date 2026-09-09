@@ -42,7 +42,7 @@ class ClinicDashboardApiDataSource implements ClinicDashboardDataSource {
     return _api.put<bool>(
       path: ClinicDashboardEndpoints.acceptBooking.replaceAll('{id}', id),
       queryParameters: {
-        if (paymentMethod != null) 'paymentMethod': paymentMethod,
+        'paymentMethod': ?paymentMethod,
         'returnUrl': 'myapp://payment-result', // Placeholder
       },
       parser: (json) => json['data'] != null,

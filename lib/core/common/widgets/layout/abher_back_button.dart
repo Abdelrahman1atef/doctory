@@ -23,7 +23,7 @@ class AbherBackButton extends StatelessWidget {
           context.pop();
         }
       },
-      icon: Icon(Icons.arrow_back),
+      icon: const Icon(Icons.arrow_back),
     );
   }
 }

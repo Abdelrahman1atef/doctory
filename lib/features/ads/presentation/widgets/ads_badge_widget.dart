@@ -1,8 +1,6 @@
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
-import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/ads/data/model/public_ad_model.dart';
-import 'package:doctory/features/ads/presentation/widgets/ads_active_tag_widget.dart';
 import 'package:doctory/features/ads/presentation/widgets/ads_banner_background_widget.dart';
 import 'package:flutter/material.dart';
 

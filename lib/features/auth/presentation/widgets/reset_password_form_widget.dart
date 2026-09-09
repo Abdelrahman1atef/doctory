@@ -3,6 +3,7 @@ import '../../../../core/common/widgets/inputs/stitch_text_field.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/extensions.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ResetPasswordFormWidget extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -32,12 +33,12 @@ class ResetPasswordFormWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         Text(
-          context.l10n('reset_password_title'),
+          'reset_password_title'.tr(),
           style: AppStyles.s24Bold.copyWith(color: AppColors.textPrimary),
         ),
         8.ph,
         Text(
-          context.l10n('reset_password_subtitle'),
+          'reset_password_subtitle'.tr(),
           style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
         ),
         40.ph,
@@ -48,8 +49,8 @@ class ResetPasswordFormWidget extends StatelessWidget {
             children: [
               StitchTextField(
                 controller: passwordController,
-                label: context.l10n('new_password'),
-                hintText: context.l10n('enter_new_password'),
+                label: 'new_password'.tr(),
+                hintText: 'enter_new_password'.tr(),
                 obscureText: obscurePassword,
                 prefixIcon: const Icon(
                   Icons.lock_outline_rounded,
@@ -64,18 +65,20 @@ class ResetPasswordFormWidget extends StatelessWidget {
                   ),
                 ),
                 validator: (value) {
-                  if (value == null || value.isEmpty)
-                    return context.l10n('password_required');
-                  if (value.length < 6)
-                    return context.l10n('password_too_short');
+                  if (value == null || value.isEmpty) {
+                    return 'password_required'.tr();
+                  }
+                  if (value.length < 6) {
+                    return 'password_too_short'.tr();
+                  }
                   return null;
                 },
               ),
               24.ph,
               StitchTextField(
                 controller: confirmPasswordController,
-                label: context.l10n('confirm_password'),
-                hintText: context.l10n('re_enter_password'),
+                label: 'confirm_password'.tr(),
+                hintText: 're_enter_password'.tr(),
                 obscureText: obscureConfirmPassword,
                 prefixIcon: const Icon(
                   Icons.lock_reset_rounded,
@@ -90,10 +93,12 @@ class ResetPasswordFormWidget extends StatelessWidget {
                   ),
                 ),
                 validator: (value) {
-                  if (value == null || value.isEmpty)
-                    return context.l10n('confirm_password_required');
-                  if (value != passwordController.text)
-                    return context.l10n('passwords_dont_match');
+                  if (value == null || value.isEmpty) {
+                    return 'confirm_password_required'.tr();
+                  }
+                  if (value != passwordController.text) {
+                    return 'passwords_dont_match'.tr();
+                  }
                   return null;
                 },
               ),
@@ -111,7 +116,7 @@ class ResetPasswordFormWidget extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    context.l10n('reset_password'),
+                    'reset_password'.tr(),
                     style: AppStyles.s16SemiBold,
                   ),
                 ),

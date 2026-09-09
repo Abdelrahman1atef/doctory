@@ -21,7 +21,7 @@ class ClinicDoctorCardWidget extends StatelessWidget {
       onTap: onTap,
       child: Container(
         // width: 160,
-        constraints: BoxConstraints(
+        constraints: const BoxConstraints(
           minWidth: 160,
           maxWidth: 200
         ),

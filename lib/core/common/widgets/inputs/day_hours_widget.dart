@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../theme/app_colors.dart';
 import '../../../theme/app_typography.dart';
-import '../../../utils/extensions.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class DayHours {
   final int dayIndex;
@@ -76,7 +76,7 @@ class DayHoursRow extends StatelessWidget {
         SizedBox(
           width: 80,
           child: Text(
-            context.l10n(dayName.toLowerCase()),
+            dayName.toLowerCase().tr(),
             style: AppStyles.s14Medium.copyWith(
               color: isClosed ? AppColors.textHint : AppColors.onSurface,
             ),
@@ -86,7 +86,7 @@ class DayHoursRow extends StatelessWidget {
         if (isClosed)
           Expanded(
             child: Text(
-              context.l10n('closed'),
+              'closed'.tr(),
               style: AppStyles.s14Medium.copyWith(color: AppColors.textHint),
             ),
           )
@@ -113,7 +113,7 @@ class DayHoursRow extends StatelessWidget {
               ),
             ),
             child: Text(
-              context.l10n('closed'),
+              'closed'.tr(),
               style: AppStyles.s12Medium.copyWith(
                 color: isClosed ? AppColors.stitchPrimary : AppColors.textSecondary,
               ),

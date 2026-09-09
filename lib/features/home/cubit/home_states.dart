@@ -1,7 +1,7 @@
 import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/features/ads/data/model/public_ad_model.dart';
 
-abstract class HomeStates {}
+sealed class HomeStates {}
 
 class HomeInitialState extends HomeStates {}
 

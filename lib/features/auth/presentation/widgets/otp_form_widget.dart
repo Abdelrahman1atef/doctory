@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:pinput/pinput.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
-import '../../../../core/utils/extensions.dart';
+import 'package:easy_localization/easy_localization.dart' hide TextDirection;
 
 class OtpFormWidget extends StatelessWidget {
   final TextEditingController otpController;
@@ -76,7 +76,7 @@ class OtpFormWidget extends StatelessWidget {
               ),
             ),
             child: Text(
-              context.l10n('verify_and_continue'),
+              'verify_and_continue'.tr(),
               style: AppStyles.s16SemiBold,
             ),
           ),
@@ -88,7 +88,7 @@ class OtpFormWidget extends StatelessWidget {
         Column(
           children: [
             Text(
-              context.l10n('the_code_was_not_sent'),
+              'the_code_was_not_sent'.tr(),
               style: AppStyles.s14Medium.copyWith(
                 color: AppColors.textSecondary,
               ),
@@ -96,7 +96,7 @@ class OtpFormWidget extends StatelessWidget {
             TextButton(
               onPressed: onResend,
               child: Text(
-                context.l10n('send_again'),
+                'send_again'.tr(),
                 style: AppStyles.s14Bold.copyWith(
                   color: AppColors.stitchPrimary,
                 ),

@@ -20,7 +20,7 @@ class IntroView extends StatelessWidget {
       },
       child: Scaffold(
         backgroundColor: AppColors.background,
-        body: IntroSliderSection(),
+        body: const IntroSliderSection(),
       ),
     );
   }

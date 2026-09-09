@@ -4,6 +4,7 @@ import '../../../../core/router/router_names.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/extensions.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class PendingApprovalBodySection extends StatelessWidget {
   const PendingApprovalBodySection({super.key});
@@ -23,13 +24,13 @@ class PendingApprovalBodySection extends StatelessWidget {
             ),
             24.ph,
             Text(
-              context.l10n('pending_approval_title'),
+              'pending_approval_title'.tr(),
               style: AppStyles.s24Bold.copyWith(color: AppColors.onSurface),
               textAlign: TextAlign.center,
             ),
             12.ph,
             Text(
-              context.l10n('pending_approval_subtitle'),
+              'pending_approval_subtitle'.tr(),
               style: AppStyles.s16Medium.copyWith(color: AppColors.textSecondary),
               textAlign: TextAlign.center,
             ),
@@ -47,7 +48,7 @@ class PendingApprovalBodySection extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  context.l10n('back_to_home'),
+                  'back_to_home'.tr(),
                   style: AppStyles.s16SemiBold,
                 ),
               ),

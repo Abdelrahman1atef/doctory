@@ -1,7 +1,6 @@
 import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:doctory/core/network/interfaces/api_consumer.dart';
-import 'package:doctory/core/network/interfaces/api_result.dart';
 
 class FileUploadService {
   final ApiConsumer _apiConsumer;

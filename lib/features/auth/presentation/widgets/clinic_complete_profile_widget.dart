@@ -5,6 +5,7 @@ import '../../../../core/common/widgets/inputs/day_hours_widget.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/extensions.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ClinicCompleteProfileWidget extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -57,21 +58,21 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
           children: [
             /// Header
             Text(
-              context.l10n(isSetupMode ? 'setup_clinic_title' : 'complete_profile_title'),
+              (isSetupMode ? 'setup_clinic_title' : 'complete_profile_title').tr(),
               style: AppStyles.s24Bold.copyWith(color: AppColors.onSurface),
             ),
             8.ph,
             Text(
-              context.l10n(isSetupMode ? 'setup_clinic_subtitle' : 'complete_profile_subtitle'),
+              (isSetupMode ? 'setup_clinic_subtitle' : 'complete_profile_subtitle').tr(),
               style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
             ),
             32.ph,
 
             /// Clinic Image
             StitchUploadField(
-              label: context.l10n('clinic_image'),
+              label: 'clinic_image'.tr(),
               fileName: clinicImageFileName,
-              hint: context.l10n('upload_file_hint'),
+              hint: 'upload_file_hint'.tr(),
               isRequired: isSetupMode,
               onPick: onPickClinicImage,
             ),
@@ -80,8 +81,8 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
             /// Clinic Name
             StitchTextField(
               controller: clinicNameController,
-              label: context.l10n('clinic_name_label'),
-              hintText: context.l10n('clinic_name_hint'),
+              label: 'clinic_name_label'.tr(),
+              hintText: 'clinic_name_hint'.tr(),
               prefixIcon: const Icon(
                 Icons.local_hospital_outlined,
                 color: AppColors.stitchPrimary,
@@ -93,8 +94,8 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
             if (isSetupMode) ...[
               StitchTextField(
                 controller: descriptionController,
-                label: context.l10n('clinic_description_label'),
-                hintText: context.l10n('clinic_description_hint'),
+                label: 'clinic_description_label'.tr(),
+                hintText: 'clinic_description_hint'.tr(),
                 maxLines: 3,
                 prefixIcon: const Icon(
                   Icons.description_outlined,
@@ -106,7 +107,7 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
 
             /// Clinic Location
             Text(
-              context.l10n('clinic_location'),
+              'clinic_location'.tr(),
               style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
             ),
             8.ph,
@@ -143,7 +144,7 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
                       child: Text(
                         clinicAddress.isNotEmpty
                             ? clinicAddress
-                            : context.l10n('pick_location_hint'),
+                            : 'pick_location_hint'.tr(),
                         style: AppStyles.s16Medium.copyWith(
                           color: clinicAddress.isNotEmpty
                               ? AppColors.onSurface
@@ -161,8 +162,8 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
             if (isSetupMode) ...[
               StitchTextField(
                 controller: emailController,
-                label: context.l10n('email_label'),
-                hintText: context.l10n('email_hint'),
+                label: 'email_label'.tr(),
+                hintText: 'email_hint'.tr(),
                 keyboardType: TextInputType.emailAddress,
                 prefixIcon: const Icon(
                   Icons.email_outlined,
@@ -176,8 +177,8 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
             if (isSetupMode) ...[
               StitchTextField(
                 controller: websiteController,
-                label: context.l10n('website_label'),
-                hintText: context.l10n('website_hint'),
+                label: 'website_label'.tr(),
+                hintText: 'website_hint'.tr(),
                 keyboardType: TextInputType.url,
                 isRequired: false,
                 prefixIcon: const Icon(
@@ -191,7 +192,7 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
             /// Specialization (setup mode only)
             if (isSetupMode) ...[
               Text(
-                context.l10n('specialization'),
+                'specialization'.tr(),
                 style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
               ),
               8.ph,
@@ -228,7 +229,7 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
                       Expanded(
                         child: Text(
                           selectedSpecializationName ??
-                              context.l10n('select_specialization'),
+                              'select_specialization'.tr(),
                           style: AppStyles.s16Medium.copyWith(
                             color: selectedSpecializationName != null
                                 ? AppColors.onSurface
@@ -249,7 +250,7 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
 
             /// Operating Hours Header
             Text(
-              context.l10n('operating_hours'),
+              'operating_hours'.tr(),
               style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
             ),
             12.ph,
@@ -287,7 +288,7 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  context.l10n('save_and_continue'),
+                  'save_and_continue'.tr(),
                   style: AppStyles.s16SemiBold,
                 ),
               ),

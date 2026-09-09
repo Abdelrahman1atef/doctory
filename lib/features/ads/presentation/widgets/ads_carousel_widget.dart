@@ -1,6 +1,4 @@
 import 'dart:async';
-import 'package:doctory/core/theme/app_colors.dart';
-import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/features/ads/data/model/public_ad_model.dart';
 import 'package:doctory/features/ads/presentation/widgets/ads_badge_widget.dart';
 import 'package:doctory/features/ads/presentation/widgets/ads_indicator_dots_widget.dart';

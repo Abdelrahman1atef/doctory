@@ -109,7 +109,7 @@ class ClinicInfoSection extends StatelessWidget {
     final minute = parts[1];
     final isPm = hour >= 12;
     final hour12 = hour == 0 ? 12 : (hour > 12 ? hour - 12 : hour);
-    return '${hour12.toString().padLeft(2, '0')}:$minute ${isPm ? context.l10n('pm_label') : context.l10n('am_label')}';
+    return '${hour12.toString().padLeft(2, '0')}:$minute ${isPm ? 'pm_label'.tr() : 'am_label'.tr()}';
   }
 
   String _formatOperatingHoursRange(String range, BuildContext context) {

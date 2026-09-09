@@ -13,10 +13,10 @@ class CommunityView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => sl<CommunityCubit>()..getPosts(),
-      child: Scaffold(
+      child: const Scaffold(
         backgroundColor: AppColors.white,
-        body: const PostsListSection(),
-        floatingActionButton: const CommunityFloatingActionSection(),
+        body: PostsListSection(),
+        floatingActionButton: CommunityFloatingActionSection(),
       ),
     );
   }

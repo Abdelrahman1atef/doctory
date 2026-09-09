@@ -214,11 +214,11 @@ class Alerts {
         decoration: BoxDecoration(
           color: backgroundColor ?? AppColors.stitchPrimaryContainer,
           borderRadius: BorderRadius.circular(12),
-          boxShadow: [
+          boxShadow: const [
             BoxShadow(
               color: Colors.black,
               blurRadius: 10,
-              offset: const Offset(0, 4),
+              offset: Offset(0, 4),
             ),
           ],
         ),

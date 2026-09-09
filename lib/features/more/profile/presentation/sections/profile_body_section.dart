@@ -11,6 +11,7 @@ import 'package:doctory/features/more/profile/presentation/widgets/profile_image
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ProfileBodySection extends StatefulWidget {
   const ProfileBodySection({super.key});
@@ -151,7 +152,7 @@ class _ProfileBodySectionState extends State<ProfileBodySection> {
         }
 
         if (state is ProfileUpdateSuccess) {
-          Alerts.snack(text: context.l10n(state.message), state: SnackState.success);
+          Alerts.snack(text: state.message.tr(), state: SnackState.success);
         } else if (state is ProfileUpdateError) {
           Alerts.snack(text: state.message, state: SnackState.failed);
         }

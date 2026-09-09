@@ -15,7 +15,7 @@ import '../widgets/message_input_widget.dart';
 class ChatRoomView extends StatelessWidget {
   final String conversationId;
 
-  const ChatRoomView({Key? key, required this.conversationId}) : super(key: key);
+  const ChatRoomView({super.key, required this.conversationId});
 
   @override
   Widget build(BuildContext context) {
@@ -28,8 +28,8 @@ class ChatRoomBodySection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: const [
+    return const Column(
+      children: [
         ChatRoomAppBarSection(),
         Expanded(child: ChatRoomSection()),
       ],
@@ -55,7 +55,7 @@ class ChatRoomAppBarSection extends StatelessWidget {
 
           return Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8).copyWith(top: kToolbarHeight),
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: Colors.white,
               border: Border(bottom: BorderSide(color: AppColors.grey200, width: 0.5)),
             ),
@@ -89,7 +89,7 @@ class ChatRoomAppBarSection extends StatelessWidget {
         }
         return Container(
           height: kToolbarHeight,
-          decoration: BoxDecoration(
+          decoration: const BoxDecoration(
             color: Colors.white,
             border: Border(bottom: BorderSide(color: AppColors.grey200, width: 0.5)),
           ),
@@ -103,7 +103,7 @@ class ChatRoomAppBarSection extends StatelessWidget {
 }
 
 class ChatRoomSection extends StatefulWidget {
-  const ChatRoomSection({Key? key}) : super(key: key);
+  const ChatRoomSection({super.key});
 
   @override
   State<ChatRoomSection> createState() => _ChatRoomSectionState();
@@ -244,7 +244,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: AppColors.grey200, width: 0.5)),
       ),
@@ -267,7 +267,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
                         color: AppColors.grey200.withValues(alpha: 0.2),
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: Icon(Icons.broken_image, color: AppColors.grey600),
+                      child: const Icon(Icons.broken_image, color: AppColors.grey600),
                     ),
               ),
             )
@@ -350,7 +350,7 @@ class _ChatRoomSectionState extends State<ChatRoomSection> {
   Widget _buildReplyPreview(BuildContext context, MessageModel message) {
     return Container(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: AppColors.grey200)),
       ),

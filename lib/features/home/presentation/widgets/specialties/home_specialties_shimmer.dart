@@ -12,7 +12,7 @@ class HomeSpecialtiesShimmer extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ShimmerContainer(width: 100, height: 16),
+            const ShimmerContainer(width: 100, height: 16),
             const SizedBox(height: 16),
             SizedBox(
               height: 70,
@@ -22,11 +22,11 @@ class HomeSpecialtiesShimmer extends StatelessWidget {
                 itemCount: 5,
                 separatorBuilder: (_, _) => const SizedBox(width: 12),
                 itemBuilder: (context, index) {
-                  return Row(
+                  return const Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       ShimmerContainer(width: 48, height: 48, radius: 24),
-                      const SizedBox(width: 12),
+                      SizedBox(width: 12),
                       ShimmerContainer(width: 60, height: 14),
                     ],
                   );

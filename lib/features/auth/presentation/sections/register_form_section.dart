@@ -8,13 +8,13 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import '../../../../core/common/models/type_of_user_for_register_flow.dart';
 import '../../../../core/router/router_names.dart';
 import '../../../../core/services/alerts.dart';
-import '../../../../core/utils/extensions.dart';
 import '../../../../core/locator/service_locator.dart';
 import '../../../../shared/cubit/specializations_cubit.dart';
 import '../../cubit/auth_cubit.dart';
 import '../../cubit/auth_states.dart';
 import '../../data/model/signup_request.dart';
 import '../widgets/register_form_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class RegisterFormSection extends StatefulWidget {
   final String role;
@@ -141,7 +141,7 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
       if (_isDoctor && _selectedGender == null) {
         Alerts.showSnackBar(
           context,
-          message: context.l10n('field_required'),
+          message: 'field_required'.tr(),
           state: SnackState.failed,
         );
         return;
@@ -206,7 +206,7 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
         } else if (state is SignupPendingState) {
           Alerts.showSnackBar(
             context,
-            message: context.l10n('signup_pending_approval'),
+            message: 'signup_pending_approval'.tr(),
             state: SnackState.info,
           );
           context.go(AppRoutes.login);

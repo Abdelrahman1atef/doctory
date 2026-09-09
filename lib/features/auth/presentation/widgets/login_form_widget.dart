@@ -5,6 +5,7 @@ import '../../../../core/services/remote_config_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/extensions.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class LoginFormWidget extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -41,7 +42,7 @@ class LoginFormWidget extends StatelessWidget {
         children: [
           /// Email Field
           Text(
-            context.l10n('email_address'),
+            'email_address'.tr(),
             style: AppStyles.s14Medium.copyWith(
               color: AppColors.stitchSecondary,
             ),
@@ -49,15 +50,15 @@ class LoginFormWidget extends StatelessWidget {
           8.ph,
           StitchTextField(
             controller: emailController,
-            hintText: context.l10n('enter_your_email'),
+            hintText: 'enter_your_email'.tr(),
             keyboardType: TextInputType.emailAddress,
             prefixIcon: const Icon(Icons.email_outlined, size: 20),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.l10n('email_required');
+                return 'email_required'.tr();
               }
               if (!RegExp(r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-                return context.l10n('invalid_email');
+                return 'invalid_email'.tr();
               }
               return null;
             },
@@ -67,7 +68,7 @@ class LoginFormWidget extends StatelessWidget {
 
           /// Password Field
           Text(
-            context.l10n('password'),
+            'password'.tr(),
             style: AppStyles.s14Medium.copyWith(
               color: AppColors.stitchSecondary,
             ),
@@ -75,7 +76,7 @@ class LoginFormWidget extends StatelessWidget {
           8.ph,
           StitchTextField(
             controller: passwordController,
-            hintText: context.l10n('enter_your_password'),
+            hintText: 'enter_your_password'.tr(),
             obscureText: obscurePassword,
             prefixIcon: const Icon(Icons.lock_outline_rounded, size: 20),
             suffixIcon: IconButton(
@@ -90,10 +91,10 @@ class LoginFormWidget extends StatelessWidget {
             ),
             validator: (value) {
               if (value == null || value.isEmpty) {
-                return context.l10n('password_required');
+                return 'password_required'.tr();
               }
               if (value.length < 6) {
-                return context.l10n('password_too_short');
+                return 'password_too_short'.tr();
               }
               return null;
             },
@@ -112,7 +113,7 @@ class LoginFormWidget extends StatelessWidget {
                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
               ),
               child: Text(
-                context.l10n('forgot_password'),
+                'forgot_password'.tr(),
                 style: AppStyles.s14Medium.copyWith(
                   color: AppColors.stitchPrimary,
                 ),
@@ -136,7 +137,7 @@ class LoginFormWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
-              child: Text(context.l10n('login'), style: AppStyles.s16SemiBold),
+              child: Text('login'.tr(), style: AppStyles.s16SemiBold),
             ),
           ),
 
@@ -153,7 +154,7 @@ class LoginFormWidget extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
                   child: Text(
-                    context.l10n('or_login_with'),
+                    'or_login_with'.tr(),
                     style: AppStyles.s14Medium.copyWith(
                       color: AppColors.stitchSecondary,
                     ),
@@ -169,7 +170,7 @@ class LoginFormWidget extends StatelessWidget {
           if (RemoteConfigService.showGoogleAuth) ...[
             32.ph,
             SocialAuthButton(
-              title: context.l10n('continue_with_google'),
+              title: 'continue_with_google'.tr(),
               icon: const Icon(
                 Icons.g_mobiledata_rounded,
                 color: Colors.red,
@@ -182,7 +183,7 @@ class LoginFormWidget extends StatelessWidget {
           if (RemoteConfigService.showFacebookAuth) ...[
             if (!RemoteConfigService.showGoogleAuth) 32.ph else 16.ph,
             SocialAuthButton(
-              title: context.l10n('continue_with_facebook'),
+              title: 'continue_with_facebook'.tr(),
               icon: const Icon(
                 Icons.facebook_rounded,
                 color: Colors.blue,
@@ -199,7 +200,7 @@ class LoginFormWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                context.l10n('dont_have_account'),
+                'dont_have_account'.tr(),
                 style: AppStyles.s14Medium.copyWith(
                   color: AppColors.stitchSecondary,
                 ),
@@ -207,7 +208,7 @@ class LoginFormWidget extends StatelessWidget {
               TextButton(
                 onPressed: onRegister,
                 child: Text(
-                  context.l10n('register_now'),
+                  'register_now'.tr(),
                   style: AppStyles.s14SemiBold.copyWith(
                     color: AppColors.stitchPrimary,
                   ),

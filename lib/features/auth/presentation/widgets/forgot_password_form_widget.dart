@@ -3,6 +3,7 @@ import '../../../../core/common/widgets/inputs/stitch_text_field.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/extensions.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ForgotPasswordFormWidget extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -23,12 +24,12 @@ class ForgotPasswordFormWidget extends StatelessWidget {
       children: [
         /// Header
         Text(
-          context.l10n('forgot_password_title'),
+          'forgot_password_title'.tr(),
           style: AppStyles.s24Bold.copyWith(color: AppColors.textPrimary),
         ),
         8.ph,
         Text(
-          context.l10n('forgot_password_subtitle'),
+          'forgot_password_subtitle'.tr(),
           style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
         ),
 
@@ -42,7 +43,7 @@ class ForgotPasswordFormWidget extends StatelessWidget {
             children: [
               StitchTextField(
                 controller: emailController,
-                label: context.l10n('email'),
+                label: 'email'.tr(),
                 hintText: 'name@example.com',
                 keyboardType: TextInputType.emailAddress,
                 prefixIcon: const Icon(
@@ -51,12 +52,12 @@ class ForgotPasswordFormWidget extends StatelessWidget {
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return context.l10n('required_email');
+                    return 'required_email'.tr();
                   }
                   if (!RegExp(
                     r'^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$',
                   ).hasMatch(value)) {
-                    return context.l10n('wrong_email_validation');
+                    return 'wrong_email_validation'.tr();
                   }
                   return null;
                 },
@@ -78,7 +79,7 @@ class ForgotPasswordFormWidget extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    context.l10n('send_reset_link'),
+                    'send_reset_link'.tr(),
                     style: AppStyles.s16SemiBold,
                   ),
                 ),

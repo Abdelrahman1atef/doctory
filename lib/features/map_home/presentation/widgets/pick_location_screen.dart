@@ -27,7 +27,7 @@ class _PickLocationScreenState extends State<PickLocationScreen> {
       _pickedLocation = widget.initialLocation;
       _initialCamera = CameraPosition(target: widget.initialLocation!, zoom: 14);
     } else {
-      _initialCamera = CameraPosition(target: LocationHelper.defaultLocation, zoom: 14);
+      _initialCamera = const CameraPosition(target: LocationHelper.defaultLocation, zoom: 14);
       _initFromGps();
     }
   }

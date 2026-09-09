@@ -49,7 +49,7 @@ class MoreOptionsSection extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   MoreOptionItem(
-                    title: context.l10n('personal_profile'),
+                    title: 'personal_profile'.tr(),
                     icon: Icons.person_outline_rounded,
                     onTap: () {
                       context.push(AppRoutes.profile);

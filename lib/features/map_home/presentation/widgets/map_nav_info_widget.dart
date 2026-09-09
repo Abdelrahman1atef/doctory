@@ -1,9 +1,9 @@
 import 'package:doctory/core/common/models/clinic_model.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
-import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/map_home/data/model/route_model.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 
 
@@ -21,9 +21,9 @@ class MapNavInfoWidget extends StatelessWidget {
 
   String _formatDistance(double meters, BuildContext context) {
     if (meters >= 1000) {
-      return '${(meters / 1000).toStringAsFixed(1)} ${context.l10n('distance_km')}';
+      return '${(meters / 1000).toStringAsFixed(1)} ${'distance_km'.tr()}';
     }
-    return '${meters.toInt()} ${context.l10n('distance_m')}';
+    return '${meters.toInt()} ${'distance_m'.tr()}';
   }
 
   String _formatDuration(double seconds, BuildContext context) {
@@ -32,11 +32,11 @@ class MapNavInfoWidget extends StatelessWidget {
       final hours = minutes ~/ 60;
       final remainingMinutes = minutes % 60;
       if (remainingMinutes > 0) {
-        return '$hours${context.l10n('duration_hour')} $remainingMinutes${context.l10n('minutes_suffix')}';
+        return '$hours${'duration_hour'.tr()} $remainingMinutes${'minutes_suffix'.tr()}';
       }
-      return '$hours${context.l10n('duration_hour')}';
+      return '$hours${'duration_hour'.tr()}';
     }
-    return '$minutes ${context.l10n('minutes_suffix')}';
+    return '$minutes ${'minutes_suffix'.tr()}';
   }
 
   @override

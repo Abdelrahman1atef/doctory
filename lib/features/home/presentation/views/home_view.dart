@@ -1,5 +1,5 @@
 import 'package:doctory/core/theme/app_colors.dart';
-import 'package:doctory/features/home/presentation/sections/home_content_section.dart';
+import 'package:doctory/features/home/presentation/sections/home_body_section.dart';
 import 'package:flutter/material.dart';
 
 class HomeView extends StatelessWidget {
@@ -9,7 +9,7 @@ class HomeView extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Scaffold(
       backgroundColor: AppColors.stitchSurface,
-      body: SafeArea(child: HomeContentSection()),
+      body: HomeBodySection(),
     );
   }
 }

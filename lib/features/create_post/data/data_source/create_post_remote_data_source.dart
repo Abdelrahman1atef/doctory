@@ -73,7 +73,7 @@ class CreatePostRemoteDataSourceImpl implements CreatePostRemoteDataSource {
   }) async {
     return await apiConsumer.post<String>(
       path: 'posts/create',
-      body: {'content': content, if (media != null) 'media': media},
+      body: {'content': content, 'media': ?media},
       parser: (json) => (json['data'] ?? json['Data'] ?? json).toString(),
     );
   }

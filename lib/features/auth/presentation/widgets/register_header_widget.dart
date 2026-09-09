@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/extensions.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class RegisterHeaderWidget extends StatelessWidget {
   const RegisterHeaderWidget({super.key});
@@ -14,7 +15,7 @@ class RegisterHeaderWidget extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            context.l10n('signUp'),
+            'signUp'.tr(),
             textAlign: TextAlign.center,
             style: AppStyles.s14Bold.copyWith(
               fontWeight: FontWeight.w800,
@@ -25,7 +26,7 @@ class RegisterHeaderWidget extends StatelessWidget {
           ),
           12.ph,
           Text(
-            context.l10n('signUp_subtitle'),
+            'signUp_subtitle'.tr(),
             textAlign: TextAlign.center,
             style: AppStyles.s14Bold.copyWith(
               color: AppColors.textSecondary,

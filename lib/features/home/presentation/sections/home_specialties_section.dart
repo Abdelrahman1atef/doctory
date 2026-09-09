@@ -1,8 +1,8 @@
 import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/common/functions/location_helper.dart';
-import 'package:doctory/features/home/presentation/widgets/home_specialties_list_widget.dart';
-import 'package:doctory/features/home/presentation/widgets/home_specialties_shimmer.dart';
+import 'package:doctory/features/home/presentation/widgets/specialties/home_specialties_list_widget.dart';
+import 'package:doctory/features/home/presentation/widgets/specialties/home_specialties_shimmer.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

@@ -55,8 +55,11 @@ class _AudioMessageWidgetState extends State<AudioMessageWidget> {
         children: [
           IconButton(
             onPressed: () async {
-              if (_isPlaying) await _controller.pausePlayer();
-              else await _controller.startPlayer();
+              if (_isPlaying) {
+                await _controller.pausePlayer();
+              } else {
+                await _controller.startPlayer();
+              }
             },
             icon: Icon(_isPlaying ? Icons.pause_circle : Icons.play_circle),
             color: widget.isMe ? Colors.white : AppColors.primary,

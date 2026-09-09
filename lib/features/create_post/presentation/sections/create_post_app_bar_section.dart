@@ -23,7 +23,7 @@ class CreatePostAppBarSection extends StatelessWidget
         BlocBuilder<CreatePostCubit, CreatePostStates>(
           builder: (context, state) {
             return CustomButton(
-              padding: EdgeInsetsDirectional.symmetric(horizontal: 20,vertical: 10),
+              padding: const EdgeInsetsDirectional.symmetric(horizontal: 20,vertical: 10),
               onPressed: () {
                 final text = contentController.text.trim();
                 final cubit = context.read<CreatePostCubit>();

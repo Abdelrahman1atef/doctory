@@ -13,7 +13,7 @@ class MediaPickerBar extends StatelessWidget {
     double bottomPadding = MediaQuery.of(context).viewPadding.bottom;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8).copyWith(bottom: bottomPadding),
-      decoration: BoxDecoration(
+      decoration: const BoxDecoration(
         color: Colors.white,
         border: Border(top: BorderSide(color: AppColors.grey100)),
       ),

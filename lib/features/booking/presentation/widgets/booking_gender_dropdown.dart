@@ -29,11 +29,11 @@ class BookingGenderDropdown extends StatelessWidget {
         fillColor: AppColors.white,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.grey200),
+          borderSide: const BorderSide(color: AppColors.grey200),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.grey200),
+          borderSide: const BorderSide(color: AppColors.grey200),
         ),
       ),
     );

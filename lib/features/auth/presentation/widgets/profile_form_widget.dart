@@ -5,6 +5,7 @@ import '../../../../core/common/widgets/inputs/day_hours_widget.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/extensions.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ProfileFormWidget extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -50,9 +51,9 @@ class ProfileFormWidget extends StatelessWidget {
           if (isOwnClinic) ...[
             /// Clinic Image
             StitchUploadField(
-              label: context.l10n('clinic_image'),
+              label: 'clinic_image'.tr(),
               fileName: clinicImageFileName,
-              hint: context.l10n('upload_file_hint'),
+              hint: 'upload_file_hint'.tr(),
               isRequired: true,
               onPick: onPickClinicImage ?? () {},
             ),
@@ -61,8 +62,8 @@ class ProfileFormWidget extends StatelessWidget {
             /// Clinic Name
             StitchTextField(
               controller: clinicNameController,
-              label: context.l10n('clinic_name_label'),
-              hintText: context.l10n('clinic_name_hint'),
+              label: 'clinic_name_label'.tr(),
+              hintText: 'clinic_name_hint'.tr(),
               prefixIcon: const Icon(
                 Icons.local_hospital_outlined,
                 color: AppColors.stitchPrimary,
@@ -73,7 +74,7 @@ class ProfileFormWidget extends StatelessWidget {
 
             /// Clinic Location
             Text(
-              context.l10n('clinic_location'),
+              'clinic_location'.tr(),
               style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
             ),
             8.ph,
@@ -100,7 +101,7 @@ class ProfileFormWidget extends StatelessWidget {
                       child: Text(
                         clinicAddress?.isNotEmpty == true
                             ? clinicAddress!
-                            : context.l10n('pick_location_hint'),
+                            : 'pick_location_hint'.tr(),
                         style: AppStyles.s16Medium.copyWith(
                           color: clinicAddress?.isNotEmpty == true
                               ? AppColors.onSurface
@@ -116,7 +117,7 @@ class ProfileFormWidget extends StatelessWidget {
 
             /// Operating Hours Header
             Text(
-              context.l10n('operating_hours'),
+              'operating_hours'.tr(),
               style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
             ),
             12.ph,
@@ -142,7 +143,7 @@ class ProfileFormWidget extends StatelessWidget {
 
           /// Date of Birth
           StitchTextField(
-            label: context.l10n('birth_date'),
+            label: 'birth_date'.tr(),
             hintText: 'DD / MM / YYYY',
             prefixIcon: const Icon(
               Icons.calendar_month_outlined,
@@ -155,7 +156,7 @@ class ProfileFormWidget extends StatelessWidget {
 
           /// Gender Selection
           Text(
-            context.l10n('gender'),
+            'gender'.tr(),
             style: AppStyles.s14Bold.copyWith(color: AppColors.textPrimary),
           ),
           const SizedBox(height: 16),
@@ -163,7 +164,7 @@ class ProfileFormWidget extends StatelessWidget {
             children: [
               Expanded(
                 child: _GenderChip(
-                  label: context.l10n('male'),
+                  label: 'male'.tr(),
                   isSelected: selectedGender == 'male',
                   onTap: () => onGenderChanged('male'),
                 ),
@@ -171,7 +172,7 @@ class ProfileFormWidget extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _GenderChip(
-                  label: context.l10n('female'),
+                  label: 'female'.tr(),
                   isSelected: selectedGender == 'female',
                   onTap: () => onGenderChanged('female'),
                 ),
@@ -179,7 +180,7 @@ class ProfileFormWidget extends StatelessWidget {
               const SizedBox(width: 12),
               Expanded(
                 child: _GenderChip(
-                  label: context.l10n('other'),
+                  label: 'other'.tr(),
                   isSelected: selectedGender == 'other',
                   onTap: () => onGenderChanged('other'),
                 ),
@@ -203,7 +204,7 @@ class ProfileFormWidget extends StatelessWidget {
                 ),
               ),
               child: Text(
-                context.l10n(isOwnClinic ? 'save_and_continue' : 'complete_setup'),
+                (isOwnClinic ? 'save_and_continue' : 'complete_setup').tr(),
                 style: AppStyles.s16SemiBold,
               ),
             ),

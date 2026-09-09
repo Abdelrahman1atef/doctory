@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/extensions.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class DoctorTypeSelectionWidget extends StatelessWidget {
   final String? selectedType;
@@ -19,16 +20,16 @@ class DoctorTypeSelectionWidget extends StatelessWidget {
       children: [
         _TypeCard(
           icon: Icons.person_pin_outlined,
-          title: context.l10n('freelance_doctor'),
-          description: context.l10n('freelance_doctor_desc'),
+          title: 'freelance_doctor'.tr(),
+          description: 'freelance_doctor_desc'.tr(),
           isSelected: selectedType == 'freelance',
           onTap: () => onTypeSelected('freelance'),
         ),
         const SizedBox(height: 16),
         _TypeCard(
           icon: Icons.local_hospital_outlined,
-          title: context.l10n('clinic_owner'),
-          description: context.l10n('clinic_owner_desc'),
+          title: 'clinic_owner'.tr(),
+          description: 'clinic_owner_desc'.tr(),
           isSelected: selectedType == 'ownClinic',
           onTap: () => onTypeSelected('ownClinic'),
         ),
@@ -104,7 +105,7 @@ class _TypeCard extends StatelessWidget {
               ),
             ),
             if (isSelected)
-              Icon(
+              const Icon(
                 Icons.check_circle,
                 color: AppColors.stitchPrimary,
                 size: 24,

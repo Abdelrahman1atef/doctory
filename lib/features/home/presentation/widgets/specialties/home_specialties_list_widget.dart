@@ -1,9 +1,9 @@
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:doctory/core/common/models/shared_models.dart';
-import 'package:doctory/features/home/presentation/widgets/specialty_item_widget.dart';
+import 'package:doctory/features/home/presentation/widgets/specialties/specialty_item_widget.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/utils/extensions.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HomeSpecialtiesListWidget extends StatelessWidget {
   final List<SpecialtyModel> specialties;
@@ -28,14 +28,14 @@ class HomeSpecialtiesListWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                context.l10n('specialties'),
+                'specialties'.tr(),
                 style: AppStyles.s16Bold.copyWith(color: AppColors.textPrimary),
               ),
               TextButton(
                 onPressed: onSeeAll,
                 style: ButtonStyle(backgroundColor: WidgetStateProperty.all(AppColors.white)) ,
                 child: Text(
-                  context.l10n('see_all'),
+                  'see_all'.tr(),
                   style: AppStyles.s14Medium.copyWith(
                     color: AppColors.stitchPrimary,
                   ),

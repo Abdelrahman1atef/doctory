@@ -163,7 +163,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       body: {
         'postId': postId,
         'content': content,
-        if (parentCommentId != null) 'parentCommentId': parentCommentId,
+        'parentCommentId': ?parentCommentId,
       },
       parser: (json) => (json['data'] ?? json['Data'] ?? json).toString(),
     );

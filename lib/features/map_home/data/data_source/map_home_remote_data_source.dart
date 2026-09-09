@@ -57,14 +57,14 @@ class MapHomeRemoteDataSourceImpl implements MapHomeRemoteDataSource {
     return await _apiConsumer.get(
       path: MapHomeEndpoints.searchClinics,
       queryParameters: {
-        if (searchText != null) 'SearchText': searchText,
-        if (specializationId != null) 'SpecializationId': specializationId,
-        if (userLat != null) 'UserLat': userLat,
-        if (userLng != null) 'UserLng': userLng,
-        if (isNearest != null) 'IsNearest': isNearest,
-        if (radiusInKm != null) 'RadiusInKm': radiusInKm,
-        if (pageNumber != null) 'PageNumber': pageNumber,
-        if (pageSize != null) 'PageSize': pageSize,
+        'SearchText': ?searchText,
+        'SpecializationId': ?specializationId,
+        'UserLat': ?userLat,
+        'UserLng': ?userLng,
+        'IsNearest': ?isNearest,
+        'RadiusInKm': ?radiusInKm,
+        'PageNumber': ?pageNumber,
+        'PageSize': ?pageSize,
       },
       cancelToken: cancelToken,
       parser: (json) => ClinicSearchResponse.fromJson(json),
@@ -116,9 +116,9 @@ class MapHomeRemoteDataSourceImpl implements MapHomeRemoteDataSource {
     return await _apiConsumer.get<PaginatedData<SpecialtyModel>>(
       path: 'specializations',
       queryParameters: {
-        if (pageNumber != null) 'PageNumber': pageNumber,
-        if (pageSize != null) 'PageSize': pageSize,
-        if (isFamous != null) 'IsFamous': isFamous,
+        'PageNumber': ?pageNumber,
+        'PageSize': ?pageSize,
+        'IsFamous': ?isFamous,
       },
       parser:
           (json) => PaginatedData.fromJson(

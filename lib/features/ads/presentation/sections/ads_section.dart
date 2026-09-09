@@ -1,10 +1,10 @@
 import 'package:doctory/core/common/models/shared_models.dart';
 import 'package:doctory/core/router/router_names.dart';
-import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/ads/data/model/public_ad_model.dart';
 import 'package:doctory/features/ads/presentation/widgets/ads_carousel_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AdsSection extends StatelessWidget {
   final List<PublicAdModel> ads;
@@ -17,7 +17,7 @@ class AdsSection extends StatelessWidget {
 
     return AdsCarouselWidget(
       ads: ads,
-      title: context.l10n('ads_title'),
+      title: 'ads_title'.tr(),
       onAdTap: (ad) => _openClinic(context, ad),
     );
   }

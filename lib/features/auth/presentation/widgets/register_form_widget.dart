@@ -13,6 +13,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/extensions.dart';
 import 'package:doctory/features/auth/presentation/widgets/gender_selection_widget.dart';
+import 'package:easy_localization/easy_localization.dart'hide TextDirection;
 
 class RegisterFormWidget extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -111,7 +112,7 @@ class RegisterFormWidget extends StatelessWidget {
           /// Full Name
           StitchTextField(
             controller: nameController,
-            label: context.l10n('full_name'),
+            label: 'full_name'.tr(),
             hintText: 'John Doe',
             prefixIcon: const Icon(
               Icons.person_outline_rounded,
@@ -119,10 +120,10 @@ class RegisterFormWidget extends StatelessWidget {
             ),
             validator: (value) {
               if (requireBioFields && (value == null || value.trim().isEmpty)) {
-                return context.l10n('field_required');
+                return 'field_required'.tr();
               }
               if (requireBioFields && value != null && value.trim().length < 3) {
-                return context.l10n('name_too_short');
+                return 'name_too_short'.tr();
               }
               return null;
             },
@@ -133,7 +134,7 @@ class RegisterFormWidget extends StatelessWidget {
           /// Email
           StitchTextField(
             controller: emailController,
-            label: context.l10n('email'),
+            label: 'email'.tr(),
             hintText: 'example@mail.com',
             keyboardType: TextInputType.emailAddress,
             prefixIcon: const Icon(
@@ -142,14 +143,14 @@ class RegisterFormWidget extends StatelessWidget {
             ),
             validator: (value) {
               if (requireBioFields && (value == null || value.trim().isEmpty)) {
-                return context.l10n('field_required');
+                return 'field_required'.tr();
               }
               if (requireBioFields && value != null) {
                 final emailRegex = RegExp(
                   r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
                 );
                 if (!emailRegex.hasMatch(value.trim())) {
-                  return context.l10n('invalid_email');
+                  return 'invalid_email'.tr();
                 }
               }
               return null;
@@ -161,7 +162,7 @@ class RegisterFormWidget extends StatelessWidget {
           /// Phone Number
           StitchTextField(
             controller: phoneController,
-            label: context.l10n('phone_number'),
+            label: 'phone_number'.tr(),
             hintText: '01XXXXXXXXX',
             keyboardType: TextInputType.phone,
             maxLength: 11,
@@ -187,10 +188,10 @@ class RegisterFormWidget extends StatelessWidget {
             ),
             validator: (value) {
               if (requireBioFields && (value == null || value.trim().isEmpty)) {
-                return context.l10n('field_required');
+                return 'field_required'.tr();
               }
               if (requireBioFields && value != null && value.trim().length != 11) {
-                return context.l10n('invalid_phone');
+                return 'invalid_phone'.tr();
               }
               return null;
             },
@@ -203,7 +204,7 @@ class RegisterFormWidget extends StatelessWidget {
             text: TextSpan(
               children: [
                 TextSpan(
-                  text: context.l10n('birth_date'),
+                  text: 'birth_date'.tr(),
                   style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
                 ),
                 if (requireBioFields)
@@ -213,7 +214,7 @@ class RegisterFormWidget extends StatelessWidget {
                   )
                 else
                   TextSpan(
-                    text: ' ${context.l10n('optional')}',
+                    text: ' ${'optional'.tr()}',
                     style: AppStyles.s14Bold.copyWith(color: AppColors.textSecondary),
                   ),
               ],
@@ -227,14 +228,14 @@ class RegisterFormWidget extends StatelessWidget {
                 flex: 2,
                 child: StitchTextField(
                   controller: dayController,
-                  hintText: context.l10n('day'),
+                  hintText: 'day'.tr(),
                   keyboardType: TextInputType.number,
                   maxLength: 2,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   isRequired: requireBioFields,
                   validator: (value) {
                     if (requireBioFields && (value == null || value.isEmpty)) {
-                      return context.l10n('field_required');
+                      return 'field_required'.tr();
                     }
                     if (value == null || value.isEmpty) return null;
                     final day = int.tryParse(value);
@@ -262,14 +263,14 @@ class RegisterFormWidget extends StatelessWidget {
                 flex: 2,
                 child: StitchTextField(
                   controller: monthController,
-                  hintText: context.l10n('month'),
+                  hintText: 'month'.tr(),
                   keyboardType: TextInputType.number,
                   maxLength: 2,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   isRequired: requireBioFields,
                   validator: (value) {
                     if (requireBioFields && (value == null || value.isEmpty)) {
-                      return context.l10n('field_required');
+                      return 'field_required'.tr();
                     }
                     if (value == null || value.isEmpty) return null;
                     final month = int.tryParse(value);
@@ -297,14 +298,14 @@ class RegisterFormWidget extends StatelessWidget {
                 flex: 3,
                 child: StitchTextField(
                   controller: yearController,
-                  hintText: context.l10n('year'),
+                  hintText: 'year'.tr(),
                   keyboardType: TextInputType.number,
                   maxLength: 4,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                   isRequired: requireBioFields,
                   validator: (value) {
                     if (requireBioFields && (value == null || value.isEmpty)) {
-                      return context.l10n('field_required');
+                      return 'field_required'.tr();
                     }
                     if (value == null || value.isEmpty) return null;
                     if (value.length != 4) return '';
@@ -347,7 +348,7 @@ class RegisterFormWidget extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: 4),
               child: Text(
-                context.l10n('field_required'),
+                'field_required'.tr(),
                 style: AppStyles.s12Medium.copyWith(color: AppColors.error),
               ),
             ),
@@ -355,13 +356,13 @@ class RegisterFormWidget extends StatelessWidget {
 
           if (onPickPracticeCard != null) ...[
             StitchUploadField(
-              label: context.l10n('professional_practice_card_label'),
+              label: 'professional_practice_card_label'.tr(),
               fileName: practiceCardFileName,
-              hint: context.l10n('upload_file_hint'),
+              hint: 'upload_file_hint'.tr(),
               isRequired: true,
               onPick: onPickPracticeCard!,
               errorText: showImageErrors && practiceCardFileName == null
-                  ? context.l10n('field_required')
+                  ? 'field_required'.tr()
                   : null,
             ),
             12.ph,
@@ -369,13 +370,13 @@ class RegisterFormWidget extends StatelessWidget {
 
           if (onPickUnion != null) ...[
             StitchUploadField(
-              label: context.l10n('union_id_card_label'),
+              label: 'union_id_card_label'.tr(),
               fileName: unionFileName,
-              hint: context.l10n('upload_file_hint'),
+              hint: 'upload_file_hint'.tr(),
               isRequired: true,
               onPick: onPickUnion!,
               errorText: showImageErrors && unionFileName == null
-                  ? context.l10n('field_required')
+                  ? 'field_required'.tr()
                   : null,
             ),
             12.ph,
@@ -383,13 +384,13 @@ class RegisterFormWidget extends StatelessWidget {
 
           if (onPickTaxCard != null) ...[
             StitchUploadField(
-              label: context.l10n('tax_card_label'),
+              label: 'tax_card_label'.tr(),
               fileName: taxCardFileName,
-              hint: context.l10n('upload_file_hint'),
+              hint: 'upload_file_hint'.tr(),
               isRequired: true,
               onPick: onPickTaxCard!,
               errorText: showImageErrors && taxCardFileName == null
-                  ? context.l10n('field_required')
+                  ? 'field_required'.tr()
                   : null,
             ),
             12.ph,
@@ -403,7 +404,7 @@ class RegisterFormWidget extends StatelessWidget {
                   text: TextSpan(
                     children: [
                       TextSpan(
-                        text: context.l10n('select_specialization'),
+                        text: 'select_specialization'.tr(),
                         style: AppStyles.s14Bold.copyWith(
                           color: AppColors.onSurface,
                         ),
@@ -419,7 +420,7 @@ class RegisterFormWidget extends StatelessWidget {
                 DropdownButtonFormField<String>(
                   initialValue: selectedSpecializationId,
                   hint: Text(
-                    context.l10n('specialization'),
+                    'specialization'.tr(),
                     style: AppStyles.s14Medium.copyWith(
                       color: AppColors.textHint,
                     ),
@@ -471,7 +472,7 @@ class RegisterFormWidget extends StatelessWidget {
                   onChanged: onSpecializationChanged,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return context.l10n('field_required');
+                      return 'field_required'.tr();
                     }
                     return null;
                   },
@@ -484,8 +485,8 @@ class RegisterFormWidget extends StatelessWidget {
           if (isDoctor) ...[
             StitchTextField(
               controller: bioController,
-              label: context.l10n('bio_label'),
-              hintText: context.l10n('bio_hint'),
+              label: 'bio_label'.tr(),
+              hintText: 'bio_hint'.tr(),
               maxLines: 3,
               prefixIcon: const Icon(
                 Icons.info_outline_rounded,
@@ -493,7 +494,7 @@ class RegisterFormWidget extends StatelessWidget {
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return context.l10n('field_required');
+                  return 'field_required'.tr();
                 }
                 return null;
               },
@@ -501,7 +502,7 @@ class RegisterFormWidget extends StatelessWidget {
             20.ph,
             StitchTextField(
               controller: yearsOfExperienceController,
-              label: context.l10n('years_of_experience'),
+              label: 'years_of_experience'.tr(),
               hintText: '5',
               keyboardType: TextInputType.number,
               inputFormatters: [FilteringTextInputFormatter.digitsOnly],
@@ -511,11 +512,11 @@ class RegisterFormWidget extends StatelessWidget {
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
-                  return context.l10n('field_required');
+                  return 'field_required'.tr();
                 }
                 final years = int.tryParse(value.trim());
                 if (years == null || years > 100) {
-                  return context.l10n('years_max_100');
+                  return 'years_max_100'.tr();
                 }
                 return null;
               },
@@ -527,7 +528,7 @@ class RegisterFormWidget extends StatelessWidget {
             /// Password + Confirm Password side by side for doctors
                  StitchTextField(
                     controller: passwordController,
-                    label: context.l10n('password'),
+                    label: 'password'.tr(),
                     hintText: '••••••••',
                     obscureText: obscurePassword,
                     prefixIcon: const Icon(
@@ -546,7 +547,7 @@ class RegisterFormWidget extends StatelessWidget {
                     ),
                     validator: (value) {
                       if (requireBioFields && (value == null || value.length < 6)) {
-                        return context.l10n('password_too_short');
+                        return 'password_too_short'.tr();
                       }
                       return null;
                     },
@@ -554,7 +555,7 @@ class RegisterFormWidget extends StatelessWidget {
                 12.ph,
                  StitchTextField(
                     controller: confirmPasswordController,
-                    label: context.l10n('confirm_password'),
+                    label: 'confirm_password'.tr(),
                     hintText: '••••••••',
                     obscureText: obscureConfirmPassword,
                     prefixIcon: const Icon(
@@ -573,7 +574,7 @@ class RegisterFormWidget extends StatelessWidget {
                     ),
                     validator: (value) {
                       if (requireBioFields && value != passwordController.text) {
-                        return context.l10n('passwords_dont_match');
+                        return 'passwords_dont_match'.tr();
                       }
                       return null;
                     },
@@ -582,7 +583,7 @@ class RegisterFormWidget extends StatelessWidget {
             /// Password (stacked for patients)
             StitchTextField(
               controller: passwordController,
-              label: context.l10n('password'),
+              label: 'password'.tr(),
               hintText: '••••••••',
               obscureText: obscurePassword,
               prefixIcon: const Icon(
@@ -601,7 +602,7 @@ class RegisterFormWidget extends StatelessWidget {
               ),
               validator: (value) {
                 if (requireBioFields && (value == null || value.length < 6)) {
-                  return context.l10n('password_too_short');
+                  return 'password_too_short'.tr();
                 }
                 return null;
               },
@@ -612,7 +613,7 @@ class RegisterFormWidget extends StatelessWidget {
             /// Confirm Password
             StitchTextField(
               controller: confirmPasswordController,
-              label: context.l10n('confirm_password'),
+              label: 'confirm_password'.tr(),
               hintText: '••••••••',
               obscureText: obscureConfirmPassword,
               prefixIcon: const Icon(
@@ -631,7 +632,7 @@ class RegisterFormWidget extends StatelessWidget {
               ),
               validator: (value) {
                 if (requireBioFields && value != passwordController.text) {
-                  return context.l10n('passwords_dont_match');
+                  return 'passwords_dont_match'.tr();
                 }
                 return null;
               },
@@ -655,7 +656,7 @@ class RegisterFormWidget extends StatelessWidget {
                 ),
               ),
               child: Text(
-                context.l10n('create_account'),
+                'create_account'.tr(),
                 style: AppStyles.s16SemiBold,
               ),
             ),
@@ -675,7 +676,7 @@ class RegisterFormWidget extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 16),
                     child: Text(
-                      context.l10n('or_register_with'),
+                      'or_register_with'.tr(),
                       style: AppStyles.s14Medium.copyWith(
                         color: AppColors.textSecondary,
                       ),
@@ -690,7 +691,7 @@ class RegisterFormWidget extends StatelessWidget {
             if (RemoteConfigService.showGoogleAuth) ...[
               24.ph,
               SocialAuthButton(
-                title: context.l10n('continue_with_google'),
+                title: 'continue_with_google'.tr(),
                 icon: const Icon(
                   Icons.g_mobiledata_rounded,
                   color: Colors.red,
@@ -703,7 +704,7 @@ class RegisterFormWidget extends StatelessWidget {
             if (RemoteConfigService.showFacebookAuth) ...[
               if (!RemoteConfigService.showGoogleAuth) 24.ph else 16.ph,
               SocialAuthButton(
-                title: context.l10n('continue_with_facebook'),
+                title: 'continue_with_facebook'.tr(),
                 icon: const Icon(
                   Icons.facebook_rounded,
                   color: Colors.blue,
@@ -721,7 +722,7 @@ class RegisterFormWidget extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                context.l10n('already_have_account'),
+                'already_have_account'.tr(),
                 style: AppStyles.s14Medium.copyWith(
                   color: AppColors.textSecondary,
                 ),
@@ -729,7 +730,7 @@ class RegisterFormWidget extends StatelessWidget {
               TextButton(
                 onPressed: onLogin,
                 child: Text(
-                  context.l10n('login'),
+                  'login'.tr(),
                   style: AppStyles.s14SemiBold.copyWith(
                     color: AppColors.stitchPrimary,
                   ),

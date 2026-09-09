@@ -4,11 +4,11 @@ import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:go_router/go_router.dart';
 import '../../../../core/router/router_names.dart';
 import '../../../../core/services/alerts.dart';
-import '../../../../core/utils/extensions.dart';
 import '../../cubit/auth_cubit.dart';
 import '../../cubit/auth_states.dart';
 import '../widgets/auth_form_container_widget.dart';
 import '../widgets/forgot_password_form_widget.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class ForgotPasswordBodySection extends StatefulWidget {
   const ForgotPasswordBodySection({super.key});
@@ -47,7 +47,7 @@ class _ForgotPasswordBodySectionState extends State<ForgotPasswordBodySection> {
         if (state is ForgotPasswordSuccessState) {
           Alerts.showSnackBar(
             context,
-            message: context.l10n('reset_link_sent_success'),
+            message: 'reset_link_sent_success'.tr(),
           );
           context.push(
             AppRoutes.otpVerification,

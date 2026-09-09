@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_typography.dart';
 import '../../../../core/utils/extensions.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class LoginHeaderWidget extends StatelessWidget {
   const LoginHeaderWidget({super.key});
@@ -14,7 +15,7 @@ class LoginHeaderWidget extends StatelessWidget {
       child: Column(
         children: [
           Text(
-            context.l10n('login_title'),
+            'login_title'.tr(),
             textAlign: TextAlign.center,
             style: AppStyles.s14Bold.copyWith(
               fontWeight: FontWeight.w800,
@@ -25,7 +26,7 @@ class LoginHeaderWidget extends StatelessWidget {
           ),
           16.ph,
           Text(
-            context.l10n('login_subtitle'),
+            'login_subtitle'.tr(),
             textAlign: TextAlign.center,
             style: AppStyles.s14Bold.copyWith(
               color: AppColors.textSecondary,

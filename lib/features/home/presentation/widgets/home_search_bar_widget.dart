@@ -1,7 +1,7 @@
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/utils/extensions.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class HomeSearchBarWidget extends StatelessWidget {
   final TextEditingController controller;
@@ -35,7 +35,7 @@ class HomeSearchBarWidget extends StatelessWidget {
             controller: controller,
             onSubmitted: (_) => onSearch(),
             decoration: InputDecoration(
-              hintText: context.l10n('search_hint'),
+              hintText: 'search_hint'.tr(),
               hintStyle: AppStyles.s14Medium.copyWith(
                 color: AppColors.textHint,
               ),

@@ -1,7 +1,7 @@
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
-import 'package:doctory/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
+import 'package:easy_localization/easy_localization.dart';
 
 class AdsActiveTagWidget extends StatelessWidget {
   const AdsActiveTagWidget({super.key});
@@ -15,7 +15,7 @@ class AdsActiveTagWidget extends StatelessWidget {
         borderRadius: BorderRadius.circular(8),
       ),
       child: Text(
-        context.l10n('ads_active_tag'),
+        'ads_active_tag'.tr(),
         style: AppStyles.s10Bold.copyWith(color: AppColors.success),
       ),
     );

@@ -143,7 +143,7 @@ class _NearbyClinicsSheetWidgetState extends State<NearbyClinicsSheetWidget> {
                         color: AppColors.stitchSurfaceLow,
                         borderRadius: BorderRadius.circular(6),
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.close_rounded,
                         size: 16,
                         color: AppColors.stitchSecondary,
