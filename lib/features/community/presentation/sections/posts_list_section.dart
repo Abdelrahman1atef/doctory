@@ -82,19 +82,19 @@ class _PostsListSectionState extends State<PostsListSection> {
               extra: {'post': post, 'focusComment': false},
             ),
             onAvatarTap: (post) {
-              if (post.isFreelanceDoctor) {
-                context.push(AppRoutes.doctorDetails, extra: {
-                  'id': post.authorId,
-                  'name': post.authorName,
-                  'image': post.authorImage,
-                });
-              } else {
-                context.push(AppRoutes.clinicDetails, extra: {
-                  'id': post.authorId,
-                  'name': post.authorName,
-                  'image': post.authorImage,
-                });
-              }
+              // if (post.isFreelanceDoctor) {
+              //   context.push(AppRoutes.doctorDetails, extra: {
+              //     'id': post.authorId,
+              //     'name': post.authorName,
+              //     'image': post.authorImage,
+              //   });
+              // } else {
+              //   context.push(AppRoutes.clinicDetails, extra: {
+              //     'id': post.authorId,
+              //     'name': post.authorName,
+              //     'image': post.authorImage,
+              //   });
+              // }
             },
             onReactionsTapped: (post) {
               final cubit = context.read<CommunityCubit>();

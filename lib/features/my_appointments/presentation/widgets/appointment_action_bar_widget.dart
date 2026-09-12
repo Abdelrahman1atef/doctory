@@ -78,7 +78,9 @@ class AppointmentActionBarWidget extends StatelessWidget {
                     isCancelling ? null : onCancelTap,
                 icon: const Icon(Icons.cancel_outlined),
                 label: Text('cancel_appointment'.tr()),
+                
                 style: OutlinedButton.styleFrom(
+                  textStyle: AppStyles.s14Bold.withColor(AppColors.error),
                   foregroundColor: AppColors.error,
                   side: BorderSide(
                     color: isCancelling

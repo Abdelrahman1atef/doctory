@@ -2,13 +2,15 @@ import 'package:doctory/core/theme/app_colors.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme/app_typography.dart';
+
 Future<String?> showCancelAppointmentDialog(BuildContext context) {
   final controller = TextEditingController();
   return showDialog<String>(
     context: context,
     builder: (ctx) =>
         AlertDialog(
-          title: Text('cancel_appointment'.tr()),
+          title: Text('cancel_appointment'.tr(),style: AppStyles.s16SemiBold.withColor(AppColors.black),),
           content: TextField(
             controller: controller,
             maxLines: 3,
@@ -21,7 +23,7 @@ Future<String?> showCancelAppointmentDialog(BuildContext context) {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(ctx).pop(),
-              child: Text('no'.tr()),
+              child: Text('no'.tr(),style: AppStyles.s14Medium.withColor(AppColors.primary)),
             ),
             ValueListenableBuilder<TextEditingValue>(
               valueListenable: controller,
@@ -34,7 +36,7 @@ Future<String?> showCancelAppointmentDialog(BuildContext context) {
                         : () => Navigator.of(ctx).pop(value.text.trim()),
                     child: Text(
                       'yes'.tr(),
-                      style: TextStyle(color: AppColors.error),
+                      style: AppStyles.s14Medium.withColor(AppColors.error),
                     ),
                   ),
             ),

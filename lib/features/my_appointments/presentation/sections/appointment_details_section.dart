@@ -226,8 +226,7 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
     final cubit = context.read<MyAppointmentsCubit>();
 
     setState(() => _initiatingPayment = true);
-    final url = apt.paymobRedirectUrl ??
-        widget.paymentUrl ??
+    final url =
         await cubit.initiatePayment(
           appointmentId: apt.id,
           paymentMethod: method,

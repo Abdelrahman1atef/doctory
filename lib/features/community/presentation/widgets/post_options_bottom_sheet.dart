@@ -10,6 +10,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/app_typography.dart';
+
 class PostOptionsBottomSheet extends StatelessWidget {
   final PostModel post;
 
@@ -46,17 +49,17 @@ class PostOptionsBottomSheet extends StatelessWidget {
                 );
               },
             ),
-          ListTile(
-            leading: const Icon(Icons.copy),
-            title: Text('copy_link'.tr()),
-            onTap: () {
-              final subPath = '/post/${post.id}';
-              final url = '${DeepLinkConfig.scheme}://${DeepLinkConfig.host}$subPath';
-              Clipboard.setData(ClipboardData(text: url));
-              Navigator.pop(context);
-              Alerts.showToast('copy_link'.tr());
-            },
-          ),
+          // ListTile(
+          //   leading: const Icon(Icons.copy),
+          //   title: Text('copy_link'.tr()),
+          //   onTap: () {
+          //     final subPath = '/post/${post.id}';
+          //     final url = '${DeepLinkConfig.scheme}://${DeepLinkConfig.host}$subPath';
+          //     Clipboard.setData(ClipboardData(text: url));
+          //     Navigator.pop(context);
+          //     Alerts.showToast('copy_link'.tr());
+          //   },
+          // ),
           // ListTile(
           //   leading: const Icon(Icons.report_outlined),
           //   title: Text('report'.tr()),
@@ -67,7 +70,7 @@ class PostOptionsBottomSheet extends StatelessWidget {
               leading: const Icon(Icons.delete_outline, color: Colors.red),
               title: Text(
                 'delete'.tr(),
-                style: const TextStyle(color: Colors.red),
+                style: AppStyles.s14Medium.withColor(AppColors.error),
               ),
               onTap: () => Navigator.pop(context),
             ),

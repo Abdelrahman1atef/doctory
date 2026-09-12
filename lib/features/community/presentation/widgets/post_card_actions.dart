@@ -77,19 +77,19 @@ class PostCardActions extends StatelessWidget {
             onTap: onCommentTapped,
           ),
         ),
-        Expanded(
-          child: PostCardActionButton(
-            icon: Icons.share_outlined,
-            color: AppColors.textSecondary,
-            label: 'share'.tr(),
-            onTap: () {
-              final subPath = '/post/${post.id}';
-              final url = '${DeepLinkConfig.scheme}://${DeepLinkConfig.host}$subPath';
-              Clipboard.setData(ClipboardData(text: url));
-              Alerts.showToast('copy_link'.tr());
-            },
-          ),
-        ),
+        // Expanded(
+        //   child: PostCardActionButton(
+        //     icon: Icons.share_outlined,
+        //     color: AppColors.textSecondary,
+        //     label: 'share'.tr(),
+        //     onTap: () {
+        //       final subPath = '/post/${post.id}';
+        //       final url = '${DeepLinkConfig.scheme}://${DeepLinkConfig.host}$subPath';
+        //       Clipboard.setData(ClipboardData(text: url));
+        //       Alerts.showToast('copy_link'.tr());
+        //     },
+        //   ),
+        // ),
       ],
     );
   }
