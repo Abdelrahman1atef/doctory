@@ -33,7 +33,7 @@ class PostModel {
   final ReactionType myReaction;
 
   bool get isMedicalProfessional =>
-      authorRole != null && authorRole?.toLowerCase() != 'patient' || isFreelanceDoctor;
+      authorRole != null && authorRole?.toLowerCase() != 'user' || isFreelanceDoctor;
 
   PostModel({
     required this.id,
