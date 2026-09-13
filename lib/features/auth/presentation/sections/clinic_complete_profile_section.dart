@@ -197,10 +197,10 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
     return map;
   }
 
-  List<String> _buildWorkingDays() {
+  List<int> _buildWorkingDays() {
     return _dayHours
         .where((d) => !d.isClosed)
-        .map((d) => d.dayName)
+        .map((d) => d.dayIndex)
         .toList();
   }
 
@@ -328,6 +328,17 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
         selectedSpecializationName: _selectedSpecializationName,
         onPickSpecialization: _pickSpecialization,
         onSubmit: _onSubmit,
+        onPop: () {
+          if (widget.isSetupMode) {
+            UserSession.logout().then((_) {
+              if (context.mounted) {
+                context.go(AppRoutes.login);
+              }
+            });
+          } else {
+            context.go(AppRoutes.login);
+          }
+        },
       ),
     );
   }

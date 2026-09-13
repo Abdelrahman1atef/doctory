@@ -9,7 +9,7 @@ class AdminClinicSetupRequest {
   final String workingHours;
   final String workingHoursStart;
   final String workingHoursEnd;
-  final List<String> workingDays;
+  final List<int> workingDays;
   final String specializationId;
   final double lat;
   final double lng;

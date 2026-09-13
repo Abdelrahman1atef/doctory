@@ -18,6 +18,6 @@ class AuthEndpoints {
   static const String updateDeviceToken = '/Auth/update-device-token';
   static const String users = '/users';
   static const String clinicRegister = '/Clinics';
-  static const String deepLinkVerify = '/api/v1/deep-links/verify';
-  static const String setupClinic = '/api/v1/admin/clinics/setup';
+  static const String deepLinkVerify = '/deep-links/verify';
+  static const String setupClinic = '/admin/clinics/setup';
 }

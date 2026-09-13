@@ -24,6 +24,7 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
   final String? selectedSpecializationName;
   final VoidCallback onPickSpecialization;
   final VoidCallback onSubmit;
+  final VoidCallback onPop;
 
   const ClinicCompleteProfileWidget({
     super.key,
@@ -44,6 +45,7 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
     this.selectedSpecializationName,
     required this.onPickSpecialization,
     required this.onSubmit,
+    required this.onPop,
   });
 
   @override
@@ -55,6 +57,16 @@ class ClinicCompleteProfileWidget extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: GestureDetector(
+                onTap: onPop,
+                child: const Padding(
+                  padding: EdgeInsets.only(bottom: 16),
+                  child: Icon(Icons.arrow_back_ios_new_rounded, size: 24, color: AppColors.textPrimary),
+                ),
+              ),
+            ),
             /// Header
             Text(
               context.l10n(isSetupMode ? 'setup_clinic_title' : 'complete_profile_title'),

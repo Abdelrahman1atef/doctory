@@ -54,19 +54,19 @@ class _LoginInputSectionState extends State<LoginInputSection> {
     String destination;
     Object? extra;
 
-    if (UserSession.clinicStatus == null) {
-      destination = AppRoutes.home;
-    } else if (UserSession.verificationStatus == 'Pending') {
-      destination = AppRoutes.clinicPendingApproval;
-    } else if (UserSession.verificationStatus == 'Rejected') {
-      destination = AppRoutes.clinicRejected;
-    } else if (UserSession.clinicStatus == 'Suspended') {
-      destination = AppRoutes.clinicPendingApproval;
-    } else if (!UserSession.isClinicSetupComplete) {
-      destination = AppRoutes.clinicCompleteProfile;
-      extra = {'isSetupMode': true};
+    if (UserSession.currentRole == UserRole.clinicOwner) {
+      if (!UserSession.isClinicSetupComplete) {
+        destination = AppRoutes.clinicCompleteProfile;
+        extra = {'isSetupMode': true};
+      } else if (UserSession.verificationStatus == 'Pending' || UserSession.clinicStatus == 'Suspended') {
+        destination = AppRoutes.clinicPendingApproval;
+      } else if (UserSession.verificationStatus == 'Rejected') {
+        destination = AppRoutes.clinicRejected;
+      } else {
+        destination = AppRoutes.clinicDashboard;
+      }
     } else {
-      destination = AppRoutes.clinicDashboard;
+      destination = AppRoutes.home;
     }
 
     if (destination == AppRoutes.home || destination == AppRoutes.clinicDashboard) {
