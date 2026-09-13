@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:flutter_facebook_auth/flutter_facebook_auth.dart';
+
+import 'crashlytics_service.dart';
 
 class SocialAuthResult {
   final String? name;
@@ -34,13 +37,24 @@ class SocialAuthService {
 
   Future<SocialAuthResult?> signInWithGoogle() async {
     try {
+      debugPrint('===> Google Sign In: starting (serverClientId=$_serverClientId)');
       final user = await _googleSignIn.signIn();
-      if (user == null) return null;
+      if (user == null) {
+        // User dismissed the account picker — not an error.
+        debugPrint('===> Google Sign In: cancelled by user');
+        return null;
+      }
 
       final auth = await user.authentication;
+      debugPrint(
+        '===> Google Sign In: account=${user.email} '
+        'idToken=${auth.idToken != null} accessToken=${auth.accessToken != null}',
+      );
 
       if (auth.idToken == null) {
-        throw Exception("ID Token is null");
+        throw StateError(
+          'Google returned no idToken (serverClientId missing or wrong OAuth client)',
+        );
       }
 
       return SocialAuthResult(
@@ -50,10 +64,26 @@ class SocialAuthService {
         idToken: auth.idToken,
         provider: 'google',
       );
-    } catch (e) {
-      debugPrint('Google Sign In Error: $e');
+    } on PlatformException catch (e, st) {
+      // The native plugin surfaces Play Services failures here.
+      // code 'sign_in_failed' + "ApiException: 10" == DEVELOPER_ERROR
+      // (SHA-1 of the signing key not registered in Firebase / OAuth client).
+      _reportGoogleError(
+        'PlatformException code=${e.code} message=${e.message} details=${e.details}',
+        e,
+        st,
+      );
+      return null;
+    } catch (e, st) {
+      _reportGoogleError('$e', e, st);
       return null;
     }
+  }
+
+  void _reportGoogleError(String summary, Object error, StackTrace st) {
+    debugPrint('===> Google Sign In Error: $summary');
+    CrashlyticsService.log('Google Sign In Error: $summary');
+    CrashlyticsService.recordError(error, st);
   }
 
   Future<SocialAuthResult?> signInWithFacebook() async {

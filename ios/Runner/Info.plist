@@ -57,7 +57,21 @@
 				<string>doctory</string>
 			</array>
 		</dict>
+		<dict>
+			<!-- Google Sign-In OAuth callback: reversed iOS client ID -->
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.1077893614286-upsfe0te88flm0gc3hl2af0qjdfnk6le</string>
+			</array>
+		</dict>
 	</array>
+	<!-- Google Sign-In (google_sign_in_ios reads these) -->
+	<key>GIDClientID</key>
+	<string>1077893614286-upsfe0te88flm0gc3hl2af0qjdfnk6le.apps.googleusercontent.com</string>
+	<key>GIDServerClientID</key>
+	<string>1077893614286-hfio622ah8p9hc0d97ms3h8e2lpmm88h.apps.googleusercontent.com</string>
 	<key>UIBackgroundModes</key>
 		<array>
 			<string>remote-notification</string>
