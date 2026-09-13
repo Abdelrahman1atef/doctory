@@ -33,7 +33,7 @@ class PostModel {
   final ReactionType myReaction;
 
   bool get isMedicalProfessional =>
-      authorRole != null && authorRole != 'patient' || isFreelanceDoctor;
+      authorRole != null && authorRole?.toLowerCase() != 'patient' || isFreelanceDoctor;
 
   PostModel({
     required this.id,
@@ -57,7 +57,7 @@ class PostModel {
       authorId: json['authorId'] ?? '',
       authorName: json['authorName'],
       authorImage: json['authorProfileImageUrl'] ?? json['authorImage'],
-      authorRole: json['authorRole'],
+      authorRole:  json['userRole'],
       isFreelanceDoctor: json['isFreelanceDoctor'] == true,
       createdAt: json['createdAt'] ?? '',
       reactionCount: json['reactionCount'] ?? 0,
@@ -245,19 +245,22 @@ class PaginatedData<T> {
     Map<String, dynamic> json,
     T Function(Map<String, dynamic>) fromJsonT,
   ) {
+    // Tolerant parsing for pagination which might be a sibling or nested
+    final data = json['data'] ?? json['Data'] ?? json;
+    final itemsList = (data['items'] ?? data['Items'] ?? json['items'] ?? json['Items']) as List?;
+    
+    final meta = json['pagination'] ?? json['meta'] ?? data['pagination'] ?? data['meta'] ?? data ?? json;
+    
     return PaginatedData<T>(
-      items: (json['items'] ?? json['Items']) != null
-          ? ((json['items'] ?? json['Items']) as List)
-                .map((i) => fromJsonT(i))
-                .toList()
+      items: itemsList != null
+          ? itemsList.map((i) => fromJsonT(i)).toList()
           : [],
-      pageNumber: json['pageNumber'] ?? json['PageNumber'] ?? 1,
-      pageSize: json['pageSize'] ?? json['PageSize'] ?? 20,
-      totalPages: json['totalPages'] ?? json['TotalPages'] ?? 1,
-      totalCount: json['totalCount'] ?? json['TotalCount'] ?? 0,
-      hasPreviousPage:
-          json['hasPreviousPage'] ?? json['HasPreviousPage'] ?? false,
-      hasNextPage: json['hasNextPage'] ?? json['HasNextPage'] ?? false,
+      pageNumber: meta['pageNumber'] ?? meta['PageNumber'] ?? meta['currentPage'] ?? 1,
+      pageSize: meta['pageSize'] ?? meta['PageSize'] ?? meta['perPage'] ?? 20,
+      totalPages: meta['totalPages'] ?? meta['TotalPages'] ?? meta['lastPage'] ?? 1,
+      totalCount: meta['totalCount'] ?? meta['TotalCount'] ?? meta['total'] ?? 0,
+      hasPreviousPage: meta['hasPreviousPage'] ?? meta['HasPreviousPage'] ?? false,
+      hasNextPage: meta['hasNextPage'] ?? meta['HasNextPage'] ?? false,
     );
   }
 }

@@ -64,24 +64,31 @@ class _LayoutViewState extends State<LayoutView> {
       },
       child: Scaffold(
         body: widget.navigationShell,
-        floatingActionButton: UserSession.currentRole == UserRole.clinicOwner ||
+        floatingActionButton: ValueListenableBuilder(
+          valueListenable: UserSession.userNotifier,
+          builder: (context, user, child) {
+            final isClinicOrAdmin = UserSession.currentRole == UserRole.clinicOwner ||
+                UserSession.currentRole == UserRole.superAdmin;
+            
+            if (!isClinicOrAdmin) return const SizedBox.shrink();
+
+            return FloatingActionButton(
+              heroTag: 'layout_fab',
+              onPressed: () => context.push(
                 UserSession.currentRole == UserRole.superAdmin
-            ? FloatingActionButton(
-                heroTag: 'layout_fab',
-                onPressed: () => context.push(
-                  UserSession.currentRole == UserRole.superAdmin
-                      ? AdminRoutes.admin
-                      : AppRoutes.clinicDashboard,
-                ),
-                backgroundColor: AppColors.stitchPrimary,
-                foregroundColor: AppColors.white,
-                child: Icon(
-                  UserSession.currentRole == UserRole.superAdmin
-                      ? Icons.admin_panel_settings_rounded
-                      : Icons.dashboard_rounded,
-                ),
-              )
-            : null,
+                    ? AdminRoutes.admin
+                    : AppRoutes.clinicDashboard,
+              ),
+              backgroundColor: AppColors.stitchPrimary,
+              foregroundColor: AppColors.white,
+              child: Icon(
+                UserSession.currentRole == UserRole.superAdmin
+                    ? Icons.admin_panel_settings_rounded
+                    : Icons.dashboard_rounded,
+              ),
+            );
+          },
+        ),
         floatingActionButtonLocation: FloatingActionButtonLocation.miniStartFloat,
         bottomNavigationBar: BottomNavigationBar(
           currentIndex: widget.navigationShell.currentIndex,

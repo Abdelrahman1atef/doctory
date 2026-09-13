@@ -45,6 +45,16 @@ class UserModel {
         .whereType<Permission>()
         .toList();
 
+    DoctorEmploymentType? dType = DoctorEmploymentType.fromJson(json['doctorType']?.toString());
+    final parsedUserRole = UserRole.fromJson(rawRole);
+    if (dType == null && json['isFreelanceDoctor'] is bool) {
+      if (parsedUserRole == UserRole.doctor || parsedUserRole == UserRole.clinicOwner) {
+        dType = (json['isFreelanceDoctor'] as bool)
+            ? DoctorEmploymentType.freelance
+            : DoctorEmploymentType.ownClinic;
+      }
+    }
+
     return UserModel(
       id: json['id']?.toString(),
       fullName: json['fullName'] ?? '',
@@ -61,7 +71,7 @@ class UserModel {
       role: rawRole,
       userRole: UserRole.fromJson(rawRole),
       permissions: permissions.isNotEmpty ? permissions : null,
-      doctorType: DoctorEmploymentType.fromJson(json['doctorType']?.toString()),
+      doctorType: dType,
       certificateImage: json['certificate_image']?.toString(),
       syndicateIdImage: json['syndicate_id_image']?.toString(),
       professionalPracticeCardImage: json['professional_practice_card_image']?.toString(),

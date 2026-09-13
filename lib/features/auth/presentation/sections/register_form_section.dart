@@ -137,54 +137,60 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
   void _onSubmit() {
     setState(() => _showImageErrors = false);
 
-    if (_formKey.currentState!.validate()) {
+    bool hasImageErrors = false;
+    if (_isDoctor) {
+      final missingImages = <String>[];
+      if (_profileImage == null) missingImages.add('profile');
+      if (_professionalPracticeCard == null) missingImages.add('practice_card');
+      if (_unionIdImage == null) missingImages.add('union_id');
+      if (widget.doctorType == 'ownClinic' && _taxCardImage == null) {
+        missingImages.add('tax_card');
+      }
+      if (missingImages.isNotEmpty) {
+        hasImageErrors = true;
+      }
+    }
+
+    final isValid = _formKey.currentState!.validate();
+
+    if (hasImageErrors) {
+      setState(() => _showImageErrors = true);
+    }
+
+    if (!isValid || hasImageErrors) {
       if (_isDoctor && _selectedGender == null) {
         Alerts.showSnackBar(
           context,
           message: context.l10n('field_required'),
           state: SnackState.failed,
         );
-        return;
       }
-
-      if (_isDoctor) {
-        final missingImages = <String>[];
-        if (_profileImage == null) missingImages.add('profile');
-        if (_professionalPracticeCard == null) missingImages.add('practice_card');
-        if (_unionIdImage == null) missingImages.add('union_id');
-        if (widget.doctorType == 'ownClinic' && _taxCardImage == null) {
-          missingImages.add('tax_card');
-        }
-        if (missingImages.isNotEmpty) {
-          setState(() => _showImageErrors = true);
-          return;
-        }
-      }
-
-      final signupRequest = SignupRequest(
-        fullName: _nameController.text.trim(),
-        email: _emailController.text.trim(),
-        password: _passwordController.text,
-        confirmPassword: _confirmPasswordController.text,
-        phoneNumber: _getFormattedPhone(),
-        typeOfUser: _typeOfUser,
-        birthDate: _buildBirthDate(),
-        gender: _getGenderValue(),
-        specializationId: _selectedSpecializationId,
-        bio: _bioController.text.trim().isEmpty ? null : _bioController.text.trim(),
-        yearsOfExperience: _yearsOfExperienceController.text.trim().isEmpty
-            ? null
-            : int.tryParse(_yearsOfExperienceController.text.trim()),
-      );
-
-      context.read<AuthCubit>().signup(
-        request: signupRequest,
-        doctorImageFile: _isDoctor ? _profileImage : null,
-        professionalPracticeCardFile: _isDoctor ? _professionalPracticeCard : null,
-        unionIdFile: _isDoctor ? _unionIdImage : null,
-        taxCardFile: _isDoctor && widget.doctorType == 'ownClinic' ? _taxCardImage : null,
-      );
+      return;
     }
+
+    final signupRequest = SignupRequest(
+      fullName: _nameController.text.trim(),
+      email: _emailController.text.trim(),
+      password: _passwordController.text,
+      confirmPassword: _confirmPasswordController.text,
+      phoneNumber: _getFormattedPhone(),
+      typeOfUser: _typeOfUser,
+      birthDate: _buildBirthDate(),
+      gender: _getGenderValue(),
+      specializationId: _selectedSpecializationId,
+      bio: _bioController.text.trim().isEmpty ? null : _bioController.text.trim(),
+      yearsOfExperience: _yearsOfExperienceController.text.trim().isEmpty
+          ? null
+          : int.tryParse(_yearsOfExperienceController.text.trim()),
+    );
+
+    context.read<AuthCubit>().signup(
+      request: signupRequest,
+      doctorImageFile: _isDoctor ? _profileImage : null,
+      professionalPracticeCardFile: _isDoctor ? _professionalPracticeCard : null,
+      unionIdFile: _isDoctor ? _unionIdImage : null,
+      taxCardFile: _isDoctor && widget.doctorType == 'ownClinic' ? _taxCardImage : null,
+    );
   }
 
   @override

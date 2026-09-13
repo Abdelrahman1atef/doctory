@@ -118,10 +118,10 @@ class RegisterFormWidget extends StatelessWidget {
               color: AppColors.stitchPrimary,
             ),
             validator: (value) {
-              if (requireBioFields && (value == null || value.trim().isEmpty)) {
+              if (value == null || value.trim().isEmpty) {
                 return context.l10n('field_required');
               }
-              if (requireBioFields && value != null && value.trim().length < 3) {
+              if (value.trim().length < 3) {
                 return context.l10n('name_too_short');
               }
               return null;
@@ -141,16 +141,14 @@ class RegisterFormWidget extends StatelessWidget {
               color: AppColors.stitchPrimary,
             ),
             validator: (value) {
-              if (requireBioFields && (value == null || value.trim().isEmpty)) {
+              if (value == null || value.trim().isEmpty) {
                 return context.l10n('field_required');
               }
-              if (requireBioFields && value != null) {
-                final emailRegex = RegExp(
-                  r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
-                );
-                if (!emailRegex.hasMatch(value.trim())) {
-                  return context.l10n('invalid_email');
-                }
+              final emailRegex = RegExp(
+                r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+              );
+              if (!emailRegex.hasMatch(value.trim())) {
+                return context.l10n('invalid_email');
               }
               return null;
             },
@@ -186,10 +184,10 @@ class RegisterFormWidget extends StatelessWidget {
               ),
             ),
             validator: (value) {
-              if (requireBioFields && (value == null || value.trim().isEmpty)) {
+              if (value == null || value.trim().isEmpty) {
                 return context.l10n('field_required');
               }
-              if (requireBioFields && value != null && value.trim().length != 11) {
+              if (value.trim().length != 11) {
                 return context.l10n('invalid_phone');
               }
               return null;
@@ -206,16 +204,10 @@ class RegisterFormWidget extends StatelessWidget {
                   text: context.l10n('birth_date'),
                   style: AppStyles.s14Bold.copyWith(color: AppColors.onSurface),
                 ),
-                if (requireBioFields)
-                  TextSpan(
-                    text: ' *',
-                    style: AppStyles.s14Bold.copyWith(color: Colors.red),
-                  )
-                else
-                  TextSpan(
-                    text: ' ${context.l10n('optional')}',
-                    style: AppStyles.s14Bold.copyWith(color: AppColors.textSecondary),
-                  ),
+                const TextSpan(
+                  text: ' *',
+                  style: TextStyle(color: Colors.red),
+                ),
               ],
             ),
           ),
@@ -231,12 +223,11 @@ class RegisterFormWidget extends StatelessWidget {
                   keyboardType: TextInputType.number,
                   maxLength: 2,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  isRequired: requireBioFields,
+                  isRequired: true,
                   validator: (value) {
-                    if (requireBioFields && (value == null || value.isEmpty)) {
+                    if (value == null || value.isEmpty) {
                       return context.l10n('field_required');
                     }
-                    if (value == null || value.isEmpty) return null;
                     final day = int.tryParse(value);
                     if (day == null || day < 1 || day > 31) {
                       return '';
@@ -266,12 +257,11 @@ class RegisterFormWidget extends StatelessWidget {
                   keyboardType: TextInputType.number,
                   maxLength: 2,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  isRequired: requireBioFields,
+                  isRequired: true,
                   validator: (value) {
-                    if (requireBioFields && (value == null || value.isEmpty)) {
+                    if (value == null || value.isEmpty) {
                       return context.l10n('field_required');
                     }
-                    if (value == null || value.isEmpty) return null;
                     final month = int.tryParse(value);
                     if (month == null || month < 1 || month > 12) {
                       return '';
@@ -301,12 +291,11 @@ class RegisterFormWidget extends StatelessWidget {
                   keyboardType: TextInputType.number,
                   maxLength: 4,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  isRequired: requireBioFields,
+                  isRequired: true,
                   validator: (value) {
-                    if (requireBioFields && (value == null || value.isEmpty)) {
+                    if (value == null || value.isEmpty) {
                       return context.l10n('field_required');
                     }
-                    if (value == null || value.isEmpty) return null;
                     if (value.length != 4) return '';
                     final year = int.tryParse(value);
                     if (year == null || year < 1900 || year > DateTime.now().year) {
@@ -337,7 +326,7 @@ class RegisterFormWidget extends StatelessWidget {
           GenderSelectionWidget(
             selectedGender: selectedGender,
             onGenderChanged: onGenderChanged,
-            isRequired: requireBioFields,
+            isRequired: true,
           ),
 
           20.ph,
@@ -545,7 +534,7 @@ class RegisterFormWidget extends StatelessWidget {
                       onPressed: onTogglePassword,
                     ),
                     validator: (value) {
-                      if (requireBioFields && (value == null || value.length < 6)) {
+                      if (value == null || value.length < 6) {
                         return context.l10n('password_too_short');
                       }
                       return null;
@@ -572,7 +561,7 @@ class RegisterFormWidget extends StatelessWidget {
                       onPressed: onToggleConfirmPassword,
                     ),
                     validator: (value) {
-                      if (requireBioFields && value != passwordController.text) {
+                      if (value != passwordController.text) {
                         return context.l10n('passwords_dont_match');
                       }
                       return null;
@@ -600,7 +589,7 @@ class RegisterFormWidget extends StatelessWidget {
                 onPressed: onTogglePassword,
               ),
               validator: (value) {
-                if (requireBioFields && (value == null || value.length < 6)) {
+                if (value == null || value.length < 6) {
                   return context.l10n('password_too_short');
                 }
                 return null;
@@ -630,7 +619,7 @@ class RegisterFormWidget extends StatelessWidget {
                 onPressed: onToggleConfirmPassword,
               ),
               validator: (value) {
-                if (requireBioFields && value != passwordController.text) {
+                if (value != passwordController.text) {
                   return context.l10n('passwords_dont_match');
                 }
                 return null;

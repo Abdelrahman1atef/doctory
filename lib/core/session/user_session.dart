@@ -113,7 +113,7 @@ class UserSession {
         currentRole = UserRole.fromJson(
           (userData['role'] ?? userData['roles'])?.toString(),
         );
-        currentDoctorType = _parseDoctorType(userData);
+        currentDoctorType = _parseDoctorType(userData, currentRole);
         final rawPermissions = userData['permissions'] as List<dynamic>?;
         if (rawPermissions != null) {
           currentPermissions = rawPermissions
@@ -190,12 +190,15 @@ class UserSession {
     }
   }
 
-  static DoctorEmploymentType? _parseDoctorType(Map<String, dynamic> userData) {
+  static DoctorEmploymentType? _parseDoctorType(Map<String, dynamic> userData, UserRole? role) {
+    if (role != UserRole.doctor && role != UserRole.clinicOwner) {
+      return null;
+    }
     if (userData['doctorType'] != null) {
       return DoctorEmploymentType.fromJson(userData['doctorType'].toString());
     }
     if (userData['isFreelanceDoctor'] is bool) {
-      return userData['isFreelanceDoctor'] as bool
+      return (userData['isFreelanceDoctor'] as bool)
           ? DoctorEmploymentType.freelance
           : DoctorEmploymentType.ownClinic;
     }
@@ -266,7 +269,7 @@ class UserSession {
         currentRole = UserRole.fromJson(
           (userData['role'] ?? userData['roles'])?.toString(),
         );
-        currentDoctorType = _parseDoctorType(userData);
+        currentDoctorType = _parseDoctorType(userData, currentRole);
         final rawPermissions = userData['permissions'] as List<dynamic>?;
         if (rawPermissions != null) {
           currentPermissions = rawPermissions

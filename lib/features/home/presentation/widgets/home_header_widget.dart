@@ -119,7 +119,11 @@ class HomeHeaderWidget extends StatelessWidget {
                     imageUrl: imageUrl?.toImageUrl,
                     size: 60,
                     isFreelance: doctorType == DoctorEmploymentType.freelance,
-                    onTap: () => context.push(AppRoutes.clinicDashboard),
+                    onTap: () => context.push(
+                      userRole?.toLowerCase() == 'clinicowner'
+                          ? AppRoutes.clinicDashboard
+                          : AppRoutes.profile,
+                    ),
                   )
                 : GestureDetector(
                     onTap: () => context.push(AppRoutes.profile),

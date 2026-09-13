@@ -66,8 +66,7 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       path: 'posts/pagginated',
       queryParameters: {'PageNumber': pageNumber, 'PageSize': pageSize},
       parser: (json) {
-        final data = json['data'] ?? json['Data'] ?? json;
-        return PaginatedData.fromJson(data, (item) => PostModel.fromJson(item));
+        return PaginatedData.fromJson(json, (item) => PostModel.fromJson(item));
       },
     );
   }
@@ -123,9 +122,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       path: 'posts/$postId/reactions',
       queryParameters: {'PageNumber': pageNumber, 'PageSize': pageSize},
       parser: (json) {
-        final data = json['data'] ?? json['Data'] ?? json;
         return PaginatedData.fromJson(
-          data,
+          json,
           (item) => ReactionModel.fromJson(item),
         );
       },
@@ -143,9 +141,8 @@ class CommunityRemoteDataSourceImpl implements CommunityRemoteDataSource {
       path: 'comments/post/$postId',
       queryParameters: {'PageNumber': pageNumber, 'PageSize': pageSize},
       parser: (json) {
-        final data = json['data'] ?? json['Data'] ?? json;
         return PaginatedData.fromJson(
-          data,
+          json,
           (item) => CommentModel.fromJson(item),
         );
       },

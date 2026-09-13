@@ -14,16 +14,16 @@ class PostAuthorRoleBadge extends StatelessWidget {
   });
 
   bool get _isDoctor =>
-      role == 'Doctor' || role == 'FreelanceDoctor' || isFreelanceDoctor;
+      role?.toLowerCase() == 'doctor' || role?.toLowerCase() == 'freelancedoctor' || isFreelanceDoctor;
 
-  bool get _isClinic => role == 'ClinicOwner' || role == 'Clinic';
+  bool get _isClinic => role?.toLowerCase() == 'clinicowner' || role?.toLowerCase() == 'clinic';
 
   @override
   Widget build(BuildContext context) {
-    final String? label = _isDoctor
-        ? 'doctor_role'.tr()
-        : _isClinic
-            ? 'clinic_name'.tr()
+    final String? label = _isClinic
+        ? 'clinic_name'.tr()
+        : _isDoctor
+            ? 'doctor_role'.tr()
             : null;
     if (label == null) return const SizedBox.shrink();
 
