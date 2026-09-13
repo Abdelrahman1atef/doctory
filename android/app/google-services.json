@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "1077893614286-clgt7d6om3h941htvdul8n1i1jj2jbgg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.clinichub.doctory",
+            "certificate_hash": "ce3a16cfa517b3073c94899740fa12ef2beca797"
+          }
+        },
+        {
           "client_id": "1077893614286-cn4fm7odlbv70m2g6kn56rphm1rpg2cd.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
