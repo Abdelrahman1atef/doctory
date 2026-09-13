@@ -18,12 +18,12 @@ class ClinicDashboardApiDataSource implements ClinicDashboardDataSource {
   }
 
   @override
-  Future<ApiResult<List<BookingRequestModel>>> getBookingsByStatus(
+  Future<ApiResult<PaginatedBookingsResponse>> getBookingsByStatus(
     String status,
     int page,
     int perPage,
   ) async {
-    return _api.get<List<BookingRequestModel>>(
+    return _api.get<PaginatedBookingsResponse>(
       path: ClinicDashboardEndpoints.bookings,
       queryParameters: {
         'status': status,
@@ -31,8 +31,7 @@ class ClinicDashboardApiDataSource implements ClinicDashboardDataSource {
         'pageSize': perPage,
       },
       parser: (json) {
-        final paginated = PaginatedBookingsResponse.fromJson(json['data'] as Map<String, dynamic>);
-        return paginated.items;
+        return PaginatedBookingsResponse.fromJson(json['data'] as Map<String, dynamic>);
       },
     );
   }

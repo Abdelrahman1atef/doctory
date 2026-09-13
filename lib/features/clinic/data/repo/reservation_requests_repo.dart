@@ -17,7 +17,11 @@ class ReservationRequestsRepoImpl implements ReservationRequestsRepo {
   @override
   Future<ApiResult<List<BookingRequestModel>>> getPending(int page, int perPage) async {
     try {
-      return _dataSource.getBookingsByStatus('pending', page, perPage);
+      final result = await _dataSource.getBookingsByStatus('pending', page, perPage);
+      return result.fold(
+        onSuccess: (res) => ApiResult.success(res.items),
+        onFailure: (failure) => ApiResult.failure(failure),
+      );
     } on Exception catch (e) {
       return ApiResult.failure(ErrorHandler.handleException(e));
     }

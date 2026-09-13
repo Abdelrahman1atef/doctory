@@ -20,7 +20,7 @@ class ClinicDashboardRepoImpl implements ClinicDashboardRepo {
   }
 
   @override
-  Future<ApiResult<List<BookingRequestModel>>> getBookingsByStatus(
+  Future<ApiResult<PaginatedBookingsResponse>> getBookingsByStatus(
       String status, int page, int perPage) async {
     try {
       return _dataSource.getBookingsByStatus(status, page, perPage);

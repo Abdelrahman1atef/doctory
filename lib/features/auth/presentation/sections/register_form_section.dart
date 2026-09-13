@@ -158,7 +158,7 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
     }
 
     if (!isValid || hasImageErrors) {
-      if (_isDoctor && _selectedGender == null) {
+      if ((_isDoctor && _selectedGender == null) || hasImageErrors) {
         Alerts.showSnackBar(
           context,
           message: context.l10n('field_required'),

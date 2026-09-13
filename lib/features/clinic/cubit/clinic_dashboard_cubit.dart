@@ -20,34 +20,34 @@ class ClinicDashboardCubit extends Cubit<ClinicDashboardState> {
     final results = await Future.wait([
       _repo.getStats(),
       _repo.getBookingsByStatus('pending', 1, _perPage),
-      _repo.getBookingsByStatus('pending', 1, 0),
-      _repo.getBookingsByStatus('accepted', 1, 0),
-      _repo.getBookingsByStatus('rejected', 1, 0),
+      _repo.getBookingsByStatus('pending', 1, 1),
+      _repo.getBookingsByStatus('accepted', 1, 1),
+      _repo.getBookingsByStatus('rejected', 1, 1),
       sl<NotificationsRepo>().getUnreadCount(),
     ]);
 
     final statsResult = results[0] as ApiResult<DashboardStatsModel>;
-    final bookingsResult = results[1] as ApiResult<List<BookingRequestModel>>;
-    final pendingCountResult = results[2] as ApiResult<List<BookingRequestModel>>;
-    final acceptedCountResult = results[3] as ApiResult<List<BookingRequestModel>>;
-    final rejectedCountResult = results[4] as ApiResult<List<BookingRequestModel>>;
+    final bookingsResult = results[1] as ApiResult<PaginatedBookingsResponse>;
+    final pendingCountResult = results[2] as ApiResult<PaginatedBookingsResponse>;
+    final acceptedCountResult = results[3] as ApiResult<PaginatedBookingsResponse>;
+    final rejectedCountResult = results[4] as ApiResult<PaginatedBookingsResponse>;
     final countResult = results[5] as ApiResult<int>;
     final unreadCount = countResult.fold(onSuccess: (c) => c, onFailure: (_) => 0);
 
     statsResult.fold(
       onSuccess: (stats) {
         bookingsResult.fold(
-          onSuccess: (bookings) {
-            final pending = pendingCountResult.fold(onSuccess: (l) => l.length, onFailure: (_) => 0);
-            final accepted = acceptedCountResult.fold(onSuccess: (l) => l.length, onFailure: (_) => 0);
-            final rejected = rejectedCountResult.fold(onSuccess: (l) => l.length, onFailure: (_) => 0);
+          onSuccess: (bookingsResponse) {
+            final pending = pendingCountResult.fold(onSuccess: (r) => r.totalCount, onFailure: (_) => 0);
+            final accepted = acceptedCountResult.fold(onSuccess: (r) => r.totalCount, onFailure: (_) => 0);
+            final rejected = rejectedCountResult.fold(onSuccess: (r) => r.totalCount, onFailure: (_) => 0);
             emit(
               ClinicDashboardLoaded(
                 stats: stats,
-                bookings: bookings,
+                bookings: bookingsResponse.items,
                 currentStatus: BookingStatus.pending,
                 page: 1,
-                hasMore: bookings.length >= _perPage,
+                hasMore: bookingsResponse.items.length >= _perPage,
                 pendingCount: pending,
                 acceptedCount: accepted,
                 rejectedCount: rejected,
@@ -81,13 +81,13 @@ class ClinicDashboardCubit extends Cubit<ClinicDashboardState> {
     );
 
     result.fold(
-      onSuccess: (newItems) {
+      onSuccess: (newItemsResponse) {
         if (state is! ClinicDashboardLoaded) return;
         final loaded = state as ClinicDashboardLoaded;
         emit(loaded.copyWith(
-          bookings: [...loaded.bookings, ...newItems],
+          bookings: [...loaded.bookings, ...newItemsResponse.items],
           page: nextPage,
-          hasMore: newItems.length >= _perPage,
+          hasMore: newItemsResponse.items.length >= _perPage,
           isLoadingMore: false,
         ));
       },
@@ -107,13 +107,13 @@ class ClinicDashboardCubit extends Cubit<ClinicDashboardState> {
 
     final result = await _repo.getBookingsByStatus(status.name, 1, _perPage);
     result.fold(
-      onSuccess: (bookings) {
+      onSuccess: (bookingsResponse) {
         if (state is! ClinicDashboardLoaded) return;
         emit((state as ClinicDashboardLoaded).copyWith(
-          bookings: bookings,
+          bookings: bookingsResponse.items,
           currentStatus: status,
           page: 1,
-          hasMore: bookings.length >= _perPage,
+          hasMore: bookingsResponse.items.length >= _perPage,
           isLoadingMore: false,
         ));
       },
