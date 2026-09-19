@@ -62,6 +62,10 @@ class AuthCubit extends Cubit<AuthStates> {
     );
   }
 
+  Future<String?> uploadImageSilently(File file, int fileType, int place) async {
+    return _uploadFile(file, fileType, place);
+  }
+
   /// Uploads the clinic logo and returns the server file name, or null on failure.
   Future<String?> uploadClinicImage(File file) async {
     emit(AuthLoadingState());
@@ -116,11 +120,11 @@ class AuthCubit extends Cubit<AuthStates> {
       gender: request.gender,
       fcmToken: UserSession.fcmToken.isNotEmpty ? UserSession.fcmToken : null,
       devicePlatform: _currentPlatform,
-      doctorImage: doctorImage,
-      professionalPracticeCardImage: professionalPracticeCardImage,
-      unionIdImage: unionIdImage,
-      taxCardImage: taxCardImage,
-      commercialRegisterImage: commercialRegisterImage,
+      doctorImage: doctorImage ?? request.doctorImage,
+      professionalPracticeCardImage: professionalPracticeCardImage ?? request.professionalPracticeCardImage,
+      unionIdImage: unionIdImage ?? request.unionIdImage,
+      taxCardImage: taxCardImage ?? request.taxCardImage,
+      commercialRegisterImage: commercialRegisterImage ?? request.commercialRegisterImage,
       clinicGuid: request.clinicGuid,
       specializationId: request.specializationId,
       bio: request.bio,

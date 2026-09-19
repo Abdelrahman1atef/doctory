@@ -46,9 +46,13 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   File? _professionalPracticeCard;
+  String? _professionalPracticeCardUrl;
   File? _unionIdImage;
+  String? _unionIdImageUrl;
   File? _taxCardImage;
+  String? _taxCardImageUrl;
   File? _profileImage;
+  String? _profileImageUrl;
 
   TypeOfUserForRegisterFlow get _typeOfUser {
     if (widget.role == 'patient') return TypeOfUserForRegisterFlow.user;
@@ -120,17 +124,29 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
       type: FileType.image,
     );
     if (result != null && result.files.single.path != null) {
+      final file = File(result.files.single.path!);
       setState(() {
         if (isUnion) {
-          _unionIdImage = File(result.files.single.path!);
+          _unionIdImage = file;
         } else if (isPracticeCard) {
-          _professionalPracticeCard = File(result.files.single.path!);
+          _professionalPracticeCard = file;
         } else if (isTaxCard) {
-          _taxCardImage = File(result.files.single.path!);
+          _taxCardImage = file;
         } else if (isProfile) {
-          _profileImage = File(result.files.single.path!);
+          _profileImage = file;
         }
       });
+      
+      final cubit = context.read<AuthCubit>();
+      if (isUnion) {
+        _unionIdImageUrl = await cubit.uploadImageSilently(file, 0, 6);
+      } else if (isPracticeCard) {
+        _professionalPracticeCardUrl = await cubit.uploadImageSilently(file, 0, 5);
+      } else if (isTaxCard) {
+        _taxCardImageUrl = await cubit.uploadImageSilently(file, 0, 7);
+      } else if (isProfile) {
+        _profileImageUrl = await cubit.uploadImageSilently(file, 0, 1);
+      }
     }
   }
 
@@ -182,14 +198,18 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
       yearsOfExperience: _yearsOfExperienceController.text.trim().isEmpty
           ? null
           : int.tryParse(_yearsOfExperienceController.text.trim()),
+      doctorImage: _profileImageUrl,
+      professionalPracticeCardImage: _professionalPracticeCardUrl,
+      unionIdImage: _unionIdImageUrl,
+      taxCardImage: _taxCardImageUrl,
     );
 
     context.read<AuthCubit>().signup(
       request: signupRequest,
-      doctorImageFile: _isDoctor ? _profileImage : null,
-      professionalPracticeCardFile: _isDoctor ? _professionalPracticeCard : null,
-      unionIdFile: _isDoctor ? _unionIdImage : null,
-      taxCardFile: _isDoctor && widget.doctorType == 'ownClinic' ? _taxCardImage : null,
+      doctorImageFile: (_isDoctor && _profileImageUrl == null) ? _profileImage : null,
+      professionalPracticeCardFile: (_isDoctor && _professionalPracticeCardUrl == null) ? _professionalPracticeCard : null,
+      unionIdFile: (_isDoctor && _unionIdImageUrl == null) ? _unionIdImage : null,
+      taxCardFile: (_isDoctor && widget.doctorType == 'ownClinic' && _taxCardImageUrl == null) ? _taxCardImage : null,
     );
   }
 
@@ -292,10 +312,15 @@ class _RegisterFormSectionState extends State<RegisterFormSection> {
             ? () => _pickFile(isTaxCard: true)
             : null,
         onPickProfileImage: _isDoctor
-            ? (File? file) {
-                setState(() {
-                  if (file != null) _profileImage = file;
-                });
+            ? (File? file) async {
+                if (file != null) {
+                  setState(() {
+                    _profileImage = file;
+                    _profileImageUrl = null;
+                  });
+                  final cubit = context.read<AuthCubit>();
+                  _profileImageUrl = await cubit.uploadImageSilently(file, 0, 1);
+                }
               }
             : null,
         showImageErrors: _showImageErrors,

@@ -38,6 +38,7 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
   final _emailController = TextEditingController();
   final _websiteController = TextEditingController();
   File? _clinicImage;
+  String? _clinicImageUrl;
   double? _clinicLat;
   double? _clinicLng;
   String _clinicAddress = '';
@@ -135,9 +136,13 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
       type: FileType.image,
     );
     if (result != null && result.files.single.path != null) {
+      final file = File(result.files.single.path!);
       setState(() {
-        _clinicImage = File(result.files.single.path!);
+        _clinicImage = file;
+        _clinicImageUrl = null;
       });
+      final cubit = context.read<AuthCubit>();
+      _clinicImageUrl = await cubit.uploadImageSilently(file, 0, 9);
     }
   }
 
@@ -231,9 +236,9 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
   Future<void> _submitSetup() async {
     final cubit = context.read<AuthCubit>();
 
-    String? logoName;
+    String? logoName = _clinicImageUrl;
     final image = _clinicImage;
-    if (image != null) {
+    if (logoName == null && image != null) {
       logoName = await cubit.uploadClinicImage(image);
       if (logoName == null) return;
     }

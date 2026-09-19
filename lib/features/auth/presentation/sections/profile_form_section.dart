@@ -105,9 +105,12 @@ class _ProfileFormSectionState extends State<ProfileFormSection> {
       type: FileType.image,
     );
     if (result != null && result.files.single.path != null) {
+      final file = File(result.files.single.path!);
       setState(() {
-        _clinicImage = File(result.files.single.path!);
+        _clinicImage = file;
       });
+      final cubit = context.read<AuthCubit>();
+      await cubit.uploadImageSilently(file, 0, 9);
     }
   }
 
