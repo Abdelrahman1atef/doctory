@@ -118,7 +118,7 @@ class ClinicDashboardApiDataSource implements ClinicDashboardDataSource {
   Future<ApiResult<void>> deleteAvailability(String id) async {
     return _api.delete<void>(
       path: ClinicDashboardEndpoints.deleteAvailability(id),
-      parser: (json) => null,
+      parser: (_) {},
     );
   }
 }

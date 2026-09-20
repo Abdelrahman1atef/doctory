@@ -12,9 +12,7 @@ class ClinicBookingConfigCubit extends Cubit<ClinicBookingConfigState> {
 
   ClinicBookingConfigCubit(this._repo) : super(ClinicBookingConfigInitial());
 
-  String get _clinicId {
-    return UserSession.userModel?['clinicId']?.toString() ?? '';
-  }
+  String get _clinicId => UserSession.clinicId ?? '';
 
   Future<void> loadConfig() async {
     final clinicId = _clinicId;
@@ -25,19 +23,18 @@ class ClinicBookingConfigCubit extends Cubit<ClinicBookingConfigState> {
 
     emit(ClinicBookingConfigLoading());
     final result = await _repo.getBookingConfig(clinicId);
-    
+
     result.fold(
       onSuccess: (config) {
         currentConfig = config;
         emit(ClinicBookingConfigSuccess(config));
       },
       onFailure: (failure) {
-        // If 404 / NotFoundFailure, it means no config exists yet. We don't consider it a fatal error, 
-        // we just show the form in "create" mode.
-        // The backend returns 404 if not found.
-        if (failure is NotFoundFailure || failure.code == '404' || failure.userMessage.toLowerCase().contains('not found')) {
+        // 404 means the clinic has not configured booking yet — not an error,
+        // the form opens in create mode and the first save uses POST.
+        if (failure is NotFoundFailure) {
           currentConfig = null;
-          emit(ClinicBookingConfigSuccess(BookingConfigDto.mock)); // Just returning a mock to initialize the form
+          emit(ClinicBookingConfigEmpty());
         } else {
           emit(ClinicBookingConfigError(failure.userMessage));
         }
@@ -49,17 +46,16 @@ class ClinicBookingConfigCubit extends Cubit<ClinicBookingConfigState> {
     final clinicId = _clinicId;
     if (clinicId.isEmpty) return;
 
+    final isFirstSetup = !isEditMode;
     emit(ClinicBookingConfigSubmitLoading());
-    final result = isEditMode
-        ? await _repo.updateBookingConfig(clinicId, config)
-        : await _repo.createBookingConfig(clinicId, config);
+    final result = isFirstSetup
+        ? await _repo.createBookingConfig(clinicId, config)
+        : await _repo.updateBookingConfig(clinicId, config);
 
     result.fold(
       onSuccess: (updatedConfig) {
         currentConfig = updatedConfig;
-        emit(ClinicBookingConfigSubmitSuccess(updatedConfig));
-        // Reset back to success state to re-render the view if needed
-        emit(ClinicBookingConfigSuccess(updatedConfig));
+        emit(ClinicBookingConfigSubmitSuccess(updatedConfig, isFirstSetup: isFirstSetup));
       },
       onFailure: (failure) {
         emit(ClinicBookingConfigSubmitError(failure.userMessage));

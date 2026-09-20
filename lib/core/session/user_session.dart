@@ -4,6 +4,7 @@ import '../cache/cache_helper.dart';
 import '../cache/hive_service.dart';
 import '../cache/secure_storage.dart';
 import '../utils/general_constants.dart';
+import '../utils/jwt_utils.dart';
 import '../locator/service_locator.dart';
 import '../services/chat/chat_realtime_service.dart';
 
@@ -40,6 +41,9 @@ class UserSession {
 
   /// Doctor entity id (only present for users linked to a Doctor entity)
   static String? doctorId;
+
+  /// Clinic entity id (only present for clinic owners / staff)
+  static String? clinicId;
 
   static MobileRole? get mobileRole {
     if (currentRole == null) return null;
@@ -127,6 +131,7 @@ class UserSession {
       verificationStatus = response['verificationStatus']?.toString();
       isClinicSetupComplete = response['isClinicSetupComplete'] == true;
       doctorId = response['doctorId']?.toString();
+      clinicId = response['clinicId']?.toString();
 
       // Determine the token (accessToken, token, or access_token)
       if (response.containsKey("data") && response["data"] is Map) {
@@ -166,6 +171,8 @@ class UserSession {
         response,
       );
 
+      _resolveClinicIdFromToken();
+
       if (token.isNotEmpty) {
         await SecureStorage.saveToken(token);
         if (refreshToken.isNotEmpty) {
@@ -178,6 +185,65 @@ class UserSession {
     } catch (e) {
       debugPrint("Error in saveUser: $e");
     }
+  }
+
+  /// Replaces only the tokens (e.g. after a refresh). Everything else in the
+  /// session — cached user, clinic status, setup flag — is left untouched, so a
+  /// refresh response without a `user` object can never wipe the profile.
+  static Future<void> updateTokens({
+    required String accessToken,
+    String? newRefreshToken,
+    String? newClinicId,
+  }) async {
+    if (accessToken.isEmpty) return;
+    token = accessToken;
+    if (newRefreshToken != null && newRefreshToken.isNotEmpty) {
+      refreshToken = newRefreshToken;
+    }
+    if (newClinicId != null && newClinicId.isNotEmpty) clinicId = newClinicId;
+    _resolveClinicIdFromToken();
+
+    await SecureStorage.saveToken(token);
+    if (refreshToken.isNotEmpty) {
+      await SecureStorage.saveRefreshToken(refreshToken);
+    }
+    await _patchCachedSession({
+      'accessToken': token,
+      'refreshToken': refreshToken,
+      'clinicId': clinicId,
+    });
+  }
+
+  /// Called once the owner finishes the clinic setup so the splash/login
+  /// guards stop redirecting to the setup screen on the next launch.
+  static Future<void> markClinicSetupComplete({String? newClinicId}) async {
+    isClinicSetupComplete = true;
+    if (newClinicId != null && newClinicId.isNotEmpty) clinicId = newClinicId;
+    await _patchCachedSession({
+      'isClinicSetupComplete': true,
+      'clinicId': clinicId,
+    });
+  }
+
+  /// Merges [fields] into the cached auth payload without touching the rest.
+  static Future<void> _patchCachedSession(Map<String, dynamic> fields) async {
+    final cached = await HiveService().get(
+      GeneralConstants.hiveUserBox,
+      GeneralConstants.hiveUserKey,
+    );
+    if (cached is! Map) return;
+    await HiveService().put(
+      GeneralConstants.hiveUserBox,
+      GeneralConstants.hiveUserKey,
+      Map<String, dynamic>.from(cached)..addAll(fields),
+    );
+  }
+
+  /// The auth payload does not always carry `clinicId`, but the access token
+  /// does once the clinic is set up (`ClinicId` claim) — use it as a fallback.
+  static void _resolveClinicIdFromToken() {
+    if ((clinicId ?? '').isNotEmpty || token.isEmpty) return;
+    clinicId = JwtUtils.claim(token, 'clinicId');
   }
 
   /// Update profile fields in the session and notify listeners
@@ -221,6 +287,7 @@ class UserSession {
     verificationStatus = null;
     isClinicSetupComplete = false;
     doctorId = null;
+    clinicId = null;
     userNotifier.value = null;
     await HiveService().delete(
       GeneralConstants.hiveUserBox,
@@ -314,6 +381,8 @@ class UserSession {
       verificationStatus = data['verificationStatus']?.toString();
       isClinicSetupComplete = data['isClinicSetupComplete'] == true;
       doctorId = data['doctorId']?.toString();
+      clinicId = data['clinicId']?.toString();
+      _resolveClinicIdFromToken();
 
       if (token.isNotEmpty) {
         // Intentionally empty — realtime init moved to chat cubits

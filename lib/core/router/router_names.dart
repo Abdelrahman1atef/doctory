@@ -49,6 +49,8 @@ abstract class AppRoutes {
   // Clinic Booking Config & Availability
   static const String clinicBookingConfig = '/clinic/booking-config';
   static const String clinicAvailability = '/clinic/availability';
+  /// Same screen during first-time setup — shows the "finish setup" action.
+  static const String clinicAvailabilityOnboarding = '$clinicAvailability?onboarding=true';
 
   // Notifications
   static const String notifications = '/notifications';

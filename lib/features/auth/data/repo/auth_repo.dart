@@ -80,7 +80,14 @@ class AuthRepoImpl implements AuthRepo {
 
   @override
   Future<ApiResult<AuthResponse>> setupClinic(AdminClinicSetupRequest request) async {
-    return await _dataSource.setupClinic(request);
+    final result = await _dataSource.setupClinic(request);
+    return result.fold(
+      onSuccess: (response) async {
+        await UserSession.markClinicSetupComplete(newClinicId: response.clinicId);
+        return ApiResult.success(response);
+      },
+      onFailure: (failure) => ApiResult.failure(failure),
+    );
   }
 
   @override
@@ -124,7 +131,12 @@ class AuthRepoImpl implements AuthRepo {
     final result = await _dataSource.refreshToken(token);
     return result.fold(
       onSuccess: (response) async {
-        await _saveAuthSession(response);
+        // Token-only update: the refresh payload carries no user profile.
+        await UserSession.updateTokens(
+          accessToken: response.accessToken,
+          newRefreshToken: response.refreshToken,
+          newClinicId: response.clinicId,
+        );
         return ApiResult.success(response);
       },
       onFailure: (failure) => ApiResult.failure(failure),
@@ -262,6 +274,7 @@ class AuthRepoImpl implements AuthRepo {
       'verificationStatus': response.verificationStatus,
       'isClinicSetupComplete': response.isClinicSetupComplete,
       'doctorId': response.doctorId,
+      'clinicId': response.clinicId,
     });
   }
 }

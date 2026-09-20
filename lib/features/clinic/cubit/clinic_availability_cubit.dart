@@ -12,15 +12,17 @@ class ClinicAvailabilityCubit extends Cubit<ClinicAvailabilityState> {
 
   ClinicAvailabilityCubit(this._repo) : super(ClinicAvailabilityInitial());
 
-  String get _clinicId {
-    return UserSession.userModel?['clinicId']?.toString() ?? '';
-  }
+  String get _clinicId => UserSession.clinicId ?? '';
 
   Future<void> loadAvailability(String doctorId) async {
     _currentDoctorId = doctorId;
     final clinicId = _clinicId;
     if (clinicId.isEmpty) {
       emit(ClinicAvailabilityError('Clinic ID not found.'));
+      return;
+    }
+    if (doctorId.isEmpty) {
+      emit(ClinicAvailabilityError('Doctor ID not found.'));
       return;
     }
 
@@ -38,6 +40,9 @@ class ClinicAvailabilityCubit extends Cubit<ClinicAvailabilityState> {
     );
   }
 
+  /// Re-fetches the windows of the doctor loaded last (retry / after writes).
+  Future<void> reload() => loadAvailability(_currentDoctorId ?? '');
+
   Future<void> addAvailability(AvailabilityDto availability) async {
     emit(ClinicAvailabilitySubmitLoading());
     final result = await _repo.createAvailability(availability);
@@ -45,9 +50,7 @@ class ClinicAvailabilityCubit extends Cubit<ClinicAvailabilityState> {
     result.fold(
       onSuccess: (_) {
         emit(ClinicAvailabilitySubmitSuccess());
-        if (_currentDoctorId != null) {
-          loadAvailability(_currentDoctorId!);
-        }
+        reload();
       },
       onFailure: (failure) {
         emit(ClinicAvailabilitySubmitError(failure.userMessage));
@@ -62,9 +65,7 @@ class ClinicAvailabilityCubit extends Cubit<ClinicAvailabilityState> {
     result.fold(
       onSuccess: (_) {
         emit(ClinicAvailabilitySubmitSuccess());
-        if (_currentDoctorId != null) {
-          loadAvailability(_currentDoctorId!);
-        }
+        reload();
       },
       onFailure: (failure) {
         emit(ClinicAvailabilitySubmitError(failure.userMessage));
@@ -79,9 +80,7 @@ class ClinicAvailabilityCubit extends Cubit<ClinicAvailabilityState> {
     result.fold(
       onSuccess: (_) {
         emit(ClinicAvailabilitySubmitSuccess());
-        if (_currentDoctorId != null) {
-          loadAvailability(_currentDoctorId!);
-        }
+        reload();
       },
       onFailure: (failure) {
         emit(ClinicAvailabilitySubmitError(failure.userMessage));

@@ -1,3 +1,4 @@
+import 'package:doctory/core/enums/week_day.dart';
 import 'package:doctory/core/utils/parse_utils.dart';
 
 class AvailabilityDto {
@@ -42,16 +43,15 @@ class AvailabilityDto {
     };
   }
 
-  static List<AvailabilityDto> get mock => List.generate(
-        7,
-        (index) => AvailabilityDto(
-          id: index.toString(),
-          doctorId: 'doc-123',
-          clinicId: 'clinic-123',
-          dayOfWeek: index,
-          startTime: '09:00',
-          endTime: '17:00',
-          slotDurationMinutes: 30,
-        ),
-      );
+  /// Translation key for the localized day name (e.g. 'sunday').
+  String get dayLabelKey => WeekDay.labelKeyFor(dayOfWeek.toString());
+
+  /// `HH:mm` for display — the API returns `HH:mm:ss`.
+  String get startTimeDisplay => _hhmm(startTime);
+  String get endTimeDisplay => _hhmm(endTime);
+
+  static String _hhmm(String time) {
+    final parts = time.split(':');
+    return parts.length >= 2 ? '${parts[0]}:${parts[1]}' : time;
+  }
 }

@@ -25,21 +25,13 @@ class BookingConfigDto {
     );
   }
 
+  /// Request body for POST/PUT — `currency` is set server-side and not sent.
   Map<String, dynamic> toJson() {
     return {
       'consultationFee': consultationFee,
-      'currency': currency,
       'maxAdvanceBookingDays': maxAdvanceBookingDays,
       'reservationTtlMinutes': reservationTtlMinutes,
       'cancellationWindowMinutes': cancellationWindowMinutes,
     };
   }
-
-  static BookingConfigDto get mock => const BookingConfigDto(
-        consultationFee: 500.0,
-        currency: 'EGP',
-        maxAdvanceBookingDays: 30,
-        reservationTtlMinutes: 15,
-        cancellationWindowMinutes: 60,
-      );
 }

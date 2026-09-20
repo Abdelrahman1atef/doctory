@@ -1,5 +1,6 @@
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/router/router_names.dart';
+import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/features/clinic/cubit/clinic_dashboard_cubit.dart';
 import 'package:doctory/features/clinic/cubit/reservation_requests_cubit.dart';
 import 'package:doctory/features/clinic/cubit/clinic_booking_config_cubit.dart';
@@ -47,7 +48,8 @@ abstract class ClinicRouter {
         GoRoute(
           path: AppRoutes.clinicAvailability,
           builder: (context, state) => BlocProvider(
-            create: (_) => sl<ClinicAvailabilityCubit>(),
+            create: (_) => sl<ClinicAvailabilityCubit>()
+              ..loadAvailability(UserSession.doctorId ?? ''),
             child: const ClinicAvailabilityView(),
           ),
         ),

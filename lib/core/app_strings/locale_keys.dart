@@ -564,4 +564,29 @@ abstract class LocaleKeys {
   static const pending_approval_subtitle = 'pending_approval_subtitle';
   static const rejected_title = 'rejected_title';
   static const rejected_subtitle = 'rejected_subtitle';
+
+  // Clinic booking config & availability
+  static const success = 'success';
+  static const delete = 'delete';
+  static const consultation_fee = 'consultation_fee';
+  static const currency = 'currency';
+  static const booking_config_title = 'booking_config_title';
+  static const max_advance_days = 'max_advance_days';
+  static const reservation_ttl = 'reservation_ttl';
+  static const cancellation_window = 'cancellation_window';
+  static const availability_title = 'availability_title';
+  static const no_availability = 'no_availability';
+  static const add_availability = 'add_availability';
+  static const finish_setup = 'finish_setup';
+  static const day_of_week = 'day_of_week';
+  static const start_time = 'start_time';
+  static const end_time = 'end_time';
+  static const slot_duration = 'slot_duration';
+  static const booking_config_subtitle = 'booking_config_subtitle';
+  static const availability_subtitle = 'availability_subtitle';
+  static const no_availability_hint = 'no_availability_hint';
+  static const fee_cannot_be_negative = 'fee_cannot_be_negative';
+  static const must_be_positive = 'must_be_positive';
+  static const end_time_after_start = 'end_time_after_start';
+  static const slot = 'slot';
 }

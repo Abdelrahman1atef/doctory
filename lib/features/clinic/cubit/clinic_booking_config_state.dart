@@ -6,6 +6,9 @@ class ClinicBookingConfigInitial extends ClinicBookingConfigState {}
 
 class ClinicBookingConfigLoading extends ClinicBookingConfigState {}
 
+/// The clinic has no booking config yet — show the form in create mode.
+class ClinicBookingConfigEmpty extends ClinicBookingConfigState {}
+
 class ClinicBookingConfigSuccess extends ClinicBookingConfigState {
   final BookingConfigDto config;
   ClinicBookingConfigSuccess(this.config);
@@ -20,7 +23,10 @@ class ClinicBookingConfigSubmitLoading extends ClinicBookingConfigState {}
 
 class ClinicBookingConfigSubmitSuccess extends ClinicBookingConfigState {
   final BookingConfigDto config;
-  ClinicBookingConfigSubmitSuccess(this.config);
+
+  /// True when this save created the config for the first time (onboarding).
+  final bool isFirstSetup;
+  ClinicBookingConfigSubmitSuccess(this.config, {required this.isFirstSetup});
 }
 
 class ClinicBookingConfigSubmitError extends ClinicBookingConfigState {
