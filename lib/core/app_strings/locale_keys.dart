@@ -570,6 +570,7 @@ abstract class LocaleKeys {
   static const delete = 'delete';
   static const consultation_fee = 'consultation_fee';
   static const currency = 'currency';
+  static const currency_egp = 'currency_egp';
   static const booking_config_title = 'booking_config_title';
   static const max_advance_days = 'max_advance_days';
   static const reservation_ttl = 'reservation_ttl';

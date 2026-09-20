@@ -55,7 +55,12 @@ class _DoctoryState extends State<Doctory> {
               debugShowCheckedModeBanner: false,
               theme: AppThemeManager.lightTheme,
               themeMode: ThemeMode.light,
-              routerConfig: AppRouter.router,
+              // Spelled out instead of `routerConfig` so the app can supply
+              // its own back-button dispatcher (GoRouter has no hook for it).
+              routerDelegate: AppRouter.router.routerDelegate,
+              routeInformationParser: AppRouter.router.routeInformationParser,
+              routeInformationProvider: AppRouter.router.routeInformationProvider,
+              backButtonDispatcher: AppRouter.backButtonDispatcher,
               localizationsDelegates: context.localizationDelegates,
               supportedLocales: context.supportedLocales,
               locale: context.locale,

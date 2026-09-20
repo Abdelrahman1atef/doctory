@@ -1,4 +1,5 @@
 import 'package:doctory/core/common/models/role.dart';
+import 'package:doctory/core/router/app_back_button_dispatcher.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,11 @@ class AppRouter {
 
   static final GlobalKey<NavigatorState> navigatorKey =
       GlobalKey<NavigatorState>();
+
+  /// Routes the system back button: pops when possible, otherwise goes home
+  /// instead of closing the app. Wired in `MaterialApp.router`.
+  static final AppBackButtonDispatcher backButtonDispatcher =
+      AppBackButtonDispatcher(router: () => router);
 
   static final GoRouter router = GoRouter(
     navigatorKey: navigatorKey,

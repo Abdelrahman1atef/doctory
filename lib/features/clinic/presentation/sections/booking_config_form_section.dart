@@ -21,13 +21,14 @@ class BookingConfigFormSection extends StatefulWidget {
 }
 
 class _BookingConfigFormSectionState extends State<BookingConfigFormSection> {
+  /// ISO code sent to the API; the form shows the localized label instead.
   static const _defaultCurrency = 'EGP';
 
   final _formKey = GlobalKey<FormState>();
   final _feeController = TextEditingController();
   final _maxAdvanceController = TextEditingController(text: '30');
-  final _ttlController = TextEditingController(text: '10');
-  final _cancellationController = TextEditingController(text: '120');
+  final _ttlController = TextEditingController(text: '30');
+  final _cancellationController = TextEditingController(text: '480');
   String _currency = _defaultCurrency;
   bool _populated = false;
 
@@ -42,6 +43,10 @@ class _BookingConfigFormSectionState extends State<BookingConfigFormSection> {
     _cancellationController.text = config.cancellationWindowMinutes.toString();
     _currency = config.currency.isEmpty ? _defaultCurrency : config.currency;
   }
+
+  /// Localized label for the currency code (EGP → "EGP" / "ج.م").
+  String get _currencyLabel =>
+      _currency == _defaultCurrency ? LocaleKeys.currency_egp.tr() : _currency;
 
   String _formatNumber(double value) =>
       value == value.roundToDouble() ? value.toInt().toString() : value.toString();
@@ -88,7 +93,7 @@ class _BookingConfigFormSectionState extends State<BookingConfigFormSection> {
     return BookingConfigFormWidget(
       formKey: _formKey,
       feeController: _feeController,
-      currency: _currency,
+      currencyLabel: _currencyLabel,
       maxAdvanceController: _maxAdvanceController,
       ttlController: _ttlController,
       cancellationController: _cancellationController,

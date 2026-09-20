@@ -21,7 +21,7 @@ class StitchPageHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(24, 24, 24, 0),
-      child: Column(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (onBack != null) ...[
@@ -33,8 +33,11 @@ class StitchPageHeader extends StatelessWidget {
                 color: AppColors.textPrimary,
               ),
             ),
-            16.ph,
+            16.pw,
           ],
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
           Text(
             title,
             style: AppStyles.s24Bold.copyWith(color: AppColors.onSurface),
@@ -46,6 +49,9 @@ class StitchPageHeader extends StatelessWidget {
               style: AppStyles.s14Medium.copyWith(color: AppColors.textSecondary),
             ),
           ],
+
+            ],
+          )
         ],
       ),
     );

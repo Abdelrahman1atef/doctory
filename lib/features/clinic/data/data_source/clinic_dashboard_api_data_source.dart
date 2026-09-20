@@ -92,7 +92,7 @@ class ClinicDashboardApiDataSource implements ClinicDashboardDataSource {
         'doctorId': doctorId,
         'clinicId': clinicId,
       },
-      parser: (json) => (json['data'] as List).map((e) => AvailabilityDto.fromJson(e)).toList(),
+      parser: (json) => AvailabilityDto.listFromJson(json['data']),
     );
   }
 

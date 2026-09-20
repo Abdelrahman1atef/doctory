@@ -37,7 +37,9 @@ class AvailabilityListWidget extends StatelessWidget {
             separatorBuilder: (_, _) => 12.ph,
             itemBuilder: (context, index) => AvailabilityWindowCard(
               window: windows[index],
-              onDelete: isSubmitting ? null : () => onDelete(windows[index]),
+              onDelete: isSubmitting || !windows[index].canDelete
+                  ? null
+                  : () => onDelete(windows[index]),
             ),
           ),
         ),

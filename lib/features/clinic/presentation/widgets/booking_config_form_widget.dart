@@ -13,7 +13,7 @@ class BookingConfigFormWidget extends StatelessWidget {
   final TextEditingController maxAdvanceController;
   final TextEditingController ttlController;
   final TextEditingController cancellationController;
-  final String currency;
+  final String currencyLabel;
   final FormFieldValidator<String> feeValidator;
   final FormFieldValidator<String> positiveIntValidator;
   final bool isLoading;
@@ -26,7 +26,7 @@ class BookingConfigFormWidget extends StatelessWidget {
     required this.maxAdvanceController,
     required this.ttlController,
     required this.cancellationController,
-    required this.currency,
+    required this.currencyLabel,
     required this.feeValidator,
     required this.positiveIntValidator,
     required this.isLoading,
@@ -55,7 +55,7 @@ class BookingConfigFormWidget extends StatelessWidget {
                 child: Center(
                   widthFactor: 1,
                   child: Text(
-                    currency,
+                    currencyLabel,
                     style: AppStyles.s14Bold.copyWith(color: AppColors.textSecondary),
                   ),
                 ),
