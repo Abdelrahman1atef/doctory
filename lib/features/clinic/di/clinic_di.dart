@@ -4,6 +4,8 @@ import 'package:doctory/core/router/app_router.dart';
 import 'package:doctory/core/services/deep_link_service.dart';
 import 'package:doctory/features/clinic/cubit/clinic_dashboard_cubit.dart';
 import 'package:doctory/features/clinic/cubit/reservation_requests_cubit.dart';
+import 'package:doctory/features/clinic/cubit/clinic_booking_config_cubit.dart';
+import 'package:doctory/features/clinic/cubit/clinic_availability_cubit.dart';
 import 'package:doctory/features/clinic/data/data_source/clinic_dashboard_api_data_source.dart';
 import 'package:doctory/features/clinic/data/data_source/clinic_dashboard_data_source.dart';
 import 'package:doctory/features/clinic/data/repo/clinic_dashboard_repo.dart';
@@ -40,6 +42,18 @@ void setupClinicDI(GetIt sl) {
   if (!sl.isRegistered<ReservationRequestsCubit>()) {
     sl.registerFactory<ReservationRequestsCubit>(
       () => ReservationRequestsCubit(sl<ReservationRequestsRepo>()),
+    );
+  }
+
+  if (!sl.isRegistered<ClinicBookingConfigCubit>()) {
+    sl.registerFactory<ClinicBookingConfigCubit>(
+      () => ClinicBookingConfigCubit(sl<ClinicDashboardRepo>()),
+    );
+  }
+
+  if (!sl.isRegistered<ClinicAvailabilityCubit>()) {
+    sl.registerFactory<ClinicAvailabilityCubit>(
+      () => ClinicAvailabilityCubit(sl<ClinicDashboardRepo>()),
     );
   }
 

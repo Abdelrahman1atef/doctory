@@ -3,6 +3,8 @@ import 'package:doctory/features/clinic/data/data_source/clinic_dashboard_data_s
 import 'package:doctory/features/clinic/data/data_source/clinic_dashboard_endpoints.dart';
 import 'package:doctory/features/clinic/data/model/booking_request_model.dart';
 import 'package:doctory/features/clinic/data/model/dashboard_stats_model.dart';
+import 'package:doctory/features/clinic/data/model/booking_config_dto.dart';
+import 'package:doctory/features/clinic/data/model/availability_dto.dart';
 
 class ClinicDashboardApiDataSource implements ClinicDashboardDataSource {
   final ApiConsumer _api;
@@ -53,6 +55,70 @@ class ClinicDashboardApiDataSource implements ClinicDashboardDataSource {
     return _api.put<bool>(
       path: ClinicDashboardEndpoints.rejectBooking.replaceAll('{id}', id),
       parser: (json) => json['data'] != null,
+    );
+  }
+
+  @override
+  Future<ApiResult<BookingConfigDto>> getBookingConfig(String clinicId) async {
+    return _api.get<BookingConfigDto>(
+      path: ClinicDashboardEndpoints.bookingConfig(clinicId),
+      parser: (json) => BookingConfigDto.fromJson(json['data'] as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Future<ApiResult<BookingConfigDto>> createBookingConfig(String clinicId, BookingConfigDto config) async {
+    return _api.post<BookingConfigDto>(
+      path: ClinicDashboardEndpoints.bookingConfig(clinicId),
+      body: config.toJson(),
+      parser: (json) => BookingConfigDto.fromJson(json['data'] as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Future<ApiResult<BookingConfigDto>> updateBookingConfig(String clinicId, BookingConfigDto config) async {
+    return _api.put<BookingConfigDto>(
+      path: ClinicDashboardEndpoints.bookingConfig(clinicId),
+      body: config.toJson(),
+      parser: (json) => BookingConfigDto.fromJson(json['data'] as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Future<ApiResult<List<AvailabilityDto>>> getAvailability(String doctorId, String clinicId) async {
+    return _api.get<List<AvailabilityDto>>(
+      path: ClinicDashboardEndpoints.availability,
+      queryParameters: {
+        'doctorId': doctorId,
+        'clinicId': clinicId,
+      },
+      parser: (json) => (json['data'] as List).map((e) => AvailabilityDto.fromJson(e)).toList(),
+    );
+  }
+
+  @override
+  Future<ApiResult<AvailabilityDto>> createAvailability(AvailabilityDto availability) async {
+    return _api.post<AvailabilityDto>(
+      path: ClinicDashboardEndpoints.availability,
+      body: availability.toJson(),
+      parser: (json) => AvailabilityDto.fromJson(json['data'] as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Future<ApiResult<AvailabilityDto>> updateAvailability(String id, AvailabilityDto availability) async {
+    return _api.put<AvailabilityDto>(
+      path: ClinicDashboardEndpoints.updateAvailability(id),
+      body: availability.toJson(),
+      parser: (json) => AvailabilityDto.fromJson(json['data'] as Map<String, dynamic>),
+    );
+  }
+
+  @override
+  Future<ApiResult<void>> deleteAvailability(String id) async {
+    return _api.delete<void>(
+      path: ClinicDashboardEndpoints.deleteAvailability(id),
+      parser: (json) => null,
     );
   }
 }

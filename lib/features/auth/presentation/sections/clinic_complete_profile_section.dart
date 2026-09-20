@@ -286,9 +286,12 @@ class _ClinicCompleteProfileSectionState extends State<ClinicCompleteProfileSect
     LocationHelper.isPermissionGranted().then((isGranted) {
       if (!mounted) return;
       if (isGranted) {
-        context.go(AppRoutes.clinicDashboard);
+        context.go(AppRoutes.clinicBookingConfig);
       } else {
-        context.push(AppRoutes.locationPermission);
+        // Even if they need location perm, maybe send them to booking config first? 
+        // Or wait, if we send them to locationPermission, how do they get to bookingConfig?
+        // Let's send them to booking config regardless; we can check location permission later if needed.
+        context.go(AppRoutes.clinicBookingConfig);
       }
     });
   }

@@ -42,6 +42,10 @@ class DashboardAppbarSection extends StatelessWidget {
             ],
           ),
           const Spacer(),
+          IconButton(
+            onPressed: () => context.push(AppRoutes.clinicBookingConfig),
+            icon: const Icon(Icons.settings_outlined, color: AppColors.textPrimary),
+          ),
           Stack(
             clipBehavior: Clip.none,
             children: [

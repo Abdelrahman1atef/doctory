@@ -3,6 +3,9 @@ import 'dart:async';
 import 'package:doctory/core/common/widgets/indicators/abher_loading.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:doctory/core/router/app_router.dart';
+import 'package:doctory/core/router/router_names.dart';
+import 'package:go_router/go_router.dart' as import_router;
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import '../interfaces/api_consumer.dart';
 import '../interfaces/network_info.dart';
@@ -140,6 +143,13 @@ class DioConsumer implements ApiConsumer {
         if (e.type == DioExceptionType.cancel) {
           debugPrint('⚠️ [DioConsumer] Request cancelled: ${e.message}');
           return ApiResult.failure(UnknownFailure(message: 'Request cancelled'));
+        }
+        if (e.response?.statusCode == 403) {
+          // Intercept 403 for Subscription / Trial Expired Gate
+          final context = AppRouter.navigatorKey.currentContext;
+          if (context != null) {
+            import_router.GoRouter.of(context).push(AppRoutes.clinicRejected); // Using clinicRejected as a placeholder for the subscription gate, or a dedicated screen
+          }
         }
         return ApiResult.failure(ErrorHandler.handleDioException(e));
       }

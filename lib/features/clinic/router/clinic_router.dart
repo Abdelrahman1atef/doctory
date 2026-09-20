@@ -2,10 +2,14 @@ import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/features/clinic/cubit/clinic_dashboard_cubit.dart';
 import 'package:doctory/features/clinic/cubit/reservation_requests_cubit.dart';
+import 'package:doctory/features/clinic/cubit/clinic_booking_config_cubit.dart';
+import 'package:doctory/features/clinic/cubit/clinic_availability_cubit.dart';
 import 'package:doctory/features/clinic/presentation/views/clinic_dashboard_view.dart';
 import 'package:doctory/features/clinic/presentation/views/clinic_pending_approval_view.dart';
 import 'package:doctory/features/clinic/presentation/views/clinic_rejected_view.dart';
 import 'package:doctory/features/clinic/presentation/views/requests_inbox_view.dart';
+import 'package:doctory/features/clinic/presentation/views/booking_config_view.dart';
+import 'package:doctory/features/clinic/presentation/views/clinic_availability_view.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
@@ -32,6 +36,20 @@ abstract class ClinicRouter {
         GoRoute(
           path: AppRoutes.clinicRejected,
           builder: (context, state) => const ClinicRejectedView(),
+        ),
+        GoRoute(
+          path: AppRoutes.clinicBookingConfig,
+          builder: (context, state) => BlocProvider(
+            create: (_) => sl<ClinicBookingConfigCubit>()..loadConfig(),
+            child: const BookingConfigView(),
+          ),
+        ),
+        GoRoute(
+          path: AppRoutes.clinicAvailability,
+          builder: (context, state) => BlocProvider(
+            create: (_) => sl<ClinicAvailabilityCubit>(),
+            child: const ClinicAvailabilityView(),
+          ),
         ),
       ];
 }

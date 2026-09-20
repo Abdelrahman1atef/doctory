@@ -121,7 +121,14 @@ class AuthRepoImpl implements AuthRepo {
 
   @override
   Future<ApiResult<AuthResponse>> refreshToken(String token) async {
-    return await _dataSource.refreshToken(token);
+    final result = await _dataSource.refreshToken(token);
+    return result.fold(
+      onSuccess: (response) async {
+        await _saveAuthSession(response);
+        return ApiResult.success(response);
+      },
+      onFailure: (failure) => ApiResult.failure(failure),
+    );
   }
 
   @override

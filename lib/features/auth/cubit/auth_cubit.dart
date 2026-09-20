@@ -306,7 +306,18 @@ class AuthCubit extends Cubit<AuthStates> {
     emit(AuthLoadingState());
     final result = await _authRepo.setupClinic(request);
     result.fold(
-      onSuccess: (_) => emit(ClinicSetupCompleteState()),
+      onSuccess: (_) async {
+        final refreshResult = await _authRepo.refreshToken(UserSession.refreshToken);
+        refreshResult.fold(
+          onSuccess: (authResponse) {
+            emit(ClinicSetupCompleteState());
+          },
+          onFailure: (failure) {
+            // Still emit success if the setup succeeded, but they might need to login again.
+            emit(ClinicSetupCompleteState());
+          }
+        );
+      },
       onFailure: (failure) => emit(AuthErrorState(failure.userMessage, failure.code ?? '')),
     );
   }

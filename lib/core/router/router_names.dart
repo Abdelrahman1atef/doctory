@@ -46,6 +46,10 @@ abstract class AppRoutes {
   static const String clinicPendingApproval = '/clinic/pending-approval';
   static const String clinicRejected = '/clinic/rejected';
 
+  // Clinic Booking Config & Availability
+  static const String clinicBookingConfig = '/clinic/booking-config';
+  static const String clinicAvailability = '/clinic/availability';
+
   // Notifications
   static const String notifications = '/notifications';
 }
