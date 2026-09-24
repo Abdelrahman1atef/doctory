@@ -579,6 +579,8 @@ abstract class LocaleKeys {
   static const no_availability = 'no_availability';
   static const add_availability = 'add_availability';
   static const finish_setup = 'finish_setup';
+  static const add_at_least_one_slot = 'add_at_least_one_slot';
+  static const complete_booking_config_first = 'complete_booking_config_first';
   static const day_of_week = 'day_of_week';
   static const start_time = 'start_time';
   static const end_time = 'end_time';

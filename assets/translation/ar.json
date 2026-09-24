@@ -827,6 +827,8 @@
   "no_availability": "لم تتم إضافة مواعيد عمل بعد",
   "add_availability": "إضافة مواعيد عمل",
   "finish_setup": "إنهاء الإعداد",
+  "add_at_least_one_slot": "من فضلك أضف موعدًا واحدًا على الأقل لساعات العمل قبل الإنهاء.",
+  "complete_booking_config_first": "من فضلك أكمل إعدادات الحجز وساعات العمل أولاً.",
   "day_of_week": "اليوم",
   "start_time": "وقت البداية",
   "end_time": "وقت النهاية",

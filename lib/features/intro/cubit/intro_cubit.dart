@@ -1,4 +1,5 @@
 import 'package:doctory/core/cache/cache_helper.dart';
+import 'package:doctory/core/common/models/role.dart';
 import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/features/auth/data/repo/auth_repo.dart';
@@ -51,6 +52,11 @@ class IntroCubit extends Cubit<IntroStates> {
               UserSession.currentPermissions = user.permissions!.toSet();
             }
             UserSession.currentDoctorType = user.doctorType;
+            UserSession.updateCompleteProfile(
+              user.userRole == UserRole.clinicOwner
+                  ? user.isCompleteProfile
+                  : null,
+            );
           },
           onFailure: (_) {},
         );

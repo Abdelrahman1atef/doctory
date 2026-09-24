@@ -17,6 +17,8 @@ class UserModel {
   final String? syndicateIdImage;
   final String? professionalPracticeCardImage;
   final String? commercialRegisterImage;
+  final bool? isClinicSetupComplete;
+  final bool? isCompleteProfile;
 
   UserModel({
     this.id,
@@ -33,8 +35,10 @@ class UserModel {
     this.doctorType,
     this.certificateImage,
     this.syndicateIdImage,
+    this.isClinicSetupComplete = false,
     this.professionalPracticeCardImage,
     this.commercialRegisterImage,
+    this.isCompleteProfile,
   });
 
   factory UserModel.fromJson(Map<String, dynamic> json) {
@@ -76,6 +80,10 @@ class UserModel {
       syndicateIdImage: json['syndicate_id_image']?.toString(),
       professionalPracticeCardImage: json['professional_practice_card_image']?.toString(),
       commercialRegisterImage: json['commercial_register_image']?.toString(),
+      isClinicSetupComplete: json['isClinicSetupComplete'] == true,
+      isCompleteProfile: json['isCompleteProfile'] is bool
+          ? json['isCompleteProfile'] as bool
+          : null,
     );
   }
 

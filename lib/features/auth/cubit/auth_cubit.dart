@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:doctory/core/common/models/role.dart';
 import 'package:doctory/core/enums/device_platform.dart';
 import 'package:doctory/core/services/file_upload_service.dart';
 import 'package:doctory/features/auth/cubit/auth_states.dart';
@@ -273,6 +274,11 @@ class AuthCubit extends Cubit<AuthStates> {
       UserSession.currentPermissions = user.permissions!.toSet();
     }
     UserSession.currentDoctorType = user.doctorType;
+    if (user.userRole == UserRole.clinicOwner) {
+      UserSession.updateCompleteProfile(user.isCompleteProfile);
+    } else {
+      UserSession.updateCompleteProfile(null);
+    }
   }
 
   Future<void> updateProfile(UpdateProfileRequest request) async {

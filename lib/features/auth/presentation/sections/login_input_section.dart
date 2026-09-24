@@ -1,6 +1,8 @@
 import 'package:doctory/core/app_strings/locale_keys.dart';
 import 'package:doctory/core/common/models/role.dart';
+import 'package:doctory/core/locator/service_locator.dart';
 import 'package:doctory/core/session/user_session.dart';
+import 'package:doctory/features/auth/data/repo/auth_repo.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/theme/app_typography.dart';
 import 'package:easy_localization/easy_localization.dart';
@@ -45,7 +47,7 @@ class _LoginInputSectionState extends State<LoginInputSection> {
     }
   }
 
-  void _resolveAndNavigate() {
+  Future<void> _resolveAndNavigate() async {
     if (UserSession.currentRole == UserRole.superAdmin) {
       context.go(AdminRoutes.admin);
       return;
@@ -63,11 +65,23 @@ class _LoginInputSectionState extends State<LoginInputSection> {
       } else if (UserSession.verificationStatus == 'Rejected') {
         destination = AppRoutes.clinicRejected;
       } else {
-        destination = AppRoutes.clinicDashboard;
+        // Login response doesn't carry isCompleteProfile — fetch it fresh
+        // so a returning owner with an incomplete booking setup is routed
+        // back into the wizard instead of straight to the dashboard.
+        final result = await sl<AuthRepo>().getProfile();
+        result.fold(
+          onSuccess: (user) => UserSession.updateCompleteProfile(user.isCompleteProfile),
+          onFailure: (_) {},
+        );
+        destination = UserSession.isCompleteProfile == false
+            ? AppRoutes.clinicBookingConfig
+            : AppRoutes.clinicDashboard;
       }
     } else {
       destination = AppRoutes.home;
     }
+
+    if (!context.mounted) return;
 
     if (destination == AppRoutes.home || destination == AppRoutes.clinicDashboard) {
       LocationHelper.isPermissionGranted().then((isGranted) {

@@ -829,6 +829,8 @@
   "no_availability": "No working hours added yet",
   "add_availability": "Add Working Hours",
   "finish_setup": "Finish Setup",
+  "add_at_least_one_slot": "Please add at least one working hours slot before finishing.",
+  "complete_booking_config_first": "Please complete your booking settings and working hours first.",
   "day_of_week": "Day",
   "start_time": "Start time",
   "end_time": "End time",

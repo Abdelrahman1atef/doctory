@@ -45,6 +45,8 @@ class SplashView extends StatelessWidget {
               destination = AppRoutes.clinicPendingApproval;
             } else if (UserSession.verificationStatus == 'Rejected') {
               destination = AppRoutes.clinicRejected;
+            } else if (UserSession.isCompleteProfile == false) {
+              destination = AppRoutes.clinicBookingConfig;
             } else {
               destination = AppRoutes.clinicDashboard;
             }

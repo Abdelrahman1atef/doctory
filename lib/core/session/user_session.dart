@@ -39,6 +39,10 @@ class UserSession {
   static String? verificationStatus;
   static bool isClinicSetupComplete = false;
 
+  /// Whether the clinic owner has finished booking-config + availability
+  /// setup (tri-state: null = not applicable / unknown for non-owners).
+  static bool? isCompleteProfile;
+
   /// Doctor entity id (only present for users linked to a Doctor entity)
   static String? doctorId;
 
@@ -130,6 +134,9 @@ class UserSession {
       clinicStatus = response['clinicStatus']?.toString();
       verificationStatus = response['verificationStatus']?.toString();
       isClinicSetupComplete = response['isClinicSetupComplete'] == true;
+      if (response['isCompleteProfile'] is bool) {
+        isCompleteProfile = response['isCompleteProfile'] as bool;
+      }
       doctorId = response['doctorId']?.toString();
       clinicId = response['clinicId']?.toString();
 
@@ -225,6 +232,13 @@ class UserSession {
     });
   }
 
+  /// Updates the tri-state profile-completeness flag after a fresh
+  /// `GET /auth/profile` call and persists it to the cache.
+  static Future<void> updateCompleteProfile(bool? value) async {
+    isCompleteProfile = value;
+    await _patchCachedSession({'isCompleteProfile': value});
+  }
+
   /// Merges [fields] into the cached auth payload without touching the rest.
   static Future<void> _patchCachedSession(Map<String, dynamic> fields) async {
     final cached = await HiveService().get(
@@ -286,6 +300,7 @@ class UserSession {
     clinicStatus = null;
     verificationStatus = null;
     isClinicSetupComplete = false;
+    isCompleteProfile = null;
     doctorId = null;
     clinicId = null;
     userNotifier.value = null;
@@ -380,6 +395,9 @@ class UserSession {
       clinicStatus = data['clinicStatus']?.toString();
       verificationStatus = data['verificationStatus']?.toString();
       isClinicSetupComplete = data['isClinicSetupComplete'] == true;
+      if (data['isCompleteProfile'] is bool) {
+        isCompleteProfile = data['isCompleteProfile'] as bool;
+      }
       doctorId = data['doctorId']?.toString();
       clinicId = data['clinicId']?.toString();
       _resolveClinicIdFromToken();
