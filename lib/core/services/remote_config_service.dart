@@ -14,7 +14,7 @@ class RemoteConfigService {
       _localAppVersion = '${info.version}+${info.buildNumber}';
 
       await _remoteConfig.setDefaults({
-        "BASE_URL": "https://doctory-icare.runasp.net/api/v1/",
+        "BASE_URL": "https://api.doctoryconnect.online/api/v1",
         "android_version": "1.0.0+1",
         "ios_version": "1.0.0+1",
         "android_store_link": "",
