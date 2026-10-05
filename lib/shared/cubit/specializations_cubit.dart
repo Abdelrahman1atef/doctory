@@ -39,7 +39,7 @@ class SharedSpecializationsCubit extends Cubit<SharedSpecializationsState> {
     emit(SharedSpecializationsLoading());
 
     final future = _apiConsumer.get<PaginatedData<SpecialtyModel>>(
-      path: 'specializations',
+      path: '/specializations',
       queryParameters: {'IsFamous': true},
       parser: (json) => PaginatedData.fromJson(
         json['data'],
