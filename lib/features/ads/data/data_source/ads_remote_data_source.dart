@@ -13,7 +13,7 @@ class AdsRemoteDataSourceImpl implements AdsRemoteDataSource {
   @override
   Future<ApiResult<List<PublicAdModel>>> getActiveAds() async {
     return await _apiConsumer.get<List<PublicAdModel>>(
-      path: 'public/ads/active',
+      path: '/public/ads/active',
       parser: (json) {
         final data = json['data'] as List<dynamic>?;
         if (data == null) return <PublicAdModel>[];

@@ -9,12 +9,18 @@ import 'package:go_router/go_router.dart';
 
 class HomeSpecialtiesSection extends StatelessWidget {
   final List<SpecialtyModel> specialties;
+  final bool isLoading;
 
-  const HomeSpecialtiesSection({super.key, required this.specialties});
+  const HomeSpecialtiesSection({
+    super.key,
+    required this.specialties,
+    this.isLoading = false,
+  });
 
   @override
   Widget build(BuildContext context) {
-    if (specialties.isEmpty) return const HomeSpecialtiesShimmer();
+    if (isLoading) return const HomeSpecialtiesShimmer();
+    if (specialties.isEmpty) return const SizedBox.shrink();
 
     return HomeSpecialtiesListWidget(
       specialties: specialties,

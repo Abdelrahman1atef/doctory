@@ -24,12 +24,16 @@ class HomeContentSection extends StatelessWidget {
       },
       child: BlocBuilder<HomeCubit, HomeStates>(
         buildWhen: (previous, current) =>
-            current is HomeInitialState || current is HomeSuccessState || current is HomeErrorState,
+            current is HomeInitialState ||
+            current is HomeLoadingState ||
+            current is HomeSuccessState ||
+            current is HomeErrorState,
         builder: (context, state) {
           if (state is HomeErrorState) {
             return HomeErrorWidget(message: state.message);
           }
 
+          final bool isLoading = state is HomeLoadingState || state is HomeInitialState;
           final HomeSuccessState? successState = state is HomeSuccessState ? state : null;
           final specialties = successState?.specialties ?? const <SpecialtyModel>[];
           final hasFeatured =
@@ -51,7 +55,7 @@ class HomeContentSection extends StatelessWidget {
                 ],
                 const HomeSearchSection(),
                 const SizedBox(height: 24),
-                HomeSpecialtiesSection(specialties: specialties),
+                HomeSpecialtiesSection(specialties: specialties, isLoading: isLoading),
                 if (hasFeatured) ...[
                   const SizedBox(height: 16),
                   SectionContainerWidget(
