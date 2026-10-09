@@ -20,10 +20,14 @@ abstract class MyAppointmentsRemoteDataSource {
 
   /// Creates the payment for an accepted appointment and returns the gateway
   /// payload, which carries the `redirectUrl` the webview opens.
+  ///
+  /// [walletPhoneNumber] is required by the gateway for wallet payments and
+  /// omitted from the request otherwise.
   Future<ApiResult<Map<String, dynamic>>> initiatePayment({
     required String appointmentId,
     required String paymentMethod,
     required String returnUrl,
+    String? walletPhoneNumber,
   });
 
   /// Confirms a payment with the server after the gateway returns, and yields
@@ -88,6 +92,7 @@ class MyAppointmentsRemoteDataSourceImpl
     required String appointmentId,
     required String paymentMethod,
     required String returnUrl,
+    String? walletPhoneNumber,
   }) async {
     return apiConsumer.post<Map<String, dynamic>>(
       path: MyAppointmentsEndpoints.payments,
@@ -95,6 +100,8 @@ class MyAppointmentsRemoteDataSourceImpl
         'reservationId': appointmentId,
         'paymentMethod': paymentMethod,
         'returnUrl': returnUrl,
+        if (walletPhoneNumber != null && walletPhoneNumber.isNotEmpty)
+          'walletPhoneNumber': walletPhoneNumber,
       },
       parser: (json) => (json['data'] ?? json) as Map<String, dynamic>,
     );

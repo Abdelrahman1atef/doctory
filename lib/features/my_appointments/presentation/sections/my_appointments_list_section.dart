@@ -1,10 +1,8 @@
 import 'package:doctory/core/router/router_names.dart';
 import 'package:doctory/core/theme/app_colors.dart';
-import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
 import 'package:doctory/features/booking/domain/enums/appointment_status.dart';
 import 'package:doctory/features/my_appointments/presentation/widgets/appointment_card_widget.dart';
-import 'package:doctory/features/my_appointments/presentation/widgets/appointment_status_tabs_widget.dart';
 import 'package:doctory/features/my_appointments/presentation/widgets/empty_appointments_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -13,9 +11,7 @@ class MyAppointmentsListSection extends StatefulWidget {
   final List<AppointmentResponseDto> appointments;
   final bool hasMore;
   final bool isLoadingMore;
-  final AppointmentStatus? statusFilter;
   final VoidCallback onLoadMore;
-  final void Function(AppointmentStatus status) onLoadByStatus;
   final void Function(AppointmentResponseDto appointment) onPayTap;
   final Future<void> Function() onRefresh;
 
@@ -24,9 +20,7 @@ class MyAppointmentsListSection extends StatefulWidget {
     required this.appointments,
     this.hasMore = false,
     this.isLoadingMore = false,
-    this.statusFilter,
     required this.onLoadMore,
-    required this.onLoadByStatus,
     required this.onPayTap,
     required this.onRefresh,
   });
@@ -67,21 +61,13 @@ class _MyAppointmentsListSectionState extends State<MyAppointmentsListSection> {
       '${AppRoutes.appointmentDetails}?id=${apt.id}',
     );
     if (!context.mounted) return;
-    widget.onLoadByStatus(widget.statusFilter ?? AppointmentStatus.pending);
+    widget.onRefresh();
   }
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: AppointmentStatusTabsWidget(
-            selected: widget.statusFilter ?? AppointmentStatus.pending,
-            onSelected: widget.onLoadByStatus,
-          ),
-        ),
-        16.ph,
         if (widget.appointments.isEmpty && !widget.isLoadingMore)
           Expanded(
             child: RefreshIndicator(

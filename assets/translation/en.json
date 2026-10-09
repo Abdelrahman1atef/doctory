@@ -842,5 +842,7 @@
   "fee_cannot_be_negative": "Fee cannot be negative",
   "must_be_positive": "Must be greater than zero",
   "end_time_after_start": "End time must be after start time",
-  "slot": "slot"
+  "slot": "slot",
+  "wallet_phone_number": "E-wallet phone number",
+  "wallet_phone_note": "Enter a number registered with an e-wallet (Vodafone Cash, Etisalat Cash, Orange Cash, WE Pay)"
 }

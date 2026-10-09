@@ -43,12 +43,14 @@ class BookingRepositoryImpl implements BookingRepository {
     required String reservationId,
     required String paymentMethod,
     required String returnUrl,
+    String? walletPhoneNumber,
   }) async {
     try {
       return await remoteDataSource.initiateBookingPayment(
         reservationId: reservationId,
         paymentMethod: paymentMethod,
         returnUrl: returnUrl,
+        walletPhoneNumber: walletPhoneNumber,
       );
     } catch (e) {
       return ApiResult.failure(_toFailure(e));

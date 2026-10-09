@@ -11,10 +11,13 @@ abstract class BookingRepository {
     required String appointmentId,
   });
 
+  /// [walletPhoneNumber] is required by the gateway for wallet payments and
+  /// omitted from the request otherwise.
   Future<ApiResult<Map<String, dynamic>>> initiateBookingPayment({
     required String reservationId,
     required String paymentMethod,
     required String returnUrl,
+    String? walletPhoneNumber,
   });
 
   Future<ApiResult<AppointmentResponseDto>> verifyPayment({

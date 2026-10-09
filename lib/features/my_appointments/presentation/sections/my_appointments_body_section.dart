@@ -7,6 +7,8 @@ import 'package:doctory/features/my_appointments/cubit/my_appointments_cubit.dar
 import 'package:doctory/features/my_appointments/cubit/my_appointments_state.dart';
 import 'package:doctory/features/my_appointments/presentation/sections/my_appointments_appbar_section.dart';
 import 'package:doctory/features/my_appointments/presentation/sections/my_appointments_list_section.dart';
+import 'package:doctory/features/my_appointments/presentation/sections/my_appointments_tabs_section.dart';
+import 'package:doctory/features/my_appointments/presentation/widgets/appointments_skeleton_widget.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,6 +22,8 @@ class MyAppointmentsBodySection extends StatelessWidget {
       children: [
         const MyAppointmentsAppBarSection(),
         8.ph,
+        const MyAppointmentsTabsSection(),
+        16.ph,
         Expanded(
           child: BlocConsumer<MyAppointmentsCubit, MyAppointmentsState>(
             listener: (context, state) {
@@ -34,8 +38,7 @@ class MyAppointmentsBodySection extends StatelessWidget {
             },
             builder: (context, state) {
               if (state is MyAppointmentsLoading) {
-                return const Center(child: CircularProgressIndicator(
-                  color: AppColors.stitchPrimaryContainer));
+                return const AppointmentsSkeletonWidget();
               }
               if (state is MyAppointmentsError) {
                 return Center(
@@ -46,7 +49,7 @@ class MyAppointmentsBodySection extends StatelessWidget {
                         style: AppStyles.s14Medium.withColor(AppColors.error)),
                       16.ph,
                       TextButton(
-                        onPressed: () => context.read<MyAppointmentsCubit>().loadAppointments(),
+                        onPressed: () => context.read<MyAppointmentsCubit>().refresh(),
                         child: Text('try_again'.tr()),
                       ),
                     ],
@@ -60,10 +63,7 @@ class MyAppointmentsBodySection extends StatelessWidget {
                       appointments: state.appointments,
                       hasMore: state.hasMore,
                       isLoadingMore: state.isLoadingMore,
-                      statusFilter: state.statusFilter,
                       onLoadMore: () => context.read<MyAppointmentsCubit>().loadMore(),
-                      onLoadByStatus: (status) =>
-                          context.read<MyAppointmentsCubit>().loadByStatus(status),
                       onPayTap: (appointment) =>
                           _openPaymentWebView(context, appointment),
                       onRefresh: () => context.read<MyAppointmentsCubit>().refresh(),

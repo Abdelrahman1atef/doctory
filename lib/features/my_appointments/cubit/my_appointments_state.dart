@@ -5,7 +5,12 @@ sealed class MyAppointmentsState {}
 
 class MyAppointmentsInitial extends MyAppointmentsState {}
 
-class MyAppointmentsLoading extends MyAppointmentsState {}
+class MyAppointmentsLoading extends MyAppointmentsState {
+  /// The tab being loaded, so it shows as selected before the data arrives.
+  final AppointmentStatus? statusFilter;
+
+  MyAppointmentsLoading({this.statusFilter});
+}
 
 class MyAppointmentsLoaded extends MyAppointmentsState {
   final List<AppointmentResponseDto> appointments;

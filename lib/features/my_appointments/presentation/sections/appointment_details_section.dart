@@ -1,6 +1,7 @@
 import 'package:doctory/core/common/widgets/error/app_error_widget.dart';
 import 'package:doctory/core/common/widgets/layout/abher_payment_webview.dart';
 import 'package:doctory/core/router/router_names.dart';
+import 'package:doctory/core/session/user_session.dart';
 import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/core/utils/extensions.dart';
 import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
@@ -220,8 +221,11 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
     BuildContext context,
     AppointmentResponseDto apt,
   ) async {
-    final method = await showPaymentMethodSheet(context);
-    if (method == null || !context.mounted) return;
+    final selection = await showPaymentMethodSheet(
+      context,
+      initialWalletPhone: UserSession.userModel?['phoneNumber']?.toString(),
+    );
+    if (selection == null || !context.mounted) return;
 
     final cubit = context.read<MyAppointmentsCubit>();
 
@@ -229,7 +233,8 @@ class _AppointmentDetailsSectionState extends State<AppointmentDetailsSection> {
     final url =
         await cubit.initiatePayment(
           appointmentId: apt.id,
-          paymentMethod: method,
+          paymentMethod: selection.method,
+          walletPhoneNumber: selection.walletPhoneNumber,
         );
     if (!context.mounted) return;
     setState(() => _initiatingPayment = false);

@@ -5,8 +5,9 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 
 class AppointmentStatusTabsWidget extends StatelessWidget {
-  final AppointmentStatus selected;
-  final ValueChanged<AppointmentStatus> onSelected;
+  /// The selected status; null selects the "All" tab.
+  final AppointmentStatus? selected;
+  final ValueChanged<AppointmentStatus?> onSelected;
 
   const AppointmentStatusTabsWidget({
     super.key,
@@ -15,6 +16,7 @@ class AppointmentStatusTabsWidget extends StatelessWidget {
   });
 
   static const List<_TabConfig> _tabs = [
+    _TabConfig('all', null),
     _TabConfig('pending', AppointmentStatus.pending),
     _TabConfig('awaiting_payment', AppointmentStatus.accepted),
     _TabConfig('confirmed', AppointmentStatus.confirmed),
@@ -82,7 +84,7 @@ class AppointmentStatusTabsWidget extends StatelessWidget {
 
 class _TabConfig {
   final String label;
-  final AppointmentStatus status;
+  final AppointmentStatus? status;
 
   const _TabConfig(this.label, this.status);
 }

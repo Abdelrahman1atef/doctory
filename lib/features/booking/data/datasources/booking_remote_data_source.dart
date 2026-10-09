@@ -11,10 +11,13 @@ abstract class BookingRemoteDataSource {
     required String appointmentId,
   });
 
+  /// [walletPhoneNumber] is required by the gateway for wallet payments and
+  /// omitted from the request otherwise.
   Future<ApiResult<Map<String, dynamic>>> initiateBookingPayment({
     required String reservationId,
     required String paymentMethod,
     required String returnUrl,
+    String? walletPhoneNumber,
   });
 
   Future<ApiResult<AppointmentResponseDto>> verifyPayment({
@@ -33,7 +36,7 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     CreateAppointmentRequestDto request,
   ) async {
     return apiConsumer.post<AppointmentResponseDto>(
-      path: 'appointments',
+      path: '/appointments',
       body: request.toJson(),
       parser: (json) => AppointmentResponseDto.fromJson(
         json['data'] ?? json,
@@ -46,7 +49,7 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     required String appointmentId,
   }) async {
     return apiConsumer.get<AppointmentResponseDto>(
-      path: 'appointments/$appointmentId',
+      path: '/appointments/$appointmentId',
       parser: (json) => AppointmentResponseDto.fromJson(
         json['data'] ?? json,
       ),
@@ -58,13 +61,16 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     required String reservationId,
     required String paymentMethod,
     required String returnUrl,
+    String? walletPhoneNumber,
   }) async {
     return apiConsumer.post<Map<String, dynamic>>(
-      path: 'payments',
+      path: '/payments',
       body: {
         'reservationId': reservationId,
         'paymentMethod': paymentMethod,
         'returnUrl': returnUrl,
+        if (walletPhoneNumber != null && walletPhoneNumber.isNotEmpty)
+          'walletPhoneNumber': walletPhoneNumber,
       },
       parser: (json) => json['data'] ?? json,
     );
@@ -76,7 +82,7 @@ class BookingRemoteDataSourceImpl implements BookingRemoteDataSource {
     required String transactionId,
   }) async {
     return apiConsumer.post<AppointmentResponseDto>(
-      path: 'payments/verify',
+      path: '/payments/verify',
       body: {
         'paymentId': paymentId,
         'transactionId': transactionId,

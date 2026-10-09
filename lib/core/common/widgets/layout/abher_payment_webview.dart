@@ -1,3 +1,4 @@
+import 'package:doctory/core/utils/parse_utils.dart';
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -22,6 +23,87 @@ class AbherPaymentWebView extends StatefulWidget {
 }
 
 class _AbherPaymentWebViewState extends State<AbherPaymentWebView> {
+  /// Scheme of the app's own return URL
+  /// (`doctory://payment-result?success=…&order=…`).
+  static const String _appScheme = 'doctory';
+  static const Duration _resultDelay = Duration(seconds: 2);
+
+  late final WebViewController _controller;
+
+  /// The result can be detected both from a gateway page URL and from the
+  /// final redirect to the app; only the first one is acted on.
+  bool _resultHandled = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = WebViewController()
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..setBackgroundColor(const Color(0x00000000))
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onWebResourceError: (WebResourceError error) {
+            debugPrint('''
+          Page resource error:
+        code: ${error.errorCode}
+        description: ${error.description}
+        errorType: ${error.errorType}
+        isForMainFrame: ${error.isForMainFrame}
+              ''');
+          },
+          onNavigationRequest: _onNavigationRequest,
+          onUrlChange: (UrlChange change) => _onUrlChange(change.url ?? ''),
+        ),
+      )
+      ..loadRequest(Uri.parse(widget.url));
+  }
+
+  NavigationDecision _onNavigationRequest(NavigationRequest request) {
+    final uri = Uri.tryParse(request.url);
+    // The gateway finishes by redirecting to the app's return URL, which the
+    // webview cannot load ("Web page not available"). Read the result from
+    // it and close the webview instead.
+    if (uri != null && uri.scheme == _appScheme) {
+      _completePayment(ParseUtils.ensureBool(uri.queryParameters['success']));
+      return NavigationDecision.prevent;
+    }
+    return NavigationDecision.navigate;
+  }
+
+  void _onUrlChange(String url) {
+    if (url.contains('message=APPROVED') ||
+        url.contains('status=success') ||
+        url.contains('SUCCESS') ||
+        url.contains('success=True')) {
+      _completePayment(true);
+    } else if (url.contains("status=failed") ||
+        url.contains("status=error") ||
+        url.contains("FAILED") ||
+        url.contains("success=False")) {
+      _completePayment(false);
+    }
+  }
+
+  Future<void> _completePayment(bool success) async {
+    if (_resultHandled || !mounted) return;
+    _resultHandled = true;
+
+    Alerts.snack(
+      text: (success ? 'payment_success' : 'payment_failed').tr(),
+      state: success ? SnackState.success : SnackState.failed,
+    );
+
+    await Future<void>.delayed(_resultDelay);
+    if (!mounted) return;
+
+    if (success && widget.onPaymentResult == null) {
+      context.go(AppRoutes.login);
+      return;
+    }
+    widget.onPaymentResult?.call(success);
+    context.pop();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -44,70 +126,7 @@ class _AbherPaymentWebViewState extends State<AbherPaymentWebView> {
         ),
       ),
       body: SafeArea(
-        child: WebViewWidget(
-          controller: WebViewController()
-            ..setJavaScriptMode(JavaScriptMode.unrestricted)
-            ..setBackgroundColor(const Color(0x00000000))
-            ..setNavigationDelegate(
-              NavigationDelegate(
-                onProgress: (int progress) {
-                  // Update loading bar.
-                },
-                onPageStarted: (String url) {},
-                onPageFinished: (String url) {},
-                onWebResourceError: (WebResourceError error) {
-                  debugPrint('''
-          Page resource error:
-        code: ${error.errorCode}
-        description: ${error.description}
-        errorType: ${error.errorType}
-        isForMainFrame: ${error.isForMainFrame}
-              ''');
-                },
-                onNavigationRequest: (NavigationRequest request) {
-                  return NavigationDecision.navigate;
-                },
-
-                onUrlChange: (UrlChange change) async {
-                  final url = change.url ?? '';
-                  if (url.contains('message=APPROVED') ||
-                      url.contains('status=success') ||
-                      url.contains('SUCCESS') ||
-                      url.contains('success=True')) {
-                    if (!mounted) return;
-                    Alerts.snack(
-                      text: 'payment_success'.tr(),
-                      state: SnackState.success,
-                    );
-
-                    await Future<void>.delayed(const Duration(seconds: 2));
-                    if (!mounted) return;
-                    if (widget.onPaymentResult != null) {
-                      widget.onPaymentResult!(true);
-                      if (mounted) context.pop();
-                    } else {
-                      if (mounted) context.go(AppRoutes.login);
-                    }
-                  } else if (url.contains("status=failed") ||
-                      url.contains("status=error") ||
-                      url.contains("FAILED") ||
-                      url.contains("success=False")) {
-                    if (!mounted) return;
-                    Alerts.snack(
-                      text: 'payment_failed'.tr(),
-                      state: SnackState.failed,
-                    );
-
-                    await Future<void>.delayed(const Duration(seconds: 2));
-                    if (!mounted) return;
-                    widget.onPaymentResult?.call(false);
-                    if (mounted) context.pop();
-                  }
-                },
-              ),
-            )
-            ..loadRequest(Uri.parse(widget.url)),
-        ),
+        child: WebViewWidget(controller: _controller),
       ),
     );
   }

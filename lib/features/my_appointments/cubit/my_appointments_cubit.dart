@@ -12,20 +12,31 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
   static const String _paymentReturnUrl = 'doctory://payment-result';
   AppointmentStatus? _currentStatusFilter;
 
+  /// Bumped by every list load, so a response that arrives after the user
+  /// switched tabs is dropped instead of overwriting the newer tab.
+  int _listRequestId = 0;
+
   MyAppointmentsCubit({
     required MyAppointmentsRemoteDataSource remoteDataSource,
     bool autoLoad = true,
   })  : _remoteDataSource = remoteDataSource,
         super(MyAppointmentsInitial()) {
-    if (autoLoad) loadAppointments(status: AppointmentStatus.pending);
+    if (autoLoad) loadAppointments();
   }
 
+  /// Loads the first page of appointments with [status]; null loads all.
+  ///
+  /// Reloading the tab already on screen keeps its list visible while
+  /// refreshing; any other load shows the loading state for the new tab
+  /// right away.
   Future<void> loadAppointments({AppointmentStatus? status}) async {
+    final current = state;
+    final isRefresh =
+        current is MyAppointmentsLoaded && current.statusFilter == status;
     _currentStatusFilter = status;
-    final isRefresh = state is MyAppointmentsLoaded;
+    final requestId = ++_listRequestId;
 
     if (isRefresh) {
-      final current = state as MyAppointmentsLoaded;
       emit(MyAppointmentsLoaded(
         appointments: current.appointments,
         pageNumber: current.pageNumber,
@@ -35,7 +46,7 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
         isRefreshing: true,
       ));
     } else {
-      emit(MyAppointmentsLoading());
+      emit(MyAppointmentsLoading(statusFilter: status));
     }
 
     final result = await _remoteDataSource.getAppointments(
@@ -44,8 +55,9 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
       status: status,
     );
 
+    if (requestId != _listRequestId) return;
     if (isRefresh && state is! MyAppointmentsLoaded) return;
-    if (!isRefresh && state is! MyAppointmentsInitial && state is! MyAppointmentsLoading) return;
+    if (!isRefresh && state is! MyAppointmentsLoading) return;
 
     result.fold(
       onSuccess: (data) {
@@ -75,12 +87,13 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
     );
   }
 
-  void loadByStatus(AppointmentStatus status) {
+  /// Loads appointments with [status]; null loads all statuses.
+  void loadByStatus(AppointmentStatus? status) {
     loadAppointments(status: status);
   }
 
   Future<void> refresh() {
-    return loadAppointments(status: _currentStatusFilter ?? AppointmentStatus.pending);
+    return loadAppointments(status: _currentStatusFilter);
   }
 
   Future<void> loadMore() async {
@@ -97,6 +110,7 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
       statusFilter: _currentStatusFilter,
     ));
 
+    final requestId = _listRequestId;
     final nextPage = currentState.pageNumber + 1;
     final result = await _remoteDataSource.getAppointments(
       pageNumber: nextPage,
@@ -104,6 +118,9 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
       status: _currentStatusFilter,
     );
 
+    // A tab switch or refresh started meanwhile; this page belongs to the
+    // old list.
+    if (requestId != _listRequestId) return;
     if (state is! MyAppointmentsLoaded) return;
 
     result.fold(
@@ -139,12 +156,14 @@ class MyAppointmentsCubit extends Cubit<MyAppointmentsState> {
   Future<String?> initiatePayment({
     required String appointmentId,
     required PaymentMethod paymentMethod,
+    String? walletPhoneNumber,
     String returnUrl = _paymentReturnUrl,
   }) async {
     final result = await _remoteDataSource.initiatePayment(
       appointmentId: appointmentId,
       paymentMethod: paymentMethod.serverValue,
       returnUrl: returnUrl,
+      walletPhoneNumber: walletPhoneNumber,
     );
 
     return result.fold(

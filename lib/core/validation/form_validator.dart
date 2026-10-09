@@ -19,6 +19,20 @@ class FormValidator {
     return null;
   }
 
+  /// Egyptian mobile wallet number: Vodafone (010), Etisalat (011),
+  /// Orange (012) or WE (015), followed by 8 digits.
+  static final RegExp _egyptianWalletPhoneRegex = RegExp(r'^01[0125]\d{8}$');
+
+  static String? validateWalletPhone(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return LocaleKeys.required_phone.tr();
+    }
+    if (!_egyptianWalletPhoneRegex.hasMatch(value.trim())) {
+      return LocaleKeys.invalid_phone.tr();
+    }
+    return null;
+  }
+
   static String? validateEmail(String? value) {
     if (value == null || value.trim().isEmpty) {
       return LocaleKeys.required_email.tr();
