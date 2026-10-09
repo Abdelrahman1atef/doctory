@@ -1,3 +1,4 @@
+import 'package:doctory/core/theme/app_colors.dart';
 import 'package:doctory/features/booking/data/model/appointment_response_dto.dart';
 import 'package:doctory/features/my_appointments/presentation/widgets/appointment_card_widget.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +29,12 @@ class AppointmentsSkeletonWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Skeletonizer(
       enabled: true,
+      // Without an explicit effect, skeletonizer follows the device's
+      // dark/light setting, which draws near-black bones in this light app.
+      effect: const ShimmerEffect(
+        baseColor: AppColors.shimmerBase,
+        highlightColor: AppColors.shimmerHighlight,
+      ),
       child: ListView.builder(
         physics: const NeverScrollableScrollPhysics(),
         padding: const EdgeInsets.only(top: 8, bottom: 24),
