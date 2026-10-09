@@ -121,7 +121,7 @@ class MediaModel {
 
   String get fullUrl {
     if (url.startsWith('http')) return url;
-    return 'https://doctory-icare.runasp.net/files/$url';
+    return 'https://api.doctoryconnect.online/files/$url';
   }
 
   Map<String, dynamic> toJson() {

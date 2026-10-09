@@ -569,6 +569,7 @@
   "about_clinic": "عن العيادة",
   "operating_hours": "ساعات العمل",
   "available_doctors": "الأطباء المتاحين",
+  "clinic_doctors_book_hint": "اختر الطبيب واحجز موعدك مباشرة",
   "book_appointment": "احجز موعد",
   "no_available_time": "لا توجد مواعيد متاحة حالياً",
   "doctor_details": "الملف الشخصي للطبيب",

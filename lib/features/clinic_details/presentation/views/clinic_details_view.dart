@@ -51,7 +51,10 @@ class ClinicDetailsView extends StatelessWidget {
                     ClinicInfoSection(clinic: currentClinic),
                     24.ph,
                     if (currentClinic.doctors != null) ...[
-                      ClinicDoctorsSection(doctors: currentClinic.doctors!),
+                      ClinicDoctorsSection(
+                        doctors: currentClinic.doctors!,
+                        clinicId: currentClinic.id,
+                      ),
                       24.ph,
                     ],
                     ClinicReviewsSummarySection(

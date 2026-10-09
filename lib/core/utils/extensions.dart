@@ -12,7 +12,7 @@ extension Photo on String {
   String get toImageUrl {
     if (isEmpty) return '';
     if (startsWith('http')) return this;
-    return 'https://doctory-icare.runasp.net/files/$this';
+    return 'https://api.doctoryconnect.online/files/$this';
   }
 }
 

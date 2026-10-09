@@ -44,7 +44,7 @@ class SpecialtyItemWidget extends StatelessWidget {
                   child:
                       specialty.iconUrl != null && specialty.iconUrl!.isNotEmpty
                           ? CachedNetworkImage(
-                            imageUrl: "https://doctory-icare.runasp.net/files/${specialty.iconUrl!}",
+                            imageUrl: "https://api.doctoryconnect.online/files/${specialty.iconUrl!}",
                             width: 24,
                             height: 24,
                             placeholder:

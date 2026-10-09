@@ -90,7 +90,7 @@ class ChatMessageWidget extends StatelessWidget {
   String _toImageUrl(String fileName) {
     if (fileName.isEmpty) return '';
     if (fileName.startsWith('http')) return fileName;
-    return 'https://doctory-icare.runasp.net/files/$fileName';
+    return 'https://api.doctoryconnect.online/files/$fileName';
   }
 
   Widget _buildMediaContent(dynamic media, bool isMe) {

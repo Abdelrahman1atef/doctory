@@ -15,59 +15,50 @@ class HomeCubit extends Cubit<HomeStates> {
 
   HomeCubit(this._homeRepo, this._adsRepo) : super(HomeInitialState());
 
-  void getHomeData() async {
-    emit(HomeSuccessState(
-      specialties: const [],
-      recommendedDoctors: const [],
-      featuredClinics: const [],
-      ads: const [],
-      unreadCount: 0,
-    ));
+  /// Loads every home section independently. A failed, null or empty
+  /// response for one section falls back to an empty list (the section hides
+  /// itself) and never blocks the rest of the home screen.
+  Future<void> getHomeData() async {
+    emit(HomeLoadingState());
 
     final sharedCubit = sl<SharedSpecializationsCubit>();
-    await sharedCubit.getFamousSpecializations(forceRefresh: true);
-
-    if (sharedCubit.state is SharedSpecializationsError) {
-      emit(HomeErrorState((sharedCubit.state as SharedSpecializationsError).message));
-      return;
-    }
-
-    final specialties = (sharedCubit.state is SharedSpecializationsLoaded)
-        ? (sharedCubit.state as SharedSpecializationsLoaded).specializations
-        : <SpecialtyModel>[];
-
     final results = await Future.wait([
       _homeRepo.getRecommendedDoctors(),
       _homeRepo.getFeaturedClinics(),
       _adsRepo.getActiveAds(),
       sl<NotificationsRepo>().getUnreadCount(),
+      sharedCubit.getFamousSpecializations(forceRefresh: true),
     ]);
+
+    if (isClosed) return;
 
     final doctorsResult = results[0] as ApiResult<List<DoctorModel>>;
     final clinicsResult = results[1] as ApiResult<List<ClinicModel>>;
     final adsResult = results[2] as ApiResult<List<PublicAdModel>>;
     final countResult = results[3] as ApiResult<int>;
-    final unreadCount = countResult.fold(onSuccess: (c) => c, onFailure: (_) => 0);
-    final ads = adsResult.fold(onSuccess: (a) => a, onFailure: (_) => <PublicAdModel>[]);
 
-    doctorsResult.fold(
-      onSuccess: (doctors) {
-        clinicsResult.fold(
-          onSuccess: (clinics) {
-            emit(
-              HomeSuccessState(
-                specialties: specialties,
-                recommendedDoctors: doctors,
-                featuredClinics: clinics,
-                ads: ads,
-                unreadCount: unreadCount,
-              ),
-            );
-          },
-          onFailure: (failure) => emit(HomeErrorState(failure.message)),
-        );
-      },
-      onFailure: (failure) => emit(HomeErrorState(failure.message)),
+    final specializationsState = sharedCubit.state;
+    final specialties = specializationsState is SharedSpecializationsLoaded
+        ? specializationsState.specializations
+        : <SpecialtyModel>[];
+
+    emit(
+      HomeSuccessState(
+        specialties: specialties,
+        recommendedDoctors: doctorsResult.fold(
+          onSuccess: (doctors) => doctors,
+          onFailure: (_) => <DoctorModel>[],
+        ),
+        featuredClinics: clinicsResult.fold(
+          onSuccess: (clinics) => clinics,
+          onFailure: (_) => <ClinicModel>[],
+        ),
+        ads: adsResult.fold(
+          onSuccess: (ads) => ads,
+          onFailure: (_) => <PublicAdModel>[],
+        ),
+        unreadCount: countResult.fold(onSuccess: (c) => c, onFailure: (_) => 0),
+      ),
     );
   }
 

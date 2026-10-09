@@ -6,7 +6,6 @@ import 'package:doctory/features/home/presentation/sections/home_featured_sectio
 import 'package:doctory/features/home/presentation/sections/home_header_section.dart';
 import 'package:doctory/features/home/presentation/sections/home_search_section.dart';
 import 'package:doctory/features/home/presentation/sections/home_specialties_section.dart';
-import 'package:doctory/features/home/presentation/widgets/home_error_widget.dart';
 import 'package:doctory/features/home/presentation/widgets/section_container_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -19,20 +18,13 @@ class HomeContentSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return RefreshIndicator(
-      onRefresh: () async {
-        context.read<HomeCubit>().getHomeData();
-      },
+      onRefresh: () => context.read<HomeCubit>().getHomeData(),
       child: BlocBuilder<HomeCubit, HomeStates>(
         buildWhen: (previous, current) =>
             current is HomeInitialState ||
             current is HomeLoadingState ||
-            current is HomeSuccessState ||
-            current is HomeErrorState,
+            current is HomeSuccessState,
         builder: (context, state) {
-          if (state is HomeErrorState) {
-            return HomeErrorWidget(message: state.message);
-          }
-
           final bool isLoading = state is HomeLoadingState || state is HomeInitialState;
           final HomeSuccessState? successState = state is HomeSuccessState ? state : null;
           final specialties = successState?.specialties ?? const <SpecialtyModel>[];

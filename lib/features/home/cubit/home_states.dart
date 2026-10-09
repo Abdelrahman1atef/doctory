@@ -23,11 +23,6 @@ class HomeSuccessState extends HomeStates {
   });
 }
 
-class HomeErrorState extends HomeStates {
-  final String message;
-  HomeErrorState(this.message);
-}
-
 // Search States
 class SearchLoadingState extends HomeStates {}
 

@@ -574,6 +574,7 @@
   "about_clinic": "About Clinic",
   "operating_hours": "Operating Hours",
   "available_doctors": "Available Doctors",
+  "clinic_doctors_book_hint": "Choose a doctor and book your appointment directly",
   "book_appointment": "Book Appointment",
   "no_available_time": "No available time slots",
   "doctor_details": "Doctor Profile",

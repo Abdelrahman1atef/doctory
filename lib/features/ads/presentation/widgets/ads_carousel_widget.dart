@@ -102,6 +102,8 @@ class _AdsCarouselWidgetState extends State<AdsCarouselWidget> {
               clipBehavior: Clip.none,
               controller: _pageController,
               itemCount: _adCount < 2 ? _adCount : null,
+              allowImplicitScrolling: true,
+              pageSnapping: true,
               onPageChanged: (index) => setState(() => _currentPage = index),
               itemBuilder: (context, index) {
                 final ad = widget.ads[index % _adCount];
